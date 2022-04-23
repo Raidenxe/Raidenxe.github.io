@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>GitHub 443 Timed out的解决方法</title>
+    <url>/archives/4dcde7a2.html</url>
+    <content><![CDATA[<h1 id="GitHub-443-Timed-out解决办法"><a href="#GitHub-443-Timed-out解决办法" class="headerlink" title="GitHub 443 Timed out解决办法"></a>GitHub 443 Timed out解决办法</h1><h2 id="Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out"><a href="#Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out" class="headerlink" title="Failed to connect to github.com port 443 after 21090 ms: Timed out"></a>Failed to connect to github.com port 443 after 21090 ms: Timed out</h2><p>最近尝试过很多方法都无法解决GitHub的上传问题，包括取消全局代理也无效。</p>
+<p>取消全局代理：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global --<span class="built_in">unset</span> http.proxy</span><br><span class="line">git config --global --<span class="built_in">unset</span> https.proxy</span><br></pre></td></tr></table></figure>
+<p>无奈之下只能选择修改hosts文件。</p>
+<p>登录以下三个网站获取对应的ip地址，写入hosts文件即可。</p>
+<p><a href="https://ipaddress.com/website/github.com">GitHub IP地址</a></p>
+<p><img src="https://pic3.zhimg.com/80/v2-7a0b82ecaa96fdc3efda9e4295ab1eee_720w.jpg" alt="GitHub IP地址"></p>
+<p><a href="https://ipaddress.com/website/github.global.ssl.fastly.net#ipinfo">github.global.ssl.Fastly.net IP地址</a></p>
+<p><img src="https://pic2.zhimg.com/80/v2-aed12d6e1e2bedebba9e1444bbdc83dd_720w.jpg" alt="github.global.ssl.Fastly.net IP地址"></p>
+<p><a href="https://ipaddress.com/website/assets-cdn.github.com">assets-cdn.Github.com IP地址</a></p>
+<p><img src="https://pic1.zhimg.com/80/v2-05f981b555f81338eb2bb15b5ebb5338_720w.jpg" alt="assets-cdn.Github.com IP地址"></p>
+<p>如下图所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">140.82.112.4 http://GitHub.com</span><br><span class="line"></span><br><span class="line">199.232.69.194 http://github.global.ssl.Fastly.net</span><br><span class="line"></span><br><span class="line">185.199.108.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.109.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.110.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.111.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>实测有效<br><img src="https://pic3.zhimg.com/80/v2-8ed6c75a78b8c4418f8b802d5ae38a26_720w.jpg"></p>
+]]></content>
+      <tags>
+        <tag>GitHub</tag>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hello World</title>
     <url>/archives/4a17b156.html</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
@@ -17,89 +40,6 @@
 
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>单片机和嵌入式系统的区别</title>
-    <url>/archives/cc4d518f.html</url>
-    <content><![CDATA[<h1 id="单片机和嵌入式系统的区别"><a href="#单片机和嵌入式系统的区别" class="headerlink" title="单片机和嵌入式系统的区别"></a>单片机和嵌入式系统的区别</h1><p>嵌入式和单片机并不是一对相对的概念，嵌入式系统包括硬件和软件部分，而单片机是单片微型计算机(Single Chip Microcomputer )的简称，即微控制单元(Microcontroller Unit；MCU) 。单片机可以是嵌入式系统的组成部分。我们可以理解为嵌入式系统是一个大类，单片机是其中一个重要的子类。</p>
-<h1 id="什么是单片机？"><a href="#什么是单片机？" class="headerlink" title="什么是单片机？"></a>什么是单片机？</h1><p>单片机又称单片微控制器，它是将电子计算机的基本环节,如:中央处理器(又称中央处理器,主要由运算器,控制器组成),存储器,总线,输入输出接口等,采用集成电路技术集成在一片硅基片上.由于单片计算机体积很小(仅手指般大小),功能强(具有一个简单计算机的功能)。</p>
-<h1 id="什么是嵌入式系统？"><a href="#什么是嵌入式系统？" class="headerlink" title="什么是嵌入式系统？"></a>什么是嵌入式系统？</h1><p>嵌入式系统是基于微处理器的计算机硬件系统，其软件设计用于执行专用功能，既可以作为独立系统，也可以作为大型系统的一部分。其核心是一个集成电路，旨在为实时操作执行计算。其软件内容只包括软件运行环境及其操作系统。硬件内容包括信号处理器、存储器、通信模块等在内的多方面的内容。</p>
-<p>复杂性从单个微控制器到具有连接外围设备和网络的一套处理器；从无用户界面到复杂的图形用户界面。嵌入式系统的复杂性因设计任务而异。</p>
-<p>嵌入式系统应用范围从数字手表和微波到混合动力汽车和航空电子设备。多达 98% 的制造的微处理器用于嵌入式系统。</p>
-<p>嵌入式系统如何工作？</p>
-<p>嵌入式系统由微控制器或数字信号处理器 (DSP)、专用集成电路 (ASIC)、现场可编程门阵列 (FPGA)、GPU 技术和门阵列管理。这些处理系统与专用于处理电气和&#x2F;或机械接口的组件集成在一起。</p>
-<p>嵌入式系统编程指令，称为固件，存储在只读存储器或闪存芯片中，以有限的计算机硬件资源运行。嵌入式系统通过外围设备与外部世界连接，连接输入和输出设备。</p>
-<p>嵌入式系统的基本结构</p>
-<p><img src="https://pic3.zhimg.com/80/v2-510f561d07185b9ac8ce873cfa42d79e_720w.jpg" alt="嵌入式系统的基本结构"><br>嵌入式系统的基本结构包括以下组件：</p>
-<p>传感器：传感器测量物理量并将其转换为电信号，然后可以由嵌入式系统工程师或任何电子仪器读取。传感器将测量的量存储到存储器中。</p>
-<p>AD转换器：模数转换器将传感器发送的模拟信号转换为数字信号。<br>处理器和 ASIC：处理器评估数据以测量输出并将其存储到内存中。</p>
-<p>DA 转换器：数模转换器将处理器提供的数字数据转换为模拟数据</p>
-<p>执行器：执行器将 DA 转换器给出的输出与存储的实际输出进行比较，并存储批准的输出。</p>
-<p>以常见的几种嵌入式开发板和单片机为例子</p>
-<p>树莓派4B：<br><img src="https://pic3.zhimg.com/80/v2-e4113649f5c864c848977651efe67fde_720w.jpg" alt="树莓派4B"><br>Broadcom BCM2711, Quad core Cortex-A72 (ARM v8) 64-bit SoC @ 1.5GHz</p>
-<p>Raspberry Pi(中文名为“树莓派”,简写为RPi，(或者RasPi &#x2F; RPI) 是为学习计算机编程教育而设计)，只有信用卡大小的微型电脑，其系统基于Linux。</p>
-<p>可以将树莓派理解为一台微型电脑，它与我们平时使用的电脑近乎相同。</p>
-<p>Arduino：<br><img src="https://pic2.zhimg.com/80/v2-296df3f5f79f05cf00f9d1219ed160ed_720w.jpg" alt="Arduino"><br>AVR单片机、ARM芯片</p>
-<p>Arduino是一款便捷灵活、方便上手的开源电子原型平台。</p>
-<p>它构建于开放原始码simple I&#x2F;O介面版，并且具有使用类似Java、C语言的Processing&#x2F;Wiring开发环境。主要包含两个的部分：硬件部分是可以用来做电路连接的Arduino电路板；另外一个则是Arduino IDE，你的计算机中的程序开发环境。只要在IDE中编写程序代码，将程序上传到Arduino电路板后，程序会告诉Arduino电路板要做什么。</p>
-<p>简单来说，arduino是对单片机的二次封装。</p>
-<p>Stm32:<br><img src="https://pic1.zhimg.com/80/v2-66dc8e061c98669e0bf291326dbef7b4_720w.jpg" alt="stm32"><br>ARM Cortex-M内核单片机</p>
-<p>stm32全称是意法半导体32位系列微控制器芯片。STM32系列专为要求高性能、低成本、低功耗的嵌入式应用设计的ARM Cortex®-M0，M0+，M3, M4和M7内核。</p>
-<p>主流产品（STM32F0、STM32F1、STM32F3）、超低功耗产品（STM32L0、STM32L1、STM32L4、STM32L4+）、高性能产品（STM32F2、STM32F4、STM32F7、STM32H7）</p>
-<p>51单片机：<br><img src="https://pic1.zhimg.com/80/v2-5f93514b9dbe056edf726476e000a680_720w.jpg" alt="51单片机"><br>51单片机是对兼容英特尔8051指令系统的单片机的统称</p>
-<p>51单片机广泛应用于家用电器、汽车、工业测控、通信设备中。因为51单片机的指令系统、内部结构相对简单，所以国内许多高校用其进行单片机入门教学。</p>
-<p>51单片机是Intel在1981年推出的由8031微控制器芯片改造升级的、使用CISC指令集的、冯诺依曼架构的、8位的8051微控制器。后Intel将8051微控制器的内核授权给其他芯片厂商,使得市面上广泛出现类似于8051的芯片,这种采用8051内核的芯片被简称为51。</p>
-<p>从上述例子中我们能直观地看到这些开发板和单片机所使用处理器的不同，但是树莓派、Arduino、stm32和我们日常使用的手机均是使用arm架构的处理器，那么手机算单片机吗？</p>
-<p>要回答这个问题，首先要简单介绍一下ARM处理器产品线。</p>
-<p>ARM Cortex内核系列提供非常广泛的具有可扩展性的性能选项，设计人员有机会在多种选项中选择最适合自身应用的内核。Cortex系列组合大体上分为三种类别：</p>
-<p>● Cortex-A—面向性能密集型系统的应用处理器内核</p>
-<p>● Cortex-R—面向实时应用的高性能内核</p>
-<p>● Cortex-M—面向各类嵌入式应用的微控制器内核</p>
-<p><img src="https://pic2.zhimg.com/80/v2-f85640d3f7901185a13f066da1a9b191_720w.jpg" alt="处理器家族"><br>Cortex-A处理器为利用操作系统（例如Linux或者Android）的设备提供了一系列解决方案，这些设备被用于各类应用，从低成本手持设备到智能手机、平板电脑、机顶盒以及企业网络设备等。</p>
-<p>Cortex-R实时处理器为要求可靠性、高可用性、容错功能、可维护性和实时响应的嵌入式系统提供高性能计算解决方案。在数以亿计的产品中得到验证的成熟技术提供极快的上市速度，并利用广泛的 ARM 生态系统、全球和本地语言以及全天候的支持服务，保证快速、低风险的产品开发。</p>
-<p>Cortex-M系列基于ARMv7-M架构（用于Cortex-M3和Cortex-M4）构建，针对成本和功耗敏感的MCU和终端应用（如智能测量、人机接口设备、汽车和工业控制系统、大型家用电器、消费性产品和医疗器械）的混合信号设备进行过优化。</p>
-<p>总结： Cortex-M 系列是MCU，也就是单片机，Cortex-R 系列处理器提供的性能比 Cortex-M 系列提供的性能高得多，而 Cortex-A 系列专用于具有复杂软件操作系统（需使用虚拟内存管理）的面向用户的应用。</p>
-<p>综上所述，只有Cortex-A系列内核的芯片叫处理器。而上述的开发板和单片机只有Raspberry Pi以及我们日常使用的手机是Cortex-A系列内核的芯片。</p>
-<p>单片机和嵌入式系统的结构</p>
-<p>单片机： 软件 —— 硬件<br>嵌入式系统： 软件 ——操作系统——硬件</p>
-<p>有无操作系统的区别</p>
-<p>有操作系统可以实现多任务调度、文件系统、内存管理等复杂功能。</p>
-<p>当系统中存在操作系统的时候，设备驱动变成了连接硬件和内核的桥梁。开发者调用统一的系统调用接口来访问各种设备，方便开发。提供操作方便、简单、提供友好的图形GUI和图形界面，追求易学易用。并且可以使用大量开源的软件，工具，库。</p>
-<p>提供强大的网络功能，支持TCP&#x2F;IP协议及其他协议，提供TCP&#x2F;UDP&#x2F;IP&#x2F;PPP协议支持及统一的MAC访问层接口，为各种移动计算设备预留接口。可以实现远程控制。</p>
-<p>拥有良好的软件移植性，嵌入式系统和具体应用有机地结合在一起，升级换代也是和具体产品同步进行，具有较长的生命周期。</p>
-<p>而对于无操作系统的单片机而言，可以实现的功能相对单一。开发者必须要先了解这个硬件平台，才能进行软件编程，降低了开发效率且软件移植性差。</p>
-<p>单片机的优势</p>
-<p>从上文所述的种种优缺点来看，单片机对比嵌入式系统似乎一无是处，尽管嵌入式系统的性能强大且可实现功能众多，但嵌入式最大的劣势便是其高昂的价格。</p>
-<p>单片机价格低廉，结构简单，使用方便，实现模块化，单片机可靠性高，可工作到10^6 ~10^7小时无故障，处理功能强，速度快。低电压，低功耗，控制功能强，环境适应能力强。</p>
-]]></content>
-      <tags>
-        <tag>嵌入式</tag>
-        <tag>单片机</tag>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>树莓派系统烧录教程</title>
-    <url>/archives/6a0755b3.html</url>
-    <content><![CDATA[<p>树莓派的系统烧录大体上可分为使用</p>
-<p>官方的烧录工具Raspberry Pi Imager烧录和使用第三方烧录工具烧录。</p>
-<p>官方的烧录工具胜在操作简单，方便快捷，所以这里使用Raspberry Pi Imager进行演示。</p>
-<p>具体步骤如下：</p>
-<p>首先准备好tf卡和读卡器</p>
-<p>然后进入官网下载 <a href="https://link.zhihu.com/?target=https://www.raspberrypi.com/software/">Raspberry Pi Imager</a></p>
-<p><img src="https://pic4.zhimg.com/80/v2-8a14d7c95dec632584c034d0dc88b28b_720w.jpg" alt="选择download for windows"></p>
-<p>安装Raspberry Pi Imager<br><img src="https://pic1.zhimg.com/80/v2-c4e4c22348914ce68edf31226bb6f340_720w.jpg" alt="点击Install"><br><img src="https://pic2.zhimg.com/80/v2-84775579e1f5e109e7cfb486f4aab445_720w.jpg" alt="Finish"></p>
-<p>打开Raspberry Pi Imager<br><img src="https://pic4.zhimg.com/80/v2-4eae49e0a08f4a124f1a8a74ebc7970b_720w.jpg" alt="点击CHOOSE OS选项"></p>
-<p>这里我们可以看到有很多系统可供选择，可以自行选择适合的系统，</p>
-<p>这里我们选择带有树莓派桌面的第一个系统为例<br><img src="https://pic2.zhimg.com/80/v2-112d84b8ae1fa0b9dcd92a6325576ae9_720w.jpg" alt="点击Raspberry PI OS(32-bit)"></p>
-<p>选择对应的存储设备<br><img src="https://pic1.zhimg.com/80/v2-a5d82eae153723595f4c1944cf3f797c_720w.jpg" alt="点击CHOOSE STORAGE选项"><br><img src="https://pic3.zhimg.com/80/v2-f6cf4fe01e8b59da659a6e37c9db9aae_720w.jpg" alt="注意所选盘符是否为目标tf卡"></p>
-<p>烧录程序<br><img src="https://pic4.zhimg.com/80/v2-16125a207574f1440b2e52738d1a7c47_720w.jpg" alt="点击WRITE"><br><img src="https://pic1.zhimg.com/80/v2-71484bd203bca4874eeb82a93026a360_720w.jpg" alt="点击yes"></p>
-<p>接下来耐心等待即可<br><img src="https://pic4.zhimg.com/80/v2-7d813e812b9816d4339a448576daa9bf_720w.jpg" alt="等进度条达100％即完成树莓派系统的烧录"></p>
-<p>如果出现报错，可以尝试重新烧录系统。</p>
-]]></content>
-      <tags>
-        <tag>树莓派</tag>
-      </tags>
   </entry>
   <entry>
     <title>常用Linux命令整理</title>
@@ -238,27 +178,88 @@
       </tags>
   </entry>
   <entry>
-    <title>计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</title>
-    <url>/archives/8cdebc07.html</url>
-    <content><![CDATA[<h2 id="什么是Socket？"><a href="#什么是Socket？" class="headerlink" title="什么是Socket？"></a>什么是Socket？</h2><p>Socket允许在相同或不同机器上的两个不同进程之间进行通信。更准确地说，这是一种使用标准 Unix 文件描述符与其他计算机通信的方式。</p>
-<p>在 Unix 中，每个 I&#x2F;O 操作都是通过写入或读取文件描述符来完成的。文件描述符只是与打开的文件相关联的整数，它可以是网络连接、文本文件、终端或其他东西。</p>
-<p>对于程序员来说，套接字的外观和行为很像低级文件描述符。这是因为诸如 read() 和 write() 之类的命令对套接字的工作方式与它们对文件和管道的工作方式相同。</p>
-<p>套接字最初是在 2.1BSD 中引入的，随后在 4.2BSD 中被改进为当前的形式。现在，大多数最新的 UNIX 系统版本都提供了套接字功能。<br><img src="https://pic1.zhimg.com/80/v2-33d5adb9c5bdefa9977a7f64970834a0_720w.jpg" alt="Socket与各种网络协议的关系"><br>如图所示，Socket是为了给应用程序一个更加统一、简洁的API接口而将底层各种协议栈封装起来形成形成的一层接口函数。</p>
-<p>简单举例Socket如何实现客户端和服务端<br><img src="https://pic3.zhimg.com/80/v2-50a90c813007b71ef251e00f5cf7692e_720w.jpg" alt="客户端和服务端信息交互"><br>构建客户端和服务器的方式有所不同，但都涉及到Socket的基本构造。这两个进程都建立了自己的套接字。</p>
-<h2 id="如何构建客户端"><a href="#如何构建客户端" class="headerlink" title="如何构建客户端"></a>如何构建客户端</h2><p>在客户端建立Socket的步骤如下 ：</p>
-<p>1.使用socket()系统调用创建一个套接字。</p>
-<p>2.使用connect()系统调用将套接字连接到服务器的地址。</p>
-<p>3.发送和接收数据。有很多方式可以实现这一点，最简单的方法就是使用read()和write()系统调用。</p>
-<h2 id="如何构建服务端"><a href="#如何构建服务端" class="headerlink" title="如何构建服务端"></a>如何构建服务端</h2><p>在服务器端建立套接字的步骤如下 ：</p>
-<p>1.使用socket()系统调用创建一个套接字。</p>
-<p>2.使用bind()系统调用将套接字绑定到一个地址。对于 Internet 上的服务器套接字，地址由主机上的端口号组成。</p>
-<p>3.通过listen()系统调用监听连接。</p>
-<p>4.通过accept()系统调用接受连接。此调用通常会阻止连接，直到客户端与服务器连接。</p>
-<p>5.使用read()和write()系统调用发送和接收数据。</p>
+    <title>单片机和嵌入式系统的区别</title>
+    <url>/archives/cc4d518f.html</url>
+    <content><![CDATA[<h1 id="单片机和嵌入式系统的区别"><a href="#单片机和嵌入式系统的区别" class="headerlink" title="单片机和嵌入式系统的区别"></a>单片机和嵌入式系统的区别</h1><p>嵌入式和单片机并不是一对相对的概念，嵌入式系统包括硬件和软件部分，而单片机是单片微型计算机(Single Chip Microcomputer )的简称，即微控制单元(Microcontroller Unit；MCU) 。单片机可以是嵌入式系统的组成部分。我们可以理解为嵌入式系统是一个大类，单片机是其中一个重要的子类。</p>
+<h1 id="什么是单片机？"><a href="#什么是单片机？" class="headerlink" title="什么是单片机？"></a>什么是单片机？</h1><p>单片机又称单片微控制器，它是将电子计算机的基本环节,如:中央处理器(又称中央处理器,主要由运算器,控制器组成),存储器,总线,输入输出接口等,采用集成电路技术集成在一片硅基片上.由于单片计算机体积很小(仅手指般大小),功能强(具有一个简单计算机的功能)。</p>
+<h1 id="什么是嵌入式系统？"><a href="#什么是嵌入式系统？" class="headerlink" title="什么是嵌入式系统？"></a>什么是嵌入式系统？</h1><p>嵌入式系统是基于微处理器的计算机硬件系统，其软件设计用于执行专用功能，既可以作为独立系统，也可以作为大型系统的一部分。其核心是一个集成电路，旨在为实时操作执行计算。其软件内容只包括软件运行环境及其操作系统。硬件内容包括信号处理器、存储器、通信模块等在内的多方面的内容。</p>
+<p>复杂性从单个微控制器到具有连接外围设备和网络的一套处理器；从无用户界面到复杂的图形用户界面。嵌入式系统的复杂性因设计任务而异。</p>
+<p>嵌入式系统应用范围从数字手表和微波到混合动力汽车和航空电子设备。多达 98% 的制造的微处理器用于嵌入式系统。</p>
+<p>嵌入式系统如何工作？</p>
+<p>嵌入式系统由微控制器或数字信号处理器 (DSP)、专用集成电路 (ASIC)、现场可编程门阵列 (FPGA)、GPU 技术和门阵列管理。这些处理系统与专用于处理电气和&#x2F;或机械接口的组件集成在一起。</p>
+<p>嵌入式系统编程指令，称为固件，存储在只读存储器或闪存芯片中，以有限的计算机硬件资源运行。嵌入式系统通过外围设备与外部世界连接，连接输入和输出设备。</p>
+<p>嵌入式系统的基本结构</p>
+<p><img src="https://pic3.zhimg.com/80/v2-510f561d07185b9ac8ce873cfa42d79e_720w.jpg" alt="嵌入式系统的基本结构"><br>嵌入式系统的基本结构包括以下组件：</p>
+<p>传感器：传感器测量物理量并将其转换为电信号，然后可以由嵌入式系统工程师或任何电子仪器读取。传感器将测量的量存储到存储器中。</p>
+<p>AD转换器：模数转换器将传感器发送的模拟信号转换为数字信号。<br>处理器和 ASIC：处理器评估数据以测量输出并将其存储到内存中。</p>
+<p>DA 转换器：数模转换器将处理器提供的数字数据转换为模拟数据</p>
+<p>执行器：执行器将 DA 转换器给出的输出与存储的实际输出进行比较，并存储批准的输出。</p>
+<p>以常见的几种嵌入式开发板和单片机为例子</p>
+<p>树莓派4B：<br><img src="https://pic3.zhimg.com/80/v2-e4113649f5c864c848977651efe67fde_720w.jpg" alt="树莓派4B"><br>Broadcom BCM2711, Quad core Cortex-A72 (ARM v8) 64-bit SoC @ 1.5GHz</p>
+<p>Raspberry Pi(中文名为“树莓派”,简写为RPi，(或者RasPi &#x2F; RPI) 是为学习计算机编程教育而设计)，只有信用卡大小的微型电脑，其系统基于Linux。</p>
+<p>可以将树莓派理解为一台微型电脑，它与我们平时使用的电脑近乎相同。</p>
+<p>Arduino：<br><img src="https://pic2.zhimg.com/80/v2-296df3f5f79f05cf00f9d1219ed160ed_720w.jpg" alt="Arduino"><br>AVR单片机、ARM芯片</p>
+<p>Arduino是一款便捷灵活、方便上手的开源电子原型平台。</p>
+<p>它构建于开放原始码simple I&#x2F;O介面版，并且具有使用类似Java、C语言的Processing&#x2F;Wiring开发环境。主要包含两个的部分：硬件部分是可以用来做电路连接的Arduino电路板；另外一个则是Arduino IDE，你的计算机中的程序开发环境。只要在IDE中编写程序代码，将程序上传到Arduino电路板后，程序会告诉Arduino电路板要做什么。</p>
+<p>简单来说，arduino是对单片机的二次封装。</p>
+<p>Stm32:<br><img src="https://pic1.zhimg.com/80/v2-66dc8e061c98669e0bf291326dbef7b4_720w.jpg" alt="stm32"><br>ARM Cortex-M内核单片机</p>
+<p>stm32全称是意法半导体32位系列微控制器芯片。STM32系列专为要求高性能、低成本、低功耗的嵌入式应用设计的ARM Cortex®-M0，M0+，M3, M4和M7内核。</p>
+<p>主流产品（STM32F0、STM32F1、STM32F3）、超低功耗产品（STM32L0、STM32L1、STM32L4、STM32L4+）、高性能产品（STM32F2、STM32F4、STM32F7、STM32H7）</p>
+<p>51单片机：<br><img src="https://pic1.zhimg.com/80/v2-5f93514b9dbe056edf726476e000a680_720w.jpg" alt="51单片机"><br>51单片机是对兼容英特尔8051指令系统的单片机的统称</p>
+<p>51单片机广泛应用于家用电器、汽车、工业测控、通信设备中。因为51单片机的指令系统、内部结构相对简单，所以国内许多高校用其进行单片机入门教学。</p>
+<p>51单片机是Intel在1981年推出的由8031微控制器芯片改造升级的、使用CISC指令集的、冯诺依曼架构的、8位的8051微控制器。后Intel将8051微控制器的内核授权给其他芯片厂商,使得市面上广泛出现类似于8051的芯片,这种采用8051内核的芯片被简称为51。</p>
+<p>从上述例子中我们能直观地看到这些开发板和单片机所使用处理器的不同，但是树莓派、Arduino、stm32和我们日常使用的手机均是使用arm架构的处理器，那么手机算单片机吗？</p>
+<p>要回答这个问题，首先要简单介绍一下ARM处理器产品线。</p>
+<p>ARM Cortex内核系列提供非常广泛的具有可扩展性的性能选项，设计人员有机会在多种选项中选择最适合自身应用的内核。Cortex系列组合大体上分为三种类别：</p>
+<p>● Cortex-A—面向性能密集型系统的应用处理器内核</p>
+<p>● Cortex-R—面向实时应用的高性能内核</p>
+<p>● Cortex-M—面向各类嵌入式应用的微控制器内核</p>
+<p><img src="https://pic2.zhimg.com/80/v2-f85640d3f7901185a13f066da1a9b191_720w.jpg" alt="处理器家族"><br>Cortex-A处理器为利用操作系统（例如Linux或者Android）的设备提供了一系列解决方案，这些设备被用于各类应用，从低成本手持设备到智能手机、平板电脑、机顶盒以及企业网络设备等。</p>
+<p>Cortex-R实时处理器为要求可靠性、高可用性、容错功能、可维护性和实时响应的嵌入式系统提供高性能计算解决方案。在数以亿计的产品中得到验证的成熟技术提供极快的上市速度，并利用广泛的 ARM 生态系统、全球和本地语言以及全天候的支持服务，保证快速、低风险的产品开发。</p>
+<p>Cortex-M系列基于ARMv7-M架构（用于Cortex-M3和Cortex-M4）构建，针对成本和功耗敏感的MCU和终端应用（如智能测量、人机接口设备、汽车和工业控制系统、大型家用电器、消费性产品和医疗器械）的混合信号设备进行过优化。</p>
+<p>总结： Cortex-M 系列是MCU，也就是单片机，Cortex-R 系列处理器提供的性能比 Cortex-M 系列提供的性能高得多，而 Cortex-A 系列专用于具有复杂软件操作系统（需使用虚拟内存管理）的面向用户的应用。</p>
+<p>综上所述，只有Cortex-A系列内核的芯片叫处理器。而上述的开发板和单片机只有Raspberry Pi以及我们日常使用的手机是Cortex-A系列内核的芯片。</p>
+<p>单片机和嵌入式系统的结构</p>
+<p>单片机： 软件 —— 硬件<br>嵌入式系统： 软件 ——操作系统——硬件</p>
+<p>有无操作系统的区别</p>
+<p>有操作系统可以实现多任务调度、文件系统、内存管理等复杂功能。</p>
+<p>当系统中存在操作系统的时候，设备驱动变成了连接硬件和内核的桥梁。开发者调用统一的系统调用接口来访问各种设备，方便开发。提供操作方便、简单、提供友好的图形GUI和图形界面，追求易学易用。并且可以使用大量开源的软件，工具，库。</p>
+<p>提供强大的网络功能，支持TCP&#x2F;IP协议及其他协议，提供TCP&#x2F;UDP&#x2F;IP&#x2F;PPP协议支持及统一的MAC访问层接口，为各种移动计算设备预留接口。可以实现远程控制。</p>
+<p>拥有良好的软件移植性，嵌入式系统和具体应用有机地结合在一起，升级换代也是和具体产品同步进行，具有较长的生命周期。</p>
+<p>而对于无操作系统的单片机而言，可以实现的功能相对单一。开发者必须要先了解这个硬件平台，才能进行软件编程，降低了开发效率且软件移植性差。</p>
+<p>单片机的优势</p>
+<p>从上文所述的种种优缺点来看，单片机对比嵌入式系统似乎一无是处，尽管嵌入式系统的性能强大且可实现功能众多，但嵌入式最大的劣势便是其高昂的价格。</p>
+<p>单片机价格低廉，结构简单，使用方便，实现模块化，单片机可靠性高，可工作到10^6 ~10^7小时无故障，处理功能强，速度快。低电压，低功耗，控制功能强，环境适应能力强。</p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+        <tag>嵌入式</tag>
+        <tag>单片机</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机网络知识点总结（一）</title>
+    <url>/archives/5dd58e55.html</url>
+    <content><![CDATA[<h2 id="计算机网络的定义"><a href="#计算机网络的定义" class="headerlink" title="计算机网络的定义"></a>计算机网络的定义</h2><p>计算机网络是“以相互共享资源的方式互联起来的自治计算机系统的集合”。<br>计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。</p>
+<h2 id="计算机网络的分类"><a href="#计算机网络的分类" class="headerlink" title="计算机网络的分类"></a>计算机网络的分类</h2><p>计算机网络按照其覆盖的地理范围进行分类，可以很好地反映不同类型网络的技术特征。按照覆盖的地理范围划分，计算机网络可以分为以下5类。</p>
+<h3 id="广域网（Wide-Area-Network，WAN）"><a href="#广域网（Wide-Area-Network，WAN）" class="headerlink" title="广域网（Wide Area Network，WAN）"></a>广域网（Wide Area Network，WAN）</h3><h3 id="城域网-Metropolitan-Area-Network，MAN"><a href="#城域网-Metropolitan-Area-Network，MAN" class="headerlink" title="城域网(Metropolitan Area Network，MAN)"></a>城域网(Metropolitan Area Network，MAN)</h3><h3 id="局域网（Local-Area-Network-，LAN）"><a href="#局域网（Local-Area-Network-，LAN）" class="headerlink" title="局域网（Local Area Network ，LAN）"></a>局域网（Local Area Network ，LAN）</h3><h3 id="个人区域网（Personal-Area-Network，PAN）"><a href="#个人区域网（Personal-Area-Network，PAN）" class="headerlink" title="个人区域网（Personal Area Network，PAN）"></a>个人区域网（Personal Area Network，PAN）</h3><h3 id="人体区域网（Body-Area-Network，BAN）"><a href="#人体区域网（Body-Area-Network，BAN）" class="headerlink" title="人体区域网（Body Area Network，BAN）"></a>人体区域网（Body Area Network，BAN）</h3><h3 id="网络体系结构和网络协议"><a href="#网络体系结构和网络协议" class="headerlink" title="网络体系结构和网络协议"></a>网络体系结构和网络协议</h3><h2 id="网络协议"><a href="#网络协议" class="headerlink" title="网络协议"></a>网络协议</h2><p>网络协议类似于人类协议，除了交换报文和采取动作的实体是某些设备（可以是计算机、智能手机、平板电脑、路由器或其他具有网络能力的设备）的硬件或软件组件。在因 特网中，涉及两个或多个远程通信实体的所有活动都受协议的制约。例如，在两台物理上 连接的计算机中，硬件实现的协议控制了在两块网络接口卡间的“线上”的比特流；在端 系统中，拥塞控制协议控制了在发送方和接收方之间传输的分组发送的速率；路由器中的协议决定了分组从源到目的地的路径。<br>协议（protocol）定义了在两个或多个通信实体之间交换的报文的格式和顺序，以及报文发送和&#x2F;或接收一条报文或其他事件所采取的动作。<br>因特网（更一般地说是计算机网络）广泛地使用了协议。不同的协议用于完成不同的通信任务。<br>    层次（layer）结构事处理计算机网络问题最基本的方法。对于一些难以处理的复杂问题，通常是采用若干个容易处理的、小一些的问题，“化整为零，分而治之”的方法去解决。<br>接口是同一主机内相邻层之间交换信息的连接点。<br>对于结构复杂的网络协议体系来说，最好的组织方是层次结构模型。计算机网络引入了一个重要的概念——网络体系结构（network architecture）。</p>
+<h2 id="OSI-参考模型"><a href="#OSI-参考模型" class="headerlink" title="OSI 参考模型"></a>OSI 参考模型</h2><p>1974年，IBM公司提出世界第一个网络体系结构——系统网络体系结构（SNA）。1974年，国际标准化组织（ISO）发布了著名的ISO&#x2F;IEC7498标准，定义了网络互联的7层框架，即开放系统互连（Open System Interconnect，OSI）参考模型。<br>开放系统互连 (OSI) 模型描述了计算机系统用于通过网络进行通信的七个层次。OSI参考模型包括以下七层：物理层、数据链路层、网络层、传输层、会话层、表示层和应用层。<br><img src="https://pic3.zhimg.com/80/v2-82a2e89aa4a4218d23a8aedba5b77ad2_720w.jpg" alt="OSI七层模型"></p>
+<p>现代互联网不是基于 OSI，而是基于更简单的 TCP&#x2F;IP 模型。然而，OSI 7 层模型仍然被广泛使用，因为它有助于可视化和传达网络的运行方式，并有助于隔离和解决网络问题。<br>我们将“自上而下”地描述 OSI 层，从直接为最终用户服务的应用程序层，一直到物理层。<br><img src="https://pic1.zhimg.com/80/v2-112f5d6be901f464ec832561b4f98f48_720w.jpg" alt="主机、路由器和链路层交换机，每个包含了不同的层，反映了它们的功能差异"></p>
+<h3 id="7-应用层"><a href="#7-应用层" class="headerlink" title="7.应用层"></a>7.应用层</h3><p>应用层由最终用户软件使用，例如 Web 浏览器和电子邮件客户端。它提供允许软件发送和接收信息并向用户呈现有意义的数据的协议。应用层协议的一些示例是超文本传输协议(HTTP)、文件传输协议 (FTP)、邮局协议 (POP)、简单邮件传输协议 (SMTP) 和域名系统 (DNS)。</p>
+<h3 id="6-表示层"><a href="#6-表示层" class="headerlink" title="6.表示层"></a>6.表示层</h3><p>表示层为应用层准备数据。它定义了两个设备应如何编码、加密和压缩数据，以便在另一端正确接收数据。表示层获取应用层传输的任何数据，并准备好通过会话层传输。</p>
+<h3 id="5-会话层"><a href="#5-会话层" class="headerlink" title="5.会话层"></a>5.会话层</h3><p>会话层在设备之间创建通信通道，称为会话。它负责打开会话，确保它们在传输数据时保持打开和功能，并在通信结束时关闭它们。会话层还可以在数据传输期间设置检查点——如果会话中断，设备可以从上一个检查点恢复数据传输。</p>
+<h3 id="4-传输层"><a href="#4-传输层" class="headerlink" title="4.传输层"></a>4.传输层</h3><p>传输层获取会话层中传输的数据，并在发送端将其分解为“段”。它负责在接收端重新组装段，将其转换回会话层可以使用的数据。传输层进行流量控制，以与接收设备的连接速度相匹配的速率发送数据，以及错误控制，检查数据是否接收错误，如果没有，则重新请求。</p>
+<h3 id="3-网络层"><a href="#3-网络层" class="headerlink" title="3.网络层"></a>3.网络层</h3><p>网络层有两个主要功能。一种是将分段分解为网络数据包，然后在接收端重新组装数据包。另一种是通过发现跨物理网络的最佳路径来路由数据包。网络层使用网络地址（通常是 Internet 协议地址）将数据包路由到目标节点。</p>
+<h3 id="2-数据链路层"><a href="#2-数据链路层" class="headerlink" title="2.数据链路层"></a>2.数据链路层</h3><p>数据链路层在网络上两个物理连接的节点之间建立和终止连接。它将数据包分解成帧并将它们从源发送到目标。该层由两部分组成——逻辑链路控制 (LLC)，它识别网络协议、执行错误检查和同步帧，以及媒体访问控制 (MAC)，它使用 MAC 地址连接设备并定义传输和接收数据的权限。</p>
+<h3 id="1-物理层"><a href="#1-物理层" class="headerlink" title="1.物理层"></a>1.物理层</h3><p>物理层负责网络节点之间的物理有线或无线连接。它定义了连接器、连接设备的电缆或无线技术，并负责传输原始数据，这只是一系列 0 和 1，同时负责比特率控制。<br>OSI模型的优点<br>OSI 模型帮助计算机网络的用户和运营商：<br>•    确定构建网络所需的硬件和软件。<br>•    了解并传达组件通过网络进行通信的过程。<br>•    通过确定导致问题的网络层并将工作重点放在该层来执行故障排除。<br>OSI 模型帮助网络设备制造商和网络软件供应商：<br>•    创建可以与任何其他供应商的产品进行通信的设备和软件，从而实现开放的互操作性<br>•    定义他们的产品应该使用的网络部分。<br>•    与用户沟通他们的产品在哪些网络层运行——例如，仅在应用层，或跨堆栈。</p>
+<h2 id="OSI-与-TCP-x2F-IP-模型"><a href="#OSI-与-TCP-x2F-IP-模型" class="headerlink" title="OSI 与 TCP&#x2F;IP 模型"></a>OSI 与 TCP&#x2F;IP 模型</h2><p><img src="https://pic3.zhimg.com/80/v2-c39270e61b82808e07c29a4f143199d2_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
+<p>传输控制协议&#x2F;互联网协议(TCP&#x2F;IP) 比 OSI 模型更早，由美国国防部 (DoD) 创建。模型之间的一个关键区别是 TCP&#x2F;IP 更简单，将几个 OSI 层合并为一个：</p>
+<p><img src="https://pic4.zhimg.com/80/v2-1127aaa36d2eff825865f1020568d18f_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
+<p>OSI 第 5、6、7 层在 TCP&#x2F;IP 中合并为一个应用层<br>OSI 第 1 层、第 2 层在 TCP&#x2F;IP 中合并为一个网络访问层 - 但是 TCP&#x2F;IP 不负责排序和确认功能，将这些留给底层传输层。<br>其他重要区别：<br>TCP&#x2F;IP 是一种功能模型，旨在解决特定的通信问题，它基于特定的标准协议。OSI 是一个通用的、独立于协议的模型，旨在描述所有形式的网络通信。<br>在 TCP&#x2F;IP 中，大多数应用程序使用所有层，而在 OSI 中简单应用程序不使用所有七层。只有第 1、2 和 3 层是必需的才能启用任何数据通信。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/PicWarehouse/img/%E9%A3%8E%E6%99%AF008.png" alt="TCP/IP与OSI对应关系"></p>
 ]]></content>
       <tags>
         <tag>计算机网络</tag>
-        <tag>Socket</tag>
       </tags>
   </entry>
   <entry>
@@ -346,31 +347,6 @@
       </tags>
   </entry>
   <entry>
-    <title>计算机网络知识点总结（一）</title>
-    <url>/archives/5dd58e55.html</url>
-    <content><![CDATA[<h2 id="计算机网络的定义"><a href="#计算机网络的定义" class="headerlink" title="计算机网络的定义"></a>计算机网络的定义</h2><p>计算机网络是“以相互共享资源的方式互联起来的自治计算机系统的集合”。<br>计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。</p>
-<h2 id="计算机网络的分类"><a href="#计算机网络的分类" class="headerlink" title="计算机网络的分类"></a>计算机网络的分类</h2><p>计算机网络按照其覆盖的地理范围进行分类，可以很好地反映不同类型网络的技术特征。按照覆盖的地理范围划分，计算机网络可以分为以下5类。</p>
-<h3 id="广域网（Wide-Area-Network，WAN）"><a href="#广域网（Wide-Area-Network，WAN）" class="headerlink" title="广域网（Wide Area Network，WAN）"></a>广域网（Wide Area Network，WAN）</h3><h3 id="城域网-Metropolitan-Area-Network，MAN"><a href="#城域网-Metropolitan-Area-Network，MAN" class="headerlink" title="城域网(Metropolitan Area Network，MAN)"></a>城域网(Metropolitan Area Network，MAN)</h3><h3 id="局域网（Local-Area-Network-，LAN）"><a href="#局域网（Local-Area-Network-，LAN）" class="headerlink" title="局域网（Local Area Network ，LAN）"></a>局域网（Local Area Network ，LAN）</h3><h3 id="个人区域网（Personal-Area-Network，PAN）"><a href="#个人区域网（Personal-Area-Network，PAN）" class="headerlink" title="个人区域网（Personal Area Network，PAN）"></a>个人区域网（Personal Area Network，PAN）</h3><h3 id="人体区域网（Body-Area-Network，BAN）"><a href="#人体区域网（Body-Area-Network，BAN）" class="headerlink" title="人体区域网（Body Area Network，BAN）"></a>人体区域网（Body Area Network，BAN）</h3><h3 id="网络体系结构和网络协议"><a href="#网络体系结构和网络协议" class="headerlink" title="网络体系结构和网络协议"></a>网络体系结构和网络协议</h3><h2 id="网络协议"><a href="#网络协议" class="headerlink" title="网络协议"></a>网络协议</h2><p>网络协议类似于人类协议，除了交换报文和采取动作的实体是某些设备（可以是计算机、智能手机、平板电脑、路由器或其他具有网络能力的设备）的硬件或软件组件。在因 特网中，涉及两个或多个远程通信实体的所有活动都受协议的制约。例如，在两台物理上 连接的计算机中，硬件实现的协议控制了在两块网络接口卡间的“线上”的比特流；在端 系统中，拥塞控制协议控制了在发送方和接收方之间传输的分组发送的速率；路由器中的协议决定了分组从源到目的地的路径。<br>协议（protocol）定义了在两个或多个通信实体之间交换的报文的格式和顺序，以及报文发送和&#x2F;或接收一条报文或其他事件所采取的动作。<br>因特网（更一般地说是计算机网络）广泛地使用了协议。不同的协议用于完成不同的通信任务。<br>    层次（layer）结构事处理计算机网络问题最基本的方法。对于一些难以处理的复杂问题，通常是采用若干个容易处理的、小一些的问题，“化整为零，分而治之”的方法去解决。<br>接口是同一主机内相邻层之间交换信息的连接点。<br>对于结构复杂的网络协议体系来说，最好的组织方是层次结构模型。计算机网络引入了一个重要的概念——网络体系结构（network architecture）。</p>
-<h2 id="OSI-参考模型"><a href="#OSI-参考模型" class="headerlink" title="OSI 参考模型"></a>OSI 参考模型</h2><p>1974年，IBM公司提出世界第一个网络体系结构——系统网络体系结构（SNA）。1974年，国际标准化组织（ISO）发布了著名的ISO&#x2F;IEC7498标准，定义了网络互联的7层框架，即开放系统互连（Open System Interconnect，OSI）参考模型。<br>开放系统互连 (OSI) 模型描述了计算机系统用于通过网络进行通信的七个层次。OSI参考模型包括以下七层：物理层、数据链路层、网络层、传输层、会话层、表示层和应用层。<br><img src="https://pic3.zhimg.com/80/v2-82a2e89aa4a4218d23a8aedba5b77ad2_720w.jpg" alt="OSI七层模型"></p>
-<p>现代互联网不是基于 OSI，而是基于更简单的 TCP&#x2F;IP 模型。然而，OSI 7 层模型仍然被广泛使用，因为它有助于可视化和传达网络的运行方式，并有助于隔离和解决网络问题。<br>我们将“自上而下”地描述 OSI 层，从直接为最终用户服务的应用程序层，一直到物理层。<br><img src="https://pic1.zhimg.com/80/v2-112f5d6be901f464ec832561b4f98f48_720w.jpg" alt="主机、路由器和链路层交换机，每个包含了不同的层，反映了它们的功能差异"></p>
-<h3 id="7-应用层"><a href="#7-应用层" class="headerlink" title="7.应用层"></a>7.应用层</h3><p>应用层由最终用户软件使用，例如 Web 浏览器和电子邮件客户端。它提供允许软件发送和接收信息并向用户呈现有意义的数据的协议。应用层协议的一些示例是超文本传输协议(HTTP)、文件传输协议 (FTP)、邮局协议 (POP)、简单邮件传输协议 (SMTP) 和域名系统 (DNS)。</p>
-<h3 id="6-表示层"><a href="#6-表示层" class="headerlink" title="6.表示层"></a>6.表示层</h3><p>表示层为应用层准备数据。它定义了两个设备应如何编码、加密和压缩数据，以便在另一端正确接收数据。表示层获取应用层传输的任何数据，并准备好通过会话层传输。</p>
-<h3 id="5-会话层"><a href="#5-会话层" class="headerlink" title="5.会话层"></a>5.会话层</h3><p>会话层在设备之间创建通信通道，称为会话。它负责打开会话，确保它们在传输数据时保持打开和功能，并在通信结束时关闭它们。会话层还可以在数据传输期间设置检查点——如果会话中断，设备可以从上一个检查点恢复数据传输。</p>
-<h3 id="4-传输层"><a href="#4-传输层" class="headerlink" title="4.传输层"></a>4.传输层</h3><p>传输层获取会话层中传输的数据，并在发送端将其分解为“段”。它负责在接收端重新组装段，将其转换回会话层可以使用的数据。传输层进行流量控制，以与接收设备的连接速度相匹配的速率发送数据，以及错误控制，检查数据是否接收错误，如果没有，则重新请求。</p>
-<h3 id="3-网络层"><a href="#3-网络层" class="headerlink" title="3.网络层"></a>3.网络层</h3><p>网络层有两个主要功能。一种是将分段分解为网络数据包，然后在接收端重新组装数据包。另一种是通过发现跨物理网络的最佳路径来路由数据包。网络层使用网络地址（通常是 Internet 协议地址）将数据包路由到目标节点。</p>
-<h3 id="2-数据链路层"><a href="#2-数据链路层" class="headerlink" title="2.数据链路层"></a>2.数据链路层</h3><p>数据链路层在网络上两个物理连接的节点之间建立和终止连接。它将数据包分解成帧并将它们从源发送到目标。该层由两部分组成——逻辑链路控制 (LLC)，它识别网络协议、执行错误检查和同步帧，以及媒体访问控制 (MAC)，它使用 MAC 地址连接设备并定义传输和接收数据的权限。</p>
-<h3 id="1-物理层"><a href="#1-物理层" class="headerlink" title="1.物理层"></a>1.物理层</h3><p>物理层负责网络节点之间的物理有线或无线连接。它定义了连接器、连接设备的电缆或无线技术，并负责传输原始数据，这只是一系列 0 和 1，同时负责比特率控制。<br>OSI模型的优点<br>OSI 模型帮助计算机网络的用户和运营商：<br>•    确定构建网络所需的硬件和软件。<br>•    了解并传达组件通过网络进行通信的过程。<br>•    通过确定导致问题的网络层并将工作重点放在该层来执行故障排除。<br>OSI 模型帮助网络设备制造商和网络软件供应商：<br>•    创建可以与任何其他供应商的产品进行通信的设备和软件，从而实现开放的互操作性<br>•    定义他们的产品应该使用的网络部分。<br>•    与用户沟通他们的产品在哪些网络层运行——例如，仅在应用层，或跨堆栈。</p>
-<h2 id="OSI-与-TCP-x2F-IP-模型"><a href="#OSI-与-TCP-x2F-IP-模型" class="headerlink" title="OSI 与 TCP&#x2F;IP 模型"></a>OSI 与 TCP&#x2F;IP 模型</h2><p><img src="https://pic3.zhimg.com/80/v2-c39270e61b82808e07c29a4f143199d2_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
-<p>传输控制协议&#x2F;互联网协议(TCP&#x2F;IP) 比 OSI 模型更早，由美国国防部 (DoD) 创建。模型之间的一个关键区别是 TCP&#x2F;IP 更简单，将几个 OSI 层合并为一个：</p>
-<p><img src="https://pic4.zhimg.com/80/v2-1127aaa36d2eff825865f1020568d18f_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
-<p>OSI 第 5、6、7 层在 TCP&#x2F;IP 中合并为一个应用层<br>OSI 第 1 层、第 2 层在 TCP&#x2F;IP 中合并为一个网络访问层 - 但是 TCP&#x2F;IP 不负责排序和确认功能，将这些留给底层传输层。<br>其他重要区别：<br>TCP&#x2F;IP 是一种功能模型，旨在解决特定的通信问题，它基于特定的标准协议。OSI 是一个通用的、独立于协议的模型，旨在描述所有形式的网络通信。<br>在 TCP&#x2F;IP 中，大多数应用程序使用所有层，而在 OSI 中简单应用程序不使用所有七层。只有第 1、2 和 3 层是必需的才能启用任何数据通信。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/PicWarehouse/img/%E9%A3%8E%E6%99%AF008.png" alt="TCP/IP与OSI对应关系"></p>
-]]></content>
-      <tags>
-        <tag>计算机网络</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序</title>
     <url>/archives/cf06f66d.html</url>
     <content><![CDATA[<p>在上文中，讲述了Socket的一些基本函数以及如何简单使用Socket搭建一个单工聊天的聊天室程序。</p>
@@ -387,6 +363,30 @@
         <tag>计算机网络</tag>
         <tag>Socket</tag>
         <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</title>
+    <url>/archives/8cdebc07.html</url>
+    <content><![CDATA[<h2 id="什么是Socket？"><a href="#什么是Socket？" class="headerlink" title="什么是Socket？"></a>什么是Socket？</h2><p>Socket允许在相同或不同机器上的两个不同进程之间进行通信。更准确地说，这是一种使用标准 Unix 文件描述符与其他计算机通信的方式。</p>
+<p>在 Unix 中，每个 I&#x2F;O 操作都是通过写入或读取文件描述符来完成的。文件描述符只是与打开的文件相关联的整数，它可以是网络连接、文本文件、终端或其他东西。</p>
+<p>对于程序员来说，套接字的外观和行为很像低级文件描述符。这是因为诸如 read() 和 write() 之类的命令对套接字的工作方式与它们对文件和管道的工作方式相同。</p>
+<p>套接字最初是在 2.1BSD 中引入的，随后在 4.2BSD 中被改进为当前的形式。现在，大多数最新的 UNIX 系统版本都提供了套接字功能。<br><img src="https://pic1.zhimg.com/80/v2-33d5adb9c5bdefa9977a7f64970834a0_720w.jpg" alt="Socket与各种网络协议的关系"><br>如图所示，Socket是为了给应用程序一个更加统一、简洁的API接口而将底层各种协议栈封装起来形成形成的一层接口函数。</p>
+<p>简单举例Socket如何实现客户端和服务端<br><img src="https://pic3.zhimg.com/80/v2-50a90c813007b71ef251e00f5cf7692e_720w.jpg" alt="客户端和服务端信息交互"><br>构建客户端和服务器的方式有所不同，但都涉及到Socket的基本构造。这两个进程都建立了自己的套接字。</p>
+<h2 id="如何构建客户端"><a href="#如何构建客户端" class="headerlink" title="如何构建客户端"></a>如何构建客户端</h2><p>在客户端建立Socket的步骤如下 ：</p>
+<p>1.使用socket()系统调用创建一个套接字。</p>
+<p>2.使用connect()系统调用将套接字连接到服务器的地址。</p>
+<p>3.发送和接收数据。有很多方式可以实现这一点，最简单的方法就是使用read()和write()系统调用。</p>
+<h2 id="如何构建服务端"><a href="#如何构建服务端" class="headerlink" title="如何构建服务端"></a>如何构建服务端</h2><p>在服务器端建立套接字的步骤如下 ：</p>
+<p>1.使用socket()系统调用创建一个套接字。</p>
+<p>2.使用bind()系统调用将套接字绑定到一个地址。对于 Internet 上的服务器套接字，地址由主机上的端口号组成。</p>
+<p>3.通过listen()系统调用监听连接。</p>
+<p>4.通过accept()系统调用接受连接。此调用通常会阻止连接，直到客户端与服务器连接。</p>
+<p>5.使用read()和write()系统调用发送和接收数据。</p>
+]]></content>
+      <tags>
+        <tag>计算机网络</tag>
+        <tag>Socket</tag>
       </tags>
   </entry>
   <entry>
@@ -455,6 +455,29 @@
         <tag>Linux</tag>
         <tag>计算机网络</tag>
         <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>树莓派系统烧录教程</title>
+    <url>/archives/6a0755b3.html</url>
+    <content><![CDATA[<p>树莓派的系统烧录大体上可分为使用</p>
+<p>官方的烧录工具Raspberry Pi Imager烧录和使用第三方烧录工具烧录。</p>
+<p>官方的烧录工具胜在操作简单，方便快捷，所以这里使用Raspberry Pi Imager进行演示。</p>
+<p>具体步骤如下：</p>
+<p>首先准备好tf卡和读卡器</p>
+<p>然后进入官网下载 <a href="https://link.zhihu.com/?target=https://www.raspberrypi.com/software/">Raspberry Pi Imager</a></p>
+<p><img src="https://pic4.zhimg.com/80/v2-8a14d7c95dec632584c034d0dc88b28b_720w.jpg" alt="选择download for windows"></p>
+<p>安装Raspberry Pi Imager<br><img src="https://pic1.zhimg.com/80/v2-c4e4c22348914ce68edf31226bb6f340_720w.jpg" alt="点击Install"><br><img src="https://pic2.zhimg.com/80/v2-84775579e1f5e109e7cfb486f4aab445_720w.jpg" alt="Finish"></p>
+<p>打开Raspberry Pi Imager<br><img src="https://pic4.zhimg.com/80/v2-4eae49e0a08f4a124f1a8a74ebc7970b_720w.jpg" alt="点击CHOOSE OS选项"></p>
+<p>这里我们可以看到有很多系统可供选择，可以自行选择适合的系统，</p>
+<p>这里我们选择带有树莓派桌面的第一个系统为例<br><img src="https://pic2.zhimg.com/80/v2-112d84b8ae1fa0b9dcd92a6325576ae9_720w.jpg" alt="点击Raspberry PI OS(32-bit)"></p>
+<p>选择对应的存储设备<br><img src="https://pic1.zhimg.com/80/v2-a5d82eae153723595f4c1944cf3f797c_720w.jpg" alt="点击CHOOSE STORAGE选项"><br><img src="https://pic3.zhimg.com/80/v2-f6cf4fe01e8b59da659a6e37c9db9aae_720w.jpg" alt="注意所选盘符是否为目标tf卡"></p>
+<p>烧录程序<br><img src="https://pic4.zhimg.com/80/v2-16125a207574f1440b2e52738d1a7c47_720w.jpg" alt="点击WRITE"><br><img src="https://pic1.zhimg.com/80/v2-71484bd203bca4874eeb82a93026a360_720w.jpg" alt="点击yes"></p>
+<p>接下来耐心等待即可<br><img src="https://pic4.zhimg.com/80/v2-7d813e812b9816d4339a448576daa9bf_720w.jpg" alt="等进度条达100％即完成树莓派系统的烧录"></p>
+<p>如果出现报错，可以尝试重新烧录系统。</p>
+]]></content>
+      <tags>
+        <tag>树莓派</tag>
       </tags>
   </entry>
 </search>

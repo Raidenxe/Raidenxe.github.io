@@ -1,0 +1,347 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll | Raidenxe的博客</title><meta name="keywords" content="Linux,计算机网络,C++"><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="什么是IO多路复用？IO即为网络I&#x2F;O，多路即为多个TCP连接，复用即为共用一个线程或者进程，模型最大的优势是系统开销小，不必创建也不必维护过多的线程或进程。 IO复用(IOmultiplexing)使得内核一旦发现进程指定的一个或多个IO条件就绪（也就是说输入已准备好被读取，或者描述符已能承接更多的输出)，它就通知进程。 应用场景I&#x2F;O 多路复用通常用于以下场景的网络应用：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络知识点（五） I&#x2F;O 多路复用：函数select、poll和epoll">
+<meta property="og:url" content="https://raidenxe.github.io/archives/884564f6.html">
+<meta property="og:site_name" content="Raidenxe的博客">
+<meta property="og:description" content="什么是IO多路复用？IO即为网络I&#x2F;O，多路即为多个TCP连接，复用即为共用一个线程或者进程，模型最大的优势是系统开销小，不必创建也不必维护过多的线程或进程。 IO复用(IOmultiplexing)使得内核一旦发现进程指定的一个或多个IO条件就绪（也就是说输入已准备好被读取，或者描述符已能承接更多的输出)，它就通知进程。 应用场景I&#x2F;O 多路复用通常用于以下场景的网络应用：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic2.zhimg.com/v2-5e496ba6fe03f8cd4ca253ec8cf4bff2_1440w.jpg?source=172ae18b">
+<meta property="article:published_time" content="2022-04-22T14:47:12.000Z">
+<meta property="article:modified_time" content="2022-04-23T04:46:01.947Z">
+<meta property="article:author" content="Raidenxe">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="计算机网络">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic2.zhimg.com/v2-5e496ba6fe03f8cd4ca253ec8cf4bff2_1440w.jpg?source=172ae18b"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/884564f6"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-04-23 12:46:01'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    document.addEventListener('pjax:complete', detectApple)})(window)</script><meta name="generator" content="Hexo 5.4.2"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://pic2.zhimg.com/v2-5e496ba6fe03f8cd4ca253ec8cf4bff2_1440w.jpg?source=172ae18b')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Raidenxe的博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-04-22T14:47:12.000Z" title="发表于 2022-04-22 22:47:12">2022-04-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-04-23T04:46:01.947Z" title="更新于 2022-04-23 12:46:01">2022-04-23</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>9分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="什么是IO多路复用？"><a href="#什么是IO多路复用？" class="headerlink" title="什么是IO多路复用？"></a>什么是IO多路复用？</h1><p>IO即为网络I&#x2F;O，多路即为多个TCP连接，复用即为共用一个线程或者进程，模型最大的优势是系统开销小，不必创建也不必维护过多的线程或进程。</p>
+<p>IO复用(IOmultiplexing)使得内核一旦发现进程指定的一个或多个IO条件就绪（也就是说输入已准备好被读取，或者描述符已能承接更多的输出)，它就通知进程。</p>
+<h1 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h1><p>I&#x2F;O 多路复用通常用于以下场景的网络应用：</p>
+<p>当客户端处理多个描述符时（通常是交互式输入和网络套接字）</p>
+<p>当客户端同时处理多个套接字时（这是可能的，但很少见）</p>
+<p>如果 TCP 服务器同时处理侦听套接字及其连接的套接字</p>
+<p>如果服务器同时处理 TCP 和 UDP</p>
+<p>如果服务器处理多个服务，可能还有多个协议</p>
+<p>I&#x2F;O 多路复用不限于网络编程。许多重要的应用程序发现需要这些技术。</p>
+<h1 id="输入-x2F-输出模型"><a href="#输入-x2F-输出模型" class="headerlink" title="输入&#x2F;输出模型"></a>输入&#x2F;输出模型</h1><p>我们首先检查 Unix 下可用的五种 I&#x2F;O 模型的基本区别：</p>
+<p><strong>[1]blockingIO - 阻塞I&#x2F;O</strong></p>
+<p><strong>[2]nonblockingIO - 非阻塞I&#x2F;O</strong></p>
+<p><strong>[3]IOmultiplexing – I&#x2F;O多路复用（select和poll）</strong></p>
+<p><strong>[4]signaldrivenIO - 信号驱动I&#x2F;O</strong></p>
+<p><strong>[5]asynchronousIO - 异步I&#x2F;O（POSIX aio函数）</strong></p>
+<h2 id="输入操作通常有两个不同的阶段："><a href="#输入操作通常有两个不同的阶段：" class="headerlink" title="输入操作通常有两个不同的阶段："></a>输入操作通常有两个不同的阶段：</h2><p>1等待数据准备好。这涉及等待数据到达网络。当数据包到达时，它被复制到内核中的缓冲区中。</p>
+<p>2将数据从内核复制到进程。这意味着将（准备好的）数据从内核缓冲区复制到我们的应用程序缓冲区</p>
+<h1 id="阻塞-I-x2F-O-模型"><a href="#阻塞-I-x2F-O-模型" class="headerlink" title="阻塞 I&#x2F;O 模型"></a>阻塞 I&#x2F;O 模型</h1><p>最流行的 I&#x2F;O 模型是阻塞 I&#x2F;O 模型（我们在前面部分的所有示例中都使用了该模型）。默认情况下，所有套接字都是阻塞的。场景如下图所示：<br><img src="https://pic4.zhimg.com/80/v2-728b741914df045b9cdfb918a30d1843_720w.jpg" alt="阻塞I/O模型"></p>
+<p>使用UDP而不是TCP作为例子的原因在于就UDP而言，数据准备好读取的概念比较简单:要么整个数据报已经收到，要么还没有。然而对于TCP来说，诸如套接字低水位标记( low-water mark）等额外变量开始起作用，导致这个概念变得复杂。</p>
+<p>在这个例子中,我们把recvfrom函数视为系统调用,因为我们正在区分应用进程和内核。不论它如何实现(在源自Berkeley的内核上是作为系统调用，在System V内核上是作为调用系统调用getmsg的函数)，一般都会从在应用进程空间中运行切换到在内核空间中运行，一段时间之后再切换回来。</p>
+<h1 id="非阻塞-I-x2F-O-模型"><a href="#非阻塞-I-x2F-O-模型" class="headerlink" title="非阻塞 I&#x2F;O 模型"></a>非阻塞 I&#x2F;O 模型</h1><p>当套接字设置为非阻塞时，我们是在告诉内核“当我请求的 I&#x2F;O 操作在不让进程进入睡眠状态的情况下无法完成时，不要让进程进入睡眠状态，而是返回一个错误”。</p>
+<p><img src="https://pic3.zhimg.com/80/v2-fb59340a9864676a60e9bdcfbd523dca_720w.jpg" alt="非阻塞I/O模型"><br>对于前三个recvfrom，没有要返回的数据，内核立即返回一个错误EWOULDBLOCK。<br>我们第四次调用recvfrom，数据报准备好了，它被复制到我们的应用程序缓冲区，并recvfrom成功返回。然后我们处理数据。<br>当应用程序处于循环调用recvfrom这样的非阻塞描述符时，它被称为轮询。应用程序不断地轮询内核以查看某些操作是否已准备好。这通常会浪费 CPU 时间，但偶尔会遇到这种模型，通常在专用于一个功能的系统上。</p>
+<h1 id="I-x2F-O-复用模型"><a href="#I-x2F-O-复用模型" class="headerlink" title="I&#x2F;O 复用模型"></a>I&#x2F;O 复用模型</h1><p>有了IO复用(IO multiplexing)，我们就可以调用select或poll，阻塞在这两个系统调用中的某一个之上，而不是阻塞在真正的IO系统调用上。</p>
+<p><img src="https://pic2.zhimg.com/80/v2-824e9b31fc2e72d02956b72dc622c751_720w.jpg" alt="IO复用"></p>
+<p>我们阻塞于select调用，等待数据报套接字变为可读。当select返回套接字可读这一条件时，我们调用recvfrom把所读数据报复制到应用进程缓冲区。</p>
+<p>与阻塞型IO比较，IO复用并不显得有什么优势，事实上由于使用select需要两个而不是单个系统调用，IO复用还稍有劣势。，使用select的优势在于我们可以等待多个描述符就绪。</p>
+<h1 id="异步-I-x2F-O-模型"><a href="#异步-I-x2F-O-模型" class="headerlink" title="异步 I&#x2F;O 模型"></a>异步 I&#x2F;O 模型</h1><p>异步 I&#x2F;O由 POSIX 规范定义，各种标准中出现的实时功能的各种差异共同形成了当前的 POSIX 规范。</p>
+<p>我们也可以用信号，让内核在描述符就绪时发送SIGIO信号通知我们。我们称这种模型为信号驱动式IO ( signal-driven I&#x2F;O)。</p>
+<p><img src="https://pic1.zhimg.com/80/v2-dc3e4fbed4a71e550f0b422e268b70a8_720w.jpg" alt="异步IO"></p>
+<p>我们首先开启套接字的信号驱动式I&#x2F;O功能，并通过sigaction系统调用安装一个信号处理函数。该系统调用将立即返回，我们的进程继续工作，也就是说它没有被阻塞。当数据报准备好读取时，内核就为该进程产生一个sIGIo信号。我们随后既可以在信号处理函数中调用recvfrom读取数据报，并通知主循环数据已准备好待处理，也可以立即通知主循环，让它读取数据报。</p>
+<p>无论如何处理SIGIO信号，这种模型的优势在于等待数据报到达期间进程不被阻塞。主循环可以继续执行，只要等待来自信号处理函数的通知:既可以是数据已准备好被处理，也可以是数据报已准备好被读取。</p>
+<h1 id="各种I-x2F-O模型的比较"><a href="#各种I-x2F-O模型的比较" class="headerlink" title="各种I&#x2F;O模型的比较"></a>各种I&#x2F;O模型的比较</h1><p>对比上述5种不同的IO模型。可以看出，前4种模型的主要区别在于第一阶段，因为它们的第二阶段是一样的:在数据从内核复制到调用者的缓冲区期间，进程阻塞于recvfrom调用。相反，异步I&#x2F;O模型在这两个阶段都要处理，从而不同于其他4种模型。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-e393476a5386a92c319e5e163166fc53_720w.jpg" alt="IO模型比较"></p>
+<h1 id="同步IO和异步IO对比"><a href="#同步IO和异步IO对比" class="headerlink" title="同步IO和异步IO对比"></a>同步IO和异步IO对比</h1><p>POSIX把这两个术语定义如下:</p>
+<p>同步IO操作(synchronous IO opetation）导致请求进程阻塞，直到IO操作完成;</p>
+<p>异步IO操作（ asynchronous I&#x2F;O opetation）不导致请求进程阻塞。<br><img src="https://pic4.zhimg.com/80/v2-2c642bd2b7ef29542c3145e221cd2f97_720w.jpg"></p>
+<h1 id="select"><a href="#select" class="headerlink" title="select"></a>select</h1><p>select 是操作系统提供的系统调用函数，select()用来等待文件描述词（普通文件、终端、伪终端、管道、FIFO、套接字及其他类型的字符型）状态的改变。是一个轮循函数，循环询问文件节点，可设置超时时间，超时时间到了就跳过代码继续往下执行。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">​<span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/select.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FD_SETSIZE 1024</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NFDBITS (8 * sizeof(unsigned long))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __FDSET_LONGS (FD_SETSIZE/NFDBITS)</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// 数据结构 (bitmap)</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line"> <span class="type">unsigned</span> <span class="type">long</span> fds_bits[__FDSET_LONGS];</span><br><span class="line">&#125; fd_set;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// API</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">select</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function"> <span class="type">int</span> max_fd, </span></span></span><br><span class="line"><span class="params"><span class="function"> fd_set *readset, </span></span></span><br><span class="line"><span class="params"><span class="function"> fd_set *writeset, </span></span></span><br><span class="line"><span class="params"><span class="function"> fd_set *exceptset, </span></span></span><br><span class="line"><span class="params"><span class="function"> <span class="keyword">struct</span> timeval *timeout</span></span></span><br><span class="line"><span class="params"><span class="function">)</span> <span class="comment">// 返回值就绪描述符的数目</span></span></span><br><span class="line"><span class="function"> </span></span><br><span class="line"><span class="function"><span class="title">FD_ZERO</span><span class="params">(<span class="type">int</span> fd, fd_set* fds)</span> <span class="comment">// 清空集合</span></span></span><br><span class="line"><span class="function"><span class="title">FD_SET</span><span class="params">(<span class="type">int</span> fd, fd_set* fds)</span> <span class="comment">// 将给定的描述符加入集合</span></span></span><br><span class="line"><span class="function"><span class="title">FD_ISSET</span><span class="params">(<span class="type">int</span> fd, fd_set* fds)</span> <span class="comment">// 判断指定描述符是否在集合中 </span></span></span><br><span class="line"><span class="function"><span class="title">FD_CLR</span><span class="params">(<span class="type">int</span> fd, fd_set* fds)</span> <span class="comment">// 将给定的描述符从文件中删除 </span></span></span><br></pre></td></tr></table></figure>
+<p>select本质上是通过设置或者检查存放fd标志位的数据结构来进行下一步处理。这样所带来的缺点是：</p>
+<p>1、 单个进程可监视的fd数量被限制，即能监听端口的大小有限。</p>
+<p>一般来说这个数目和系统内存关系很大，具体数目可以cat &#x2F;proc&#x2F;sys&#x2F;fs&#x2F;file-max察看。32位机默认是1024个。64位机默认是2048。</p>
+<p>2、 对socket进行扫描时是线性扫描，即采用轮询的方法，效率较低：</p>
+<p>当套接字比较多的时候，每次select()都要通过遍历FD_SETSIZE个Socket来完成调度,不管哪个Socket是活跃的,都遍历一遍。这会浪费很多CPU时间。</p>
+<p>3、需要维护一个用来存放大量fd的数据结构，这样会使得用户空间和内核空间在传递该结构时复制开销大。</p>
+<h1 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h1><p>相关函数定义</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;poll.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"> <span class="function"><span class="type">int</span> <span class="title">poll</span><span class="params">(<span class="keyword">struct</span> pollfd *fds, <span class="type">nfds_t</span> nfds, <span class="type">int</span> timeout)</span></span>;</span><br><span class="line"> </span><br><span class="line"> <span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"> <span class="meta">#<span class="keyword">include</span> <span class="string">&lt;poll.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"> <span class="function"><span class="type">int</span> <span class="title">ppoll</span><span class="params">(<span class="keyword">struct</span> pollfd *fds, <span class="type">nfds_t</span> nfds,</span></span></span><br><span class="line"><span class="params"><span class="function"> <span class="type">const</span> <span class="keyword">struct</span> timespec *tmo_p, <span class="type">const</span> <span class="type">sigset_t</span> *sigmask)</span></span>;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">pollfd</span> &#123;</span><br><span class="line"> <span class="type">int</span> fd; <span class="comment">/* file descriptor */</span></span><br><span class="line"> <span class="type">short</span> events; <span class="comment">/* requested events to watch */</span></span><br><span class="line"> <span class="type">short</span> revents; <span class="comment">/* returned events witnessed */</span></span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>和select用三组文件描述符不同的是，poll只有一个pollfd数组，数组中的每个元素都表示一个需要监听IO操作事件的文件描述符。events参数是我们需要关心的事件，revents是所有内核监测到的事件。</p>
+<p>poll本质上和select没有区别，它将用户传入的数组拷贝到内核空间，然后查询每个fd对应的设备状态，如果设备就绪则在设备等待队列中加入一项并继续遍历，如果遍历完所有fd后没有发现就绪设备，则挂起当前进程，直到设备就绪或者主动超时，被唤醒后它又要再次遍历fd。这个过程经历了多次无谓的遍历。</p>
+<p><strong>它没有最大连接数的限制</strong>，原因是它是基于链表来存储的，但是同样有一个缺点：</p>
+<p>1、大量的fd的数组被整体复制于用户态和内核地址空间之间，而不管这样的复制是不是有意义。</p>
+<p>2、poll还有一个特点是“水平触发”，如果报告了fd后，没有被处理，那么下次poll时会再次报告该fd。</p>
+<h1 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h1><p>相关函数定义如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/epoll.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_create</span><span class="params">(<span class="type">int</span> size)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_create1</span><span class="params">(<span class="type">int</span> flags)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_ctl</span><span class="params">(<span class="type">int</span> epfd, <span class="type">int</span> op, <span class="type">int</span> fd, <span class="keyword">struct</span> epoll_event *event)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="type">int</span> epfd, <span class="keyword">struct</span> epoll_event *events,</span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">int</span> maxevents, <span class="type">int</span> timeout)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_pwait</span><span class="params">(<span class="type">int</span> epfd, <span class="keyword">struct</span> epoll_event *events,</span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">int</span> maxevents, <span class="type">int</span> timeout,</span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">const</span> <span class="type">sigset_t</span> *sigmask)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>epoll有EPOLLLT和EPOLLET两种触发模式，LT是默认的模式，ET是“高速”模式。<br>LT模式下，只要这个fd还有数据可读，每次 epoll_wait都会返回它的事件，提醒用户程序去操作<br>ET模式下，它只会提示一次，直到下次再有数据流入之前都不会再提示了，无论fd中是否还有数据可读。所以在ET模式下，read一个fd的时候一定要把它的buffer读完，或者遇到EAGAIN错误。</p>
+<h1 id="epoll的优点："><a href="#epoll的优点：" class="headerlink" title="epoll的优点："></a>epoll的优点：</h1><p><strong>1、没有最大并发连接的限制，能打开的FD的上限远大于1024（1G的内存上能监听约10万个端口）；</strong><br><strong>2、效率提升，不是轮询的方式，不会随着FD数目的增加效率下降。只有活跃可用的FD才会调用callback函数；</strong><br><strong>即Epoll最大的优点就在于它只管你“活跃”的连接，而跟连接总数无关，因此在实际的网络环境中，Epoll的效率就会远远高于select和poll。</strong></p>
+<p><strong>3、 内存拷贝，利用mmap()文件映射内存加速与内核空间的消息传递；即epoll使用mmap减少复制开销。</strong></p>
+<h1 id="epoll缺点："><a href="#epoll缺点：" class="headerlink" title="epoll缺点："></a>epoll缺点：</h1><p><strong>epoll只能工作在linux下。</strong></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noreferrer">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/884564f6.html">https://raidenxe.github.io/archives/884564f6.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/">Linux</a><a class="post-meta__tags" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a><a class="post-meta__tags" href="/tags/C/">C++</a></div><div class="post_share"><div class="social-share" data-image="https://pic2.zhimg.com/v2-5e496ba6fe03f8cd4ca253ec8cf4bff2_1440w.jpg?source=172ae18b" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/archives/cf06f66d.html"><img class="next-cover" src="https://pic3.zhimg.com/v2-762ad4c0feef90b6b09b72864f637762_1440w.jpg?source=172ae18b" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/archives/7a099087.html" title="计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战"><img class="cover" src="https://pica.zhimg.com/v2-0ccfd39e0b8d5bf6bb8960f7894c1e5d_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-16</div><div class="title">计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战</div></div></a></div><div><a href="/archives/cf06f66d.html" title="计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序"><img class="cover" src="https://pic3.zhimg.com/v2-762ad4c0feef90b6b09b72864f637762_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-17</div><div class="title">计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序</div></div></a></div><div><a href="/archives/cc4d518f.html" title="单片机和嵌入式系统的区别"><img class="cover" src="https://pica.zhimg.com/v2-13d1a10aa719b8f5e03b94b824fccac2_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-06</div><div class="title">单片机和嵌入式系统的区别</div></div></a></div><div><a href="/archives/aba2a9fd.html" title="常用Linux命令整理"><img class="cover" src="https://pica.zhimg.com/v2-5fd2e93e3fd4c3824d463dd1a0acaba2_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-06</div><div class="title">常用Linux命令整理</div></div></a></div><div><a href="/archives/5dd58e55.html" title="计算机网络知识点总结（一）"><img class="cover" src="https://pic1.zhimg.com/v2-8c3bdfd0fabf874d627ed3d00dbae07e_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-11</div><div class="title">计算机网络知识点总结（一）</div></div></a></div><div><a href="/archives/8cdebc07.html" title="计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？"><img class="cover" src="https://pica.zhimg.com/v2-81aeecb49e6fe08028ee8deb657f6954_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-12</div><div class="title">计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="lv-container" data-id="city" data-uid="MTAyMC81NjAxOC8zMjQ4MQ=="></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Raidenxe</div><div class="author-info__description">向着真理和自由，无名的献身。</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFIO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">什么是IO多路复用？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">2.</span> <span class="toc-text">应用场景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BE%93%E5%85%A5-x2F-%E8%BE%93%E5%87%BA%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">输入&#x2F;输出模型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%93%E5%85%A5%E6%93%8D%E4%BD%9C%E9%80%9A%E5%B8%B8%E6%9C%89%E4%B8%A4%E4%B8%AA%E4%B8%8D%E5%90%8C%E7%9A%84%E9%98%B6%E6%AE%B5%EF%BC%9A"><span class="toc-number">3.1.</span> <span class="toc-text">输入操作通常有两个不同的阶段：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%98%BB%E5%A1%9E-I-x2F-O-%E6%A8%A1%E5%9E%8B"><span class="toc-number">4.</span> <span class="toc-text">阻塞 I&#x2F;O 模型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9D%9E%E9%98%BB%E5%A1%9E-I-x2F-O-%E6%A8%A1%E5%9E%8B"><span class="toc-number">5.</span> <span class="toc-text">非阻塞 I&#x2F;O 模型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#I-x2F-O-%E5%A4%8D%E7%94%A8%E6%A8%A1%E5%9E%8B"><span class="toc-number">6.</span> <span class="toc-text">I&#x2F;O 复用模型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5-I-x2F-O-%E6%A8%A1%E5%9E%8B"><span class="toc-number">7.</span> <span class="toc-text">异步 I&#x2F;O 模型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%84%E7%A7%8DI-x2F-O%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%AF%94%E8%BE%83"><span class="toc-number">8.</span> <span class="toc-text">各种I&#x2F;O模型的比较</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%8C%E6%AD%A5IO%E5%92%8C%E5%BC%82%E6%AD%A5IO%E5%AF%B9%E6%AF%94"><span class="toc-number">9.</span> <span class="toc-text">同步IO和异步IO对比</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#select"><span class="toc-number">10.</span> <span class="toc-text">select</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#poll"><span class="toc-number">11.</span> <span class="toc-text">poll</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#epoll"><span class="toc-number">12.</span> <span class="toc-text">epoll</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#epoll%E7%9A%84%E4%BC%98%E7%82%B9%EF%BC%9A"><span class="toc-number">13.</span> <span class="toc-text">epoll的优点：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#epoll%E7%BC%BA%E7%82%B9%EF%BC%9A"><span class="toc-number">14.</span> <span class="toc-text">epoll缺点：</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/884564f6.html" title="计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll"><img src="https://pic2.zhimg.com/v2-5e496ba6fe03f8cd4ca253ec8cf4bff2_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll"/></a><div class="content"><a class="title" href="/archives/884564f6.html" title="计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll">计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll</a><time datetime="2022-04-22T14:47:12.000Z" title="发表于 2022-04-22 22:47:12">2022-04-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/cf06f66d.html" title="计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序"><img src="https://pic3.zhimg.com/v2-762ad4c0feef90b6b09b72864f637762_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序"/></a><div class="content"><a class="title" href="/archives/cf06f66d.html" title="计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序">计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序</a><time datetime="2022-04-17T14:04:15.000Z" title="发表于 2022-04-17 22:04:15">2022-04-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/7a099087.html" title="计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战"><img src="https://pica.zhimg.com/v2-0ccfd39e0b8d5bf6bb8960f7894c1e5d_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战"/></a><div class="content"><a class="title" href="/archives/7a099087.html" title="计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战">计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战</a><time datetime="2022-04-16T15:55:50.000Z" title="发表于 2022-04-16 23:55:50">2022-04-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/8cdebc07.html" title="计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？"><img src="https://pica.zhimg.com/v2-81aeecb49e6fe08028ee8deb657f6954_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？"/></a><div class="content"><a class="title" href="/archives/8cdebc07.html" title="计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？">计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</a><time datetime="2022-04-12T13:46:31.000Z" title="发表于 2022-04-12 21:46:31">2022-04-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/5dd58e55.html" title="计算机网络知识点总结（一）"><img src="https://pic1.zhimg.com/v2-8c3bdfd0fabf874d627ed3d00dbae07e_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点总结（一）"/></a><div class="content"><a class="title" href="/archives/5dd58e55.html" title="计算机网络知识点总结（一）">计算机网络知识点总结（一）</a><time datetime="2022-04-11T07:58:01.000Z" title="发表于 2022-04-11 15:58:01">2022-04-11</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://pic2.zhimg.com/v2-5e496ba6fe03f8cd4ca253ec8cf4bff2_1440w.jpg?source=172ae18b')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Raidenxe</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadLivere () {
+  if (typeof LivereTower === 'object') {
+    window.LivereTower.init()
+  }
+  else {
+    (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+    })(document, 'script');
+  }
+}
+
+if ('Livere' === 'Livere' || !false) {
+  if (false) btf.loadComment(document.getElementById('lv-container'), loadLivere)
+  else loadLivere()
+}
+else {
+  function loadOtherComment () {
+    loadLivere()
+  }
+}</script></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="true"> </div><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="false" data-text="自由,平等,公正,法治,爱国,敬业,诚信,友善,富强,民主,文明,和谐" data-fontsize="15px" data-random="true" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = [
+  'title',
+  '#config-diff',
+  '#body-wrap',
+  '#rightside-config-hide',
+  '#rightside-config-show',
+  '.js-pjax'
+]
+
+if (true) {
+  pjaxSelectors.unshift('meta[property="og:image"]', 'meta[property="og:title"]', 'meta[property="og:url"]')
+}
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.removeEventListener('scroll', window.tocScrollFn)
+  window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // Analytics
+  if (false) {
+    MtaH5.pgv()
+  }
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

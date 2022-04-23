@@ -1,0 +1,304 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>计算机网络知识点总结（一） | Raidenxe的博客</title><meta name="keywords" content="计算机网络"><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="计算机网络的定义计算机网络是“以相互共享资源的方式互联起来的自治计算机系统的集合”。计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。 计算机网络的分类计算机网络按照其覆盖的地理范围进行分类，可以很好地反映不同类型网络的技术特征。按照覆盖的地理范围划分，计算机网络可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络知识点总结（一）">
+<meta property="og:url" content="https://raidenxe.github.io/archives/5dd58e55.html">
+<meta property="og:site_name" content="Raidenxe的博客">
+<meta property="og:description" content="计算机网络的定义计算机网络是“以相互共享资源的方式互联起来的自治计算机系统的集合”。计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。 计算机网络的分类计算机网络按照其覆盖的地理范围进行分类，可以很好地反映不同类型网络的技术特征。按照覆盖的地理范围划分，计算机网络可">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic1.zhimg.com/v2-8c3bdfd0fabf874d627ed3d00dbae07e_1440w.jpg?source=172ae18b">
+<meta property="article:published_time" content="2022-04-11T07:58:01.000Z">
+<meta property="article:modified_time" content="2022-04-17T14:29:07.486Z">
+<meta property="article:author" content="Raidenxe">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic1.zhimg.com/v2-8c3bdfd0fabf874d627ed3d00dbae07e_1440w.jpg?source=172ae18b"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/5dd58e55"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '计算机网络知识点总结（一）',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-04-17 22:29:07'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    document.addEventListener('pjax:complete', detectApple)})(window)</script><meta name="generator" content="Hexo 5.4.2"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://pic1.zhimg.com/v2-8c3bdfd0fabf874d627ed3d00dbae07e_1440w.jpg?source=172ae18b')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Raidenxe的博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">计算机网络知识点总结（一）</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-04-11T07:58:01.000Z" title="发表于 2022-04-11 15:58:01">2022-04-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-04-17T14:29:07.486Z" title="更新于 2022-04-17 22:29:07">2022-04-17</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="计算机网络知识点总结（一）"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="计算机网络的定义"><a href="#计算机网络的定义" class="headerlink" title="计算机网络的定义"></a>计算机网络的定义</h2><p>计算机网络是“以相互共享资源的方式互联起来的自治计算机系统的集合”。<br>计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。</p>
+<h2 id="计算机网络的分类"><a href="#计算机网络的分类" class="headerlink" title="计算机网络的分类"></a>计算机网络的分类</h2><p>计算机网络按照其覆盖的地理范围进行分类，可以很好地反映不同类型网络的技术特征。按照覆盖的地理范围划分，计算机网络可以分为以下5类。</p>
+<h3 id="广域网（Wide-Area-Network，WAN）"><a href="#广域网（Wide-Area-Network，WAN）" class="headerlink" title="广域网（Wide Area Network，WAN）"></a>广域网（Wide Area Network，WAN）</h3><h3 id="城域网-Metropolitan-Area-Network，MAN"><a href="#城域网-Metropolitan-Area-Network，MAN" class="headerlink" title="城域网(Metropolitan Area Network，MAN)"></a>城域网(Metropolitan Area Network，MAN)</h3><h3 id="局域网（Local-Area-Network-，LAN）"><a href="#局域网（Local-Area-Network-，LAN）" class="headerlink" title="局域网（Local Area Network ，LAN）"></a>局域网（Local Area Network ，LAN）</h3><h3 id="个人区域网（Personal-Area-Network，PAN）"><a href="#个人区域网（Personal-Area-Network，PAN）" class="headerlink" title="个人区域网（Personal Area Network，PAN）"></a>个人区域网（Personal Area Network，PAN）</h3><h3 id="人体区域网（Body-Area-Network，BAN）"><a href="#人体区域网（Body-Area-Network，BAN）" class="headerlink" title="人体区域网（Body Area Network，BAN）"></a>人体区域网（Body Area Network，BAN）</h3><h3 id="网络体系结构和网络协议"><a href="#网络体系结构和网络协议" class="headerlink" title="网络体系结构和网络协议"></a>网络体系结构和网络协议</h3><h2 id="网络协议"><a href="#网络协议" class="headerlink" title="网络协议"></a>网络协议</h2><p>网络协议类似于人类协议，除了交换报文和采取动作的实体是某些设备（可以是计算机、智能手机、平板电脑、路由器或其他具有网络能力的设备）的硬件或软件组件。在因 特网中，涉及两个或多个远程通信实体的所有活动都受协议的制约。例如，在两台物理上 连接的计算机中，硬件实现的协议控制了在两块网络接口卡间的“线上”的比特流；在端 系统中，拥塞控制协议控制了在发送方和接收方之间传输的分组发送的速率；路由器中的协议决定了分组从源到目的地的路径。<br>协议（protocol）定义了在两个或多个通信实体之间交换的报文的格式和顺序，以及报文发送和&#x2F;或接收一条报文或其他事件所采取的动作。<br>因特网（更一般地说是计算机网络）广泛地使用了协议。不同的协议用于完成不同的通信任务。<br>    层次（layer）结构事处理计算机网络问题最基本的方法。对于一些难以处理的复杂问题，通常是采用若干个容易处理的、小一些的问题，“化整为零，分而治之”的方法去解决。<br>接口是同一主机内相邻层之间交换信息的连接点。<br>对于结构复杂的网络协议体系来说，最好的组织方是层次结构模型。计算机网络引入了一个重要的概念——网络体系结构（network architecture）。</p>
+<h2 id="OSI-参考模型"><a href="#OSI-参考模型" class="headerlink" title="OSI 参考模型"></a>OSI 参考模型</h2><p>1974年，IBM公司提出世界第一个网络体系结构——系统网络体系结构（SNA）。1974年，国际标准化组织（ISO）发布了著名的ISO&#x2F;IEC7498标准，定义了网络互联的7层框架，即开放系统互连（Open System Interconnect，OSI）参考模型。<br>开放系统互连 (OSI) 模型描述了计算机系统用于通过网络进行通信的七个层次。OSI参考模型包括以下七层：物理层、数据链路层、网络层、传输层、会话层、表示层和应用层。<br><img src="https://pic3.zhimg.com/80/v2-82a2e89aa4a4218d23a8aedba5b77ad2_720w.jpg" alt="OSI七层模型"></p>
+<p>现代互联网不是基于 OSI，而是基于更简单的 TCP&#x2F;IP 模型。然而，OSI 7 层模型仍然被广泛使用，因为它有助于可视化和传达网络的运行方式，并有助于隔离和解决网络问题。<br>我们将“自上而下”地描述 OSI 层，从直接为最终用户服务的应用程序层，一直到物理层。<br><img src="https://pic1.zhimg.com/80/v2-112f5d6be901f464ec832561b4f98f48_720w.jpg" alt="主机、路由器和链路层交换机，每个包含了不同的层，反映了它们的功能差异"></p>
+<h3 id="7-应用层"><a href="#7-应用层" class="headerlink" title="7.应用层"></a>7.应用层</h3><p>应用层由最终用户软件使用，例如 Web 浏览器和电子邮件客户端。它提供允许软件发送和接收信息并向用户呈现有意义的数据的协议。应用层协议的一些示例是超文本传输协议(HTTP)、文件传输协议 (FTP)、邮局协议 (POP)、简单邮件传输协议 (SMTP) 和域名系统 (DNS)。</p>
+<h3 id="6-表示层"><a href="#6-表示层" class="headerlink" title="6.表示层"></a>6.表示层</h3><p>表示层为应用层准备数据。它定义了两个设备应如何编码、加密和压缩数据，以便在另一端正确接收数据。表示层获取应用层传输的任何数据，并准备好通过会话层传输。</p>
+<h3 id="5-会话层"><a href="#5-会话层" class="headerlink" title="5.会话层"></a>5.会话层</h3><p>会话层在设备之间创建通信通道，称为会话。它负责打开会话，确保它们在传输数据时保持打开和功能，并在通信结束时关闭它们。会话层还可以在数据传输期间设置检查点——如果会话中断，设备可以从上一个检查点恢复数据传输。</p>
+<h3 id="4-传输层"><a href="#4-传输层" class="headerlink" title="4.传输层"></a>4.传输层</h3><p>传输层获取会话层中传输的数据，并在发送端将其分解为“段”。它负责在接收端重新组装段，将其转换回会话层可以使用的数据。传输层进行流量控制，以与接收设备的连接速度相匹配的速率发送数据，以及错误控制，检查数据是否接收错误，如果没有，则重新请求。</p>
+<h3 id="3-网络层"><a href="#3-网络层" class="headerlink" title="3.网络层"></a>3.网络层</h3><p>网络层有两个主要功能。一种是将分段分解为网络数据包，然后在接收端重新组装数据包。另一种是通过发现跨物理网络的最佳路径来路由数据包。网络层使用网络地址（通常是 Internet 协议地址）将数据包路由到目标节点。</p>
+<h3 id="2-数据链路层"><a href="#2-数据链路层" class="headerlink" title="2.数据链路层"></a>2.数据链路层</h3><p>数据链路层在网络上两个物理连接的节点之间建立和终止连接。它将数据包分解成帧并将它们从源发送到目标。该层由两部分组成——逻辑链路控制 (LLC)，它识别网络协议、执行错误检查和同步帧，以及媒体访问控制 (MAC)，它使用 MAC 地址连接设备并定义传输和接收数据的权限。</p>
+<h3 id="1-物理层"><a href="#1-物理层" class="headerlink" title="1.物理层"></a>1.物理层</h3><p>物理层负责网络节点之间的物理有线或无线连接。它定义了连接器、连接设备的电缆或无线技术，并负责传输原始数据，这只是一系列 0 和 1，同时负责比特率控制。<br>OSI模型的优点<br>OSI 模型帮助计算机网络的用户和运营商：<br>•    确定构建网络所需的硬件和软件。<br>•    了解并传达组件通过网络进行通信的过程。<br>•    通过确定导致问题的网络层并将工作重点放在该层来执行故障排除。<br>OSI 模型帮助网络设备制造商和网络软件供应商：<br>•    创建可以与任何其他供应商的产品进行通信的设备和软件，从而实现开放的互操作性<br>•    定义他们的产品应该使用的网络部分。<br>•    与用户沟通他们的产品在哪些网络层运行——例如，仅在应用层，或跨堆栈。</p>
+<h2 id="OSI-与-TCP-x2F-IP-模型"><a href="#OSI-与-TCP-x2F-IP-模型" class="headerlink" title="OSI 与 TCP&#x2F;IP 模型"></a>OSI 与 TCP&#x2F;IP 模型</h2><p><img src="https://pic3.zhimg.com/80/v2-c39270e61b82808e07c29a4f143199d2_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
+<p>传输控制协议&#x2F;互联网协议(TCP&#x2F;IP) 比 OSI 模型更早，由美国国防部 (DoD) 创建。模型之间的一个关键区别是 TCP&#x2F;IP 更简单，将几个 OSI 层合并为一个：</p>
+<p><img src="https://pic4.zhimg.com/80/v2-1127aaa36d2eff825865f1020568d18f_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
+<p>OSI 第 5、6、7 层在 TCP&#x2F;IP 中合并为一个应用层<br>OSI 第 1 层、第 2 层在 TCP&#x2F;IP 中合并为一个网络访问层 - 但是 TCP&#x2F;IP 不负责排序和确认功能，将这些留给底层传输层。<br>其他重要区别：<br>TCP&#x2F;IP 是一种功能模型，旨在解决特定的通信问题，它基于特定的标准协议。OSI 是一个通用的、独立于协议的模型，旨在描述所有形式的网络通信。<br>在 TCP&#x2F;IP 中，大多数应用程序使用所有层，而在 OSI 中简单应用程序不使用所有七层。只有第 1、2 和 3 层是必需的才能启用任何数据通信。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/PicWarehouse/img/%E9%A3%8E%E6%99%AF008.png" alt="TCP/IP与OSI对应关系"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noreferrer">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/5dd58e55.html">https://raidenxe.github.io/archives/5dd58e55.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></div><div class="post_share"><div class="social-share" data-image="https://pic1.zhimg.com/v2-8c3bdfd0fabf874d627ed3d00dbae07e_1440w.jpg?source=172ae18b" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/archives/8cdebc07.html"><img class="prev-cover" src="https://pica.zhimg.com/v2-81aeecb49e6fe08028ee8deb657f6954_1440w.jpg?source=172ae18b" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</div></div></a></div><div class="next-post pull-right"><a href="/archives/cc4d518f.html"><img class="next-cover" src="https://pica.zhimg.com/v2-13d1a10aa719b8f5e03b94b824fccac2_1440w.jpg?source=172ae18b" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">单片机和嵌入式系统的区别</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/archives/7a099087.html" title="计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战"><img class="cover" src="https://pica.zhimg.com/v2-0ccfd39e0b8d5bf6bb8960f7894c1e5d_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-16</div><div class="title">计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战</div></div></a></div><div><a href="/archives/8cdebc07.html" title="计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？"><img class="cover" src="https://pica.zhimg.com/v2-81aeecb49e6fe08028ee8deb657f6954_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-12</div><div class="title">计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</div></div></a></div><div><a href="/archives/cf06f66d.html" title="计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序"><img class="cover" src="https://pic3.zhimg.com/v2-762ad4c0feef90b6b09b72864f637762_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-17</div><div class="title">计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序</div></div></a></div><div><a href="/archives/884564f6.html" title="计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll"><img class="cover" src="https://pic2.zhimg.com/v2-5e496ba6fe03f8cd4ca253ec8cf4bff2_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-22</div><div class="title">计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="lv-container" data-id="city" data-uid="MTAyMC81NjAxOC8zMjQ4MQ=="></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Raidenxe</div><div class="author-info__description">向着真理和自由，无名的献身。</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">1.</span> <span class="toc-text">计算机网络的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-number">2.</span> <span class="toc-text">计算机网络的分类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%BF%E5%9F%9F%E7%BD%91%EF%BC%88Wide-Area-Network%EF%BC%8CWAN%EF%BC%89"><span class="toc-number">2.1.</span> <span class="toc-text">广域网（Wide Area Network，WAN）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%8E%E5%9F%9F%E7%BD%91-Metropolitan-Area-Network%EF%BC%8CMAN"><span class="toc-number">2.2.</span> <span class="toc-text">城域网(Metropolitan Area Network，MAN)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B1%80%E5%9F%9F%E7%BD%91%EF%BC%88Local-Area-Network-%EF%BC%8CLAN%EF%BC%89"><span class="toc-number">2.3.</span> <span class="toc-text">局域网（Local Area Network ，LAN）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%AA%E4%BA%BA%E5%8C%BA%E5%9F%9F%E7%BD%91%EF%BC%88Personal-Area-Network%EF%BC%8CPAN%EF%BC%89"><span class="toc-number">2.4.</span> <span class="toc-text">个人区域网（Personal Area Network，PAN）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%BA%E4%BD%93%E5%8C%BA%E5%9F%9F%E7%BD%91%EF%BC%88Body-Area-Network%EF%BC%8CBAN%EF%BC%89"><span class="toc-number">2.5.</span> <span class="toc-text">人体区域网（Body Area Network，BAN）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E5%92%8C%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE"><span class="toc-number">2.6.</span> <span class="toc-text">网络体系结构和网络协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE"><span class="toc-number">3.</span> <span class="toc-text">网络协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OSI-%E5%8F%82%E8%80%83%E6%A8%A1%E5%9E%8B"><span class="toc-number">4.</span> <span class="toc-text">OSI 参考模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E5%BA%94%E7%94%A8%E5%B1%82"><span class="toc-number">4.1.</span> <span class="toc-text">7.应用层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E8%A1%A8%E7%A4%BA%E5%B1%82"><span class="toc-number">4.2.</span> <span class="toc-text">6.表示层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%BC%9A%E8%AF%9D%E5%B1%82"><span class="toc-number">4.3.</span> <span class="toc-text">5.会话层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%BC%A0%E8%BE%93%E5%B1%82"><span class="toc-number">4.4.</span> <span class="toc-text">4.传输层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%BD%91%E7%BB%9C%E5%B1%82"><span class="toc-number">4.5.</span> <span class="toc-text">3.网络层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82"><span class="toc-number">4.6.</span> <span class="toc-text">2.数据链路层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%89%A9%E7%90%86%E5%B1%82"><span class="toc-number">4.7.</span> <span class="toc-text">1.物理层</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OSI-%E4%B8%8E-TCP-x2F-IP-%E6%A8%A1%E5%9E%8B"><span class="toc-number">5.</span> <span class="toc-text">OSI 与 TCP&#x2F;IP 模型</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/884564f6.html" title="计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll"><img src="https://pic2.zhimg.com/v2-5e496ba6fe03f8cd4ca253ec8cf4bff2_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll"/></a><div class="content"><a class="title" href="/archives/884564f6.html" title="计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll">计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll</a><time datetime="2022-04-22T14:47:12.000Z" title="发表于 2022-04-22 22:47:12">2022-04-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/cf06f66d.html" title="计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序"><img src="https://pic3.zhimg.com/v2-762ad4c0feef90b6b09b72864f637762_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序"/></a><div class="content"><a class="title" href="/archives/cf06f66d.html" title="计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序">计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序</a><time datetime="2022-04-17T14:04:15.000Z" title="发表于 2022-04-17 22:04:15">2022-04-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/7a099087.html" title="计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战"><img src="https://pica.zhimg.com/v2-0ccfd39e0b8d5bf6bb8960f7894c1e5d_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战"/></a><div class="content"><a class="title" href="/archives/7a099087.html" title="计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战">计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战</a><time datetime="2022-04-16T15:55:50.000Z" title="发表于 2022-04-16 23:55:50">2022-04-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/8cdebc07.html" title="计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？"><img src="https://pica.zhimg.com/v2-81aeecb49e6fe08028ee8deb657f6954_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？"/></a><div class="content"><a class="title" href="/archives/8cdebc07.html" title="计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？">计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</a><time datetime="2022-04-12T13:46:31.000Z" title="发表于 2022-04-12 21:46:31">2022-04-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/5dd58e55.html" title="计算机网络知识点总结（一）"><img src="https://pic1.zhimg.com/v2-8c3bdfd0fabf874d627ed3d00dbae07e_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点总结（一）"/></a><div class="content"><a class="title" href="/archives/5dd58e55.html" title="计算机网络知识点总结（一）">计算机网络知识点总结（一）</a><time datetime="2022-04-11T07:58:01.000Z" title="发表于 2022-04-11 15:58:01">2022-04-11</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://pic1.zhimg.com/v2-8c3bdfd0fabf874d627ed3d00dbae07e_1440w.jpg?source=172ae18b')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Raidenxe</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadLivere () {
+  if (typeof LivereTower === 'object') {
+    window.LivereTower.init()
+  }
+  else {
+    (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+    })(document, 'script');
+  }
+}
+
+if ('Livere' === 'Livere' || !false) {
+  if (false) btf.loadComment(document.getElementById('lv-container'), loadLivere)
+  else loadLivere()
+}
+else {
+  function loadOtherComment () {
+    loadLivere()
+  }
+}</script></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="true"> </div><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="false" data-text="自由,平等,公正,法治,爱国,敬业,诚信,友善,富强,民主,文明,和谐" data-fontsize="15px" data-random="true" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = [
+  'title',
+  '#config-diff',
+  '#body-wrap',
+  '#rightside-config-hide',
+  '#rightside-config-show',
+  '.js-pjax'
+]
+
+if (true) {
+  pjaxSelectors.unshift('meta[property="og:image"]', 'meta[property="og:title"]', 'meta[property="og:url"]')
+}
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.removeEventListener('scroll', window.tocScrollFn)
+  window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // Analytics
+  if (false) {
+    MtaH5.pgv()
+  }
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

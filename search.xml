@@ -103,75 +103,6 @@
       </tags>
   </entry>
   <entry>
-    <title>日常使用Linux系统是什么体验？</title>
-    <url>/archives/a1e2b7b3.html</url>
-    <content><![CDATA[<p>趁着五一小假期，我尝试了去使用Linux作为日常使用的操作系统，这个过程中也是踩了不少的坑，所以想写一篇文章分享一下。</p>
-<p>我个人使用过Kail、CentOS7、Ubuntu16.04、Windows Subsystem for Linux（WSL）作为开发环境，我个人更喜欢Debian Style (.deb)包管理系统，所以最终选择了使用Ubuntu18.04 LTS，打算在开发之余日常使用，满足听音乐，写文档，看看视频等需求。</p>
-<h1 id="Ubuntu的优缺点："><a href="#Ubuntu的优缺点：" class="headerlink" title="Ubuntu的优缺点："></a>Ubuntu的优缺点：</h1><p><img src="https://pic3.zhimg.com/80/v2-c394ee5ef8e79d2c1ee12b659d08ec32_720w.jpg"></p>
-<h1 id="安装Flash插件"><a href="#安装Flash插件" class="headerlink" title="安装Flash插件"></a>安装Flash插件</h1><p>使用Firefox 浏览器时，B站无法播放视频，提示需要下载Flash插件；<br><img src="https://pic1.zhimg.com/80/v2-1b63342350894d7b71807cdb3e57a2fc_720w.jpg"><br>点击页面跳转后却提示现在Adobe官网已经不再提供flash下载；</p>
-<p>（由于 Adobe 在 2020 年 12 月 31 日之后不再支持 Flash Player，并且从 2021 年 1 月12 日开始阻止 Flash 内容在 Flash Player 中运行，因此 Adobe 强烈建议所有用户立即卸载 Flash Player 以帮助保护其系统。）<br><img src="https://pic1.zhimg.com/v2-a372fc674dc8c7eb9ef4e9318e474dc0_r.jpg"></p>
-<p>解决办法是通过终端安装flash插件：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install flashplugin-installer</span><br></pre></td></tr></table></figure>
-<p>或者</p>
-<h2 id="安装ubuntu-restricted-extras；"><a href="#安装ubuntu-restricted-extras；" class="headerlink" title="安装ubuntu-restricted-extras；"></a>安装ubuntu-restricted-extras；</h2><p>ubuntu-restricted-extras 是一个包含各种基本软件，如 Flash 插件、unrar、gstreamer、mp4、Ubuntu 中的 Chromium 浏览器的编解码器等的软件包。</p>
-<p>Ubuntu提供了一个软件包来安装所有基本的媒体编解码器：ubuntu-restricted-extras。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install ubuntu-restricted-extras</span><br></pre></td></tr></table></figure>
-
-<h1 id="安装Google-Chrome："><a href="#安装Google-Chrome：" class="headerlink" title="安装Google Chrome："></a>安装Google Chrome：</h1><p>直接使用Google浏览器也可以解决上述问题。</p>
-<h2 id="1-下载谷歌浏览器"><a href="#1-下载谷歌浏览器" class="headerlink" title="1.下载谷歌浏览器"></a>1.下载谷歌浏览器</h2><p>下载最新的谷歌浏览器。带wget的deb包：</p>
-<p>wget <a href="https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb">https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb</a></p>
-<h2 id="2-安装谷歌浏览器"><a href="#2-安装谷歌浏览器" class="headerlink" title="2.安装谷歌浏览器"></a>2.安装谷歌浏览器</h2><p>在Ubuntu上安装软件包需要sudo权限。确保以具有sudo权限的用户身份运行以下命令。</p>
-<p>安装谷歌浏览器。通过键入以下内容</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-
-<p>安装deb包：<br>下载好deb包后，输入</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./“安装包名”</span><br></pre></td></tr></table></figure>
-<p>如上文所示</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-
-<h1 id="输入法软件："><a href="#输入法软件：" class="headerlink" title="输入法软件："></a>输入法软件：</h1><h2 id="搜狗输入法："><a href="#搜狗输入法：" class="headerlink" title="搜狗输入法："></a>搜狗输入法：</h2><p>搜狗输入法Linux官网-首页</p>
-<h3 id="1、添加中文语言支持"><a href="#1、添加中文语言支持" class="headerlink" title="1、添加中文语言支持"></a>1、添加中文语言支持</h3><p>打开 系统设置——区域和语言——管理已安装的语言——在“语言”tab下——点击“添加或删除语言”<br><img src="https://pic1.zhimg.com/80/v2-b248e5b921fa3cde2c018dbb74a09a68_720w.jpg"><br>弹出“已安装语言”窗口，勾选中文（简体），点击应用<br><img src="https://pic2.zhimg.com/80/v2-9784e564cfb3f4d55a89b0a9b459e7b5_720w.jpg"><br>回到“语言支持”窗口，在键盘输入法系统中，选择“fcitx”<br><img src="https://pic3.zhimg.com/80/v2-6ac417d2e68d2a9ab99b17f034fd3742_720w.jpg"></p>
-<p>如果在键盘输入法系统中，没有“fcitx”选项时，建议先打开终端手动安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">fcitx：sudo apt-get install fcitx</span><br></pre></td></tr></table></figure>
-<p>等安装成功之后再执行上述步骤</p>
-<p>点击“应用到整个系统”，关闭窗口，重启电脑</p>
-<p>通过命令行安装搜狗输入法</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i sogoupinyin_版本号_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果安装过程中提示缺少相关依赖，则执行如下命令解决：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt -f install</span><br></pre></td></tr></table></figure>
-<p>注销计算机即可正常使用搜狗输入法。</p>
-<h1 id="文档软件："><a href="#文档软件：" class="headerlink" title="文档软件："></a>文档软件：</h1><h2 id="Wps："><a href="#Wps：" class="headerlink" title="Wps："></a>Wps：</h2><p>WPS Office因酷似微软 Office 而广受欢迎。它的界面与微软 Office 几乎一样并且号称与微软 Office 更加兼容。<br><a href="https://www.wps.cn/product/wpslinux">https://www.wps.cn/product/wpslinux</a></p>
-<h2 id="LibreOffice："><a href="#LibreOffice：" class="headerlink" title="LibreOffice："></a>LibreOffice：</h2><p>它是个组件完整的办公软件，包括文档编辑器、电子表格工具、演示软件、数学工具和作图工具。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libreoffice libreoffice-style-breeze</span><br></pre></td></tr></table></figure>
-<h1 id="音乐软件："><a href="#音乐软件：" class="headerlink" title="音乐软件："></a>音乐软件：</h1><h2 id="网易云："><a href="#网易云：" class="headerlink" title="网易云："></a>网易云：</h2><p><a href="https://music.163.com/#/download">https://music.163.com/#/download</a></p>
-<h1 id="聊天软件："><a href="#聊天软件：" class="headerlink" title="聊天软件："></a>聊天软件：</h1><h2 id="QQ："><a href="#QQ：" class="headerlink" title="QQ："></a>QQ：</h2><p><a href="https://im.qq.com/linuxqq/download.html">https://im.qq.com/linuxqq/download.html</a></p>
-<h1 id="其他一些常用软件安装与使用："><a href="#其他一些常用软件安装与使用：" class="headerlink" title="其他一些常用软件安装与使用："></a>其他一些常用软件安装与使用：</h1><h2 id="VNC的使用及常见问题："><a href="#VNC的使用及常见问题：" class="headerlink" title="VNC的使用及常见问题："></a>VNC的使用及常见问题：</h2><h3 id="启动VNC"><a href="#启动VNC" class="headerlink" title="启动VNC"></a>启动VNC</h3><p>设置里打开共享<br><img src="https://pic3.zhimg.com/80/v2-bdad4403c861b8070edf35e06abc3f0a_720w.jpg"><br>设置密码并打开选项<br><img src="https://pic2.zhimg.com/80/v2-fe2ab52e283125190f7d46422d01d1a9_720w.jpg"><br>如果没有屏幕共享选项</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install dconf-editor</span><br></pre></td></tr></table></figure>
-<p>或者，如果尚未安装 vino，请同时执行以下操作：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install vino dconf-editor</span><br></pre></td></tr></table></figure>
-<p>打开dconf-editor工具，终端输入 dconf-editor打开</p>
-<p>打开之后，依次展开org-&gt;gnome-&gt;desktop-&gt;remote-access<br><img src="https://pic2.zhimg.com/80/v2-863b0116f3f2f976dda4a8c19f281259_720w.jpg"><br>打开相关选项即可。</p>
-<h3 id="如果无法连接VNC服务端"><a href="#如果无法连接VNC服务端" class="headerlink" title="如果无法连接VNC服务端"></a>如果无法连接VNC服务端</h3><p>报错信息如下：</p>
-<p>Unable to connect to VNC Server using your chosen security setting. Either upgrade VNC Server to a more recent version from RealVNC, or select a weaker level of encryption</p>
-<p>解决办法</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gsettings <span class="built_in">set</span> org.gnome.Vino require-encryption <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-<h2 id="SSR："><a href="#SSR：" class="headerlink" title="SSR："></a>SSR：</h2><p>科学上网工具，下载地址：<br><a href="https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb">https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb</a></p>
-<h2 id="GDebi："><a href="#GDebi：" class="headerlink" title="GDebi："></a>GDebi：</h2><p>Gedbi 是一款小巧的软件包管理器，你可以用它来安装 DEB 文件。它比软件中心更快，而且还能处理依赖问题。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gdebi</span><br></pre></td></tr></table></figure>
-
-<h2 id="Visual-Studio-Code："><a href="#Visual-Studio-Code：" class="headerlink" title="Visual Studio Code："></a>Visual Studio Code：</h2><p><a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a></p>
-<h2 id="Steam："><a href="#Steam：" class="headerlink" title="Steam："></a>Steam：</h2><p><a href="https://store.steampowered.com/about/">https://store.steampowered.com/about/</a></p>
-<h2 id="误删一些安装包导致无法打开系统设置："><a href="#误删一些安装包导致无法打开系统设置：" class="headerlink" title="误删一些安装包导致无法打开系统设置："></a>误删一些安装包导致无法打开系统设置：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gnome-control-center</span><br></pre></td></tr></table></figure>
-
-<h1 id="个人的一些感想："><a href="#个人的一些感想：" class="headerlink" title="个人的一些感想："></a>个人的一些感想：</h1><p>经过几天的使用，我发现Ubuntu在配置好环境后，日常体验还是相当不错的。</p>
-<p>但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。</p>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>常用Linux命令整理</title>
     <url>/archives/aba2a9fd.html</url>
     <content><![CDATA[<p>一、 Linux 系统中的目录</p>
@@ -305,6 +236,73 @@
 ]]></content>
       <tags>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>日常使用Linux系统是什么体验？</title>
+    <url>/archives/a1e2b7b3.html</url>
+    <content><![CDATA[<p>趁着五一小假期，我尝试了去使用Linux作为日常使用的操作系统，这个过程中也是踩了不少的坑，所以想写一篇文章分享一下。</p>
+<p>我个人使用过Kail、CentOS7、Ubuntu16.04、Windows Subsystem for Linux（WSL）作为开发环境，我个人更喜欢Debian Style (.deb)包管理系统，所以最终选择了使用Ubuntu18.04 LTS，打算在开发之余日常使用，满足听音乐，写文档，看看视频等需求。</p>
+<h1 id="Ubuntu的优缺点："><a href="#Ubuntu的优缺点：" class="headerlink" title="Ubuntu的优缺点："></a>Ubuntu的优缺点：</h1><p><img src="https://pic3.zhimg.com/80/v2-c394ee5ef8e79d2c1ee12b659d08ec32_720w.jpg"></p>
+<h1 id="安装Flash插件"><a href="#安装Flash插件" class="headerlink" title="安装Flash插件"></a>安装Flash插件</h1><p>使用Firefox 浏览器时，B站无法播放视频，提示需要下载Flash插件；<br><img src="https://pic1.zhimg.com/80/v2-1b63342350894d7b71807cdb3e57a2fc_720w.jpg"><br>点击页面跳转后却提示现在Adobe官网已经不再提供flash下载；</p>
+<p>（由于 Adobe 在 2020 年 12 月 31 日之后不再支持 Flash Player，并且从 2021 年 1 月12 日开始阻止 Flash 内容在 Flash Player 中运行，因此 Adobe 强烈建议所有用户立即卸载 Flash Player 以帮助保护其系统。）<br><img src="https://pic1.zhimg.com/v2-a372fc674dc8c7eb9ef4e9318e474dc0_r.jpg"></p>
+<p>解决办法是通过终端安装flash插件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install flashplugin-installer</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<h2 id="安装ubuntu-restricted-extras；"><a href="#安装ubuntu-restricted-extras；" class="headerlink" title="安装ubuntu-restricted-extras；"></a>安装ubuntu-restricted-extras；</h2><p>ubuntu-restricted-extras 是一个包含各种基本软件，如 Flash 插件、unrar、gstreamer、mp4、Ubuntu 中的 Chromium 浏览器的编解码器等的软件包。</p>
+<p>Ubuntu提供了一个软件包来安装所有基本的媒体编解码器：ubuntu-restricted-extras。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install ubuntu-restricted-extras</span><br></pre></td></tr></table></figure>
+
+<h1 id="安装Google-Chrome："><a href="#安装Google-Chrome：" class="headerlink" title="安装Google Chrome："></a>安装Google Chrome：</h1><p>直接使用Google浏览器也可以解决上述问题。</p>
+<h2 id="1-下载谷歌浏览器"><a href="#1-下载谷歌浏览器" class="headerlink" title="1.下载谷歌浏览器"></a>1.下载谷歌浏览器</h2><p>下载最新的谷歌浏览器。带wget的deb包：</p>
+<p>wget <a href="https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb">https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb</a></p>
+<h2 id="2-安装谷歌浏览器"><a href="#2-安装谷歌浏览器" class="headerlink" title="2.安装谷歌浏览器"></a>2.安装谷歌浏览器</h2><p>在Ubuntu上安装软件包需要sudo权限。确保以具有sudo权限的用户身份运行以下命令。</p>
+<p>安装谷歌浏览器。通过键入以下内容</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+
+<p>安装deb包：<br>下载好deb包后，输入</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./“安装包名”</span><br></pre></td></tr></table></figure>
+<p>如上文所示</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+
+<h1 id="输入法软件："><a href="#输入法软件：" class="headerlink" title="输入法软件："></a>输入法软件：</h1><h2 id="搜狗输入法："><a href="#搜狗输入法：" class="headerlink" title="搜狗输入法："></a>搜狗输入法：</h2><p>搜狗输入法Linux官网-首页</p>
+<h3 id="1、添加中文语言支持"><a href="#1、添加中文语言支持" class="headerlink" title="1、添加中文语言支持"></a>1、添加中文语言支持</h3><p>打开 系统设置——区域和语言——管理已安装的语言——在“语言”tab下——点击“添加或删除语言”<br><img src="https://pic1.zhimg.com/80/v2-b248e5b921fa3cde2c018dbb74a09a68_720w.jpg"><br>弹出“已安装语言”窗口，勾选中文（简体），点击应用<br><img src="https://pic2.zhimg.com/80/v2-9784e564cfb3f4d55a89b0a9b459e7b5_720w.jpg"><br>回到“语言支持”窗口，在键盘输入法系统中，选择“fcitx”<br><img src="https://pic3.zhimg.com/80/v2-6ac417d2e68d2a9ab99b17f034fd3742_720w.jpg"></p>
+<p>如果在键盘输入法系统中，没有“fcitx”选项时，建议先打开终端手动安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">fcitx：sudo apt-get install fcitx</span><br></pre></td></tr></table></figure>
+<p>等安装成功之后再执行上述步骤</p>
+<p>点击“应用到整个系统”，关闭窗口，重启电脑</p>
+<h3 id="2-通过命令行安装搜狗输入法"><a href="#2-通过命令行安装搜狗输入法" class="headerlink" title="2.通过命令行安装搜狗输入法"></a>2.通过命令行安装搜狗输入法</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i sogoupinyin_版本号_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果安装过程中提示缺少相关依赖，则执行如下命令解决：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt -f install</span><br></pre></td></tr></table></figure>
+<h3 id="3-注销计算机即可正常使用搜狗输入法。"><a href="#3-注销计算机即可正常使用搜狗输入法。" class="headerlink" title="3.注销计算机即可正常使用搜狗输入法。"></a>3.注销计算机即可正常使用搜狗输入法。</h3><h1 id="文档软件："><a href="#文档软件：" class="headerlink" title="文档软件："></a>文档软件：</h1><h2 id="Wps："><a href="#Wps：" class="headerlink" title="Wps："></a>Wps：</h2><p>WPS Office因酷似微软 Office 而广受欢迎。它的界面与微软 Office 几乎一样并且号称与微软 Office 更加兼容。<br><a href="https://www.wps.cn/product/wpslinux">https://www.wps.cn/product/wpslinux</a></p>
+<h2 id="LibreOffice："><a href="#LibreOffice：" class="headerlink" title="LibreOffice："></a>LibreOffice：</h2><p>它是个组件完整的办公软件，包括文档编辑器、电子表格工具、演示软件、数学工具和作图工具。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libreoffice libreoffice-style-breeze</span><br></pre></td></tr></table></figure>
+<h1 id="音乐软件："><a href="#音乐软件：" class="headerlink" title="音乐软件："></a>音乐软件：</h1><h2 id="网易云："><a href="#网易云：" class="headerlink" title="网易云："></a>网易云：</h2><p><a href="https://music.163.com/#/download">https://music.163.com/#/download</a></p>
+<h1 id="聊天软件："><a href="#聊天软件：" class="headerlink" title="聊天软件："></a>聊天软件：</h1><h2 id="QQ："><a href="#QQ：" class="headerlink" title="QQ："></a>QQ：</h2><p><a href="https://im.qq.com/linuxqq/download.html">https://im.qq.com/linuxqq/download.html</a></p>
+<h1 id="其他一些常用软件安装与使用："><a href="#其他一些常用软件安装与使用：" class="headerlink" title="其他一些常用软件安装与使用："></a>其他一些常用软件安装与使用：</h1><h2 id="VNC的使用及常见问题："><a href="#VNC的使用及常见问题：" class="headerlink" title="VNC的使用及常见问题："></a>VNC的使用及常见问题：</h2><h3 id="启动VNC"><a href="#启动VNC" class="headerlink" title="启动VNC"></a>启动VNC</h3><p>设置里打开共享<br><img src="https://pic3.zhimg.com/80/v2-bdad4403c861b8070edf35e06abc3f0a_720w.jpg"><br>设置密码并打开选项<br><img src="https://pic2.zhimg.com/80/v2-fe2ab52e283125190f7d46422d01d1a9_720w.jpg"><br>如果没有屏幕共享选项</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install dconf-editor</span><br></pre></td></tr></table></figure>
+<p>或者，如果尚未安装 vino，请同时执行以下操作：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install vino dconf-editor</span><br></pre></td></tr></table></figure>
+<p>打开dconf-editor工具，终端输入 dconf-editor打开</p>
+<p>打开之后，依次展开org-&gt;gnome-&gt;desktop-&gt;remote-access<br><img src="https://pic2.zhimg.com/80/v2-863b0116f3f2f976dda4a8c19f281259_720w.jpg"><br>打开相关选项即可。</p>
+<h3 id="如果无法连接VNC服务端"><a href="#如果无法连接VNC服务端" class="headerlink" title="如果无法连接VNC服务端"></a>如果无法连接VNC服务端</h3><p>报错信息如下：</p>
+<p>Unable to connect to VNC Server using your chosen security setting. Either upgrade VNC Server to a more recent version from RealVNC, or select a weaker level of encryption</p>
+<p>解决办法</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gsettings <span class="built_in">set</span> org.gnome.Vino require-encryption <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<h2 id="SSR："><a href="#SSR：" class="headerlink" title="SSR："></a>SSR：</h2><p>科学上网工具，下载地址：<br><a href="https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb">https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb</a></p>
+<h2 id="GDebi："><a href="#GDebi：" class="headerlink" title="GDebi："></a>GDebi：</h2><p>Gedbi 是一款小巧的软件包管理器，你可以用它来安装 DEB 文件。它比软件中心更快，而且还能处理依赖问题。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gdebi</span><br></pre></td></tr></table></figure>
+
+<h2 id="Visual-Studio-Code："><a href="#Visual-Studio-Code：" class="headerlink" title="Visual Studio Code："></a>Visual Studio Code：</h2><p><a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a></p>
+<h2 id="Steam："><a href="#Steam：" class="headerlink" title="Steam："></a>Steam：</h2><p><a href="https://store.steampowered.com/about/">https://store.steampowered.com/about/</a></p>
+<h2 id="误删一些安装包导致无法打开系统设置："><a href="#误删一些安装包导致无法打开系统设置：" class="headerlink" title="误删一些安装包导致无法打开系统设置："></a>误删一些安装包导致无法打开系统设置：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gnome-control-center</span><br></pre></td></tr></table></figure>
+
+<h1 id="个人的一些感想："><a href="#个人的一些感想：" class="headerlink" title="个人的一些感想："></a>个人的一些感想：</h1><p>经过几天的使用，我发现Ubuntu在配置好环境后，日常体验还是相当不错的。</p>
+<p>但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。</p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>

@@ -1,30 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>GitHub 443 Timed out的解决方法</title>
-    <url>/archives/4dcde7a2.html</url>
-    <content><![CDATA[<h1 id="GitHub-443-Timed-out解决办法"><a href="#GitHub-443-Timed-out解决办法" class="headerlink" title="GitHub 443 Timed out解决办法"></a>GitHub 443 Timed out解决办法</h1><h2 id="Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out"><a href="#Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out" class="headerlink" title="Failed to connect to github.com port 443 after 21090 ms: Timed out"></a>Failed to connect to github.com port 443 after 21090 ms: Timed out</h2><p>最近尝试过很多方法都无法解决GitHub的上传问题，包括取消全局代理也无效。</p>
-<p>取消全局代理：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global --<span class="built_in">unset</span> http.proxy</span><br><span class="line">git config --global --<span class="built_in">unset</span> https.proxy</span><br></pre></td></tr></table></figure>
-<p>无奈之下只能选择修改hosts文件。</p>
-<p>登录以下三个网站获取对应的ip地址，写入hosts文件即可。</p>
-<p><a href="https://ipaddress.com/website/github.com">GitHub IP地址</a></p>
-<p><img src="https://pic3.zhimg.com/80/v2-7a0b82ecaa96fdc3efda9e4295ab1eee_720w.jpg" alt="GitHub IP地址"></p>
-<p><a href="https://ipaddress.com/website/github.global.ssl.fastly.net#ipinfo">github.global.ssl.Fastly.net IP地址</a></p>
-<p><img src="https://pic2.zhimg.com/80/v2-aed12d6e1e2bedebba9e1444bbdc83dd_720w.jpg" alt="github.global.ssl.Fastly.net IP地址"></p>
-<p><a href="https://ipaddress.com/website/assets-cdn.github.com">assets-cdn.Github.com IP地址</a></p>
-<p><img src="https://pic1.zhimg.com/80/v2-05f981b555f81338eb2bb15b5ebb5338_720w.jpg" alt="assets-cdn.Github.com IP地址"></p>
-<p>如下图所示：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">140.82.112.4 http://GitHub.com</span><br><span class="line"></span><br><span class="line">199.232.69.194 http://github.global.ssl.Fastly.net</span><br><span class="line"></span><br><span class="line">185.199.108.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.109.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.110.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.111.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>实测有效</p>
-<p><img src="https://pic3.zhimg.com/80/v2-8ed6c75a78b8c4418f8b802d5ae38a26_720w.jpg"></p>
-]]></content>
-      <tags>
-        <tag>GitHub</tag>
-        <tag>Git</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux下的fork和exec函数</title>
     <url>/archives/90acc1af.html</url>
     <content><![CDATA[<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>多线程程序设计的概念早在六十年代就被提出，但直到八十年代中期，Unix系统中才引入多线程机制，如今，由于自身的许多优点，多线程编程已经得到了广泛的应用。</p>
@@ -69,6 +45,30 @@
       <tags>
         <tag>Linux</tag>
         <tag>进程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>GitHub 443 Timed out的解决方法</title>
+    <url>/archives/4dcde7a2.html</url>
+    <content><![CDATA[<h1 id="GitHub-443-Timed-out解决办法"><a href="#GitHub-443-Timed-out解决办法" class="headerlink" title="GitHub 443 Timed out解决办法"></a>GitHub 443 Timed out解决办法</h1><h2 id="Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out"><a href="#Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out" class="headerlink" title="Failed to connect to github.com port 443 after 21090 ms: Timed out"></a>Failed to connect to github.com port 443 after 21090 ms: Timed out</h2><p>最近尝试过很多方法都无法解决GitHub的上传问题，包括取消全局代理也无效。</p>
+<p>取消全局代理：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global --<span class="built_in">unset</span> http.proxy</span><br><span class="line">git config --global --<span class="built_in">unset</span> https.proxy</span><br></pre></td></tr></table></figure>
+<p>无奈之下只能选择修改hosts文件。</p>
+<p>登录以下三个网站获取对应的ip地址，写入hosts文件即可。</p>
+<p><a href="https://ipaddress.com/website/github.com">GitHub IP地址</a></p>
+<p><img src="https://pic3.zhimg.com/80/v2-7a0b82ecaa96fdc3efda9e4295ab1eee_720w.jpg" alt="GitHub IP地址"></p>
+<p><a href="https://ipaddress.com/website/github.global.ssl.fastly.net#ipinfo">github.global.ssl.Fastly.net IP地址</a></p>
+<p><img src="https://pic2.zhimg.com/80/v2-aed12d6e1e2bedebba9e1444bbdc83dd_720w.jpg" alt="github.global.ssl.Fastly.net IP地址"></p>
+<p><a href="https://ipaddress.com/website/assets-cdn.github.com">assets-cdn.Github.com IP地址</a></p>
+<p><img src="https://pic1.zhimg.com/80/v2-05f981b555f81338eb2bb15b5ebb5338_720w.jpg" alt="assets-cdn.Github.com IP地址"></p>
+<p>如下图所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">140.82.112.4 http://GitHub.com</span><br><span class="line"></span><br><span class="line">199.232.69.194 http://github.global.ssl.Fastly.net</span><br><span class="line"></span><br><span class="line">185.199.108.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.109.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.110.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.111.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>实测有效</p>
+<p><img src="https://pic3.zhimg.com/80/v2-8ed6c75a78b8c4418f8b802d5ae38a26_720w.jpg"></p>
+]]></content>
+      <tags>
+        <tag>GitHub</tag>
+        <tag>Git</tag>
       </tags>
   </entry>
   <entry>
@@ -353,31 +353,6 @@
       </tags>
   </entry>
   <entry>
-    <title>计算机网络知识点总结（一）</title>
-    <url>/archives/5dd58e55.html</url>
-    <content><![CDATA[<h2 id="计算机网络的定义"><a href="#计算机网络的定义" class="headerlink" title="计算机网络的定义"></a>计算机网络的定义</h2><p>计算机网络是“以相互共享资源的方式互联起来的自治计算机系统的集合”。<br>计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。</p>
-<h2 id="计算机网络的分类"><a href="#计算机网络的分类" class="headerlink" title="计算机网络的分类"></a>计算机网络的分类</h2><p>计算机网络按照其覆盖的地理范围进行分类，可以很好地反映不同类型网络的技术特征。按照覆盖的地理范围划分，计算机网络可以分为以下5类。</p>
-<h3 id="广域网（Wide-Area-Network，WAN）"><a href="#广域网（Wide-Area-Network，WAN）" class="headerlink" title="广域网（Wide Area Network，WAN）"></a>广域网（Wide Area Network，WAN）</h3><h3 id="城域网-Metropolitan-Area-Network，MAN"><a href="#城域网-Metropolitan-Area-Network，MAN" class="headerlink" title="城域网(Metropolitan Area Network，MAN)"></a>城域网(Metropolitan Area Network，MAN)</h3><h3 id="局域网（Local-Area-Network-，LAN）"><a href="#局域网（Local-Area-Network-，LAN）" class="headerlink" title="局域网（Local Area Network ，LAN）"></a>局域网（Local Area Network ，LAN）</h3><h3 id="个人区域网（Personal-Area-Network，PAN）"><a href="#个人区域网（Personal-Area-Network，PAN）" class="headerlink" title="个人区域网（Personal Area Network，PAN）"></a>个人区域网（Personal Area Network，PAN）</h3><h3 id="人体区域网（Body-Area-Network，BAN）"><a href="#人体区域网（Body-Area-Network，BAN）" class="headerlink" title="人体区域网（Body Area Network，BAN）"></a>人体区域网（Body Area Network，BAN）</h3><h3 id="网络体系结构和网络协议"><a href="#网络体系结构和网络协议" class="headerlink" title="网络体系结构和网络协议"></a>网络体系结构和网络协议</h3><h2 id="网络协议"><a href="#网络协议" class="headerlink" title="网络协议"></a>网络协议</h2><p>网络协议类似于人类协议，除了交换报文和采取动作的实体是某些设备（可以是计算机、智能手机、平板电脑、路由器或其他具有网络能力的设备）的硬件或软件组件。在因 特网中，涉及两个或多个远程通信实体的所有活动都受协议的制约。例如，在两台物理上 连接的计算机中，硬件实现的协议控制了在两块网络接口卡间的“线上”的比特流；在端 系统中，拥塞控制协议控制了在发送方和接收方之间传输的分组发送的速率；路由器中的协议决定了分组从源到目的地的路径。<br>协议（protocol）定义了在两个或多个通信实体之间交换的报文的格式和顺序，以及报文发送和&#x2F;或接收一条报文或其他事件所采取的动作。<br>因特网（更一般地说是计算机网络）广泛地使用了协议。不同的协议用于完成不同的通信任务。<br>    层次（layer）结构事处理计算机网络问题最基本的方法。对于一些难以处理的复杂问题，通常是采用若干个容易处理的、小一些的问题，“化整为零，分而治之”的方法去解决。<br>接口是同一主机内相邻层之间交换信息的连接点。<br>对于结构复杂的网络协议体系来说，最好的组织方是层次结构模型。计算机网络引入了一个重要的概念——网络体系结构（network architecture）。</p>
-<h2 id="OSI-参考模型"><a href="#OSI-参考模型" class="headerlink" title="OSI 参考模型"></a>OSI 参考模型</h2><p>1974年，IBM公司提出世界第一个网络体系结构——系统网络体系结构（SNA）。1974年，国际标准化组织（ISO）发布了著名的ISO&#x2F;IEC7498标准，定义了网络互联的7层框架，即开放系统互连（Open System Interconnect，OSI）参考模型。<br>开放系统互连 (OSI) 模型描述了计算机系统用于通过网络进行通信的七个层次。OSI参考模型包括以下七层：物理层、数据链路层、网络层、传输层、会话层、表示层和应用层。<br><img src="https://pic3.zhimg.com/80/v2-82a2e89aa4a4218d23a8aedba5b77ad2_720w.jpg" alt="OSI七层模型"></p>
-<p>现代互联网不是基于 OSI，而是基于更简单的 TCP&#x2F;IP 模型。然而，OSI 7 层模型仍然被广泛使用，因为它有助于可视化和传达网络的运行方式，并有助于隔离和解决网络问题。<br>我们将“自上而下”地描述 OSI 层，从直接为最终用户服务的应用程序层，一直到物理层。<br><img src="https://pic1.zhimg.com/80/v2-112f5d6be901f464ec832561b4f98f48_720w.jpg" alt="主机、路由器和链路层交换机，每个包含了不同的层，反映了它们的功能差异"></p>
-<h3 id="7-应用层"><a href="#7-应用层" class="headerlink" title="7.应用层"></a>7.应用层</h3><p>应用层由最终用户软件使用，例如 Web 浏览器和电子邮件客户端。它提供允许软件发送和接收信息并向用户呈现有意义的数据的协议。应用层协议的一些示例是超文本传输协议(HTTP)、文件传输协议 (FTP)、邮局协议 (POP)、简单邮件传输协议 (SMTP) 和域名系统 (DNS)。</p>
-<h3 id="6-表示层"><a href="#6-表示层" class="headerlink" title="6.表示层"></a>6.表示层</h3><p>表示层为应用层准备数据。它定义了两个设备应如何编码、加密和压缩数据，以便在另一端正确接收数据。表示层获取应用层传输的任何数据，并准备好通过会话层传输。</p>
-<h3 id="5-会话层"><a href="#5-会话层" class="headerlink" title="5.会话层"></a>5.会话层</h3><p>会话层在设备之间创建通信通道，称为会话。它负责打开会话，确保它们在传输数据时保持打开和功能，并在通信结束时关闭它们。会话层还可以在数据传输期间设置检查点——如果会话中断，设备可以从上一个检查点恢复数据传输。</p>
-<h3 id="4-传输层"><a href="#4-传输层" class="headerlink" title="4.传输层"></a>4.传输层</h3><p>传输层获取会话层中传输的数据，并在发送端将其分解为“段”。它负责在接收端重新组装段，将其转换回会话层可以使用的数据。传输层进行流量控制，以与接收设备的连接速度相匹配的速率发送数据，以及错误控制，检查数据是否接收错误，如果没有，则重新请求。</p>
-<h3 id="3-网络层"><a href="#3-网络层" class="headerlink" title="3.网络层"></a>3.网络层</h3><p>网络层有两个主要功能。一种是将分段分解为网络数据包，然后在接收端重新组装数据包。另一种是通过发现跨物理网络的最佳路径来路由数据包。网络层使用网络地址（通常是 Internet 协议地址）将数据包路由到目标节点。</p>
-<h3 id="2-数据链路层"><a href="#2-数据链路层" class="headerlink" title="2.数据链路层"></a>2.数据链路层</h3><p>数据链路层在网络上两个物理连接的节点之间建立和终止连接。它将数据包分解成帧并将它们从源发送到目标。该层由两部分组成——逻辑链路控制 (LLC)，它识别网络协议、执行错误检查和同步帧，以及媒体访问控制 (MAC)，它使用 MAC 地址连接设备并定义传输和接收数据的权限。</p>
-<h3 id="1-物理层"><a href="#1-物理层" class="headerlink" title="1.物理层"></a>1.物理层</h3><p>物理层负责网络节点之间的物理有线或无线连接。它定义了连接器、连接设备的电缆或无线技术，并负责传输原始数据，这只是一系列 0 和 1，同时负责比特率控制。<br>OSI模型的优点<br>OSI 模型帮助计算机网络的用户和运营商：<br>•	确定构建网络所需的硬件和软件。<br>•	了解并传达组件通过网络进行通信的过程。<br>•	通过确定导致问题的网络层并将工作重点放在该层来执行故障排除。<br>OSI 模型帮助网络设备制造商和网络软件供应商：<br>•	创建可以与任何其他供应商的产品进行通信的设备和软件，从而实现开放的互操作性<br>•	定义他们的产品应该使用的网络部分。<br>•	与用户沟通他们的产品在哪些网络层运行——例如，仅在应用层，或跨堆栈。</p>
-<h2 id="OSI-与-TCP-x2F-IP-模型"><a href="#OSI-与-TCP-x2F-IP-模型" class="headerlink" title="OSI 与 TCP&#x2F;IP 模型"></a>OSI 与 TCP&#x2F;IP 模型</h2><p><img src="https://pic3.zhimg.com/80/v2-c39270e61b82808e07c29a4f143199d2_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
-<p>传输控制协议&#x2F;互联网协议(TCP&#x2F;IP) 比 OSI 模型更早，由美国国防部 (DoD) 创建。模型之间的一个关键区别是 TCP&#x2F;IP 更简单，将几个 OSI 层合并为一个：</p>
-<p><img src="https://pic4.zhimg.com/80/v2-1127aaa36d2eff825865f1020568d18f_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
-<p>OSI 第 5、6、7 层在 TCP&#x2F;IP 中合并为一个应用层<br>OSI 第 1 层、第 2 层在 TCP&#x2F;IP 中合并为一个网络访问层 - 但是 TCP&#x2F;IP 不负责排序和确认功能，将这些留给底层传输层。<br>其他重要区别：<br>TCP&#x2F;IP 是一种功能模型，旨在解决特定的通信问题，它基于特定的标准协议。OSI 是一个通用的、独立于协议的模型，旨在描述所有形式的网络通信。<br>在 TCP&#x2F;IP 中，大多数应用程序使用所有层，而在 OSI 中简单应用程序不使用所有七层。只有第 1、2 和 3 层是必需的才能启用任何数据通信。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/PicWarehouse/img/%E9%A3%8E%E6%99%AF008.png" alt="TCP/IP与OSI对应关系"></p>
-]]></content>
-      <tags>
-        <tag>计算机网络</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>树莓派系统烧录教程</title>
     <url>/archives/6a0755b3.html</url>
     <content><![CDATA[<p>树莓派的系统烧录大体上可分为使用</p>
@@ -401,27 +376,28 @@
       </tags>
   </entry>
   <entry>
-    <title>计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</title>
-    <url>/archives/8cdebc07.html</url>
-    <content><![CDATA[<h2 id="什么是Socket？"><a href="#什么是Socket？" class="headerlink" title="什么是Socket？"></a>什么是Socket？</h2><p>Socket允许在相同或不同机器上的两个不同进程之间进行通信。更准确地说，这是一种使用标准 Unix 文件描述符与其他计算机通信的方式。</p>
-<p>在 Unix 中，每个 I&#x2F;O 操作都是通过写入或读取文件描述符来完成的。文件描述符只是与打开的文件相关联的整数，它可以是网络连接、文本文件、终端或其他东西。</p>
-<p>对于程序员来说，套接字的外观和行为很像低级文件描述符。这是因为诸如 read() 和 write() 之类的命令对套接字的工作方式与它们对文件和管道的工作方式相同。</p>
-<p>套接字最初是在 2.1BSD 中引入的，随后在 4.2BSD 中被改进为当前的形式。现在，大多数最新的 UNIX 系统版本都提供了套接字功能。<br><img src="https://pic1.zhimg.com/80/v2-33d5adb9c5bdefa9977a7f64970834a0_720w.jpg" alt="Socket与各种网络协议的关系"><br>如图所示，Socket是为了给应用程序一个更加统一、简洁的API接口而将底层各种协议栈封装起来形成形成的一层接口函数。</p>
-<p>简单举例Socket如何实现客户端和服务端<br><img src="https://pic3.zhimg.com/80/v2-50a90c813007b71ef251e00f5cf7692e_720w.jpg" alt="客户端和服务端信息交互"><br>构建客户端和服务器的方式有所不同，但都涉及到Socket的基本构造。这两个进程都建立了自己的套接字。</p>
-<h2 id="如何构建客户端"><a href="#如何构建客户端" class="headerlink" title="如何构建客户端"></a>如何构建客户端</h2><p>在客户端建立Socket的步骤如下 ：</p>
-<p>1.使用socket()系统调用创建一个套接字。</p>
-<p>2.使用connect()系统调用将套接字连接到服务器的地址。</p>
-<p>3.发送和接收数据。有很多方式可以实现这一点，最简单的方法就是使用read()和write()系统调用。</p>
-<h2 id="如何构建服务端"><a href="#如何构建服务端" class="headerlink" title="如何构建服务端"></a>如何构建服务端</h2><p>在服务器端建立套接字的步骤如下 ：</p>
-<p>1.使用socket()系统调用创建一个套接字。</p>
-<p>2.使用bind()系统调用将套接字绑定到一个地址。对于 Internet 上的服务器套接字，地址由主机上的端口号组成。</p>
-<p>3.通过listen()系统调用监听连接。</p>
-<p>4.通过accept()系统调用接受连接。此调用通常会阻止连接，直到客户端与服务器连接。</p>
-<p>5.使用read()和write()系统调用发送和接收数据。</p>
+    <title>计算机网络知识点总结（一）</title>
+    <url>/archives/5dd58e55.html</url>
+    <content><![CDATA[<h2 id="计算机网络的定义"><a href="#计算机网络的定义" class="headerlink" title="计算机网络的定义"></a>计算机网络的定义</h2><p>计算机网络是“以相互共享资源的方式互联起来的自治计算机系统的集合”。<br>计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。</p>
+<h2 id="计算机网络的分类"><a href="#计算机网络的分类" class="headerlink" title="计算机网络的分类"></a>计算机网络的分类</h2><p>计算机网络按照其覆盖的地理范围进行分类，可以很好地反映不同类型网络的技术特征。按照覆盖的地理范围划分，计算机网络可以分为以下5类。</p>
+<h3 id="广域网（Wide-Area-Network，WAN）"><a href="#广域网（Wide-Area-Network，WAN）" class="headerlink" title="广域网（Wide Area Network，WAN）"></a>广域网（Wide Area Network，WAN）</h3><h3 id="城域网-Metropolitan-Area-Network，MAN"><a href="#城域网-Metropolitan-Area-Network，MAN" class="headerlink" title="城域网(Metropolitan Area Network，MAN)"></a>城域网(Metropolitan Area Network，MAN)</h3><h3 id="局域网（Local-Area-Network-，LAN）"><a href="#局域网（Local-Area-Network-，LAN）" class="headerlink" title="局域网（Local Area Network ，LAN）"></a>局域网（Local Area Network ，LAN）</h3><h3 id="个人区域网（Personal-Area-Network，PAN）"><a href="#个人区域网（Personal-Area-Network，PAN）" class="headerlink" title="个人区域网（Personal Area Network，PAN）"></a>个人区域网（Personal Area Network，PAN）</h3><h3 id="人体区域网（Body-Area-Network，BAN）"><a href="#人体区域网（Body-Area-Network，BAN）" class="headerlink" title="人体区域网（Body Area Network，BAN）"></a>人体区域网（Body Area Network，BAN）</h3><h3 id="网络体系结构和网络协议"><a href="#网络体系结构和网络协议" class="headerlink" title="网络体系结构和网络协议"></a>网络体系结构和网络协议</h3><h2 id="网络协议"><a href="#网络协议" class="headerlink" title="网络协议"></a>网络协议</h2><p>网络协议类似于人类协议，除了交换报文和采取动作的实体是某些设备（可以是计算机、智能手机、平板电脑、路由器或其他具有网络能力的设备）的硬件或软件组件。在因 特网中，涉及两个或多个远程通信实体的所有活动都受协议的制约。例如，在两台物理上 连接的计算机中，硬件实现的协议控制了在两块网络接口卡间的“线上”的比特流；在端 系统中，拥塞控制协议控制了在发送方和接收方之间传输的分组发送的速率；路由器中的协议决定了分组从源到目的地的路径。<br>协议（protocol）定义了在两个或多个通信实体之间交换的报文的格式和顺序，以及报文发送和&#x2F;或接收一条报文或其他事件所采取的动作。<br>因特网（更一般地说是计算机网络）广泛地使用了协议。不同的协议用于完成不同的通信任务。<br>    层次（layer）结构事处理计算机网络问题最基本的方法。对于一些难以处理的复杂问题，通常是采用若干个容易处理的、小一些的问题，“化整为零，分而治之”的方法去解决。<br>接口是同一主机内相邻层之间交换信息的连接点。<br>对于结构复杂的网络协议体系来说，最好的组织方是层次结构模型。计算机网络引入了一个重要的概念——网络体系结构（network architecture）。</p>
+<h2 id="OSI-参考模型"><a href="#OSI-参考模型" class="headerlink" title="OSI 参考模型"></a>OSI 参考模型</h2><p>1974年，IBM公司提出世界第一个网络体系结构——系统网络体系结构（SNA）。1974年，国际标准化组织（ISO）发布了著名的ISO&#x2F;IEC7498标准，定义了网络互联的7层框架，即开放系统互连（Open System Interconnect，OSI）参考模型。<br>开放系统互连 (OSI) 模型描述了计算机系统用于通过网络进行通信的七个层次。OSI参考模型包括以下七层：物理层、数据链路层、网络层、传输层、会话层、表示层和应用层。<br><img src="https://pic3.zhimg.com/80/v2-82a2e89aa4a4218d23a8aedba5b77ad2_720w.jpg" alt="OSI七层模型"></p>
+<p>现代互联网不是基于 OSI，而是基于更简单的 TCP&#x2F;IP 模型。然而，OSI 7 层模型仍然被广泛使用，因为它有助于可视化和传达网络的运行方式，并有助于隔离和解决网络问题。<br>我们将“自上而下”地描述 OSI 层，从直接为最终用户服务的应用程序层，一直到物理层。<br><img src="https://pic1.zhimg.com/80/v2-112f5d6be901f464ec832561b4f98f48_720w.jpg" alt="主机、路由器和链路层交换机，每个包含了不同的层，反映了它们的功能差异"></p>
+<h3 id="7-应用层"><a href="#7-应用层" class="headerlink" title="7.应用层"></a>7.应用层</h3><p>应用层由最终用户软件使用，例如 Web 浏览器和电子邮件客户端。它提供允许软件发送和接收信息并向用户呈现有意义的数据的协议。应用层协议的一些示例是超文本传输协议(HTTP)、文件传输协议 (FTP)、邮局协议 (POP)、简单邮件传输协议 (SMTP) 和域名系统 (DNS)。</p>
+<h3 id="6-表示层"><a href="#6-表示层" class="headerlink" title="6.表示层"></a>6.表示层</h3><p>表示层为应用层准备数据。它定义了两个设备应如何编码、加密和压缩数据，以便在另一端正确接收数据。表示层获取应用层传输的任何数据，并准备好通过会话层传输。</p>
+<h3 id="5-会话层"><a href="#5-会话层" class="headerlink" title="5.会话层"></a>5.会话层</h3><p>会话层在设备之间创建通信通道，称为会话。它负责打开会话，确保它们在传输数据时保持打开和功能，并在通信结束时关闭它们。会话层还可以在数据传输期间设置检查点——如果会话中断，设备可以从上一个检查点恢复数据传输。</p>
+<h3 id="4-传输层"><a href="#4-传输层" class="headerlink" title="4.传输层"></a>4.传输层</h3><p>传输层获取会话层中传输的数据，并在发送端将其分解为“段”。它负责在接收端重新组装段，将其转换回会话层可以使用的数据。传输层进行流量控制，以与接收设备的连接速度相匹配的速率发送数据，以及错误控制，检查数据是否接收错误，如果没有，则重新请求。</p>
+<h3 id="3-网络层"><a href="#3-网络层" class="headerlink" title="3.网络层"></a>3.网络层</h3><p>网络层有两个主要功能。一种是将分段分解为网络数据包，然后在接收端重新组装数据包。另一种是通过发现跨物理网络的最佳路径来路由数据包。网络层使用网络地址（通常是 Internet 协议地址）将数据包路由到目标节点。</p>
+<h3 id="2-数据链路层"><a href="#2-数据链路层" class="headerlink" title="2.数据链路层"></a>2.数据链路层</h3><p>数据链路层在网络上两个物理连接的节点之间建立和终止连接。它将数据包分解成帧并将它们从源发送到目标。该层由两部分组成——逻辑链路控制 (LLC)，它识别网络协议、执行错误检查和同步帧，以及媒体访问控制 (MAC)，它使用 MAC 地址连接设备并定义传输和接收数据的权限。</p>
+<h3 id="1-物理层"><a href="#1-物理层" class="headerlink" title="1.物理层"></a>1.物理层</h3><p>物理层负责网络节点之间的物理有线或无线连接。它定义了连接器、连接设备的电缆或无线技术，并负责传输原始数据，这只是一系列 0 和 1，同时负责比特率控制。<br>OSI模型的优点<br>OSI 模型帮助计算机网络的用户和运营商：<br>•	确定构建网络所需的硬件和软件。<br>•	了解并传达组件通过网络进行通信的过程。<br>•	通过确定导致问题的网络层并将工作重点放在该层来执行故障排除。<br>OSI 模型帮助网络设备制造商和网络软件供应商：<br>•	创建可以与任何其他供应商的产品进行通信的设备和软件，从而实现开放的互操作性<br>•	定义他们的产品应该使用的网络部分。<br>•	与用户沟通他们的产品在哪些网络层运行——例如，仅在应用层，或跨堆栈。</p>
+<h2 id="OSI-与-TCP-x2F-IP-模型"><a href="#OSI-与-TCP-x2F-IP-模型" class="headerlink" title="OSI 与 TCP&#x2F;IP 模型"></a>OSI 与 TCP&#x2F;IP 模型</h2><p><img src="https://pic3.zhimg.com/80/v2-c39270e61b82808e07c29a4f143199d2_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
+<p>传输控制协议&#x2F;互联网协议(TCP&#x2F;IP) 比 OSI 模型更早，由美国国防部 (DoD) 创建。模型之间的一个关键区别是 TCP&#x2F;IP 更简单，将几个 OSI 层合并为一个：</p>
+<p><img src="https://pic4.zhimg.com/80/v2-1127aaa36d2eff825865f1020568d18f_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
+<p>OSI 第 5、6、7 层在 TCP&#x2F;IP 中合并为一个应用层<br>OSI 第 1 层、第 2 层在 TCP&#x2F;IP 中合并为一个网络访问层 - 但是 TCP&#x2F;IP 不负责排序和确认功能，将这些留给底层传输层。<br>其他重要区别：<br>TCP&#x2F;IP 是一种功能模型，旨在解决特定的通信问题，它基于特定的标准协议。OSI 是一个通用的、独立于协议的模型，旨在描述所有形式的网络通信。<br>在 TCP&#x2F;IP 中，大多数应用程序使用所有层，而在 OSI 中简单应用程序不使用所有七层。只有第 1、2 和 3 层是必需的才能启用任何数据通信。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/PicWarehouse/img/%E9%A3%8E%E6%99%AF008.png" alt="TCP/IP与OSI对应关系"></p>
 ]]></content>
       <tags>
         <tag>计算机网络</tag>
-        <tag>Socket</tag>
       </tags>
   </entry>
   <entry>
@@ -504,6 +480,102 @@
       <tags>
         <tag>Linux</tag>
         <tag>计算机网络</tag>
+        <tag>Socket</tag>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</title>
+    <url>/archives/8cdebc07.html</url>
+    <content><![CDATA[<h2 id="什么是Socket？"><a href="#什么是Socket？" class="headerlink" title="什么是Socket？"></a>什么是Socket？</h2><p>Socket允许在相同或不同机器上的两个不同进程之间进行通信。更准确地说，这是一种使用标准 Unix 文件描述符与其他计算机通信的方式。</p>
+<p>在 Unix 中，每个 I&#x2F;O 操作都是通过写入或读取文件描述符来完成的。文件描述符只是与打开的文件相关联的整数，它可以是网络连接、文本文件、终端或其他东西。</p>
+<p>对于程序员来说，套接字的外观和行为很像低级文件描述符。这是因为诸如 read() 和 write() 之类的命令对套接字的工作方式与它们对文件和管道的工作方式相同。</p>
+<p>套接字最初是在 2.1BSD 中引入的，随后在 4.2BSD 中被改进为当前的形式。现在，大多数最新的 UNIX 系统版本都提供了套接字功能。<br><img src="https://pic1.zhimg.com/80/v2-33d5adb9c5bdefa9977a7f64970834a0_720w.jpg" alt="Socket与各种网络协议的关系"><br>如图所示，Socket是为了给应用程序一个更加统一、简洁的API接口而将底层各种协议栈封装起来形成形成的一层接口函数。</p>
+<p>简单举例Socket如何实现客户端和服务端<br><img src="https://pic3.zhimg.com/80/v2-50a90c813007b71ef251e00f5cf7692e_720w.jpg" alt="客户端和服务端信息交互"><br>构建客户端和服务器的方式有所不同，但都涉及到Socket的基本构造。这两个进程都建立了自己的套接字。</p>
+<h2 id="如何构建客户端"><a href="#如何构建客户端" class="headerlink" title="如何构建客户端"></a>如何构建客户端</h2><p>在客户端建立Socket的步骤如下 ：</p>
+<p>1.使用socket()系统调用创建一个套接字。</p>
+<p>2.使用connect()系统调用将套接字连接到服务器的地址。</p>
+<p>3.发送和接收数据。有很多方式可以实现这一点，最简单的方法就是使用read()和write()系统调用。</p>
+<h2 id="如何构建服务端"><a href="#如何构建服务端" class="headerlink" title="如何构建服务端"></a>如何构建服务端</h2><p>在服务器端建立套接字的步骤如下 ：</p>
+<p>1.使用socket()系统调用创建一个套接字。</p>
+<p>2.使用bind()系统调用将套接字绑定到一个地址。对于 Internet 上的服务器套接字，地址由主机上的端口号组成。</p>
+<p>3.通过listen()系统调用监听连接。</p>
+<p>4.通过accept()系统调用接受连接。此调用通常会阻止连接，直到客户端与服务器连接。</p>
+<p>5.使用read()和write()系统调用发送和接收数据。</p>
+]]></content>
+      <tags>
+        <tag>计算机网络</tag>
+        <tag>Socket</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）</title>
+    <url>/archives/1815c365.html</url>
+    <content><![CDATA[<p>本文使用fork函数实现并发TCP服务器，关于fork函数的用法可以参考我的文章：<br><a href="https://raidenxe.github.io/archives/90acc1af.html">Linux 下的 fork 和 exec 函数</a></p>
+<h1 id="服务器基本结构"><a href="#服务器基本结构" class="headerlink" title="服务器基本结构"></a>服务器基本结构</h1><p>本文的目标是编写一个完整的TCP客户&#x2F;服务器程序示例。这个简单的例子是执行如下步骤的一个回射服务器:</p>
+<p>(1) 客户从标准输入读入一行文本，并写给服务器;</p>
+<p>(2) 服务器从网络输入读入这行文本，并回射给客户;</p>
+<p>(3) 客户从网络输入读入这行回射文本，并显示在标准输出上。</p>
+<p>结构如下：<br><img src="https://pic3.zhimg.com/80/v2-7c83c25ffa290ff2fb8b07310ace85f6_720w.jpg"></p>
+<h1 id="迭代服务器和并发服务器"><a href="#迭代服务器和并发服务器" class="headerlink" title="迭代服务器和并发服务器"></a>迭代服务器和并发服务器</h1><p><strong>迭代服务器</strong>以串行方式一次处理一个客户端。</p>
+<p><strong>迭代服务器</strong>会依次处理客户端的连接 ，只要当前连接的任务没有完成，服务器的进程就会一直被占用，直到任务完成后，服务器关闭这个socket，释放连接。</p>
+<p><strong>并发服务器</strong>：服务器可以是迭代的，即它遍历每个客户端并一次服务一个请求。</p>
+<p>或者，一台服务器可以同时并行处理多个客户端，这种类型的服务器称为并发服务器。</p>
+<p>并发服务器主要通过三种方式：进程、线程和IO复用来分别实现。</p>
+<h2 id="迭代服务器程序轮廓"><a href="#迭代服务器程序轮廓" class="headerlink" title="迭代服务器程序轮廓"></a>迭代服务器程序轮廓</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> listenfd,connfd;</span><br><span class="line"> listenfd = socket( ... );</span><br><span class="line"> bind(listen, ... );</span><br><span class="line"> listen(listenfd,LISTENQ);</span><br><span class="line"> <span class="keyword">for</span>(;;)</span><br><span class="line"> &#123;</span><br><span class="line"> connfd = accept(listenfd, ... ); </span><br><span class="line"> doit(connfd);</span><br><span class="line"> close(connfd);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="并发服务器程序轮廓"><a href="#并发服务器程序轮廓" class="headerlink" title="并发服务器程序轮廓"></a>并发服务器程序轮廓</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">pid_t</span> pid;</span><br><span class="line"><span class="type">int</span> listenfd,connfd;</span><br><span class="line">listenfd = socket( ... );</span><br><span class="line">bind(listen, ... );</span><br><span class="line">listen(listenfd,LISTENQ);</span><br><span class="line"><span class="keyword">for</span>(;;)</span><br><span class="line">&#123;</span><br><span class="line">connfd = accept(listenfd, ... );</span><br><span class="line"><span class="keyword">if</span>((pid = fork()) == <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">close(listenfd);</span><br><span class="line">doit(connfd);</span><br><span class="line">close(connfd);</span><br><span class="line"><span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line">close(connfd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="并发服务器的运行流程"><a href="#并发服务器的运行流程" class="headerlink" title="并发服务器的运行流程"></a>并发服务器的运行流程</h2><p>我们在同一个主机上启动客户，并指定服务器主机的IP地址为127.0.0.1（环回地址)。当然我们也可以指定该地址为该主机的普通（非环回）IP地址。</p>
+<p>客户调用socket和connect，后者引起TCP的三路握手过程。当三路握手完成后，客户中的connect和服务器中的accept均返回，连接于是建立。接着发生的步骤如下:</p>
+<p>(1)客户调用send函数，该函数将阻塞于fgets调用，因为我们还未曾键入过一行文本。</p>
+<p>(2)当服务器中的accept返回时，服务器调用fork，再由子进程调用write函数返回输入信息。调用read，而read在等待客户送入一行文本期间阻塞。</p>
+<p>(3)另一方面，服务器父进程再次调用accept并阻塞，等待下一个客户连接。</p>
+<p>至此，我们有3个都在睡眠（即已阻塞）的进程:客户进程、服务器父进程和服务器子进程。</p>
+<p>至此连接已经建立，不论我们在客户的标准输入中键入什么，都会回射到它的标准输出中。</p>
+<h1 id="POSIX信号处理"><a href="#POSIX信号处理" class="headerlink" title="POSIX信号处理"></a>POSIX信号处理</h1><p><strong>信号</strong>(signal）就是告知某个进程发生了某个事件的通知，有时也称为软件中断( softwareinterrupt)。信号通常是异步发生的，也就是说进程预先不知道信号的准确发生时刻。</p>
+<p>信号可以:</p>
+<p>由一个进程发给另一个进程（或自身)；</p>
+<p>由内核发给某个进程。</p>
+<p>上一节结尾提到的SIGCHLD信号就是由内核在任何一个进程终止时发给它的父进程的一个信号。</p>
+<p>（1）每个信号都有一个与之关联的处置( disposition)，也称为行为(action)。我们通过调用sigaction函数（稍后讨论）来设定一个信号的处置，并有三种选择。</p>
+<p>我们可以提供一个函数，只要有特定信号发生它就被调用。这样的函数称为信号处理函数( signal handler),这种行为称为捕获( catching)信号。有两个信号不能被捕获，它们是SIGKILL和SIGSTOP。信号处理函数由信号值这个单一的整数参数来调用，且没有返回值，其函数原型如下:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">handler</span> <span class="params">( <span class="type">int</span> signo)</span> ;</span><br></pre></td></tr></table></figure>
+<p>对于大多数信号来说，调用sigaction函数并指定信号发生时所调用的函数就是捕获信号所需做的全部工作。不过我们稍后将看到，SIGIO、SIGPoLL和SIGURG这些个别信号还要求捕获它们的进程做些额外工作。</p>
+<p>(2)我们可以把某个信号的处置设定为STG_IG来忽略(ignore）它。SIGKILL和STGSTOP这两个信号不能被忽略。</p>
+<p>(3)我们可以把某个信号的处置设定为SIG_DFL来启用它的默认(default）处置。默认处置通常是在收到信号后终止进程,其中某些信号还在当前工作目录产生一个进程的核心映像(coreimage，也称为内存影像)。另有个别信号的默认处置是忽略，SIGCHLD和SIGURG（带外数据到达时发送，见第24章）就是本书中出现的默认处置为忽略的两个信号。</p>
+<h2 id="signal函数"><a href="#signal函数" class="headerlink" title="signal函数"></a>signal函数</h2><p>建立信号处置的POSIX方法就是调用sigaction函数。不过这有点复杂，因为该函数的参数之一是我们必须分配并填写的结构。简单些的方法就是调用signal函数，其第一个参数是信号名，第二个参数或为指向函数的指针，或为常值SIG_IGN或STIG_DFL。然而signal是早于POSIX出现的历史悠久的函数。调用它时，不同的实现提供不同的信号语义以达成后向兼容，而POSIX则明确规定了调用sigaction时的信号语义。我们的解决办法是定义自己的signal函数，它只是调用POSIX的sigaction函数。这就以所期望的POSIX语义提供了一个简单的接口。</p>
+<p>函数定义如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">sighandler_tsignal(int__sig, sighandler_t__handler)</span><br></pre></td></tr></table></figure>
+<p>第一个参数-信号类型共有64个，通过在终端键入 kill -l查看。<br><img src="https://pic2.zhimg.com/80/v2-18461fd503682cac3b1721b9c92c8195_720w.jpg"></p>
+<p>第二个参数是捕获到该信号的处理方式，这里我们选择自己定义对于信号的反应函数，即下文的处理僵死进程。</p>
+<p>这里我们选择使用SIGCHLD信号。（其他信号类型和作用，这里就不作赘述了）</p>
+<p>其作用是：进程Terminate或Stop的时候，SIGCHLD会发送给它的父进程。缺省情况下该Signal会被忽略。</p>
+<h2 id="如何处理SIGCHLD信号"><a href="#如何处理SIGCHLD信号" class="headerlink" title="如何处理SIGCHLD信号"></a>如何处理SIGCHLD信号</h2><p>设置僵尸（zombie）状态的目的是维护子进程的信息，以便于父进程在某个时刻获取。这里面包含：子进程的进程ID、终止状态以及资源利用信息（CPU时间、内存使用量）。如果一个进程终止，而该进程有子进程处于僵尸状态，那么它的所有僵尸子进程的父进程会变成init进程，进程ID&#x3D;1。init进程会清理（wait）这些僵尸进程。</p>
+<h1 id="处理僵死进程"><a href="#处理僵死进程" class="headerlink" title="处理僵死进程"></a>处理僵死进程</h1><p>我们显然不愿意留存僵死进程。它们占用内核中的空间，最终可能导致我们耗尽进程资源。无论何时我们fork子进程都得wait它们，以防它们变成僵死进程。为此我们建立一个俘获SIGCHLD信号的信号处理函数，在函数体中我们调用wait。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">signal (SIGCHLD,sig_chld) ;</span><br></pre></td></tr></table></figure>
+<p>我们就建立了该信号处理函数。(这必须在fork第一个子进程之前完成，且只做一次。）我们接着定义名为sig__chld的这个信号处理函数。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">sig_chld</span><span class="params">(<span class="type">int</span> sig)</span></span><br><span class="line">&#123;</span><br><span class="line"> <span class="type">pid_t</span> pid;</span><br><span class="line"> <span class="type">int</span> stat;</span><br><span class="line"> <span class="keyword">while</span>((pid = waitpid(<span class="number">-1</span>,&amp;stat,WNOHANG))&gt;<span class="number">0</span>)</span><br><span class="line"> <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;child &quot;</span> &lt;&lt; pid &lt;&lt; <span class="string">&quot; termination&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"> <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="wait和waitpid函数"><a href="#wait和waitpid函数" class="headerlink" title="wait和waitpid函数"></a>wait和waitpid函数</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="type">pid_t</span> <span class="title function_">wait</span><span class="params">(<span class="type">int</span> *statloc)</span> ;</span><br><span class="line">pid.t <span class="title function_">waitpid</span><span class="params">(<span class="type">pid_t</span> pid ,<span class="type">int</span> *statioc,<span class="type">int</span> options )</span> ;</span><br><span class="line"><span class="comment">//均返回:若成功则为进程D，若出错则为O或-1</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="wait函数的原理："><a href="#wait函数的原理：" class="headerlink" title="wait函数的原理："></a>wait函数的原理：</h2><p>进程调用wait，然后阻塞自己，然后寻找僵尸子进程，找到了则销毁子进程然后返回，没有找到则一直阻塞直到找到僵尸子进程为止。</p>
+<h2 id="waitpid函数："><a href="#waitpid函数：" class="headerlink" title="waitpid函数："></a>waitpid函数：</h2><h3 id="pid参数："><a href="#pid参数：" class="headerlink" title="pid参数："></a>pid参数：</h3><p>1)pid&gt;0:只等待进程ID等于pid的子进程，不管其它已经有多少子进程运行结束退出了，只要指定的子进程还没有结束,waitpid就会一直等下去<br>2)pid&#x3D;-1:等待任何一个子进程，没有限制，此时和wait函数作用一模一样<br>3）pid&lt;-1：等待一个指定进程组中的任何子进程，进程组号&#x3D;pid的绝对值<br>4）pid&#x3D;0：等待一个指定进程组中的任何子进程，进程组号为pid的值   </p>
+<h3 id="options参数"><a href="#options参数" class="headerlink" title="options参数:"></a>options参数:</h3><p>1)options&#x3D;WNOHANG,即使子进程没有退出，它也会立即返回，不会像wait那样永远等下去<br>2）options&#x3D;WUNTRECED，子进程睡眠则马上返回，但结束状态不予理会<br>3）options&#x3D;0，不使用该参数<br>和wait函数相比，waitpid其实是wait函数的封装，waitpid可以指定等待的子进程，并且指定返回的条件。</p>
+<h2 id="wait和waitpid函数的用法"><a href="#wait和waitpid函数的用法" class="headerlink" title="wait和waitpid函数的用法"></a>wait和waitpid函数的用法</h2><p>函数wait和waitpid均返回两个值:已终止子进程的进程ID号，以及通过statloc指针返回的子进程终止状态（一个整数)。</p>
+<p>我们可以调用三个宏来检查终止状态，并辨别子进程是正常终止、由某个信号杀死还是仅仅由作业控制停止而已。另有些宏用于接着获取子进程的退出状态、杀死子进程的信号值或停止子进程的作业控制信号值。</p>
+<p>如果调用wait的进程没有已终止的子进程，不过有一个或多个子进程仍在执行，那么wait将阻塞到现有子进程第一个终止为止。</p>
+<p>waitpid函数就等待哪个进程以及是否阻塞给了我们更多的控制。首先，pid参数允许我们指定想等待的进程ID，值-1表示等待第一个终止的子进程。(另有一些处理进程组ID的可选值，不过本书中用不上。）其次，options参数允许我们指定附加选项。最常用的选项是WNOHANG，它告知内核在没有已终止子进程时不要阻塞。</p>
+<h2 id="wait和waitpid的区别"><a href="#wait和waitpid的区别" class="headerlink" title="wait和waitpid的区别"></a>wait和waitpid的区别</h2><p>waitpid采用了WNOHANG参数，所以waitpid不会阻塞，也就是说父进程不会阻塞在那里等待子进程返回，它会立即返回然后去做自己的事情，所以需要加个循环直到等待到进程为止，相当于轮询。</p>
+<p>而在一些情况下，比如同一信号多个实例的递交，建立一个信号处理函数并在其中调用wait并不足以防止出现僵死进程。</p>
+<p>正确的解决办法是调用waitpia而不是wait。原因在于，我们在一个循环内调用waitpid，以获取所有已终止子进程的状态。我们必须指定WNOHANG选项，它告知waitpid在有尚未终止的子进程在运行时不要阻塞。我们不能在循环内调用wait，因为没有办法防止wait在正运行的子进程尚有未终止时阻塞。</p>
+<h1 id="并发TCP服务器代码实现"><a href="#并发TCP服务器代码实现" class="headerlink" title="并发TCP服务器代码实现"></a>并发TCP服务器代码实现</h1><p>server.cpp</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="type">const</span> <span class="type">int</span> BUF_SIZE = <span class="number">1024</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PORT 7000</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sig_chld</span><span class="params">(<span class="type">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">pid_t</span> pid;</span><br><span class="line"> <span class="type">int</span> stat;</span><br><span class="line"> <span class="keyword">while</span>((pid = <span class="built_in">waitpid</span>(<span class="number">-1</span>,&amp;stat,WNOHANG))&gt;<span class="number">0</span>)</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;child &quot;</span> &lt;&lt; pid &lt;&lt; <span class="string">&quot; termination&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">int</span> serv_sockfd;</span><br><span class="line"> <span class="type">int</span> client_sockfd;</span><br><span class="line"> </span><br><span class="line"> <span class="type">char</span> buf[BUF_SIZE];</span><br><span class="line"> <span class="built_in">memset</span>(buf,<span class="number">0</span>,<span class="built_in">sizeof</span>(buf));</span><br><span class="line"> </span><br><span class="line"> sockaddr_in serv_addr;</span><br><span class="line"> sockaddr_in client_addr;</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">memset</span>(&amp;serv_addr,<span class="number">0</span>,<span class="built_in">sizeof</span>(serv_addr));</span><br><span class="line"> serv_addr.sin_family = AF_INET;</span><br><span class="line"> serv_addr.sin_addr.s_addr = INADDR_ANY;</span><br><span class="line"> serv_addr.sin_port = <span class="built_in">htons</span>(PORT);</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((serv_sockfd = <span class="built_in">socket</span>(PF_INET,SOCK_STREAM,<span class="number">0</span>))&lt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;socket error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((<span class="built_in">bind</span>(serv_sockfd,(sockaddr *)&amp;serv_addr,<span class="built_in">sizeof</span>(serv_addr)))&lt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;bind error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-2</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((<span class="built_in">listen</span>(serv_sockfd,<span class="number">5</span>))&lt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;listen error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-3</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;listening...&quot;</span> &lt;&lt; endl;</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">signal</span>(SIGCHLD,sig_chld);</span><br><span class="line"> </span><br><span class="line"> <span class="type">socklen_t</span> sin_size;</span><br><span class="line"> <span class="type">int</span> read_len=<span class="number">0</span>;</span><br><span class="line"> <span class="type">int</span> child_pid;</span><br><span class="line"> <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> sin_size = <span class="built_in">sizeof</span>(client_addr);</span><br><span class="line"> <span class="built_in">memset</span>(&amp;client_addr,<span class="number">0</span>,<span class="built_in">sizeof</span>(client_addr));</span><br><span class="line"> <span class="keyword">if</span>((client_sockfd = <span class="built_in">accept</span>(serv_sockfd,(sockaddr*)&amp;client_addr,&amp;sin_size))&lt;<span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="keyword">if</span>(errno == EINTR || errno == ECONNABORTED)</span><br><span class="line"> <span class="keyword">continue</span>;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;accept error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-4</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((child_pid = fork())==<span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;client &quot;</span> &lt;&lt;<span class="built_in">inet_ntoa</span>(client_addr.sin_addr) &lt;&lt; <span class="string">&quot; 进程号：&quot;</span>&lt;&lt; <span class="built_in">getpid</span>() &lt;&lt; endl;</span><br><span class="line"> <span class="built_in">write</span>(client_sockfd,<span class="string">&quot;Welcome to my server\n&quot;</span>,<span class="number">21</span>);</span><br><span class="line"> <span class="built_in">close</span>(serv_sockfd);</span><br><span class="line"> <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">memset</span>(buf,<span class="number">0</span>,<span class="built_in">sizeof</span>(buf));</span><br><span class="line"> <span class="keyword">if</span>((read_len = <span class="built_in">read</span>(client_sockfd,buf,BUF_SIZE))&lt;=<span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line"> <span class="built_in">close</span>(client_sockfd);</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;read error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">-5</span>);</span><br><span class="line">                &#125;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;Client&quot;</span>&lt;&lt; <span class="built_in">getpid</span>()  &lt;&lt; <span class="string">&quot; say:&quot;</span>&lt;&lt;buf &lt;&lt; endl;</span><br><span class="line"> <span class="built_in">write</span>(client_sockfd,buf,read_len);</span><br><span class="line">            &#125;</span><br><span class="line"> <span class="built_in">close</span>(client_sockfd);</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">-6</span>);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span> <span class="keyword">if</span>(child_pid&gt;<span class="number">0</span>)</span><br><span class="line"> <span class="built_in">close</span>(client_sockfd);</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>客户端程序可以参考我的另一篇文章：<br><a href="https://raidenxe.github.io/archives/7a099087.html">计算机网络知识点总结（三）Socket 基本函数详解，C++ Socket 入门实战</a></p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
         <tag>Socket</tag>
         <tag>C++</tag>
       </tags>

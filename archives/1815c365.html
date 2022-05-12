@@ -1,0 +1,351 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork） | Raidenxe的博客</title><meta name="keywords" content="Linux,Socket,C++"><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本文使用fork函数实现并发TCP服务器，关于fork函数的用法可以参考我的文章：Linux 下的 fork 和 exec 函数 服务器基本结构本文的目标是编写一个完整的TCP客户&#x2F;服务器程序示例。这个简单的例子是执行如下步骤的一个回射服务器: (1) 客户从标准输入读入一行文本，并写给服务器; (2) 服务器从网络输入读入这行文本，并回射给客户; (3) 客户从网络输入读入这行回射文本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）">
+<meta property="og:url" content="https://raidenxe.github.io/archives/1815c365.html">
+<meta property="og:site_name" content="Raidenxe的博客">
+<meta property="og:description" content="本文使用fork函数实现并发TCP服务器，关于fork函数的用法可以参考我的文章：Linux 下的 fork 和 exec 函数 服务器基本结构本文的目标是编写一个完整的TCP客户&#x2F;服务器程序示例。这个简单的例子是执行如下步骤的一个回射服务器: (1) 客户从标准输入读入一行文本，并写给服务器; (2) 服务器从网络输入读入这行文本，并回射给客户; (3) 客户从网络输入读入这行回射文本">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic1.zhimg.com/v2-18f2189eec39d8a665949f2b43c54626_1440w.jpg?source=172ae18b">
+<meta property="article:published_time" content="2022-05-12T08:36:07.000Z">
+<meta property="article:modified_time" content="2022-05-12T08:54:10.916Z">
+<meta property="article:author" content="Raidenxe">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Socket">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic1.zhimg.com/v2-18f2189eec39d8a665949f2b43c54626_1440w.jpg?source=172ae18b"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/1815c365"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-05-12 16:54:10'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    document.addEventListener('pjax:complete', detectApple)})(window)</script><meta name="generator" content="Hexo 5.4.2"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">11</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://pic1.zhimg.com/v2-18f2189eec39d8a665949f2b43c54626_1440w.jpg?source=172ae18b')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Raidenxe的博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-05-12T08:36:07.000Z" title="发表于 2022-05-12 16:36:07">2022-05-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-05-12T08:54:10.916Z" title="更新于 2022-05-12 16:54:10">2022-05-12</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>11分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>本文使用fork函数实现并发TCP服务器，关于fork函数的用法可以参考我的文章：<br><a href="https://raidenxe.github.io/archives/90acc1af.html">Linux 下的 fork 和 exec 函数</a></p>
+<h1 id="服务器基本结构"><a href="#服务器基本结构" class="headerlink" title="服务器基本结构"></a>服务器基本结构</h1><p>本文的目标是编写一个完整的TCP客户&#x2F;服务器程序示例。这个简单的例子是执行如下步骤的一个回射服务器:</p>
+<p>(1) 客户从标准输入读入一行文本，并写给服务器;</p>
+<p>(2) 服务器从网络输入读入这行文本，并回射给客户;</p>
+<p>(3) 客户从网络输入读入这行回射文本，并显示在标准输出上。</p>
+<p>结构如下：<br><img src="https://pic3.zhimg.com/80/v2-7c83c25ffa290ff2fb8b07310ace85f6_720w.jpg"></p>
+<h1 id="迭代服务器和并发服务器"><a href="#迭代服务器和并发服务器" class="headerlink" title="迭代服务器和并发服务器"></a>迭代服务器和并发服务器</h1><p><strong>迭代服务器</strong>以串行方式一次处理一个客户端。</p>
+<p><strong>迭代服务器</strong>会依次处理客户端的连接 ，只要当前连接的任务没有完成，服务器的进程就会一直被占用，直到任务完成后，服务器关闭这个socket，释放连接。</p>
+<p><strong>并发服务器</strong>：服务器可以是迭代的，即它遍历每个客户端并一次服务一个请求。</p>
+<p>或者，一台服务器可以同时并行处理多个客户端，这种类型的服务器称为并发服务器。</p>
+<p>并发服务器主要通过三种方式：进程、线程和IO复用来分别实现。</p>
+<h2 id="迭代服务器程序轮廓"><a href="#迭代服务器程序轮廓" class="headerlink" title="迭代服务器程序轮廓"></a>迭代服务器程序轮廓</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> listenfd,connfd;</span><br><span class="line"> listenfd = socket( ... );</span><br><span class="line"> bind(listen, ... );</span><br><span class="line"> listen(listenfd,LISTENQ);</span><br><span class="line"> <span class="keyword">for</span>(;;)</span><br><span class="line"> &#123;</span><br><span class="line"> connfd = accept(listenfd, ... ); </span><br><span class="line"> doit(connfd);</span><br><span class="line"> close(connfd);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="并发服务器程序轮廓"><a href="#并发服务器程序轮廓" class="headerlink" title="并发服务器程序轮廓"></a>并发服务器程序轮廓</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">pid_t</span> pid;</span><br><span class="line"><span class="type">int</span> listenfd,connfd;</span><br><span class="line">listenfd = socket( ... );</span><br><span class="line">bind(listen, ... );</span><br><span class="line">listen(listenfd,LISTENQ);</span><br><span class="line"><span class="keyword">for</span>(;;)</span><br><span class="line">&#123;</span><br><span class="line">connfd = accept(listenfd, ... );</span><br><span class="line"><span class="keyword">if</span>((pid = fork()) == <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">close(listenfd);</span><br><span class="line">doit(connfd);</span><br><span class="line">close(connfd);</span><br><span class="line"><span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line">close(connfd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="并发服务器的运行流程"><a href="#并发服务器的运行流程" class="headerlink" title="并发服务器的运行流程"></a>并发服务器的运行流程</h2><p>我们在同一个主机上启动客户，并指定服务器主机的IP地址为127.0.0.1（环回地址)。当然我们也可以指定该地址为该主机的普通（非环回）IP地址。</p>
+<p>客户调用socket和connect，后者引起TCP的三路握手过程。当三路握手完成后，客户中的connect和服务器中的accept均返回，连接于是建立。接着发生的步骤如下:</p>
+<p>(1)客户调用send函数，该函数将阻塞于fgets调用，因为我们还未曾键入过一行文本。</p>
+<p>(2)当服务器中的accept返回时，服务器调用fork，再由子进程调用write函数返回输入信息。调用read，而read在等待客户送入一行文本期间阻塞。</p>
+<p>(3)另一方面，服务器父进程再次调用accept并阻塞，等待下一个客户连接。</p>
+<p>至此，我们有3个都在睡眠（即已阻塞）的进程:客户进程、服务器父进程和服务器子进程。</p>
+<p>至此连接已经建立，不论我们在客户的标准输入中键入什么，都会回射到它的标准输出中。</p>
+<h1 id="POSIX信号处理"><a href="#POSIX信号处理" class="headerlink" title="POSIX信号处理"></a>POSIX信号处理</h1><p><strong>信号</strong>(signal）就是告知某个进程发生了某个事件的通知，有时也称为软件中断( softwareinterrupt)。信号通常是异步发生的，也就是说进程预先不知道信号的准确发生时刻。</p>
+<p>信号可以:</p>
+<p>由一个进程发给另一个进程（或自身)；</p>
+<p>由内核发给某个进程。</p>
+<p>上一节结尾提到的SIGCHLD信号就是由内核在任何一个进程终止时发给它的父进程的一个信号。</p>
+<p>（1）每个信号都有一个与之关联的处置( disposition)，也称为行为(action)。我们通过调用sigaction函数（稍后讨论）来设定一个信号的处置，并有三种选择。</p>
+<p>我们可以提供一个函数，只要有特定信号发生它就被调用。这样的函数称为信号处理函数( signal handler),这种行为称为捕获( catching)信号。有两个信号不能被捕获，它们是SIGKILL和SIGSTOP。信号处理函数由信号值这个单一的整数参数来调用，且没有返回值，其函数原型如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">handler</span> <span class="params">( <span class="type">int</span> signo)</span> ;</span><br></pre></td></tr></table></figure>
+<p>对于大多数信号来说，调用sigaction函数并指定信号发生时所调用的函数就是捕获信号所需做的全部工作。不过我们稍后将看到，SIGIO、SIGPoLL和SIGURG这些个别信号还要求捕获它们的进程做些额外工作。</p>
+<p>(2)我们可以把某个信号的处置设定为STG_IG来忽略(ignore）它。SIGKILL和STGSTOP这两个信号不能被忽略。</p>
+<p>(3)我们可以把某个信号的处置设定为SIG_DFL来启用它的默认(default）处置。默认处置通常是在收到信号后终止进程,其中某些信号还在当前工作目录产生一个进程的核心映像(coreimage，也称为内存影像)。另有个别信号的默认处置是忽略，SIGCHLD和SIGURG（带外数据到达时发送，见第24章）就是本书中出现的默认处置为忽略的两个信号。</p>
+<h2 id="signal函数"><a href="#signal函数" class="headerlink" title="signal函数"></a>signal函数</h2><p>建立信号处置的POSIX方法就是调用sigaction函数。不过这有点复杂，因为该函数的参数之一是我们必须分配并填写的结构。简单些的方法就是调用signal函数，其第一个参数是信号名，第二个参数或为指向函数的指针，或为常值SIG_IGN或STIG_DFL。然而signal是早于POSIX出现的历史悠久的函数。调用它时，不同的实现提供不同的信号语义以达成后向兼容，而POSIX则明确规定了调用sigaction时的信号语义。我们的解决办法是定义自己的signal函数，它只是调用POSIX的sigaction函数。这就以所期望的POSIX语义提供了一个简单的接口。</p>
+<p>函数定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sighandler_tsignal(int__sig, sighandler_t__handler)</span><br></pre></td></tr></table></figure>
+<p>第一个参数-信号类型共有64个，通过在终端键入 kill -l查看。<br><img src="https://pic2.zhimg.com/80/v2-18461fd503682cac3b1721b9c92c8195_720w.jpg"></p>
+<p>第二个参数是捕获到该信号的处理方式，这里我们选择自己定义对于信号的反应函数，即下文的处理僵死进程。</p>
+<p>这里我们选择使用SIGCHLD信号。（其他信号类型和作用，这里就不作赘述了）</p>
+<p>其作用是：进程Terminate或Stop的时候，SIGCHLD会发送给它的父进程。缺省情况下该Signal会被忽略。</p>
+<h2 id="如何处理SIGCHLD信号"><a href="#如何处理SIGCHLD信号" class="headerlink" title="如何处理SIGCHLD信号"></a>如何处理SIGCHLD信号</h2><p>设置僵尸（zombie）状态的目的是维护子进程的信息，以便于父进程在某个时刻获取。这里面包含：子进程的进程ID、终止状态以及资源利用信息（CPU时间、内存使用量）。如果一个进程终止，而该进程有子进程处于僵尸状态，那么它的所有僵尸子进程的父进程会变成init进程，进程ID&#x3D;1。init进程会清理（wait）这些僵尸进程。</p>
+<h1 id="处理僵死进程"><a href="#处理僵死进程" class="headerlink" title="处理僵死进程"></a>处理僵死进程</h1><p>我们显然不愿意留存僵死进程。它们占用内核中的空间，最终可能导致我们耗尽进程资源。无论何时我们fork子进程都得wait它们，以防它们变成僵死进程。为此我们建立一个俘获SIGCHLD信号的信号处理函数，在函数体中我们调用wait。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">signal (SIGCHLD,sig_chld) ;</span><br></pre></td></tr></table></figure>
+<p>我们就建立了该信号处理函数。(这必须在fork第一个子进程之前完成，且只做一次。）我们接着定义名为sig__chld的这个信号处理函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">sig_chld</span><span class="params">(<span class="type">int</span> sig)</span></span><br><span class="line">&#123;</span><br><span class="line"> <span class="type">pid_t</span> pid;</span><br><span class="line"> <span class="type">int</span> stat;</span><br><span class="line"> <span class="keyword">while</span>((pid = waitpid(<span class="number">-1</span>,&amp;stat,WNOHANG))&gt;<span class="number">0</span>)</span><br><span class="line"> <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;child &quot;</span> &lt;&lt; pid &lt;&lt; <span class="string">&quot; termination&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"> <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="wait和waitpid函数"><a href="#wait和waitpid函数" class="headerlink" title="wait和waitpid函数"></a>wait和waitpid函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="type">pid_t</span> <span class="title function_">wait</span><span class="params">(<span class="type">int</span> *statloc)</span> ;</span><br><span class="line">pid.t <span class="title function_">waitpid</span><span class="params">(<span class="type">pid_t</span> pid ,<span class="type">int</span> *statioc,<span class="type">int</span> options )</span> ;</span><br><span class="line"><span class="comment">//均返回:若成功则为进程D，若出错则为O或-1</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="wait函数的原理："><a href="#wait函数的原理：" class="headerlink" title="wait函数的原理："></a>wait函数的原理：</h2><p>进程调用wait，然后阻塞自己，然后寻找僵尸子进程，找到了则销毁子进程然后返回，没有找到则一直阻塞直到找到僵尸子进程为止。</p>
+<h2 id="waitpid函数："><a href="#waitpid函数：" class="headerlink" title="waitpid函数："></a>waitpid函数：</h2><h3 id="pid参数："><a href="#pid参数：" class="headerlink" title="pid参数："></a>pid参数：</h3><p>1)pid&gt;0:只等待进程ID等于pid的子进程，不管其它已经有多少子进程运行结束退出了，只要指定的子进程还没有结束,waitpid就会一直等下去<br>2)pid&#x3D;-1:等待任何一个子进程，没有限制，此时和wait函数作用一模一样<br>3）pid&lt;-1：等待一个指定进程组中的任何子进程，进程组号&#x3D;pid的绝对值<br>4）pid&#x3D;0：等待一个指定进程组中的任何子进程，进程组号为pid的值   </p>
+<h3 id="options参数"><a href="#options参数" class="headerlink" title="options参数:"></a>options参数:</h3><p>1)options&#x3D;WNOHANG,即使子进程没有退出，它也会立即返回，不会像wait那样永远等下去<br>2）options&#x3D;WUNTRECED，子进程睡眠则马上返回，但结束状态不予理会<br>3）options&#x3D;0，不使用该参数<br>和wait函数相比，waitpid其实是wait函数的封装，waitpid可以指定等待的子进程，并且指定返回的条件。</p>
+<h2 id="wait和waitpid函数的用法"><a href="#wait和waitpid函数的用法" class="headerlink" title="wait和waitpid函数的用法"></a>wait和waitpid函数的用法</h2><p>函数wait和waitpid均返回两个值:已终止子进程的进程ID号，以及通过statloc指针返回的子进程终止状态（一个整数)。</p>
+<p>我们可以调用三个宏来检查终止状态，并辨别子进程是正常终止、由某个信号杀死还是仅仅由作业控制停止而已。另有些宏用于接着获取子进程的退出状态、杀死子进程的信号值或停止子进程的作业控制信号值。</p>
+<p>如果调用wait的进程没有已终止的子进程，不过有一个或多个子进程仍在执行，那么wait将阻塞到现有子进程第一个终止为止。</p>
+<p>waitpid函数就等待哪个进程以及是否阻塞给了我们更多的控制。首先，pid参数允许我们指定想等待的进程ID，值-1表示等待第一个终止的子进程。(另有一些处理进程组ID的可选值，不过本书中用不上。）其次，options参数允许我们指定附加选项。最常用的选项是WNOHANG，它告知内核在没有已终止子进程时不要阻塞。</p>
+<h2 id="wait和waitpid的区别"><a href="#wait和waitpid的区别" class="headerlink" title="wait和waitpid的区别"></a>wait和waitpid的区别</h2><p>waitpid采用了WNOHANG参数，所以waitpid不会阻塞，也就是说父进程不会阻塞在那里等待子进程返回，它会立即返回然后去做自己的事情，所以需要加个循环直到等待到进程为止，相当于轮询。</p>
+<p>而在一些情况下，比如同一信号多个实例的递交，建立一个信号处理函数并在其中调用wait并不足以防止出现僵死进程。</p>
+<p>正确的解决办法是调用waitpia而不是wait。原因在于，我们在一个循环内调用waitpid，以获取所有已终止子进程的状态。我们必须指定WNOHANG选项，它告知waitpid在有尚未终止的子进程在运行时不要阻塞。我们不能在循环内调用wait，因为没有办法防止wait在正运行的子进程尚有未终止时阻塞。</p>
+<h1 id="并发TCP服务器代码实现"><a href="#并发TCP服务器代码实现" class="headerlink" title="并发TCP服务器代码实现"></a>并发TCP服务器代码实现</h1><p>server.cpp</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="type">const</span> <span class="type">int</span> BUF_SIZE = <span class="number">1024</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PORT 7000</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sig_chld</span><span class="params">(<span class="type">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">pid_t</span> pid;</span><br><span class="line"> <span class="type">int</span> stat;</span><br><span class="line"> <span class="keyword">while</span>((pid = <span class="built_in">waitpid</span>(<span class="number">-1</span>,&amp;stat,WNOHANG))&gt;<span class="number">0</span>)</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;child &quot;</span> &lt;&lt; pid &lt;&lt; <span class="string">&quot; termination&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">int</span> serv_sockfd;</span><br><span class="line"> <span class="type">int</span> client_sockfd;</span><br><span class="line"> </span><br><span class="line"> <span class="type">char</span> buf[BUF_SIZE];</span><br><span class="line"> <span class="built_in">memset</span>(buf,<span class="number">0</span>,<span class="built_in">sizeof</span>(buf));</span><br><span class="line"> </span><br><span class="line"> sockaddr_in serv_addr;</span><br><span class="line"> sockaddr_in client_addr;</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">memset</span>(&amp;serv_addr,<span class="number">0</span>,<span class="built_in">sizeof</span>(serv_addr));</span><br><span class="line"> serv_addr.sin_family = AF_INET;</span><br><span class="line"> serv_addr.sin_addr.s_addr = INADDR_ANY;</span><br><span class="line"> serv_addr.sin_port = <span class="built_in">htons</span>(PORT);</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((serv_sockfd = <span class="built_in">socket</span>(PF_INET,SOCK_STREAM,<span class="number">0</span>))&lt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;socket error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((<span class="built_in">bind</span>(serv_sockfd,(sockaddr *)&amp;serv_addr,<span class="built_in">sizeof</span>(serv_addr)))&lt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;bind error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-2</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((<span class="built_in">listen</span>(serv_sockfd,<span class="number">5</span>))&lt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;listen error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-3</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;listening...&quot;</span> &lt;&lt; endl;</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">signal</span>(SIGCHLD,sig_chld);</span><br><span class="line"> </span><br><span class="line"> <span class="type">socklen_t</span> sin_size;</span><br><span class="line"> <span class="type">int</span> read_len=<span class="number">0</span>;</span><br><span class="line"> <span class="type">int</span> child_pid;</span><br><span class="line"> <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> sin_size = <span class="built_in">sizeof</span>(client_addr);</span><br><span class="line"> <span class="built_in">memset</span>(&amp;client_addr,<span class="number">0</span>,<span class="built_in">sizeof</span>(client_addr));</span><br><span class="line"> <span class="keyword">if</span>((client_sockfd = <span class="built_in">accept</span>(serv_sockfd,(sockaddr*)&amp;client_addr,&amp;sin_size))&lt;<span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="keyword">if</span>(errno == EINTR || errno == ECONNABORTED)</span><br><span class="line"> <span class="keyword">continue</span>;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;accept error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-4</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((child_pid = fork())==<span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;client &quot;</span> &lt;&lt;<span class="built_in">inet_ntoa</span>(client_addr.sin_addr) &lt;&lt; <span class="string">&quot; 进程号：&quot;</span>&lt;&lt; <span class="built_in">getpid</span>() &lt;&lt; endl;</span><br><span class="line"> <span class="built_in">write</span>(client_sockfd,<span class="string">&quot;Welcome to my server\n&quot;</span>,<span class="number">21</span>);</span><br><span class="line"> <span class="built_in">close</span>(serv_sockfd);</span><br><span class="line"> <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">memset</span>(buf,<span class="number">0</span>,<span class="built_in">sizeof</span>(buf));</span><br><span class="line"> <span class="keyword">if</span>((read_len = <span class="built_in">read</span>(client_sockfd,buf,BUF_SIZE))&lt;=<span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line"> <span class="built_in">close</span>(client_sockfd);</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;read error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">-5</span>);</span><br><span class="line">                &#125;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;Client&quot;</span>&lt;&lt; <span class="built_in">getpid</span>()  &lt;&lt; <span class="string">&quot; say:&quot;</span>&lt;&lt;buf &lt;&lt; endl;</span><br><span class="line"> <span class="built_in">write</span>(client_sockfd,buf,read_len);</span><br><span class="line">            &#125;</span><br><span class="line"> <span class="built_in">close</span>(client_sockfd);</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">-6</span>);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span> <span class="keyword">if</span>(child_pid&gt;<span class="number">0</span>)</span><br><span class="line"> <span class="built_in">close</span>(client_sockfd);</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>客户端程序可以参考我的另一篇文章：<br><a href="https://raidenxe.github.io/archives/7a099087.html">计算机网络知识点总结（三）Socket 基本函数详解，C++ Socket 入门实战</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noreferrer">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/1815c365.html">https://raidenxe.github.io/archives/1815c365.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/">Linux</a><a class="post-meta__tags" href="/tags/Socket/">Socket</a><a class="post-meta__tags" href="/tags/C/">C++</a></div><div class="post_share"><div class="social-share" data-image="https://pic1.zhimg.com/v2-18f2189eec39d8a665949f2b43c54626_1440w.jpg?source=172ae18b" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/archives/90acc1af.html"><img class="next-cover" src="https://pic2.zhimg.com/v2-1a7eb58610755e46dbcc46e787517c08_1440w.jpg?source=172ae18b" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Linux下的fork和exec函数</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/archives/7a099087.html" title="计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战"><img class="cover" src="https://pica.zhimg.com/v2-0ccfd39e0b8d5bf6bb8960f7894c1e5d_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-16</div><div class="title">计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战</div></div></a></div><div><a href="/archives/cf06f66d.html" title="计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序"><img class="cover" src="https://pic3.zhimg.com/v2-762ad4c0feef90b6b09b72864f637762_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-17</div><div class="title">计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序</div></div></a></div><div><a href="/archives/884564f6.html" title="计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll"><img class="cover" src="https://pic2.zhimg.com/v2-5e496ba6fe03f8cd4ca253ec8cf4bff2_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-22</div><div class="title">计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll</div></div></a></div><div><a href="/archives/90acc1af.html" title="Linux下的fork和exec函数"><img class="cover" src="https://pic2.zhimg.com/v2-1a7eb58610755e46dbcc46e787517c08_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-09</div><div class="title">Linux下的fork和exec函数</div></div></a></div><div><a href="/archives/cc4d518f.html" title="单片机和嵌入式系统的区别"><img class="cover" src="https://pica.zhimg.com/v2-13d1a10aa719b8f5e03b94b824fccac2_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-06</div><div class="title">单片机和嵌入式系统的区别</div></div></a></div><div><a href="/archives/aba2a9fd.html" title="常用Linux命令整理"><img class="cover" src="https://pica.zhimg.com/v2-5fd2e93e3fd4c3824d463dd1a0acaba2_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-06</div><div class="title">常用Linux命令整理</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="lv-container" data-id="city" data-uid="MTAyMC81NjAxOC8zMjQ4MQ=="></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Raidenxe</div><div class="author-info__description">向着真理和自由，无名的献身。</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">11</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text">服务器基本结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%92%8C%E5%B9%B6%E5%8F%91%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">2.</span> <span class="toc-text">迭代服务器和并发服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A8%8B%E5%BA%8F%E8%BD%AE%E5%BB%93"><span class="toc-number">2.1.</span> <span class="toc-text">迭代服务器程序轮廓</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A8%8B%E5%BA%8F%E8%BD%AE%E5%BB%93"><span class="toc-number">2.2.</span> <span class="toc-text">并发服务器程序轮廓</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E8%BF%90%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="toc-number">2.3.</span> <span class="toc-text">并发服务器的运行流程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#POSIX%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">POSIX信号处理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#signal%E5%87%BD%E6%95%B0"><span class="toc-number">3.1.</span> <span class="toc-text">signal函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86SIGCHLD%E4%BF%A1%E5%8F%B7"><span class="toc-number">3.2.</span> <span class="toc-text">如何处理SIGCHLD信号</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%83%B5%E6%AD%BB%E8%BF%9B%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text">处理僵死进程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#wait%E5%92%8Cwaitpid%E5%87%BD%E6%95%B0"><span class="toc-number">4.1.</span> <span class="toc-text">wait和waitpid函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#wait%E5%87%BD%E6%95%B0%E7%9A%84%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="toc-number">4.2.</span> <span class="toc-text">wait函数的原理：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#waitpid%E5%87%BD%E6%95%B0%EF%BC%9A"><span class="toc-number">4.3.</span> <span class="toc-text">waitpid函数：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pid%E5%8F%82%E6%95%B0%EF%BC%9A"><span class="toc-number">4.3.1.</span> <span class="toc-text">pid参数：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#options%E5%8F%82%E6%95%B0"><span class="toc-number">4.3.2.</span> <span class="toc-text">options参数:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#wait%E5%92%8Cwaitpid%E5%87%BD%E6%95%B0%E7%9A%84%E7%94%A8%E6%B3%95"><span class="toc-number">4.4.</span> <span class="toc-text">wait和waitpid函数的用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#wait%E5%92%8Cwaitpid%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">4.5.</span> <span class="toc-text">wait和waitpid的区别</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91TCP%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">5.</span> <span class="toc-text">并发TCP服务器代码实现</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/1815c365.html" title="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）"><img src="https://pic1.zhimg.com/v2-18f2189eec39d8a665949f2b43c54626_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）"/></a><div class="content"><a class="title" href="/archives/1815c365.html" title="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）">计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）</a><time datetime="2022-05-12T08:36:07.000Z" title="发表于 2022-05-12 16:36:07">2022-05-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/90acc1af.html" title="Linux下的fork和exec函数"><img src="https://pic2.zhimg.com/v2-1a7eb58610755e46dbcc46e787517c08_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux下的fork和exec函数"/></a><div class="content"><a class="title" href="/archives/90acc1af.html" title="Linux下的fork和exec函数">Linux下的fork和exec函数</a><time datetime="2022-05-09T14:16:20.000Z" title="发表于 2022-05-09 22:16:20">2022-05-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a1e2b7b3.html" title="日常使用Linux系统是什么体验？"><img src="https://pic1.zhimg.com/v2-70854dea311f3e4c308180ea1dc1c973_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="日常使用Linux系统是什么体验？"/></a><div class="content"><a class="title" href="/archives/a1e2b7b3.html" title="日常使用Linux系统是什么体验？">日常使用Linux系统是什么体验？</a><time datetime="2022-05-07T07:57:50.000Z" title="发表于 2022-05-07 15:57:50">2022-05-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/4dcde7a2.html" title="GitHub 443 Timed out的解决方法"><img src="https://pic2.zhimg.com/v2-e5f382c375b83738a5d92b88d437c9ff_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="GitHub 443 Timed out的解决方法"/></a><div class="content"><a class="title" href="/archives/4dcde7a2.html" title="GitHub 443 Timed out的解决方法">GitHub 443 Timed out的解决方法</a><time datetime="2022-04-23T11:18:52.000Z" title="发表于 2022-04-23 19:18:52">2022-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/884564f6.html" title="计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll"><img src="https://pic2.zhimg.com/v2-5e496ba6fe03f8cd4ca253ec8cf4bff2_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll"/></a><div class="content"><a class="title" href="/archives/884564f6.html" title="计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll">计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll</a><time datetime="2022-04-22T14:47:12.000Z" title="发表于 2022-04-22 22:47:12">2022-04-22</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://pic1.zhimg.com/v2-18f2189eec39d8a665949f2b43c54626_1440w.jpg?source=172ae18b')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Raidenxe</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadLivere () {
+  if (typeof LivereTower === 'object') {
+    window.LivereTower.init()
+  }
+  else {
+    (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+    })(document, 'script');
+  }
+}
+
+if ('Livere' === 'Livere' || !false) {
+  if (false) btf.loadComment(document.getElementById('lv-container'), loadLivere)
+  else loadLivere()
+}
+else {
+  function loadOtherComment () {
+    loadLivere()
+  }
+}</script></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="true"> </div><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="false" data-text="自由,平等,公正,法治,爱国,敬业,诚信,友善,富强,民主,文明,和谐" data-fontsize="15px" data-random="true" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = [
+  'title',
+  '#config-diff',
+  '#body-wrap',
+  '#rightside-config-hide',
+  '#rightside-config-show',
+  '.js-pjax'
+]
+
+if (true) {
+  pjaxSelectors.unshift('meta[property="og:image"]', 'meta[property="og:title"]', 'meta[property="og:url"]')
+}
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.removeEventListener('scroll', window.tocScrollFn)
+  window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // Analytics
+  if (false) {
+    MtaH5.pgv()
+  }
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

@@ -25,24 +25,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hello World</title>
-    <url>/archives/4a17b156.html</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
-  </entry>
-  <entry>
     <title>Linux下的fork和exec函数</title>
     <url>/archives/90acc1af.html</url>
     <content><![CDATA[<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>多线程程序设计的概念早在六十年代就被提出，但直到八十年代中期，Unix系统中才引入多线程机制，如今，由于自身的许多优点，多线程编程已经得到了广泛的应用。</p>
@@ -90,77 +72,81 @@
       </tags>
   </entry>
   <entry>
-    <title>日常使用Linux系统是什么体验？</title>
-    <url>/archives/a1e2b7b3.html</url>
-    <content><![CDATA[<p>趁着五一小假期，我尝试了去使用Linux作为日常使用的操作系统，这个过程中也是踩了不少的坑，所以想写一篇文章分享一下。</p>
-<p>我个人使用过Kail、CentOS7、Ubuntu16.04、Windows Subsystem for Linux（WSL）作为开发环境，我个人更喜欢Debian Style (.deb)包管理系统，所以最终选择了使用Ubuntu18.04 LTS，打算在开发之余日常使用，满足听音乐，写文档，看看视频等需求。</p>
-<h1 id="Ubuntu的优缺点："><a href="#Ubuntu的优缺点：" class="headerlink" title="Ubuntu的优缺点："></a>Ubuntu的优缺点：</h1><p><img src="https://pic3.zhimg.com/80/v2-c394ee5ef8e79d2c1ee12b659d08ec32_720w.jpg"></p>
-<h1 id="安装Flash插件"><a href="#安装Flash插件" class="headerlink" title="安装Flash插件"></a>安装Flash插件</h1><p>使用Firefox 浏览器时，B站无法播放视频，提示需要下载Flash插件；<br><img src="https://pic1.zhimg.com/80/v2-1b63342350894d7b71807cdb3e57a2fc_720w.jpg"><br>点击页面跳转后却提示现在Adobe官网已经不再提供flash下载；</p>
-<p>（由于 Adobe 在 2020 年 12 月 31 日之后不再支持 Flash Player，并且从 2021 年 1 月12 日开始阻止 Flash 内容在 Flash Player 中运行，因此 Adobe 强烈建议所有用户立即卸载 Flash Player 以帮助保护其系统。）<br><img src="https://pic1.zhimg.com/v2-a372fc674dc8c7eb9ef4e9318e474dc0_r.jpg"></p>
-<p>解决办法是通过终端安装flash插件：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install flashplugin-installer</span><br></pre></td></tr></table></figure>
-<p>或者</p>
-<h2 id="安装ubuntu-restricted-extras；"><a href="#安装ubuntu-restricted-extras；" class="headerlink" title="安装ubuntu-restricted-extras；"></a>安装ubuntu-restricted-extras；</h2><p>ubuntu-restricted-extras 是一个包含各种基本软件，如 Flash 插件、unrar、gstreamer、mp4、Ubuntu 中的 Chromium 浏览器的编解码器等的软件包。</p>
-<p>Ubuntu提供了一个软件包来安装所有基本的媒体编解码器：ubuntu-restricted-extras。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install ubuntu-restricted-extras</span><br></pre></td></tr></table></figure>
+    <title>Hello World</title>
+    <url>/archives/4a17b156.html</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
 
-<h1 id="安装Google-Chrome："><a href="#安装Google-Chrome：" class="headerlink" title="安装Google Chrome："></a>安装Google Chrome：</h1><p>直接使用Google浏览器也可以解决上述问题。</p>
-<h2 id="1-下载谷歌浏览器"><a href="#1-下载谷歌浏览器" class="headerlink" title="1.下载谷歌浏览器"></a>1.下载谷歌浏览器</h2><p>下载最新的谷歌浏览器。带wget的deb包：</p>
-<p>wget <a href="https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb">https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb</a></p>
-<h2 id="2-安装谷歌浏览器"><a href="#2-安装谷歌浏览器" class="headerlink" title="2.安装谷歌浏览器"></a>2.安装谷歌浏览器</h2><p>在Ubuntu上安装软件包需要sudo权限。确保以具有sudo权限的用户身份运行以下命令。</p>
-<p>安装谷歌浏览器。通过键入以下内容</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
 
-<p>安装deb包：<br>下载好deb包后，输入</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./“安装包名”</span><br></pre></td></tr></table></figure>
-<p>如上文所示</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 
-<h1 id="输入法软件："><a href="#输入法软件：" class="headerlink" title="输入法软件："></a>输入法软件：</h1><h2 id="搜狗输入法："><a href="#搜狗输入法：" class="headerlink" title="搜狗输入法："></a>搜狗输入法：</h2><p>搜狗输入法Linux官网-首页</p>
-<h3 id="1、添加中文语言支持"><a href="#1、添加中文语言支持" class="headerlink" title="1、添加中文语言支持"></a>1、添加中文语言支持</h3><p>打开 系统设置——区域和语言——管理已安装的语言——在“语言”tab下——点击“添加或删除语言”<br><img src="https://pic1.zhimg.com/80/v2-b248e5b921fa3cde2c018dbb74a09a68_720w.jpg"><br>弹出“已安装语言”窗口，勾选中文（简体），点击应用<br><img src="https://pic2.zhimg.com/80/v2-9784e564cfb3f4d55a89b0a9b459e7b5_720w.jpg"><br>回到“语言支持”窗口，在键盘输入法系统中，选择“fcitx”<br><img src="https://pic3.zhimg.com/80/v2-6ac417d2e68d2a9ab99b17f034fd3742_720w.jpg"></p>
-<p>如果在键盘输入法系统中，没有“fcitx”选项时，建议先打开终端手动安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">fcitx：sudo apt-get install fcitx</span><br></pre></td></tr></table></figure>
-<p>等安装成功之后再执行上述步骤</p>
-<p>点击“应用到整个系统”，关闭窗口，重启电脑</p>
-<h3 id="2-通过命令行安装搜狗输入法"><a href="#2-通过命令行安装搜狗输入法" class="headerlink" title="2.通过命令行安装搜狗输入法"></a>2.通过命令行安装搜狗输入法</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i sogoupinyin_版本号_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果安装过程中提示缺少相关依赖，则执行如下命令解决：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt -f install</span><br></pre></td></tr></table></figure>
-<h3 id="3-注销计算机即可正常使用搜狗输入法。"><a href="#3-注销计算机即可正常使用搜狗输入法。" class="headerlink" title="3.注销计算机即可正常使用搜狗输入法。"></a>3.注销计算机即可正常使用搜狗输入法。</h3><h1 id="文档软件："><a href="#文档软件：" class="headerlink" title="文档软件："></a>文档软件：</h1><h2 id="Wps："><a href="#Wps：" class="headerlink" title="Wps："></a>Wps：</h2><p>WPS Office因酷似微软 Office 而广受欢迎。它的界面与微软 Office 几乎一样并且号称与微软 Office 更加兼容。<br><a href="https://www.wps.cn/product/wpslinux">https://www.wps.cn/product/wpslinux</a></p>
-<h2 id="LibreOffice："><a href="#LibreOffice：" class="headerlink" title="LibreOffice："></a>LibreOffice：</h2><p>它是个组件完整的办公软件，包括文档编辑器、电子表格工具、演示软件、数学工具和作图工具。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libreoffice libreoffice-style-breeze</span><br></pre></td></tr></table></figure>
-<h1 id="音乐软件："><a href="#音乐软件：" class="headerlink" title="音乐软件："></a>音乐软件：</h1><h2 id="网易云："><a href="#网易云：" class="headerlink" title="网易云："></a>网易云：</h2><p><a href="https://music.163.com/#/download">https://music.163.com/#/download</a></p>
-<h1 id="聊天软件："><a href="#聊天软件：" class="headerlink" title="聊天软件："></a>聊天软件：</h1><h2 id="QQ："><a href="#QQ：" class="headerlink" title="QQ："></a>QQ：</h2><p><a href="https://im.qq.com/linuxqq/download.html">https://im.qq.com/linuxqq/download.html</a></p>
-<h1 id="其他一些常用软件安装与使用："><a href="#其他一些常用软件安装与使用：" class="headerlink" title="其他一些常用软件安装与使用："></a>其他一些常用软件安装与使用：</h1><h2 id="VNC的使用及常见问题："><a href="#VNC的使用及常见问题：" class="headerlink" title="VNC的使用及常见问题："></a>VNC的使用及常见问题：</h2><h3 id="启动VNC"><a href="#启动VNC" class="headerlink" title="启动VNC"></a>启动VNC</h3><p>设置里打开共享<br><img src="https://pic3.zhimg.com/80/v2-bdad4403c861b8070edf35e06abc3f0a_720w.jpg"><br>设置密码并打开选项<br><img src="https://pic2.zhimg.com/80/v2-fe2ab52e283125190f7d46422d01d1a9_720w.jpg"><br>如果没有屏幕共享选项</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install dconf-editor</span><br></pre></td></tr></table></figure>
-<p>或者，如果尚未安装 vino，请同时执行以下操作：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install vino dconf-editor</span><br></pre></td></tr></table></figure>
-<p>打开dconf-editor工具，终端输入 dconf-editor打开</p>
-<p>打开之后，依次展开org-&gt;gnome-&gt;desktop-&gt;remote-access<br><img src="https://pic2.zhimg.com/80/v2-863b0116f3f2f976dda4a8c19f281259_720w.jpg"><br>打开相关选项即可。</p>
-<h3 id="如果无法连接VNC服务端"><a href="#如果无法连接VNC服务端" class="headerlink" title="如果无法连接VNC服务端"></a>如果无法连接VNC服务端</h3><p>报错信息如下：</p>
-<p>Unable to connect to VNC Server using your chosen security setting. Either upgrade VNC Server to a more recent version from RealVNC, or select a weaker level of encryption</p>
-<p>解决办法</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gsettings <span class="built_in">set</span> org.gnome.Vino require-encryption <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-<h2 id="SSR："><a href="#SSR：" class="headerlink" title="SSR："></a>SSR：</h2><p>科学上网工具，下载地址：<br><a href="https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb">https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb</a></p>
-<h2 id="GDebi："><a href="#GDebi：" class="headerlink" title="GDebi："></a>GDebi：</h2><p>Gedbi 是一款小巧的软件包管理器，你可以用它来安装 DEB 文件。它比软件中心更快，而且还能处理依赖问题。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gdebi</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 
-<h2 id="Visual-Studio-Code："><a href="#Visual-Studio-Code：" class="headerlink" title="Visual Studio Code："></a>Visual Studio Code：</h2><p><a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a></p>
-<h2 id="Steam："><a href="#Steam：" class="headerlink" title="Steam："></a>Steam：</h2><p><a href="https://store.steampowered.com/about/">https://store.steampowered.com/about/</a></p>
-<h2 id="误删一些安装包导致无法打开系统设置："><a href="#误删一些安装包导致无法打开系统设置：" class="headerlink" title="误删一些安装包导致无法打开系统设置："></a>误删一些安装包导致无法打开系统设置：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gnome-control-center</span><br></pre></td></tr></table></figure>
-
-<h1 id="个人的一些感想："><a href="#个人的一些感想：" class="headerlink" title="个人的一些感想："></a>个人的一些感想：</h1><p>经过几天的使用，我发现Ubuntu在配置好环境后，日常体验还是相当不错的。</p>
-<h2 id="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"><a href="#但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。" class="headerlink" title="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"></a>但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。</h2><p>（2022&#x2F;5&#x2F;12 补充回答）</p>
-<p>因为之前的回答写得过于笼统，我决定补充一下回答。</p>
-<p>首先讲讲为什么都2022年了，Ubuntu22.04都出了，为什么我还在使用Ubuntu18.04，原因也很简单，因为我使用Ubuntu的首要目标是搭建开发环境，而日常使用是其次的，使用18.04也只是因为环境搭建起来比较容易而已。这次没能用上Ubuntu22.04的新桌面GNOME 42，我觉得还是挺遗憾的。</p>
-<p>再来讲讲我自己Linux的使用经历吧，我的Linux使用经验比较浅薄，我在19年年底才开始接触Linux，当时使用的是树莓派4B开发板，系统是Raspberry Pi OS，而我电脑上则是使用WSL，Ubuntu16.04版本。刚开始学习的时候，我算是完完全全的小白，只是知道Linux这么一个东西的存在，很难理解一个黑色的框框（终端）是操作系统。经过一段时间的学习后才算是明白了各种基本命令行的用法。后来在学校的机房里接触到CentOS8和RedHat，自己也出于好奇在虚拟机上跑Kali，学习关于网络的一些东西，但是也没有想过日常去使用这些Linux发行版。其实树莓派系统是有桌面的，但我平时都是用vscode+ssh去开发，所以也没什么接触Linux桌面的机会。可以说在这个假期前，我对Linux桌面的接触接近于0。</p>
-<p>经过这次假期短暂的使用后，接下来再讲讲我的小结，Linux确实可以应付所有的“日常使用”场景的，但在我看来更适合于开发。Linux的使用是有门槛的，即使拥有了桌面，离开了命令行界面（CLI），Linux上的很多操作都寸步难行。虽然我觉得CLI用起来很帅，很高效，但对于以日常使用为目的而不是开发的小白用户来说，CLI便是使用Linux的难点之一。反观Windows出色的图形用户界面（GUI），操作方便直观且学习成本低，在日常使用中普通用户一般也不需要使用到cmd和powershell。我举个不太恰当的例子，Linux发行版就像毛坯房需要自己去动手装修，桌面也只是给了一个基本的框架，自由度高，可以各种自定义各种魔改，比较适合动手能力强爱折腾的用户，而Windows就像已经装修好的样本房，即买即住，适合图省心的用户。（那么如果有一个上手简便，不需要CLI即可操作并且桌面功能完善的发行版一定会受到用户的欢迎吧）</p>
-<p>在软件方面，适配Linux的软件也是远少于Windows，如经典的office全家桶，各类工程软件以及常用软件。Linux下的游戏还是比较匮乏的，数量上远少于Windows。显卡驱动也是Linux的使用难点之一，而最近英伟达已经开源 Linux GPU 内核驱动了，未来可期。希望软件和游戏厂商以后能给Linux做更多的适配吧。</p>
-<p>还有一个问题就是国内特殊的网络环境以及中文互联网资料比较贫瘠，我寻找到的很多资料都已经是过时无效的了，使用好相关论坛可以节省掉不少的时间。</p>
-<p>相比Windows下泛滥的各式流氓软件，Linux则不需要担心这个问题，并且更为干净安全可靠，也没有像微软那样三天两头就更新的各式补丁。</p>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>单片机和嵌入式系统的区别</title>
+    <url>/archives/cc4d518f.html</url>
+    <content><![CDATA[<h1 id="单片机和嵌入式系统的区别"><a href="#单片机和嵌入式系统的区别" class="headerlink" title="单片机和嵌入式系统的区别"></a>单片机和嵌入式系统的区别</h1><p>嵌入式和单片机并不是一对相对的概念，嵌入式系统包括硬件和软件部分，而单片机是单片微型计算机(Single Chip Microcomputer )的简称，即微控制单元(Microcontroller Unit；MCU) 。单片机可以是嵌入式系统的组成部分。我们可以理解为嵌入式系统是一个大类，单片机是其中一个重要的子类。</p>
+<h1 id="什么是单片机？"><a href="#什么是单片机？" class="headerlink" title="什么是单片机？"></a>什么是单片机？</h1><p>单片机又称单片微控制器，它是将电子计算机的基本环节,如:中央处理器(又称中央处理器,主要由运算器,控制器组成),存储器,总线,输入输出接口等,采用集成电路技术集成在一片硅基片上.由于单片计算机体积很小(仅手指般大小),功能强(具有一个简单计算机的功能)。</p>
+<h1 id="什么是嵌入式系统？"><a href="#什么是嵌入式系统？" class="headerlink" title="什么是嵌入式系统？"></a>什么是嵌入式系统？</h1><p>嵌入式系统是基于微处理器的计算机硬件系统，其软件设计用于执行专用功能，既可以作为独立系统，也可以作为大型系统的一部分。其核心是一个集成电路，旨在为实时操作执行计算。其软件内容只包括软件运行环境及其操作系统。硬件内容包括信号处理器、存储器、通信模块等在内的多方面的内容。</p>
+<p>复杂性从单个微控制器到具有连接外围设备和网络的一套处理器；从无用户界面到复杂的图形用户界面。嵌入式系统的复杂性因设计任务而异。</p>
+<p>嵌入式系统应用范围从数字手表和微波到混合动力汽车和航空电子设备。多达 98% 的制造的微处理器用于嵌入式系统。</p>
+<p>嵌入式系统如何工作？</p>
+<p>嵌入式系统由微控制器或数字信号处理器 (DSP)、专用集成电路 (ASIC)、现场可编程门阵列 (FPGA)、GPU 技术和门阵列管理。这些处理系统与专用于处理电气和&#x2F;或机械接口的组件集成在一起。</p>
+<p>嵌入式系统编程指令，称为固件，存储在只读存储器或闪存芯片中，以有限的计算机硬件资源运行。嵌入式系统通过外围设备与外部世界连接，连接输入和输出设备。</p>
+<p>嵌入式系统的基本结构</p>
+<p><img src="https://pic3.zhimg.com/80/v2-510f561d07185b9ac8ce873cfa42d79e_720w.jpg" alt="嵌入式系统的基本结构"><br>嵌入式系统的基本结构包括以下组件：</p>
+<p>传感器：传感器测量物理量并将其转换为电信号，然后可以由嵌入式系统工程师或任何电子仪器读取。传感器将测量的量存储到存储器中。</p>
+<p>AD转换器：模数转换器将传感器发送的模拟信号转换为数字信号。<br>处理器和 ASIC：处理器评估数据以测量输出并将其存储到内存中。</p>
+<p>DA 转换器：数模转换器将处理器提供的数字数据转换为模拟数据</p>
+<p>执行器：执行器将 DA 转换器给出的输出与存储的实际输出进行比较，并存储批准的输出。</p>
+<p>以常见的几种嵌入式开发板和单片机为例子</p>
+<p>树莓派4B：<br><img src="https://pic3.zhimg.com/80/v2-e4113649f5c864c848977651efe67fde_720w.jpg" alt="树莓派4B"><br>Broadcom BCM2711, Quad core Cortex-A72 (ARM v8) 64-bit SoC @ 1.5GHz</p>
+<p>Raspberry Pi(中文名为“树莓派”,简写为RPi，(或者RasPi &#x2F; RPI) 是为学习计算机编程教育而设计)，只有信用卡大小的微型电脑，其系统基于Linux。</p>
+<p>可以将树莓派理解为一台微型电脑，它与我们平时使用的电脑近乎相同。</p>
+<p>Arduino：<br><img src="https://pic2.zhimg.com/80/v2-296df3f5f79f05cf00f9d1219ed160ed_720w.jpg" alt="Arduino"><br>AVR单片机、ARM芯片</p>
+<p>Arduino是一款便捷灵活、方便上手的开源电子原型平台。</p>
+<p>它构建于开放原始码simple I&#x2F;O介面版，并且具有使用类似Java、C语言的Processing&#x2F;Wiring开发环境。主要包含两个的部分：硬件部分是可以用来做电路连接的Arduino电路板；另外一个则是Arduino IDE，你的计算机中的程序开发环境。只要在IDE中编写程序代码，将程序上传到Arduino电路板后，程序会告诉Arduino电路板要做什么。</p>
+<p>简单来说，arduino是对单片机的二次封装。</p>
+<p>Stm32:<br><img src="https://pic1.zhimg.com/80/v2-66dc8e061c98669e0bf291326dbef7b4_720w.jpg" alt="stm32"><br>ARM Cortex-M内核单片机</p>
+<p>stm32全称是意法半导体32位系列微控制器芯片。STM32系列专为要求高性能、低成本、低功耗的嵌入式应用设计的ARM Cortex®-M0，M0+，M3, M4和M7内核。</p>
+<p>主流产品（STM32F0、STM32F1、STM32F3）、超低功耗产品（STM32L0、STM32L1、STM32L4、STM32L4+）、高性能产品（STM32F2、STM32F4、STM32F7、STM32H7）</p>
+<p>51单片机：<br><img src="https://pic1.zhimg.com/80/v2-5f93514b9dbe056edf726476e000a680_720w.jpg" alt="51单片机"><br>51单片机是对兼容英特尔8051指令系统的单片机的统称</p>
+<p>51单片机广泛应用于家用电器、汽车、工业测控、通信设备中。因为51单片机的指令系统、内部结构相对简单，所以国内许多高校用其进行单片机入门教学。</p>
+<p>51单片机是Intel在1981年推出的由8031微控制器芯片改造升级的、使用CISC指令集的、冯诺依曼架构的、8位的8051微控制器。后Intel将8051微控制器的内核授权给其他芯片厂商,使得市面上广泛出现类似于8051的芯片,这种采用8051内核的芯片被简称为51。</p>
+<p>从上述例子中我们能直观地看到这些开发板和单片机所使用处理器的不同，但是树莓派、Arduino、stm32和我们日常使用的手机均是使用arm架构的处理器，那么手机算单片机吗？</p>
+<p>要回答这个问题，首先要简单介绍一下ARM处理器产品线。</p>
+<p>ARM Cortex内核系列提供非常广泛的具有可扩展性的性能选项，设计人员有机会在多种选项中选择最适合自身应用的内核。Cortex系列组合大体上分为三种类别：</p>
+<p>● Cortex-A—面向性能密集型系统的应用处理器内核</p>
+<p>● Cortex-R—面向实时应用的高性能内核</p>
+<p>● Cortex-M—面向各类嵌入式应用的微控制器内核</p>
+<p><img src="https://pic2.zhimg.com/80/v2-f85640d3f7901185a13f066da1a9b191_720w.jpg" alt="处理器家族"><br>Cortex-A处理器为利用操作系统（例如Linux或者Android）的设备提供了一系列解决方案，这些设备被用于各类应用，从低成本手持设备到智能手机、平板电脑、机顶盒以及企业网络设备等。</p>
+<p>Cortex-R实时处理器为要求可靠性、高可用性、容错功能、可维护性和实时响应的嵌入式系统提供高性能计算解决方案。在数以亿计的产品中得到验证的成熟技术提供极快的上市速度，并利用广泛的 ARM 生态系统、全球和本地语言以及全天候的支持服务，保证快速、低风险的产品开发。</p>
+<p>Cortex-M系列基于ARMv7-M架构（用于Cortex-M3和Cortex-M4）构建，针对成本和功耗敏感的MCU和终端应用（如智能测量、人机接口设备、汽车和工业控制系统、大型家用电器、消费性产品和医疗器械）的混合信号设备进行过优化。</p>
+<p>总结： Cortex-M 系列是MCU，也就是单片机，Cortex-R 系列处理器提供的性能比 Cortex-M 系列提供的性能高得多，而 Cortex-A 系列专用于具有复杂软件操作系统（需使用虚拟内存管理）的面向用户的应用。</p>
+<p>综上所述，只有Cortex-A系列内核的芯片叫处理器。而上述的开发板和单片机只有Raspberry Pi以及我们日常使用的手机是Cortex-A系列内核的芯片。</p>
+<p>单片机和嵌入式系统的结构</p>
+<p>单片机： 软件 —— 硬件<br>嵌入式系统： 软件 ——操作系统——硬件</p>
+<p>有无操作系统的区别</p>
+<p>有操作系统可以实现多任务调度、文件系统、内存管理等复杂功能。</p>
+<p>当系统中存在操作系统的时候，设备驱动变成了连接硬件和内核的桥梁。开发者调用统一的系统调用接口来访问各种设备，方便开发。提供操作方便、简单、提供友好的图形GUI和图形界面，追求易学易用。并且可以使用大量开源的软件，工具，库。</p>
+<p>提供强大的网络功能，支持TCP&#x2F;IP协议及其他协议，提供TCP&#x2F;UDP&#x2F;IP&#x2F;PPP协议支持及统一的MAC访问层接口，为各种移动计算设备预留接口。可以实现远程控制。</p>
+<p>拥有良好的软件移植性，嵌入式系统和具体应用有机地结合在一起，升级换代也是和具体产品同步进行，具有较长的生命周期。</p>
+<p>而对于无操作系统的单片机而言，可以实现的功能相对单一。开发者必须要先了解这个硬件平台，才能进行软件编程，降低了开发效率且软件移植性差。</p>
+<p>单片机的优势</p>
+<p>从上文所述的种种优缺点来看，单片机对比嵌入式系统似乎一无是处，尽管嵌入式系统的性能强大且可实现功能众多，但嵌入式最大的劣势便是其高昂的价格。</p>
+<p>单片机价格低廉，结构简单，使用方便，实现模块化，单片机可靠性高，可工作到10^6 ~10^7小时无故障，处理功能强，速度快。低电压，低功耗，控制功能强，环境适应能力强。</p>
 ]]></content>
       <tags>
         <tag>Linux</tag>
-        <tag>Ubuntu</tag>
+        <tag>嵌入式</tag>
+        <tag>单片机</tag>
       </tags>
   </entry>
   <entry>
@@ -300,63 +286,77 @@
       </tags>
   </entry>
   <entry>
-    <title>单片机和嵌入式系统的区别</title>
-    <url>/archives/cc4d518f.html</url>
-    <content><![CDATA[<h1 id="单片机和嵌入式系统的区别"><a href="#单片机和嵌入式系统的区别" class="headerlink" title="单片机和嵌入式系统的区别"></a>单片机和嵌入式系统的区别</h1><p>嵌入式和单片机并不是一对相对的概念，嵌入式系统包括硬件和软件部分，而单片机是单片微型计算机(Single Chip Microcomputer )的简称，即微控制单元(Microcontroller Unit；MCU) 。单片机可以是嵌入式系统的组成部分。我们可以理解为嵌入式系统是一个大类，单片机是其中一个重要的子类。</p>
-<h1 id="什么是单片机？"><a href="#什么是单片机？" class="headerlink" title="什么是单片机？"></a>什么是单片机？</h1><p>单片机又称单片微控制器，它是将电子计算机的基本环节,如:中央处理器(又称中央处理器,主要由运算器,控制器组成),存储器,总线,输入输出接口等,采用集成电路技术集成在一片硅基片上.由于单片计算机体积很小(仅手指般大小),功能强(具有一个简单计算机的功能)。</p>
-<h1 id="什么是嵌入式系统？"><a href="#什么是嵌入式系统？" class="headerlink" title="什么是嵌入式系统？"></a>什么是嵌入式系统？</h1><p>嵌入式系统是基于微处理器的计算机硬件系统，其软件设计用于执行专用功能，既可以作为独立系统，也可以作为大型系统的一部分。其核心是一个集成电路，旨在为实时操作执行计算。其软件内容只包括软件运行环境及其操作系统。硬件内容包括信号处理器、存储器、通信模块等在内的多方面的内容。</p>
-<p>复杂性从单个微控制器到具有连接外围设备和网络的一套处理器；从无用户界面到复杂的图形用户界面。嵌入式系统的复杂性因设计任务而异。</p>
-<p>嵌入式系统应用范围从数字手表和微波到混合动力汽车和航空电子设备。多达 98% 的制造的微处理器用于嵌入式系统。</p>
-<p>嵌入式系统如何工作？</p>
-<p>嵌入式系统由微控制器或数字信号处理器 (DSP)、专用集成电路 (ASIC)、现场可编程门阵列 (FPGA)、GPU 技术和门阵列管理。这些处理系统与专用于处理电气和&#x2F;或机械接口的组件集成在一起。</p>
-<p>嵌入式系统编程指令，称为固件，存储在只读存储器或闪存芯片中，以有限的计算机硬件资源运行。嵌入式系统通过外围设备与外部世界连接，连接输入和输出设备。</p>
-<p>嵌入式系统的基本结构</p>
-<p><img src="https://pic3.zhimg.com/80/v2-510f561d07185b9ac8ce873cfa42d79e_720w.jpg" alt="嵌入式系统的基本结构"><br>嵌入式系统的基本结构包括以下组件：</p>
-<p>传感器：传感器测量物理量并将其转换为电信号，然后可以由嵌入式系统工程师或任何电子仪器读取。传感器将测量的量存储到存储器中。</p>
-<p>AD转换器：模数转换器将传感器发送的模拟信号转换为数字信号。<br>处理器和 ASIC：处理器评估数据以测量输出并将其存储到内存中。</p>
-<p>DA 转换器：数模转换器将处理器提供的数字数据转换为模拟数据</p>
-<p>执行器：执行器将 DA 转换器给出的输出与存储的实际输出进行比较，并存储批准的输出。</p>
-<p>以常见的几种嵌入式开发板和单片机为例子</p>
-<p>树莓派4B：<br><img src="https://pic3.zhimg.com/80/v2-e4113649f5c864c848977651efe67fde_720w.jpg" alt="树莓派4B"><br>Broadcom BCM2711, Quad core Cortex-A72 (ARM v8) 64-bit SoC @ 1.5GHz</p>
-<p>Raspberry Pi(中文名为“树莓派”,简写为RPi，(或者RasPi &#x2F; RPI) 是为学习计算机编程教育而设计)，只有信用卡大小的微型电脑，其系统基于Linux。</p>
-<p>可以将树莓派理解为一台微型电脑，它与我们平时使用的电脑近乎相同。</p>
-<p>Arduino：<br><img src="https://pic2.zhimg.com/80/v2-296df3f5f79f05cf00f9d1219ed160ed_720w.jpg" alt="Arduino"><br>AVR单片机、ARM芯片</p>
-<p>Arduino是一款便捷灵活、方便上手的开源电子原型平台。</p>
-<p>它构建于开放原始码simple I&#x2F;O介面版，并且具有使用类似Java、C语言的Processing&#x2F;Wiring开发环境。主要包含两个的部分：硬件部分是可以用来做电路连接的Arduino电路板；另外一个则是Arduino IDE，你的计算机中的程序开发环境。只要在IDE中编写程序代码，将程序上传到Arduino电路板后，程序会告诉Arduino电路板要做什么。</p>
-<p>简单来说，arduino是对单片机的二次封装。</p>
-<p>Stm32:<br><img src="https://pic1.zhimg.com/80/v2-66dc8e061c98669e0bf291326dbef7b4_720w.jpg" alt="stm32"><br>ARM Cortex-M内核单片机</p>
-<p>stm32全称是意法半导体32位系列微控制器芯片。STM32系列专为要求高性能、低成本、低功耗的嵌入式应用设计的ARM Cortex®-M0，M0+，M3, M4和M7内核。</p>
-<p>主流产品（STM32F0、STM32F1、STM32F3）、超低功耗产品（STM32L0、STM32L1、STM32L4、STM32L4+）、高性能产品（STM32F2、STM32F4、STM32F7、STM32H7）</p>
-<p>51单片机：<br><img src="https://pic1.zhimg.com/80/v2-5f93514b9dbe056edf726476e000a680_720w.jpg" alt="51单片机"><br>51单片机是对兼容英特尔8051指令系统的单片机的统称</p>
-<p>51单片机广泛应用于家用电器、汽车、工业测控、通信设备中。因为51单片机的指令系统、内部结构相对简单，所以国内许多高校用其进行单片机入门教学。</p>
-<p>51单片机是Intel在1981年推出的由8031微控制器芯片改造升级的、使用CISC指令集的、冯诺依曼架构的、8位的8051微控制器。后Intel将8051微控制器的内核授权给其他芯片厂商,使得市面上广泛出现类似于8051的芯片,这种采用8051内核的芯片被简称为51。</p>
-<p>从上述例子中我们能直观地看到这些开发板和单片机所使用处理器的不同，但是树莓派、Arduino、stm32和我们日常使用的手机均是使用arm架构的处理器，那么手机算单片机吗？</p>
-<p>要回答这个问题，首先要简单介绍一下ARM处理器产品线。</p>
-<p>ARM Cortex内核系列提供非常广泛的具有可扩展性的性能选项，设计人员有机会在多种选项中选择最适合自身应用的内核。Cortex系列组合大体上分为三种类别：</p>
-<p>● Cortex-A—面向性能密集型系统的应用处理器内核</p>
-<p>● Cortex-R—面向实时应用的高性能内核</p>
-<p>● Cortex-M—面向各类嵌入式应用的微控制器内核</p>
-<p><img src="https://pic2.zhimg.com/80/v2-f85640d3f7901185a13f066da1a9b191_720w.jpg" alt="处理器家族"><br>Cortex-A处理器为利用操作系统（例如Linux或者Android）的设备提供了一系列解决方案，这些设备被用于各类应用，从低成本手持设备到智能手机、平板电脑、机顶盒以及企业网络设备等。</p>
-<p>Cortex-R实时处理器为要求可靠性、高可用性、容错功能、可维护性和实时响应的嵌入式系统提供高性能计算解决方案。在数以亿计的产品中得到验证的成熟技术提供极快的上市速度，并利用广泛的 ARM 生态系统、全球和本地语言以及全天候的支持服务，保证快速、低风险的产品开发。</p>
-<p>Cortex-M系列基于ARMv7-M架构（用于Cortex-M3和Cortex-M4）构建，针对成本和功耗敏感的MCU和终端应用（如智能测量、人机接口设备、汽车和工业控制系统、大型家用电器、消费性产品和医疗器械）的混合信号设备进行过优化。</p>
-<p>总结： Cortex-M 系列是MCU，也就是单片机，Cortex-R 系列处理器提供的性能比 Cortex-M 系列提供的性能高得多，而 Cortex-A 系列专用于具有复杂软件操作系统（需使用虚拟内存管理）的面向用户的应用。</p>
-<p>综上所述，只有Cortex-A系列内核的芯片叫处理器。而上述的开发板和单片机只有Raspberry Pi以及我们日常使用的手机是Cortex-A系列内核的芯片。</p>
-<p>单片机和嵌入式系统的结构</p>
-<p>单片机： 软件 —— 硬件<br>嵌入式系统： 软件 ——操作系统——硬件</p>
-<p>有无操作系统的区别</p>
-<p>有操作系统可以实现多任务调度、文件系统、内存管理等复杂功能。</p>
-<p>当系统中存在操作系统的时候，设备驱动变成了连接硬件和内核的桥梁。开发者调用统一的系统调用接口来访问各种设备，方便开发。提供操作方便、简单、提供友好的图形GUI和图形界面，追求易学易用。并且可以使用大量开源的软件，工具，库。</p>
-<p>提供强大的网络功能，支持TCP&#x2F;IP协议及其他协议，提供TCP&#x2F;UDP&#x2F;IP&#x2F;PPP协议支持及统一的MAC访问层接口，为各种移动计算设备预留接口。可以实现远程控制。</p>
-<p>拥有良好的软件移植性，嵌入式系统和具体应用有机地结合在一起，升级换代也是和具体产品同步进行，具有较长的生命周期。</p>
-<p>而对于无操作系统的单片机而言，可以实现的功能相对单一。开发者必须要先了解这个硬件平台，才能进行软件编程，降低了开发效率且软件移植性差。</p>
-<p>单片机的优势</p>
-<p>从上文所述的种种优缺点来看，单片机对比嵌入式系统似乎一无是处，尽管嵌入式系统的性能强大且可实现功能众多，但嵌入式最大的劣势便是其高昂的价格。</p>
-<p>单片机价格低廉，结构简单，使用方便，实现模块化，单片机可靠性高，可工作到10^6 ~10^7小时无故障，处理功能强，速度快。低电压，低功耗，控制功能强，环境适应能力强。</p>
+    <title>日常使用Linux系统是什么体验？</title>
+    <url>/archives/a1e2b7b3.html</url>
+    <content><![CDATA[<p>趁着五一小假期，我尝试了去使用Linux作为日常使用的操作系统，这个过程中也是踩了不少的坑，所以想写一篇文章分享一下。</p>
+<p>我个人使用过Kail、CentOS7、Ubuntu16.04、Windows Subsystem for Linux（WSL）作为开发环境，我个人更喜欢Debian Style (.deb)包管理系统，所以最终选择了使用Ubuntu18.04 LTS，打算在开发之余日常使用，满足听音乐，写文档，看看视频等需求。</p>
+<h1 id="Ubuntu的优缺点："><a href="#Ubuntu的优缺点：" class="headerlink" title="Ubuntu的优缺点："></a>Ubuntu的优缺点：</h1><p><img src="https://pic3.zhimg.com/80/v2-c394ee5ef8e79d2c1ee12b659d08ec32_720w.jpg"></p>
+<h1 id="安装Flash插件"><a href="#安装Flash插件" class="headerlink" title="安装Flash插件"></a>安装Flash插件</h1><p>使用Firefox 浏览器时，B站无法播放视频，提示需要下载Flash插件；<br><img src="https://pic1.zhimg.com/80/v2-1b63342350894d7b71807cdb3e57a2fc_720w.jpg"><br>点击页面跳转后却提示现在Adobe官网已经不再提供flash下载；</p>
+<p>（由于 Adobe 在 2020 年 12 月 31 日之后不再支持 Flash Player，并且从 2021 年 1 月12 日开始阻止 Flash 内容在 Flash Player 中运行，因此 Adobe 强烈建议所有用户立即卸载 Flash Player 以帮助保护其系统。）<br><img src="https://pic1.zhimg.com/v2-a372fc674dc8c7eb9ef4e9318e474dc0_r.jpg"></p>
+<p>解决办法是通过终端安装flash插件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install flashplugin-installer</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<h2 id="安装ubuntu-restricted-extras；"><a href="#安装ubuntu-restricted-extras；" class="headerlink" title="安装ubuntu-restricted-extras；"></a>安装ubuntu-restricted-extras；</h2><p>ubuntu-restricted-extras 是一个包含各种基本软件，如 Flash 插件、unrar、gstreamer、mp4、Ubuntu 中的 Chromium 浏览器的编解码器等的软件包。</p>
+<p>Ubuntu提供了一个软件包来安装所有基本的媒体编解码器：ubuntu-restricted-extras。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install ubuntu-restricted-extras</span><br></pre></td></tr></table></figure>
+
+<h1 id="安装Google-Chrome："><a href="#安装Google-Chrome：" class="headerlink" title="安装Google Chrome："></a>安装Google Chrome：</h1><p>直接使用Google浏览器也可以解决上述问题。</p>
+<h2 id="1-下载谷歌浏览器"><a href="#1-下载谷歌浏览器" class="headerlink" title="1.下载谷歌浏览器"></a>1.下载谷歌浏览器</h2><p>下载最新的谷歌浏览器。带wget的deb包：</p>
+<p>wget <a href="https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb">https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb</a></p>
+<h2 id="2-安装谷歌浏览器"><a href="#2-安装谷歌浏览器" class="headerlink" title="2.安装谷歌浏览器"></a>2.安装谷歌浏览器</h2><p>在Ubuntu上安装软件包需要sudo权限。确保以具有sudo权限的用户身份运行以下命令。</p>
+<p>安装谷歌浏览器。通过键入以下内容</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+
+<p>安装deb包：<br>下载好deb包后，输入</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./“安装包名”</span><br></pre></td></tr></table></figure>
+<p>如上文所示</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+
+<h1 id="输入法软件："><a href="#输入法软件：" class="headerlink" title="输入法软件："></a>输入法软件：</h1><h2 id="搜狗输入法："><a href="#搜狗输入法：" class="headerlink" title="搜狗输入法："></a>搜狗输入法：</h2><p>搜狗输入法Linux官网-首页</p>
+<h3 id="1、添加中文语言支持"><a href="#1、添加中文语言支持" class="headerlink" title="1、添加中文语言支持"></a>1、添加中文语言支持</h3><p>打开 系统设置——区域和语言——管理已安装的语言——在“语言”tab下——点击“添加或删除语言”<br><img src="https://pic1.zhimg.com/80/v2-b248e5b921fa3cde2c018dbb74a09a68_720w.jpg"><br>弹出“已安装语言”窗口，勾选中文（简体），点击应用<br><img src="https://pic2.zhimg.com/80/v2-9784e564cfb3f4d55a89b0a9b459e7b5_720w.jpg"><br>回到“语言支持”窗口，在键盘输入法系统中，选择“fcitx”<br><img src="https://pic3.zhimg.com/80/v2-6ac417d2e68d2a9ab99b17f034fd3742_720w.jpg"></p>
+<p>如果在键盘输入法系统中，没有“fcitx”选项时，建议先打开终端手动安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">fcitx：sudo apt-get install fcitx</span><br></pre></td></tr></table></figure>
+<p>等安装成功之后再执行上述步骤</p>
+<p>点击“应用到整个系统”，关闭窗口，重启电脑</p>
+<h3 id="2-通过命令行安装搜狗输入法"><a href="#2-通过命令行安装搜狗输入法" class="headerlink" title="2.通过命令行安装搜狗输入法"></a>2.通过命令行安装搜狗输入法</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i sogoupinyin_版本号_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果安装过程中提示缺少相关依赖，则执行如下命令解决：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt -f install</span><br></pre></td></tr></table></figure>
+<h3 id="3-注销计算机即可正常使用搜狗输入法。"><a href="#3-注销计算机即可正常使用搜狗输入法。" class="headerlink" title="3.注销计算机即可正常使用搜狗输入法。"></a>3.注销计算机即可正常使用搜狗输入法。</h3><h1 id="文档软件："><a href="#文档软件：" class="headerlink" title="文档软件："></a>文档软件：</h1><h2 id="Wps："><a href="#Wps：" class="headerlink" title="Wps："></a>Wps：</h2><p>WPS Office因酷似微软 Office 而广受欢迎。它的界面与微软 Office 几乎一样并且号称与微软 Office 更加兼容。<br><a href="https://www.wps.cn/product/wpslinux">https://www.wps.cn/product/wpslinux</a></p>
+<h2 id="LibreOffice："><a href="#LibreOffice：" class="headerlink" title="LibreOffice："></a>LibreOffice：</h2><p>它是个组件完整的办公软件，包括文档编辑器、电子表格工具、演示软件、数学工具和作图工具。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libreoffice libreoffice-style-breeze</span><br></pre></td></tr></table></figure>
+<h1 id="音乐软件："><a href="#音乐软件：" class="headerlink" title="音乐软件："></a>音乐软件：</h1><h2 id="网易云："><a href="#网易云：" class="headerlink" title="网易云："></a>网易云：</h2><p><a href="https://music.163.com/#/download">https://music.163.com/#/download</a></p>
+<h1 id="聊天软件："><a href="#聊天软件：" class="headerlink" title="聊天软件："></a>聊天软件：</h1><h2 id="QQ："><a href="#QQ：" class="headerlink" title="QQ："></a>QQ：</h2><p><a href="https://im.qq.com/linuxqq/download.html">https://im.qq.com/linuxqq/download.html</a></p>
+<h1 id="其他一些常用软件安装与使用："><a href="#其他一些常用软件安装与使用：" class="headerlink" title="其他一些常用软件安装与使用："></a>其他一些常用软件安装与使用：</h1><h2 id="VNC的使用及常见问题："><a href="#VNC的使用及常见问题：" class="headerlink" title="VNC的使用及常见问题："></a>VNC的使用及常见问题：</h2><h3 id="启动VNC"><a href="#启动VNC" class="headerlink" title="启动VNC"></a>启动VNC</h3><p>设置里打开共享<br><img src="https://pic3.zhimg.com/80/v2-bdad4403c861b8070edf35e06abc3f0a_720w.jpg"><br>设置密码并打开选项<br><img src="https://pic2.zhimg.com/80/v2-fe2ab52e283125190f7d46422d01d1a9_720w.jpg"><br>如果没有屏幕共享选项</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install dconf-editor</span><br></pre></td></tr></table></figure>
+<p>或者，如果尚未安装 vino，请同时执行以下操作：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install vino dconf-editor</span><br></pre></td></tr></table></figure>
+<p>打开dconf-editor工具，终端输入 dconf-editor打开</p>
+<p>打开之后，依次展开org-&gt;gnome-&gt;desktop-&gt;remote-access<br><img src="https://pic2.zhimg.com/80/v2-863b0116f3f2f976dda4a8c19f281259_720w.jpg"><br>打开相关选项即可。</p>
+<h3 id="如果无法连接VNC服务端"><a href="#如果无法连接VNC服务端" class="headerlink" title="如果无法连接VNC服务端"></a>如果无法连接VNC服务端</h3><p>报错信息如下：</p>
+<p>Unable to connect to VNC Server using your chosen security setting. Either upgrade VNC Server to a more recent version from RealVNC, or select a weaker level of encryption</p>
+<p>解决办法</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gsettings <span class="built_in">set</span> org.gnome.Vino require-encryption <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<h2 id="SSR："><a href="#SSR：" class="headerlink" title="SSR："></a>SSR：</h2><p>科学上网工具，下载地址：<br><a href="https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb">https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb</a></p>
+<h2 id="GDebi："><a href="#GDebi：" class="headerlink" title="GDebi："></a>GDebi：</h2><p>Gedbi 是一款小巧的软件包管理器，你可以用它来安装 DEB 文件。它比软件中心更快，而且还能处理依赖问题。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gdebi</span><br></pre></td></tr></table></figure>
+
+<h2 id="Visual-Studio-Code："><a href="#Visual-Studio-Code：" class="headerlink" title="Visual Studio Code："></a>Visual Studio Code：</h2><p><a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a></p>
+<h2 id="Steam："><a href="#Steam：" class="headerlink" title="Steam："></a>Steam：</h2><p><a href="https://store.steampowered.com/about/">https://store.steampowered.com/about/</a></p>
+<h2 id="误删一些安装包导致无法打开系统设置："><a href="#误删一些安装包导致无法打开系统设置：" class="headerlink" title="误删一些安装包导致无法打开系统设置："></a>误删一些安装包导致无法打开系统设置：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gnome-control-center</span><br></pre></td></tr></table></figure>
+
+<h1 id="个人的一些感想："><a href="#个人的一些感想：" class="headerlink" title="个人的一些感想："></a>个人的一些感想：</h1><p>经过几天的使用，我发现Ubuntu在配置好环境后，日常体验还是相当不错的。</p>
+<h2 id="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"><a href="#但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。" class="headerlink" title="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"></a>但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。</h2><p>（2022&#x2F;5&#x2F;12 补充回答）</p>
+<p>因为之前的回答写得过于笼统，我决定补充一下回答。</p>
+<p>首先讲讲为什么都2022年了，Ubuntu22.04都出了，为什么我还在使用Ubuntu18.04，原因也很简单，因为我使用Ubuntu的首要目标是搭建开发环境，而日常使用是其次的，使用18.04也只是因为环境搭建起来比较容易而已。这次没能用上Ubuntu22.04的新桌面GNOME 42，我觉得还是挺遗憾的。</p>
+<p>再来讲讲我自己Linux的使用经历吧，我的Linux使用经验比较浅薄，我在19年年底才开始接触Linux，当时使用的是树莓派4B开发板，系统是Raspberry Pi OS，而我电脑上则是使用WSL，Ubuntu16.04版本。刚开始学习的时候，我算是完完全全的小白，只是知道Linux这么一个东西的存在，很难理解一个黑色的框框（终端）是操作系统。经过一段时间的学习后才算是明白了各种基本命令行的用法。后来在学校的机房里接触到CentOS8和RedHat，自己也出于好奇在虚拟机上跑Kali，学习关于网络的一些东西，但是也没有想过日常去使用这些Linux发行版。其实树莓派系统是有桌面的，但我平时都是用vscode+ssh去开发，所以也没什么接触Linux桌面的机会。可以说在这个假期前，我对Linux桌面的接触接近于0。</p>
+<p>经过这次假期短暂的使用后，接下来再讲讲我的小结，Linux确实可以应付所有的“日常使用”场景的，但在我看来更适合于开发。Linux的使用是有门槛的，即使拥有了桌面，离开了命令行界面（CLI），Linux上的很多操作都寸步难行。虽然我觉得CLI用起来很帅，很高效，但对于以日常使用为目的而不是开发的小白用户来说，CLI便是使用Linux的难点之一。反观Windows出色的图形用户界面（GUI），操作方便直观且学习成本低，在日常使用中普通用户一般也不需要使用到cmd和powershell。我举个不太恰当的例子，Linux发行版就像毛坯房需要自己去动手装修，桌面也只是给了一个基本的框架，自由度高，可以各种自定义各种魔改，比较适合动手能力强爱折腾的用户，而Windows就像已经装修好的样本房，即买即住，适合图省心的用户。（那么如果有一个上手简便，不需要CLI即可操作并且桌面功能完善的发行版一定会受到用户的欢迎吧）</p>
+<p>在软件方面，适配Linux的软件也是远少于Windows，如经典的office全家桶，各类工程软件以及常用软件。Linux下的游戏还是比较匮乏的，数量上远少于Windows。显卡驱动也是Linux的使用难点之一，而最近英伟达已经开源 Linux GPU 内核驱动了，未来可期。希望软件和游戏厂商以后能给Linux做更多的适配吧。</p>
+<p>还有一个问题就是国内特殊的网络环境以及中文互联网资料比较贫瘠，我寻找到的很多资料都已经是过时无效的了，使用好相关论坛可以节省掉不少的时间。</p>
+<p>相比Windows下泛滥的各式流氓软件，Linux则不需要担心这个问题，并且更为干净安全可靠，也没有像微软那样三天两头就更新的各式补丁。</p>
 ]]></content>
       <tags>
         <tag>Linux</tag>
-        <tag>嵌入式</tag>
-        <tag>单片机</tag>
+        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -403,92 +403,11 @@
 <p>OSI 第 5、6、7 层在 TCP&#x2F;IP 中合并为一个应用层<br>OSI 第 1 层、第 2 层在 TCP&#x2F;IP 中合并为一个网络访问层 - 但是 TCP&#x2F;IP 不负责排序和确认功能，将这些留给底层传输层。<br>其他重要区别：<br>TCP&#x2F;IP 是一种功能模型，旨在解决特定的通信问题，它基于特定的标准协议。OSI 是一个通用的、独立于协议的模型，旨在描述所有形式的网络通信。<br>在 TCP&#x2F;IP 中，大多数应用程序使用所有层，而在 OSI 中简单应用程序不使用所有七层。只有第 1、2 和 3 层是必需的才能启用任何数据通信。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/PicWarehouse/img/%E9%A3%8E%E6%99%AF008.png" alt="TCP/IP与OSI对应关系"></p>
 ]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
       <tags>
         <tag>计算机网络</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战</title>
-    <url>/archives/7a099087.html</url>
-    <content><![CDATA[<p>在上文中，简单介绍了一下什么是socket以及简单举例Socket如何实现客户端和服务端</p>
-<p>本文将会为详细地讲述Socket的一些基本函数以及如何简单使用socket搭建一个聊天室。</p>
-<h2 id="Socket数据结构"><a href="#Socket数据结构" class="headerlink" title="Socket数据结构"></a>Socket数据结构</h2><p><img src="https://pic4.zhimg.com/80/v2-0b01629d0a64c309ca2fb28d027df23b_720w.jpg" alt="Socket数据结构"><br><img src="https://pic1.zhimg.com/80/v2-f3ee7745b97d088ee4a918f23761581c_720w.jpg" alt="Socket数据结构"></p>
-<h2 id="Linux系统下的头文件"><a href="#Linux系统下的头文件" class="headerlink" title="Linux系统下的头文件"></a>Linux系统下的头文件</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br></pre></td></tr></table></figure>
-
-<h2 id="Windows系统下的头文件"><a href="#Windows系统下的头文件" class="headerlink" title="Windows系统下的头文件"></a>Windows系统下的头文件</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;winsock2.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> comment(lib,<span class="string">&quot;Ws2_32.lib&quot;</span>)</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="服务端与客户端通信过程"><a href="#服务端与客户端通信过程" class="headerlink" title="服务端与客户端通信过程"></a>服务端与客户端通信过程</h2><p><img src="https://pic3.zhimg.com/80/v2-d770bce3a03c14eb48e3aa2d24ad1dc6_720w.jpg" alt="通信过程"></p>
-<h2 id="基本函数"><a href="#基本函数" class="headerlink" title="基本函数"></a>基本函数</h2><h3 id="套接字类型的创建"><a href="#套接字类型的创建" class="headerlink" title="套接字类型的创建"></a>套接字类型的创建</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">socket</span><span class="params">(<span class="type">int</span> __domain, <span class="type">int</span> __type, <span class="type">int</span> __protocol)</span></span></span><br></pre></td></tr></table></figure>
-<p>参数介绍</p>
-<p>第一个参数domain：即协议域，又称为协议族（family）。常用的协议族有，AF_INET、AF_INET6、AF_LOCAL。</p>
-<p>地址族及含义</p>
-<p>AF_INET</p>
-<p>IPv4网络协议中采用的地址族</p>
-<p>AF_INET6</p>
-<p>IPv6网络协议中采用的地址族</p>
-<p>AF_LOCAL</p>
-<p>本地通信中采用的UNIX协议的地址族（用的少）</p>
-<p>第二个参数type：指定socket类型。常用的有SOCKET_RAW，SOCK_STREAM和SOCK_DGRAM。</p>
-<p>套接字类型及含义</p>
-<p>SOCKET_RAW</p>
-<p>原始套接字(SOCKET_RAW)允许对较低层次的协议直接访问，比如IP、ICMP协议。</p>
-<p>SOCK_STREAM是数据流，一般为TCP&#x2F;IP协议的编程。</p>
-<p>SOCK_DGRAM是数据报，一般为UDP协议的网络编程；</p>
-<p>第三个参数protocol：指定协议。最终采用的协议。常见的协议有IPPROTO_TCP、IPPTOTO_UDP。</p>
-<p>如果第二个参数选择了SOCK_STREAM，那么采用的协议就只能是IPPROTO_TCP；</p>
-<p>如果第二个参数选择的是SOCK_DGRAM，则采用的协议就只能是IPPTOTO_UDP。</p>
-<p>当protocol为0时，会自动选择type类型对应的默认协议。</p>
-<h3 id="向套接字分配网络类型"><a href="#向套接字分配网络类型" class="headerlink" title="向套接字分配网络类型"></a>向套接字分配网络类型</h3><p>bind()函数把一个地址族中的特定地址赋给socket。例如对应AF_INET、AF_INET6就是把一个ipv4或ipv6地址和端口号组合赋给socket。</p>
-<p>int bind(int __fd, const sockaddr *__addr, socklen_t __len)<br>第一个参数socket文件描述符__fd：即套接字创建时返回的对象，</p>
-<p>第二个参数addr：一个const struct sockaddr *指针，指向要绑定给sockfd的协议地址。包含通信所需要的相关信息，其结构体具体如下：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr</span></span><br><span class="line">  &#123;</span><br><span class="line"> <span class="type">sa_family_t</span> sin_family; <span class="comment">/* Common data: address family and length.  */</span></span><br><span class="line"> <span class="type">char</span> sa_data[<span class="number">14</span>];       <span class="comment">/* Address data.  */</span></span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
-
-<p>在具体传参的时候，会用该结构体的变体sockaddr_in形式去初始化相关字段，该结构体具体形式如下，结构体sockaddr中的sa_data就保存着地址信息需要的IP地址和端口号，对应着结构体sockaddr_in的sin_port和sin_addr字段。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr_in</span>&#123;</span><br><span class="line"> <span class="type">sa_family_t</span> sin_family;     <span class="comment">//前面介绍的地址族</span></span><br><span class="line"> <span class="type">uint16_t</span> sin_port;          <span class="comment">//16位的TCP/UDP端口号</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">in_addr</span> sin_addr;    <span class="comment">//32位的IP地址</span></span><br><span class="line"> <span class="type">char</span> sin_zero[<span class="number">8</span>];           <span class="comment">//不使用</span></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-
-<h3 id="进入等待连接请求状态"><a href="#进入等待连接请求状态" class="headerlink" title="进入等待连接请求状态"></a>进入等待连接请求状态</h3><p>给套接字分配了所需的信息后，服务端就可以调用listen()函数对来自客户端的连接请求进行监听（客户端此时要调用connect()函数进行连接）</p>
-<p>Listen函数的第一个参数即为要监听的socket套接字，第二个参数为相应socket可以排队的最大连接个数。</p>
-<p>Connect函数的第一个参数即为客户端的socket套接字，第二参数为服务器的socket地址，第三个参数为socket地址的长度。</p>
-<h3 id="处理服务端的连接请求"><a href="#处理服务端的连接请求" class="headerlink" title="处理服务端的连接请求"></a>处理服务端的连接请求</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">accept</span><span class="params">(<span class="type">int</span> __fd, sockaddr *__restrict__ __addr, <span class="type">socklen_t</span> *__restrict__ __addr_len)</span></span></span><br></pre></td></tr></table></figure>
-<p>函数成功执行时返回socket文件描述符，失败时返回-1。</p>
-<p>accept函数的第一个参数为服务器的socket描述字，</p>
-<p>第二个参数为指向struct sockaddr *的指针，用于返回客户端的协议地址，</p>
-<p>第三个参数为协议地址的长度。</p>
-<p>accept函数返回的是已连接的socket套接字。</p>
-<h4 id="在TCP-x2F-IP协议中-TCP协议提供可靠的连接服务-采用三次握手建立一个连接。"><a href="#在TCP-x2F-IP协议中-TCP协议提供可靠的连接服务-采用三次握手建立一个连接。" class="headerlink" title="在TCP&#x2F;IP协议中,TCP协议提供可靠的连接服务,采用三次握手建立一个连接。"></a>在TCP&#x2F;IP协议中,TCP协议提供可靠的连接服务,采用三次握手建立一个连接。</h4><p><img src="https://pic2.zhimg.com/80/v2-9dcd196f5ff3307d2e8fe6f08b54c641_720w.jpg" alt="三次握手"></p>
-<p>第一次握手：建立连接时,客户端发送syn包(syn&#x3D;j)到服务器,并进入SYN_SEND状态,等待服务器确认；</p>
-<p>SYN：同步序列编号(Synchronize Sequence Numbers)</p>
-<p>第二次握手：服务器收到syn包,必须确认客户的SYN（ack&#x3D;j+1）,同时自己也发送一个SYN包（syn&#x3D;k）,即SYN+ACK包,此时服务器进入SYN_RECV状态；</p>
-<p>第三次握手：客户端收到服务器的SYN＋ACK包,向服务器发送确认包ACK(ack&#x3D;k+1),此包发送完毕,客户端和服务器进入ESTABLISHED状态,完成三次握手。</p>
-<p>完成三次握手,客户端与服务器开始传送数据。</p>
-<h4 id="四次挥手结束连接"><a href="#四次挥手结束连接" class="headerlink" title="四次挥手结束连接"></a>四次挥手结束连接</h4><p><img src="https://pic3.zhimg.com/80/v2-1a8261c7ffa27588f3d06c741311cd86_720w.jpg" alt="四次挥手"></p>
-<p>由于 TCP 的半关闭（half-close）特性，TCP 提供了连接的一端在结束它的发送后还能接收来自另一端数据的能力。</p>
-<p>任何一方都可以在数据传送结束后发出连接释放的通知，待对方确认后进入半关闭状态。当另一方也没有数据再发送的时候，则发出连接释放通知，对方确认后就完全关闭了TCP连接。</p>
-<p>简单来说，两次握手就可以释放一端到另一端的 TCP 连接，完全释放连接一共需要四次握手。</p>
-<h3 id="write-x2F-send发送信息"><a href="#write-x2F-send发送信息" class="headerlink" title="write&#x2F;send发送信息"></a>write&#x2F;send发送信息</h3><p>Linux下的发送函数为：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">write</span> <span class="params">(<span class="type">int</span> __fd, <span class="type">const</span> <span class="type">void</span> *__buf, <span class="type">size_t</span> __n)</span> </span>;</span><br></pre></td></tr></table></figure>
-<p>而在Windows下的发送函数为：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">send</span> <span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="type">void</span> *buf, <span class="type">size_t</span> nbytes, <span class="type">int</span> flag)</span> </span>;</span><br></pre></td></tr></table></figure>
-<p>第四个参数是传输数据时可指定的信息，一般设置为0。</p>
-<h3 id="read-x2F-recv接受信息"><a href="#read-x2F-recv接受信息" class="headerlink" title="read&#x2F;recv接受信息"></a>read&#x2F;recv接受信息</h3><p>linux下的接收函数为</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">recv</span><span class="params">(<span class="type">int</span> __fd, <span class="type">void</span> *__buf, <span class="type">size_t</span> __n, <span class="type">int</span> __flags)</span></span></span><br></pre></td></tr></table></figure>
-<p>而在windows下的接收函数为</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">recv</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">void</span> *buf, <span class="type">size_t</span> nbytes, <span class="type">int</span> flag)</span> </span>;</span><br></pre></td></tr></table></figure>
-<p>第一个参数指定接收端套接字描述符；</p>
-<p>第二个参数指明一个缓冲区，该缓冲区用来存放recv函数接收到的数据；</p>
-<p>第三个参数指明buf的长度；</p>
-<p>第四个参数一般置0</p>
-<h3 id="关闭连接"><a href="#关闭连接" class="headerlink" title="关闭连接"></a>关闭连接</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">close</span><span class="params">(<span class="type">int</span> __fd)</span></span></span><br></pre></td></tr></table></figure>
-<p>退出连接，此时要注意的是：调用close()函数即表示向对方发送了EOF结束标志信息。</p>
-<h3 id="C-x2F-C-代码实战"><a href="#C-x2F-C-代码实战" class="headerlink" title="C&#x2F;C++代码实战"></a>C&#x2F;C++代码实战</h3><p>以下代码仅供参考，且在Linux环境下运行，需要先运行服务端再运行客户端，仅能实现客户端给服务端发送信息的简单功能。</p>
-<h4 id="client-cpp"><a href="#client-cpp" class="headerlink" title="client.cpp"></a>client.cpp</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MYPORT 7000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">int</span> sockCli = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">///定义sockaddr_in</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> servaddr;</span><br><span class="line"> <span class="built_in">memset</span>(&amp;servaddr, <span class="number">0</span>, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> servaddr.sin_family = AF_INET;</span><br><span class="line"> servaddr.sin_port = <span class="built_in">htons</span>(MYPORT);                 <span class="comment">//服务器端口</span></span><br><span class="line"> servaddr.sin_addr.s_addr = <span class="built_in">inet_addr</span>(<span class="string">&quot;127.0.0.1&quot;</span>); <span class="comment">//服务器ip，inet_addr用于IPv4的IP转换（十进制转换为二进制）</span></span><br><span class="line">                                                       <span class="comment">// 127.0.0.1是本地预留地址</span></span><br><span class="line">                                                       <span class="comment">//连接服务器，成功返回0，错误返回-1</span></span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">connect</span>(sockCli, (<span class="keyword">struct</span> sockaddr *)&amp;servaddr, <span class="built_in">sizeof</span>(servaddr)) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="built_in">perror</span>(<span class="string">&quot;connect&quot;</span>);</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="type">char</span> sendbuf[BUFFER_SIZE];</span><br><span class="line"> <span class="type">char</span> recvbuf[BUFFER_SIZE];</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">while</span> (<span class="built_in">fgets</span>(sendbuf, <span class="built_in">sizeof</span>(sendbuf), stdin) != <span class="literal">NULL</span>)</span><br><span class="line">    &#123;                                               <span class="comment">/*每次读取一行，读取的数据保存在buf指向的字符数组中，成功，则返回第一个参数buf；*/</span></span><br><span class="line"> <span class="built_in">send</span>(sockCli, sendbuf, <span class="built_in">strlen</span>(sendbuf), <span class="number">0</span>); <span class="comment">///发送</span></span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(sendbuf, <span class="string">&quot;exit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">        <span class="comment">// recv(sockCli, recvbuf, sizeof(recvbuf), 0); ///接收</span></span><br><span class="line">        <span class="comment">// fputs(recvbuf, stdout);</span></span><br><span class="line"> </span><br><span class="line"> <span class="built_in">memset</span>(sendbuf, <span class="number">0</span>, <span class="built_in">sizeof</span>(sendbuf)); <span class="comment">//接受或者发送完毕后把数组中的数据全部清空（置0）</span></span><br><span class="line"> <span class="built_in">memset</span>(recvbuf, <span class="number">0</span>, <span class="built_in">sizeof</span>(recvbuf));</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="built_in">close</span>(sockCli);</span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Server-cpp"><a href="#Server-cpp" class="headerlink" title="Server.cpp"></a>Server.cpp</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PORT 7000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> QUEUE 20 <span class="comment">//连接请求队列</span></span></span><br><span class="line"><span class="type">int</span> conn;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">thread_task</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">int</span> sockSer = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>); <span class="comment">//若成功则返回一个sockfd（套接字描述符）</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> server_sockaddr;            <span class="comment">//一般是储存地址和端口的。用于信息的显示及存储使用</span></span><br><span class="line">                                                   <span class="comment">/*设置 sockaddr_in 结构体中相关参数*/</span></span><br><span class="line"> server_sockaddr.sin_family = AF_INET;</span><br><span class="line"> server_sockaddr.sin_port = <span class="built_in">htons</span>(PORT); <span class="comment">//将一个无符号短整型数值转换为网络字节序，即大端模式(big-endian) </span></span><br><span class="line">                                            <span class="comment">// printf(&quot;%d\n&quot;,INADDR_ANY);</span></span><br><span class="line">    <span class="comment">// INADDR_ANY就是指定地址为0.0.0.0的地址，这个地址事实上表示不确定地址，或“所有地址”、“任意地址”。</span></span><br><span class="line">    <span class="comment">//一般来说，在各个系统中均定义成为0值。</span></span><br><span class="line"> server_sockaddr.sin_addr.s_addr = <span class="built_in">htonl</span>(INADDR_ANY); <span class="comment">//将主机的无符号长整形数转换成网络字节顺序。</span></span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">bind</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;server_sockaddr, <span class="built_in">sizeof</span>(server_sockaddr)) == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="built_in">perror</span>(<span class="string">&quot;bind&quot;</span>);</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">listen</span>(sockSer, QUEUE) == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="built_in">perror</span>(<span class="string">&quot;listen&quot;</span>);</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> client_addr;</span><br><span class="line"> <span class="type">socklen_t</span> length = <span class="built_in">sizeof</span>(client_addr);</span><br><span class="line">    <span class="comment">///成功返回非负描述字，出错返回-1</span></span><br><span class="line"> conn = <span class="built_in">accept</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;client_addr, &amp;length);</span><br><span class="line">    <span class="comment">//如果accpet成功，那么其返回值是由内核自动生成的一个全新描述符，代表与所返回客户的TCP连接。</span></span><br><span class="line">    <span class="comment">// accpet之后就会用新的套接字conn</span></span><br><span class="line"> <span class="keyword">if</span> (conn &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="built_in">perror</span>(<span class="string">&quot;connect&quot;</span>);</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="type">char</span> buffer[<span class="number">1024</span>];</span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="built_in">memset</span>(buffer, <span class="number">0</span>, <span class="built_in">sizeof</span>(buffer));</span><br><span class="line"> <span class="type">int</span> len = <span class="built_in">recv</span>(conn, buffer, <span class="built_in">sizeof</span>(buffer), <span class="number">0</span>); <span class="comment">//从TCP连接的另一端接收数据。</span></span><br><span class="line">        <span class="comment">/*该函数的第一个参数指定接收端套接字描述符；</span></span><br><span class="line"><span class="comment"> 第二个参数指明一个缓冲区，该缓冲区用来存放recv函数接收到的数据；</span></span><br><span class="line"><span class="comment"> 第三个参数指明buf的长度；</span></span><br><span class="line"><span class="comment"> 第四个参数一般置0*/</span></span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer, <span class="string">&quot;exit\n&quot;</span>) == <span class="number">0</span>) <span class="comment">//如果没有收到TCP另一端发来的数据则跳出循环不输出</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>, buffer); <span class="comment">//如果有收到数据则输出数据</span></span><br><span class="line">        <span class="comment">//必须要有返回数据， 这样才算一个完整的请求</span></span><br><span class="line"> <span class="built_in">send</span>(conn, buffer, len, <span class="number">0</span>); <span class="comment">//向TCP连接的另一端发送数据。</span></span><br><span class="line">    &#125;</span><br><span class="line"> <span class="built_in">close</span>(conn); <span class="comment">//因为accpet函数连接成功后还会生成一个新的套接字描述符，结束后也需要关闭</span></span><br><span class="line"> <span class="built_in">close</span>(sockSer);   <span class="comment">//关闭socket套接字描述符</span></span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>Linux</tag>
-        <tag>计算机网络</tag>
-        <tag>Socket</tag>
-        <tag>C++</tag>
       </tags>
   </entry>
   <entry>
@@ -572,6 +491,120 @@
       </tags>
   </entry>
   <entry>
+    <title>计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战</title>
+    <url>/archives/7a099087.html</url>
+    <content><![CDATA[<p>在上文中，简单介绍了一下什么是socket以及简单举例Socket如何实现客户端和服务端</p>
+<p>本文将会为详细地讲述Socket的一些基本函数以及如何简单使用socket搭建一个聊天室。</p>
+<h2 id="Socket数据结构"><a href="#Socket数据结构" class="headerlink" title="Socket数据结构"></a>Socket数据结构</h2><p><img src="https://pic4.zhimg.com/80/v2-0b01629d0a64c309ca2fb28d027df23b_720w.jpg" alt="Socket数据结构"><br><img src="https://pic1.zhimg.com/80/v2-f3ee7745b97d088ee4a918f23761581c_720w.jpg" alt="Socket数据结构"></p>
+<h2 id="Linux系统下的头文件"><a href="#Linux系统下的头文件" class="headerlink" title="Linux系统下的头文件"></a>Linux系统下的头文件</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Windows系统下的头文件"><a href="#Windows系统下的头文件" class="headerlink" title="Windows系统下的头文件"></a>Windows系统下的头文件</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;winsock2.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> comment(lib,<span class="string">&quot;Ws2_32.lib&quot;</span>)</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="服务端与客户端通信过程"><a href="#服务端与客户端通信过程" class="headerlink" title="服务端与客户端通信过程"></a>服务端与客户端通信过程</h2><p><img src="https://pic3.zhimg.com/80/v2-d770bce3a03c14eb48e3aa2d24ad1dc6_720w.jpg" alt="通信过程"></p>
+<h2 id="基本函数"><a href="#基本函数" class="headerlink" title="基本函数"></a>基本函数</h2><h3 id="套接字类型的创建"><a href="#套接字类型的创建" class="headerlink" title="套接字类型的创建"></a>套接字类型的创建</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">socket</span><span class="params">(<span class="type">int</span> __domain, <span class="type">int</span> __type, <span class="type">int</span> __protocol)</span></span></span><br></pre></td></tr></table></figure>
+<p>参数介绍</p>
+<p>第一个参数domain：即协议域，又称为协议族（family）。常用的协议族有，AF_INET、AF_INET6、AF_LOCAL。</p>
+<p>地址族及含义</p>
+<p>AF_INET</p>
+<p>IPv4网络协议中采用的地址族</p>
+<p>AF_INET6</p>
+<p>IPv6网络协议中采用的地址族</p>
+<p>AF_LOCAL</p>
+<p>本地通信中采用的UNIX协议的地址族（用的少）</p>
+<p>第二个参数type：指定socket类型。常用的有SOCKET_RAW，SOCK_STREAM和SOCK_DGRAM。</p>
+<p>套接字类型及含义</p>
+<p>SOCKET_RAW</p>
+<p>原始套接字(SOCKET_RAW)允许对较低层次的协议直接访问，比如IP、ICMP协议。</p>
+<p>SOCK_STREAM是数据流，一般为TCP&#x2F;IP协议的编程。</p>
+<p>SOCK_DGRAM是数据报，一般为UDP协议的网络编程；</p>
+<p>第三个参数protocol：指定协议。最终采用的协议。常见的协议有IPPROTO_TCP、IPPTOTO_UDP。</p>
+<p>如果第二个参数选择了SOCK_STREAM，那么采用的协议就只能是IPPROTO_TCP；</p>
+<p>如果第二个参数选择的是SOCK_DGRAM，则采用的协议就只能是IPPTOTO_UDP。</p>
+<p>当protocol为0时，会自动选择type类型对应的默认协议。</p>
+<h3 id="向套接字分配网络类型"><a href="#向套接字分配网络类型" class="headerlink" title="向套接字分配网络类型"></a>向套接字分配网络类型</h3><p>bind()函数把一个地址族中的特定地址赋给socket。例如对应AF_INET、AF_INET6就是把一个ipv4或ipv6地址和端口号组合赋给socket。</p>
+<p>int bind(int __fd, const sockaddr *__addr, socklen_t __len)<br>第一个参数socket文件描述符__fd：即套接字创建时返回的对象，</p>
+<p>第二个参数addr：一个const struct sockaddr *指针，指向要绑定给sockfd的协议地址。包含通信所需要的相关信息，其结构体具体如下：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr</span></span><br><span class="line">  &#123;</span><br><span class="line"> <span class="type">sa_family_t</span> sin_family; <span class="comment">/* Common data: address family and length.  */</span></span><br><span class="line"> <span class="type">char</span> sa_data[<span class="number">14</span>];       <span class="comment">/* Address data.  */</span></span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在具体传参的时候，会用该结构体的变体sockaddr_in形式去初始化相关字段，该结构体具体形式如下，结构体sockaddr中的sa_data就保存着地址信息需要的IP地址和端口号，对应着结构体sockaddr_in的sin_port和sin_addr字段。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr_in</span>&#123;</span><br><span class="line"> <span class="type">sa_family_t</span> sin_family;     <span class="comment">//前面介绍的地址族</span></span><br><span class="line"> <span class="type">uint16_t</span> sin_port;          <span class="comment">//16位的TCP/UDP端口号</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">in_addr</span> sin_addr;    <span class="comment">//32位的IP地址</span></span><br><span class="line"> <span class="type">char</span> sin_zero[<span class="number">8</span>];           <span class="comment">//不使用</span></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h3 id="进入等待连接请求状态"><a href="#进入等待连接请求状态" class="headerlink" title="进入等待连接请求状态"></a>进入等待连接请求状态</h3><p>给套接字分配了所需的信息后，服务端就可以调用listen()函数对来自客户端的连接请求进行监听（客户端此时要调用connect()函数进行连接）</p>
+<p>Listen函数的第一个参数即为要监听的socket套接字，第二个参数为相应socket可以排队的最大连接个数。</p>
+<p>Connect函数的第一个参数即为客户端的socket套接字，第二参数为服务器的socket地址，第三个参数为socket地址的长度。</p>
+<h3 id="处理服务端的连接请求"><a href="#处理服务端的连接请求" class="headerlink" title="处理服务端的连接请求"></a>处理服务端的连接请求</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">accept</span><span class="params">(<span class="type">int</span> __fd, sockaddr *__restrict__ __addr, <span class="type">socklen_t</span> *__restrict__ __addr_len)</span></span></span><br></pre></td></tr></table></figure>
+<p>函数成功执行时返回socket文件描述符，失败时返回-1。</p>
+<p>accept函数的第一个参数为服务器的socket描述字，</p>
+<p>第二个参数为指向struct sockaddr *的指针，用于返回客户端的协议地址，</p>
+<p>第三个参数为协议地址的长度。</p>
+<p>accept函数返回的是已连接的socket套接字。</p>
+<h4 id="在TCP-x2F-IP协议中-TCP协议提供可靠的连接服务-采用三次握手建立一个连接。"><a href="#在TCP-x2F-IP协议中-TCP协议提供可靠的连接服务-采用三次握手建立一个连接。" class="headerlink" title="在TCP&#x2F;IP协议中,TCP协议提供可靠的连接服务,采用三次握手建立一个连接。"></a>在TCP&#x2F;IP协议中,TCP协议提供可靠的连接服务,采用三次握手建立一个连接。</h4><p><img src="https://pic2.zhimg.com/80/v2-9dcd196f5ff3307d2e8fe6f08b54c641_720w.jpg" alt="三次握手"></p>
+<p>第一次握手：建立连接时,客户端发送syn包(syn&#x3D;j)到服务器,并进入SYN_SEND状态,等待服务器确认；</p>
+<p>SYN：同步序列编号(Synchronize Sequence Numbers)</p>
+<p>第二次握手：服务器收到syn包,必须确认客户的SYN（ack&#x3D;j+1）,同时自己也发送一个SYN包（syn&#x3D;k）,即SYN+ACK包,此时服务器进入SYN_RECV状态；</p>
+<p>第三次握手：客户端收到服务器的SYN＋ACK包,向服务器发送确认包ACK(ack&#x3D;k+1),此包发送完毕,客户端和服务器进入ESTABLISHED状态,完成三次握手。</p>
+<p>完成三次握手,客户端与服务器开始传送数据。</p>
+<h4 id="四次挥手结束连接"><a href="#四次挥手结束连接" class="headerlink" title="四次挥手结束连接"></a>四次挥手结束连接</h4><p><img src="https://pic3.zhimg.com/80/v2-1a8261c7ffa27588f3d06c741311cd86_720w.jpg" alt="四次挥手"></p>
+<p>由于 TCP 的半关闭（half-close）特性，TCP 提供了连接的一端在结束它的发送后还能接收来自另一端数据的能力。</p>
+<p>任何一方都可以在数据传送结束后发出连接释放的通知，待对方确认后进入半关闭状态。当另一方也没有数据再发送的时候，则发出连接释放通知，对方确认后就完全关闭了TCP连接。</p>
+<p>简单来说，两次握手就可以释放一端到另一端的 TCP 连接，完全释放连接一共需要四次握手。</p>
+<h3 id="write-x2F-send发送信息"><a href="#write-x2F-send发送信息" class="headerlink" title="write&#x2F;send发送信息"></a>write&#x2F;send发送信息</h3><p>Linux下的发送函数为：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">write</span> <span class="params">(<span class="type">int</span> __fd, <span class="type">const</span> <span class="type">void</span> *__buf, <span class="type">size_t</span> __n)</span> </span>;</span><br></pre></td></tr></table></figure>
+<p>而在Windows下的发送函数为：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">send</span> <span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="type">void</span> *buf, <span class="type">size_t</span> nbytes, <span class="type">int</span> flag)</span> </span>;</span><br></pre></td></tr></table></figure>
+<p>第四个参数是传输数据时可指定的信息，一般设置为0。</p>
+<h3 id="read-x2F-recv接受信息"><a href="#read-x2F-recv接受信息" class="headerlink" title="read&#x2F;recv接受信息"></a>read&#x2F;recv接受信息</h3><p>linux下的接收函数为</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">recv</span><span class="params">(<span class="type">int</span> __fd, <span class="type">void</span> *__buf, <span class="type">size_t</span> __n, <span class="type">int</span> __flags)</span></span></span><br></pre></td></tr></table></figure>
+<p>而在windows下的接收函数为</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">recv</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">void</span> *buf, <span class="type">size_t</span> nbytes, <span class="type">int</span> flag)</span> </span>;</span><br></pre></td></tr></table></figure>
+<p>第一个参数指定接收端套接字描述符；</p>
+<p>第二个参数指明一个缓冲区，该缓冲区用来存放recv函数接收到的数据；</p>
+<p>第三个参数指明buf的长度；</p>
+<p>第四个参数一般置0</p>
+<h3 id="关闭连接"><a href="#关闭连接" class="headerlink" title="关闭连接"></a>关闭连接</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">close</span><span class="params">(<span class="type">int</span> __fd)</span></span></span><br></pre></td></tr></table></figure>
+<p>退出连接，此时要注意的是：调用close()函数即表示向对方发送了EOF结束标志信息。</p>
+<h3 id="C-x2F-C-代码实战"><a href="#C-x2F-C-代码实战" class="headerlink" title="C&#x2F;C++代码实战"></a>C&#x2F;C++代码实战</h3><p>以下代码仅供参考，且在Linux环境下运行，需要先运行服务端再运行客户端，仅能实现客户端给服务端发送信息的简单功能。</p>
+<h4 id="client-cpp"><a href="#client-cpp" class="headerlink" title="client.cpp"></a>client.cpp</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MYPORT 7000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">int</span> sockCli = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">///定义sockaddr_in</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> servaddr;</span><br><span class="line"> <span class="built_in">memset</span>(&amp;servaddr, <span class="number">0</span>, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> servaddr.sin_family = AF_INET;</span><br><span class="line"> servaddr.sin_port = <span class="built_in">htons</span>(MYPORT);                 <span class="comment">//服务器端口</span></span><br><span class="line"> servaddr.sin_addr.s_addr = <span class="built_in">inet_addr</span>(<span class="string">&quot;127.0.0.1&quot;</span>); <span class="comment">//服务器ip，inet_addr用于IPv4的IP转换（十进制转换为二进制）</span></span><br><span class="line">                                                       <span class="comment">// 127.0.0.1是本地预留地址</span></span><br><span class="line">                                                       <span class="comment">//连接服务器，成功返回0，错误返回-1</span></span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">connect</span>(sockCli, (<span class="keyword">struct</span> sockaddr *)&amp;servaddr, <span class="built_in">sizeof</span>(servaddr)) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="built_in">perror</span>(<span class="string">&quot;connect&quot;</span>);</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="type">char</span> sendbuf[BUFFER_SIZE];</span><br><span class="line"> <span class="type">char</span> recvbuf[BUFFER_SIZE];</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">while</span> (<span class="built_in">fgets</span>(sendbuf, <span class="built_in">sizeof</span>(sendbuf), stdin) != <span class="literal">NULL</span>)</span><br><span class="line">    &#123;                                               <span class="comment">/*每次读取一行，读取的数据保存在buf指向的字符数组中，成功，则返回第一个参数buf；*/</span></span><br><span class="line"> <span class="built_in">send</span>(sockCli, sendbuf, <span class="built_in">strlen</span>(sendbuf), <span class="number">0</span>); <span class="comment">///发送</span></span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(sendbuf, <span class="string">&quot;exit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">        <span class="comment">// recv(sockCli, recvbuf, sizeof(recvbuf), 0); ///接收</span></span><br><span class="line">        <span class="comment">// fputs(recvbuf, stdout);</span></span><br><span class="line"> </span><br><span class="line"> <span class="built_in">memset</span>(sendbuf, <span class="number">0</span>, <span class="built_in">sizeof</span>(sendbuf)); <span class="comment">//接受或者发送完毕后把数组中的数据全部清空（置0）</span></span><br><span class="line"> <span class="built_in">memset</span>(recvbuf, <span class="number">0</span>, <span class="built_in">sizeof</span>(recvbuf));</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="built_in">close</span>(sockCli);</span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Server-cpp"><a href="#Server-cpp" class="headerlink" title="Server.cpp"></a>Server.cpp</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PORT 7000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> QUEUE 20 <span class="comment">//连接请求队列</span></span></span><br><span class="line"><span class="type">int</span> conn;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">thread_task</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">int</span> sockSer = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>); <span class="comment">//若成功则返回一个sockfd（套接字描述符）</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> server_sockaddr;            <span class="comment">//一般是储存地址和端口的。用于信息的显示及存储使用</span></span><br><span class="line">                                                   <span class="comment">/*设置 sockaddr_in 结构体中相关参数*/</span></span><br><span class="line"> server_sockaddr.sin_family = AF_INET;</span><br><span class="line"> server_sockaddr.sin_port = <span class="built_in">htons</span>(PORT); <span class="comment">//将一个无符号短整型数值转换为网络字节序，即大端模式(big-endian) </span></span><br><span class="line">                                            <span class="comment">// printf(&quot;%d\n&quot;,INADDR_ANY);</span></span><br><span class="line">    <span class="comment">// INADDR_ANY就是指定地址为0.0.0.0的地址，这个地址事实上表示不确定地址，或“所有地址”、“任意地址”。</span></span><br><span class="line">    <span class="comment">//一般来说，在各个系统中均定义成为0值。</span></span><br><span class="line"> server_sockaddr.sin_addr.s_addr = <span class="built_in">htonl</span>(INADDR_ANY); <span class="comment">//将主机的无符号长整形数转换成网络字节顺序。</span></span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">bind</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;server_sockaddr, <span class="built_in">sizeof</span>(server_sockaddr)) == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="built_in">perror</span>(<span class="string">&quot;bind&quot;</span>);</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">listen</span>(sockSer, QUEUE) == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="built_in">perror</span>(<span class="string">&quot;listen&quot;</span>);</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> client_addr;</span><br><span class="line"> <span class="type">socklen_t</span> length = <span class="built_in">sizeof</span>(client_addr);</span><br><span class="line">    <span class="comment">///成功返回非负描述字，出错返回-1</span></span><br><span class="line"> conn = <span class="built_in">accept</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;client_addr, &amp;length);</span><br><span class="line">    <span class="comment">//如果accpet成功，那么其返回值是由内核自动生成的一个全新描述符，代表与所返回客户的TCP连接。</span></span><br><span class="line">    <span class="comment">// accpet之后就会用新的套接字conn</span></span><br><span class="line"> <span class="keyword">if</span> (conn &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="built_in">perror</span>(<span class="string">&quot;connect&quot;</span>);</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="type">char</span> buffer[<span class="number">1024</span>];</span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="built_in">memset</span>(buffer, <span class="number">0</span>, <span class="built_in">sizeof</span>(buffer));</span><br><span class="line"> <span class="type">int</span> len = <span class="built_in">recv</span>(conn, buffer, <span class="built_in">sizeof</span>(buffer), <span class="number">0</span>); <span class="comment">//从TCP连接的另一端接收数据。</span></span><br><span class="line">        <span class="comment">/*该函数的第一个参数指定接收端套接字描述符；</span></span><br><span class="line"><span class="comment"> 第二个参数指明一个缓冲区，该缓冲区用来存放recv函数接收到的数据；</span></span><br><span class="line"><span class="comment"> 第三个参数指明buf的长度；</span></span><br><span class="line"><span class="comment"> 第四个参数一般置0*/</span></span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer, <span class="string">&quot;exit\n&quot;</span>) == <span class="number">0</span>) <span class="comment">//如果没有收到TCP另一端发来的数据则跳出循环不输出</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>, buffer); <span class="comment">//如果有收到数据则输出数据</span></span><br><span class="line">        <span class="comment">//必须要有返回数据， 这样才算一个完整的请求</span></span><br><span class="line"> <span class="built_in">send</span>(conn, buffer, len, <span class="number">0</span>); <span class="comment">//向TCP连接的另一端发送数据。</span></span><br><span class="line">    &#125;</span><br><span class="line"> <span class="built_in">close</span>(conn); <span class="comment">//因为accpet函数连接成功后还会生成一个新的套接字描述符，结束后也需要关闭</span></span><br><span class="line"> <span class="built_in">close</span>(sockSer);   <span class="comment">//关闭socket套接字描述符</span></span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>计算机网络</tag>
+        <tag>Socket</tag>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</title>
+    <url>/archives/8cdebc07.html</url>
+    <content><![CDATA[<h2 id="什么是Socket？"><a href="#什么是Socket？" class="headerlink" title="什么是Socket？"></a>什么是Socket？</h2><p>Socket允许在相同或不同机器上的两个不同进程之间进行通信。更准确地说，这是一种使用标准 Unix 文件描述符与其他计算机通信的方式。</p>
+<p>在 Unix 中，每个 I&#x2F;O 操作都是通过写入或读取文件描述符来完成的。文件描述符只是与打开的文件相关联的整数，它可以是网络连接、文本文件、终端或其他东西。</p>
+<p>对于程序员来说，套接字的外观和行为很像低级文件描述符。这是因为诸如 read() 和 write() 之类的命令对套接字的工作方式与它们对文件和管道的工作方式相同。</p>
+<p>套接字最初是在 2.1BSD 中引入的，随后在 4.2BSD 中被改进为当前的形式。现在，大多数最新的 UNIX 系统版本都提供了套接字功能。<br><img src="https://pic1.zhimg.com/80/v2-33d5adb9c5bdefa9977a7f64970834a0_720w.jpg" alt="Socket与各种网络协议的关系"><br>如图所示，Socket是为了给应用程序一个更加统一、简洁的API接口而将底层各种协议栈封装起来形成形成的一层接口函数。</p>
+<p>简单举例Socket如何实现客户端和服务端<br><img src="https://pic3.zhimg.com/80/v2-50a90c813007b71ef251e00f5cf7692e_720w.jpg" alt="客户端和服务端信息交互"><br>构建客户端和服务器的方式有所不同，但都涉及到Socket的基本构造。这两个进程都建立了自己的套接字。</p>
+<h2 id="如何构建客户端"><a href="#如何构建客户端" class="headerlink" title="如何构建客户端"></a>如何构建客户端</h2><p>在客户端建立Socket的步骤如下 ：</p>
+<p>1.使用socket()系统调用创建一个套接字。</p>
+<p>2.使用connect()系统调用将套接字连接到服务器的地址。</p>
+<p>3.发送和接收数据。有很多方式可以实现这一点，最简单的方法就是使用read()和write()系统调用。</p>
+<h2 id="如何构建服务端"><a href="#如何构建服务端" class="headerlink" title="如何构建服务端"></a>如何构建服务端</h2><p>在服务器端建立套接字的步骤如下 ：</p>
+<p>1.使用socket()系统调用创建一个套接字。</p>
+<p>2.使用bind()系统调用将套接字绑定到一个地址。对于 Internet 上的服务器套接字，地址由主机上的端口号组成。</p>
+<p>3.通过listen()系统调用监听连接。</p>
+<p>4.通过accept()系统调用接受连接。此调用通常会阻止连接，直到客户端与服务器连接。</p>
+<p>5.使用read()和write()系统调用发送和接收数据。</p>
+]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>计算机网络</tag>
+        <tag>Socket</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）</title>
     <url>/archives/1815c365.html</url>
     <content><![CDATA[<p>本文使用fork函数实现并发TCP服务器，关于fork函数的用法可以参考我的文章：<br><a href="https://raidenxe.github.io/archives/90acc1af.html">Linux 下的 fork 和 exec 函数</a></p>
@@ -637,6 +670,9 @@
 
 <p>客户端程序可以参考我的另一篇文章：<br><a href="https://raidenxe.github.io/archives/7a099087.html">计算机网络知识点总结（三）Socket 基本函数详解，C++ Socket 入门实战</a></p>
 ]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
       <tags>
         <tag>Linux</tag>
         <tag>Socket</tag>
@@ -655,35 +691,14 @@
 <h2 id="Sever-cpp"><a href="#Sever-cpp" class="headerlink" title="Sever.cpp"></a>Sever.cpp</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PORT 7000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024 <span class="comment">//缓冲区大小宏定义</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">const</span> <span class="type">char</span> *ip = argv[<span class="number">1</span>];</span><br><span class="line"> <span class="type">int</span> port = <span class="built_in">atoi</span>(argv[<span class="number">2</span>]); <span class="comment">//将输入的端口号由字符串转换为整数类型</span></span><br><span class="line">    <span class="comment">//结构体定义与初始化</span></span><br><span class="line"> <span class="type">int</span> sockSer = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>); <span class="comment">//若成功则返回一个sockfd（套接字描述符）</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> server_sockaddr;            <span class="comment">//一般是储存地址和端口的。用于信息的显示及存储使用</span></span><br><span class="line">                                                   <span class="comment">//设置 sockaddr_in 结构体中相关参数</span></span><br><span class="line"> server_sockaddr.sin_family = AF_INET;</span><br><span class="line"> server_sockaddr.sin_port = <span class="built_in">htons</span>(PORT); <span class="comment">//将一个无符号短整型数值转换为网络字节序，即大端模式(big-endian) </span></span><br><span class="line">                                            <span class="comment">// printf(&quot;%d\n&quot;,INADDR_ANY);</span></span><br><span class="line">    <span class="comment">// INADDR_ANY就是指定地址为0.0.0.0的地址，这个地址事实上表示不确定地址，或“所有地址”、“任意地址”。</span></span><br><span class="line">    <span class="comment">//一般来说，在各个系统中均定义成为0值。</span></span><br><span class="line">    <span class="comment">// server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY); //将主机的无符号长整形数转换成网络字节顺序。</span></span><br><span class="line"> <span class="built_in">inet_pton</span>(AF_INET, ip, &amp;server_sockaddr.sin_addr); <span class="comment">//将小端字节序转换为网络字节序</span></span><br><span class="line"> </span><br><span class="line"> <span class="built_in">assert</span>(sockSer &gt;= <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> ret = <span class="built_in">bind</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;server_sockaddr, <span class="built_in">sizeof</span>(server_sockaddr)); <span class="comment">//绑定IP地址、端口号等信息</span></span><br><span class="line"> <span class="built_in">assert</span>(ret != <span class="number">-1</span>);</span><br><span class="line"> ret = <span class="built_in">listen</span>(sockSer, <span class="number">5</span>); <span class="comment">//监听有无连接请求</span></span><br><span class="line"> <span class="built_in">assert</span>(ret != <span class="number">-1</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> client_addr;</span><br><span class="line"> <span class="type">socklen_t</span> client_addrlength = <span class="built_in">sizeof</span>(client_addr);</span><br><span class="line">    <span class="comment">///成功返回非负描述字，出错返回-1</span></span><br><span class="line"> <span class="type">int</span> connfd = <span class="built_in">accept</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;client_addr, &amp;client_addrlength); <span class="comment">//从监听队列中取出第一个已完成的连接</span></span><br><span class="line"> <span class="type">char</span> buffer_recv[BUFFER_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> <span class="type">char</span> buffer_send[BUFFER_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="keyword">if</span> (connfd &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;errno is : %d\n&quot;</span>, errno);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">memset</span>(buffer_recv, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> <span class="built_in">memset</span>(buffer_send, <span class="number">0</span>, BUFFER_SIZE); <span class="comment">//每次需要为缓冲区清空</span></span><br><span class="line"> </span><br><span class="line"> ret = <span class="built_in">recv</span>(connfd, buffer_recv, BUFFER_SIZE - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer_recv, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">// recv为quit表示客户端请求断开连接，退出循环</span></span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;client:%s&quot;</span>, buffer_recv);</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;server:&quot;</span>);</span><br><span class="line"> <span class="built_in">fgets</span>(buffer_send, BUFFER_SIZE, stdin);</span><br><span class="line"> <span class="built_in">send</span>(connfd, buffer_send, <span class="built_in">strlen</span>(buffer_send), <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer_send, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">// send为quit表示服务器请求断开连接，退出循环</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">close</span>(connfd);</span><br><span class="line"> <span class="built_in">close</span>(sockSer); <span class="comment">//关闭socket套接字描述符</span></span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="Client-cpp"><a href="#Client-cpp" class="headerlink" title="Client.cpp"></a>Client.cpp</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">const</span> <span class="type">char</span> *ip = argv[<span class="number">1</span>];</span><br><span class="line"> <span class="type">int</span> port = <span class="built_in">atoi</span>(argv[<span class="number">2</span>]);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> sockCli = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//定义sockaddr_in</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> servaddr;</span><br><span class="line"> <span class="built_in">memset</span>(&amp;servaddr, <span class="number">0</span>, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> servaddr.sin_family = AF_INET;</span><br><span class="line"> servaddr.sin_port = <span class="built_in">htons</span>(port); <span class="comment">//服务器端口</span></span><br><span class="line">    <span class="comment">// servaddr.sin_addr.s_addr = htons(port);</span></span><br><span class="line"> <span class="built_in">inet_pton</span>(AF_INET, ip, &amp;servaddr.sin_addr); <span class="comment">//将点分文本的IP地址转换为二进制网络字节序的IP地址</span></span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> sockfd = <span class="built_in">socket</span>(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line"> <span class="built_in">assert</span>(sockfd &gt;= <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> connfd = <span class="built_in">connect</span>(sockfd, (<span class="keyword">struct</span> sockaddr *)&amp;servaddr, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> </span><br><span class="line"> <span class="type">char</span> sendbuf[BUFFER_SIZE];</span><br><span class="line"> <span class="type">char</span> recvbuf[BUFFER_SIZE];</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="keyword">if</span> (connfd &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;connection failed\n&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">memset</span>(sendbuf, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> <span class="built_in">memset</span>(recvbuf, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;client:&quot;</span>);</span><br><span class="line"> <span class="built_in">fgets</span>(sendbuf, BUFFER_SIZE, stdin);</span><br><span class="line"> <span class="built_in">send</span>(sockfd, sendbuf, <span class="built_in">strlen</span>(sendbuf), <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(sendbuf, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">//send为quit表示客户端请求断开连接，退出循环</span></span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> ret = <span class="built_in">recv</span>(sockfd, recvbuf, BUFFER_SIZE - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(recvbuf, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">//recv为quit表示服务器请求断开连接，退出循环</span></span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;server:%s&quot;</span>, recvbuf);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="built_in">close</span>(connfd);</span><br><span class="line"> <span class="built_in">close</span>(sockCli);</span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
       <tags>
         <tag>Linux</tag>
         <tag>计算机网络</tag>
         <tag>Socket</tag>
         <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</title>
-    <url>/archives/8cdebc07.html</url>
-    <content><![CDATA[<h2 id="什么是Socket？"><a href="#什么是Socket？" class="headerlink" title="什么是Socket？"></a>什么是Socket？</h2><p>Socket允许在相同或不同机器上的两个不同进程之间进行通信。更准确地说，这是一种使用标准 Unix 文件描述符与其他计算机通信的方式。</p>
-<p>在 Unix 中，每个 I&#x2F;O 操作都是通过写入或读取文件描述符来完成的。文件描述符只是与打开的文件相关联的整数，它可以是网络连接、文本文件、终端或其他东西。</p>
-<p>对于程序员来说，套接字的外观和行为很像低级文件描述符。这是因为诸如 read() 和 write() 之类的命令对套接字的工作方式与它们对文件和管道的工作方式相同。</p>
-<p>套接字最初是在 2.1BSD 中引入的，随后在 4.2BSD 中被改进为当前的形式。现在，大多数最新的 UNIX 系统版本都提供了套接字功能。<br><img src="https://pic1.zhimg.com/80/v2-33d5adb9c5bdefa9977a7f64970834a0_720w.jpg" alt="Socket与各种网络协议的关系"><br>如图所示，Socket是为了给应用程序一个更加统一、简洁的API接口而将底层各种协议栈封装起来形成形成的一层接口函数。</p>
-<p>简单举例Socket如何实现客户端和服务端<br><img src="https://pic3.zhimg.com/80/v2-50a90c813007b71ef251e00f5cf7692e_720w.jpg" alt="客户端和服务端信息交互"><br>构建客户端和服务器的方式有所不同，但都涉及到Socket的基本构造。这两个进程都建立了自己的套接字。</p>
-<h2 id="如何构建客户端"><a href="#如何构建客户端" class="headerlink" title="如何构建客户端"></a>如何构建客户端</h2><p>在客户端建立Socket的步骤如下 ：</p>
-<p>1.使用socket()系统调用创建一个套接字。</p>
-<p>2.使用connect()系统调用将套接字连接到服务器的地址。</p>
-<p>3.发送和接收数据。有很多方式可以实现这一点，最简单的方法就是使用read()和write()系统调用。</p>
-<h2 id="如何构建服务端"><a href="#如何构建服务端" class="headerlink" title="如何构建服务端"></a>如何构建服务端</h2><p>在服务器端建立套接字的步骤如下 ：</p>
-<p>1.使用socket()系统调用创建一个套接字。</p>
-<p>2.使用bind()系统调用将套接字绑定到一个地址。对于 Internet 上的服务器套接字，地址由主机上的端口号组成。</p>
-<p>3.通过listen()系统调用监听连接。</p>
-<p>4.通过accept()系统调用接受连接。此调用通常会阻止连接，直到客户端与服务器连接。</p>
-<p>5.使用read()和write()系统调用发送和接收数据。</p>
-]]></content>
-      <tags>
-        <tag>计算机网络</tag>
-        <tag>Socket</tag>
       </tags>
   </entry>
   <entry>
@@ -748,6 +763,9 @@
 <p><strong>3、 内存拷贝，利用mmap()文件映射内存加速与内核空间的消息传递；即epoll使用mmap减少复制开销。</strong></p>
 <h2 id="epoll缺点："><a href="#epoll缺点：" class="headerlink" title="epoll缺点："></a>epoll缺点：</h2><p><strong>epoll只能工作在linux下。</strong></p>
 ]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
       <tags>
         <tag>Linux</tag>
         <tag>计算机网络</tag>

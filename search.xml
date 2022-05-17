@@ -1,30 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>GitHub 443 Timed out的解决方法</title>
-    <url>/archives/4dcde7a2.html</url>
-    <content><![CDATA[<h1 id="GitHub-443-Timed-out解决办法"><a href="#GitHub-443-Timed-out解决办法" class="headerlink" title="GitHub 443 Timed out解决办法"></a>GitHub 443 Timed out解决办法</h1><h2 id="Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out"><a href="#Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out" class="headerlink" title="Failed to connect to github.com port 443 after 21090 ms: Timed out"></a>Failed to connect to github.com port 443 after 21090 ms: Timed out</h2><p>最近尝试过很多方法都无法解决GitHub的上传问题，包括取消全局代理也无效。</p>
-<p>取消全局代理：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global --<span class="built_in">unset</span> http.proxy</span><br><span class="line">git config --global --<span class="built_in">unset</span> https.proxy</span><br></pre></td></tr></table></figure>
-<p>无奈之下只能选择修改hosts文件。</p>
-<p>登录以下三个网站获取对应的ip地址，写入hosts文件即可。</p>
-<p><a href="https://ipaddress.com/website/github.com">GitHub IP地址</a></p>
-<p><img src="https://pic3.zhimg.com/80/v2-7a0b82ecaa96fdc3efda9e4295ab1eee_720w.jpg" alt="GitHub IP地址"></p>
-<p><a href="https://ipaddress.com/website/github.global.ssl.fastly.net#ipinfo">github.global.ssl.Fastly.net IP地址</a></p>
-<p><img src="https://pic2.zhimg.com/80/v2-aed12d6e1e2bedebba9e1444bbdc83dd_720w.jpg" alt="github.global.ssl.Fastly.net IP地址"></p>
-<p><a href="https://ipaddress.com/website/assets-cdn.github.com">assets-cdn.Github.com IP地址</a></p>
-<p><img src="https://pic1.zhimg.com/80/v2-05f981b555f81338eb2bb15b5ebb5338_720w.jpg" alt="assets-cdn.Github.com IP地址"></p>
-<p>如下图所示：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">140.82.112.4 http://GitHub.com</span><br><span class="line"></span><br><span class="line">199.232.69.194 http://github.global.ssl.Fastly.net</span><br><span class="line"></span><br><span class="line">185.199.108.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.109.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.110.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.111.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>实测有效</p>
-<p><img src="https://pic3.zhimg.com/80/v2-8ed6c75a78b8c4418f8b802d5ae38a26_720w.jpg"></p>
-]]></content>
-      <tags>
-        <tag>GitHub</tag>
-        <tag>Git</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux下的fork和exec函数</title>
     <url>/archives/90acc1af.html</url>
     <content><![CDATA[<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>多线程程序设计的概念早在六十年代就被提出，但直到八十年代中期，Unix系统中才引入多线程机制，如今，由于自身的许多优点，多线程编程已经得到了广泛的应用。</p>
@@ -72,6 +48,30 @@
       </tags>
   </entry>
   <entry>
+    <title>GitHub 443 Timed out的解决方法</title>
+    <url>/archives/4dcde7a2.html</url>
+    <content><![CDATA[<h1 id="GitHub-443-Timed-out解决办法"><a href="#GitHub-443-Timed-out解决办法" class="headerlink" title="GitHub 443 Timed out解决办法"></a>GitHub 443 Timed out解决办法</h1><h2 id="Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out"><a href="#Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out" class="headerlink" title="Failed to connect to github.com port 443 after 21090 ms: Timed out"></a>Failed to connect to github.com port 443 after 21090 ms: Timed out</h2><p>最近尝试过很多方法都无法解决GitHub的上传问题，包括取消全局代理也无效。</p>
+<p>取消全局代理：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global --<span class="built_in">unset</span> http.proxy</span><br><span class="line">git config --global --<span class="built_in">unset</span> https.proxy</span><br></pre></td></tr></table></figure>
+<p>无奈之下只能选择修改hosts文件。</p>
+<p>登录以下三个网站获取对应的ip地址，写入hosts文件即可。</p>
+<p><a href="https://ipaddress.com/website/github.com">GitHub IP地址</a></p>
+<p><img src="https://pic3.zhimg.com/80/v2-7a0b82ecaa96fdc3efda9e4295ab1eee_720w.jpg" alt="GitHub IP地址"></p>
+<p><a href="https://ipaddress.com/website/github.global.ssl.fastly.net#ipinfo">github.global.ssl.Fastly.net IP地址</a></p>
+<p><img src="https://pic2.zhimg.com/80/v2-aed12d6e1e2bedebba9e1444bbdc83dd_720w.jpg" alt="github.global.ssl.Fastly.net IP地址"></p>
+<p><a href="https://ipaddress.com/website/assets-cdn.github.com">assets-cdn.Github.com IP地址</a></p>
+<p><img src="https://pic1.zhimg.com/80/v2-05f981b555f81338eb2bb15b5ebb5338_720w.jpg" alt="assets-cdn.Github.com IP地址"></p>
+<p>如下图所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">140.82.112.4 http://GitHub.com</span><br><span class="line"></span><br><span class="line">199.232.69.194 http://github.global.ssl.Fastly.net</span><br><span class="line"></span><br><span class="line">185.199.108.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.109.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.110.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.111.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>实测有效</p>
+<p><img src="https://pic3.zhimg.com/80/v2-8ed6c75a78b8c4418f8b802d5ae38a26_720w.jpg"></p>
+]]></content>
+      <tags>
+        <tag>GitHub</tag>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hello World</title>
     <url>/archives/4a17b156.html</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
@@ -88,66 +88,6 @@
 
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>单片机和嵌入式系统的区别</title>
-    <url>/archives/cc4d518f.html</url>
-    <content><![CDATA[<h1 id="单片机和嵌入式系统的区别"><a href="#单片机和嵌入式系统的区别" class="headerlink" title="单片机和嵌入式系统的区别"></a>单片机和嵌入式系统的区别</h1><p>嵌入式和单片机并不是一对相对的概念，嵌入式系统包括硬件和软件部分，而单片机是单片微型计算机(Single Chip Microcomputer )的简称，即微控制单元(Microcontroller Unit；MCU) 。单片机可以是嵌入式系统的组成部分。我们可以理解为嵌入式系统是一个大类，单片机是其中一个重要的子类。</p>
-<h1 id="什么是单片机？"><a href="#什么是单片机？" class="headerlink" title="什么是单片机？"></a>什么是单片机？</h1><p>单片机又称单片微控制器，它是将电子计算机的基本环节,如:中央处理器(又称中央处理器,主要由运算器,控制器组成),存储器,总线,输入输出接口等,采用集成电路技术集成在一片硅基片上.由于单片计算机体积很小(仅手指般大小),功能强(具有一个简单计算机的功能)。</p>
-<h1 id="什么是嵌入式系统？"><a href="#什么是嵌入式系统？" class="headerlink" title="什么是嵌入式系统？"></a>什么是嵌入式系统？</h1><p>嵌入式系统是基于微处理器的计算机硬件系统，其软件设计用于执行专用功能，既可以作为独立系统，也可以作为大型系统的一部分。其核心是一个集成电路，旨在为实时操作执行计算。其软件内容只包括软件运行环境及其操作系统。硬件内容包括信号处理器、存储器、通信模块等在内的多方面的内容。</p>
-<p>复杂性从单个微控制器到具有连接外围设备和网络的一套处理器；从无用户界面到复杂的图形用户界面。嵌入式系统的复杂性因设计任务而异。</p>
-<p>嵌入式系统应用范围从数字手表和微波到混合动力汽车和航空电子设备。多达 98% 的制造的微处理器用于嵌入式系统。</p>
-<p>嵌入式系统如何工作？</p>
-<p>嵌入式系统由微控制器或数字信号处理器 (DSP)、专用集成电路 (ASIC)、现场可编程门阵列 (FPGA)、GPU 技术和门阵列管理。这些处理系统与专用于处理电气和&#x2F;或机械接口的组件集成在一起。</p>
-<p>嵌入式系统编程指令，称为固件，存储在只读存储器或闪存芯片中，以有限的计算机硬件资源运行。嵌入式系统通过外围设备与外部世界连接，连接输入和输出设备。</p>
-<p>嵌入式系统的基本结构</p>
-<p><img src="https://pic3.zhimg.com/80/v2-510f561d07185b9ac8ce873cfa42d79e_720w.jpg" alt="嵌入式系统的基本结构"><br>嵌入式系统的基本结构包括以下组件：</p>
-<p>传感器：传感器测量物理量并将其转换为电信号，然后可以由嵌入式系统工程师或任何电子仪器读取。传感器将测量的量存储到存储器中。</p>
-<p>AD转换器：模数转换器将传感器发送的模拟信号转换为数字信号。<br>处理器和 ASIC：处理器评估数据以测量输出并将其存储到内存中。</p>
-<p>DA 转换器：数模转换器将处理器提供的数字数据转换为模拟数据</p>
-<p>执行器：执行器将 DA 转换器给出的输出与存储的实际输出进行比较，并存储批准的输出。</p>
-<p>以常见的几种嵌入式开发板和单片机为例子</p>
-<p>树莓派4B：<br><img src="https://pic3.zhimg.com/80/v2-e4113649f5c864c848977651efe67fde_720w.jpg" alt="树莓派4B"><br>Broadcom BCM2711, Quad core Cortex-A72 (ARM v8) 64-bit SoC @ 1.5GHz</p>
-<p>Raspberry Pi(中文名为“树莓派”,简写为RPi，(或者RasPi &#x2F; RPI) 是为学习计算机编程教育而设计)，只有信用卡大小的微型电脑，其系统基于Linux。</p>
-<p>可以将树莓派理解为一台微型电脑，它与我们平时使用的电脑近乎相同。</p>
-<p>Arduino：<br><img src="https://pic2.zhimg.com/80/v2-296df3f5f79f05cf00f9d1219ed160ed_720w.jpg" alt="Arduino"><br>AVR单片机、ARM芯片</p>
-<p>Arduino是一款便捷灵活、方便上手的开源电子原型平台。</p>
-<p>它构建于开放原始码simple I&#x2F;O介面版，并且具有使用类似Java、C语言的Processing&#x2F;Wiring开发环境。主要包含两个的部分：硬件部分是可以用来做电路连接的Arduino电路板；另外一个则是Arduino IDE，你的计算机中的程序开发环境。只要在IDE中编写程序代码，将程序上传到Arduino电路板后，程序会告诉Arduino电路板要做什么。</p>
-<p>简单来说，arduino是对单片机的二次封装。</p>
-<p>Stm32:<br><img src="https://pic1.zhimg.com/80/v2-66dc8e061c98669e0bf291326dbef7b4_720w.jpg" alt="stm32"><br>ARM Cortex-M内核单片机</p>
-<p>stm32全称是意法半导体32位系列微控制器芯片。STM32系列专为要求高性能、低成本、低功耗的嵌入式应用设计的ARM Cortex®-M0，M0+，M3, M4和M7内核。</p>
-<p>主流产品（STM32F0、STM32F1、STM32F3）、超低功耗产品（STM32L0、STM32L1、STM32L4、STM32L4+）、高性能产品（STM32F2、STM32F4、STM32F7、STM32H7）</p>
-<p>51单片机：<br><img src="https://pic1.zhimg.com/80/v2-5f93514b9dbe056edf726476e000a680_720w.jpg" alt="51单片机"><br>51单片机是对兼容英特尔8051指令系统的单片机的统称</p>
-<p>51单片机广泛应用于家用电器、汽车、工业测控、通信设备中。因为51单片机的指令系统、内部结构相对简单，所以国内许多高校用其进行单片机入门教学。</p>
-<p>51单片机是Intel在1981年推出的由8031微控制器芯片改造升级的、使用CISC指令集的、冯诺依曼架构的、8位的8051微控制器。后Intel将8051微控制器的内核授权给其他芯片厂商,使得市面上广泛出现类似于8051的芯片,这种采用8051内核的芯片被简称为51。</p>
-<p>从上述例子中我们能直观地看到这些开发板和单片机所使用处理器的不同，但是树莓派、Arduino、stm32和我们日常使用的手机均是使用arm架构的处理器，那么手机算单片机吗？</p>
-<p>要回答这个问题，首先要简单介绍一下ARM处理器产品线。</p>
-<p>ARM Cortex内核系列提供非常广泛的具有可扩展性的性能选项，设计人员有机会在多种选项中选择最适合自身应用的内核。Cortex系列组合大体上分为三种类别：</p>
-<p>● Cortex-A—面向性能密集型系统的应用处理器内核</p>
-<p>● Cortex-R—面向实时应用的高性能内核</p>
-<p>● Cortex-M—面向各类嵌入式应用的微控制器内核</p>
-<p><img src="https://pic2.zhimg.com/80/v2-f85640d3f7901185a13f066da1a9b191_720w.jpg" alt="处理器家族"><br>Cortex-A处理器为利用操作系统（例如Linux或者Android）的设备提供了一系列解决方案，这些设备被用于各类应用，从低成本手持设备到智能手机、平板电脑、机顶盒以及企业网络设备等。</p>
-<p>Cortex-R实时处理器为要求可靠性、高可用性、容错功能、可维护性和实时响应的嵌入式系统提供高性能计算解决方案。在数以亿计的产品中得到验证的成熟技术提供极快的上市速度，并利用广泛的 ARM 生态系统、全球和本地语言以及全天候的支持服务，保证快速、低风险的产品开发。</p>
-<p>Cortex-M系列基于ARMv7-M架构（用于Cortex-M3和Cortex-M4）构建，针对成本和功耗敏感的MCU和终端应用（如智能测量、人机接口设备、汽车和工业控制系统、大型家用电器、消费性产品和医疗器械）的混合信号设备进行过优化。</p>
-<p>总结： Cortex-M 系列是MCU，也就是单片机，Cortex-R 系列处理器提供的性能比 Cortex-M 系列提供的性能高得多，而 Cortex-A 系列专用于具有复杂软件操作系统（需使用虚拟内存管理）的面向用户的应用。</p>
-<p>综上所述，只有Cortex-A系列内核的芯片叫处理器。而上述的开发板和单片机只有Raspberry Pi以及我们日常使用的手机是Cortex-A系列内核的芯片。</p>
-<p>单片机和嵌入式系统的结构</p>
-<p>单片机： 软件 —— 硬件<br>嵌入式系统： 软件 ——操作系统——硬件</p>
-<p>有无操作系统的区别</p>
-<p>有操作系统可以实现多任务调度、文件系统、内存管理等复杂功能。</p>
-<p>当系统中存在操作系统的时候，设备驱动变成了连接硬件和内核的桥梁。开发者调用统一的系统调用接口来访问各种设备，方便开发。提供操作方便、简单、提供友好的图形GUI和图形界面，追求易学易用。并且可以使用大量开源的软件，工具，库。</p>
-<p>提供强大的网络功能，支持TCP&#x2F;IP协议及其他协议，提供TCP&#x2F;UDP&#x2F;IP&#x2F;PPP协议支持及统一的MAC访问层接口，为各种移动计算设备预留接口。可以实现远程控制。</p>
-<p>拥有良好的软件移植性，嵌入式系统和具体应用有机地结合在一起，升级换代也是和具体产品同步进行，具有较长的生命周期。</p>
-<p>而对于无操作系统的单片机而言，可以实现的功能相对单一。开发者必须要先了解这个硬件平台，才能进行软件编程，降低了开发效率且软件移植性差。</p>
-<p>单片机的优势</p>
-<p>从上文所述的种种优缺点来看，单片机对比嵌入式系统似乎一无是处，尽管嵌入式系统的性能强大且可实现功能众多，但嵌入式最大的劣势便是其高昂的价格。</p>
-<p>单片机价格低廉，结构简单，使用方便，实现模块化，单片机可靠性高，可工作到10^6 ~10^7小时无故障，处理功能强，速度快。低电压，低功耗，控制功能强，环境适应能力强。</p>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
-        <tag>嵌入式</tag>
-        <tag>单片机</tag>
-      </tags>
   </entry>
   <entry>
     <title>常用Linux命令整理</title>
@@ -283,6 +223,66 @@
 ]]></content>
       <tags>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>单片机和嵌入式系统的区别</title>
+    <url>/archives/cc4d518f.html</url>
+    <content><![CDATA[<h1 id="单片机和嵌入式系统的区别"><a href="#单片机和嵌入式系统的区别" class="headerlink" title="单片机和嵌入式系统的区别"></a>单片机和嵌入式系统的区别</h1><p>嵌入式和单片机并不是一对相对的概念，嵌入式系统包括硬件和软件部分，而单片机是单片微型计算机(Single Chip Microcomputer )的简称，即微控制单元(Microcontroller Unit；MCU) 。单片机可以是嵌入式系统的组成部分。我们可以理解为嵌入式系统是一个大类，单片机是其中一个重要的子类。</p>
+<h1 id="什么是单片机？"><a href="#什么是单片机？" class="headerlink" title="什么是单片机？"></a>什么是单片机？</h1><p>单片机又称单片微控制器，它是将电子计算机的基本环节,如:中央处理器(又称中央处理器,主要由运算器,控制器组成),存储器,总线,输入输出接口等,采用集成电路技术集成在一片硅基片上.由于单片计算机体积很小(仅手指般大小),功能强(具有一个简单计算机的功能)。</p>
+<h1 id="什么是嵌入式系统？"><a href="#什么是嵌入式系统？" class="headerlink" title="什么是嵌入式系统？"></a>什么是嵌入式系统？</h1><p>嵌入式系统是基于微处理器的计算机硬件系统，其软件设计用于执行专用功能，既可以作为独立系统，也可以作为大型系统的一部分。其核心是一个集成电路，旨在为实时操作执行计算。其软件内容只包括软件运行环境及其操作系统。硬件内容包括信号处理器、存储器、通信模块等在内的多方面的内容。</p>
+<p>复杂性从单个微控制器到具有连接外围设备和网络的一套处理器；从无用户界面到复杂的图形用户界面。嵌入式系统的复杂性因设计任务而异。</p>
+<p>嵌入式系统应用范围从数字手表和微波到混合动力汽车和航空电子设备。多达 98% 的制造的微处理器用于嵌入式系统。</p>
+<p>嵌入式系统如何工作？</p>
+<p>嵌入式系统由微控制器或数字信号处理器 (DSP)、专用集成电路 (ASIC)、现场可编程门阵列 (FPGA)、GPU 技术和门阵列管理。这些处理系统与专用于处理电气和&#x2F;或机械接口的组件集成在一起。</p>
+<p>嵌入式系统编程指令，称为固件，存储在只读存储器或闪存芯片中，以有限的计算机硬件资源运行。嵌入式系统通过外围设备与外部世界连接，连接输入和输出设备。</p>
+<p>嵌入式系统的基本结构</p>
+<p><img src="https://pic3.zhimg.com/80/v2-510f561d07185b9ac8ce873cfa42d79e_720w.jpg" alt="嵌入式系统的基本结构"><br>嵌入式系统的基本结构包括以下组件：</p>
+<p>传感器：传感器测量物理量并将其转换为电信号，然后可以由嵌入式系统工程师或任何电子仪器读取。传感器将测量的量存储到存储器中。</p>
+<p>AD转换器：模数转换器将传感器发送的模拟信号转换为数字信号。<br>处理器和 ASIC：处理器评估数据以测量输出并将其存储到内存中。</p>
+<p>DA 转换器：数模转换器将处理器提供的数字数据转换为模拟数据</p>
+<p>执行器：执行器将 DA 转换器给出的输出与存储的实际输出进行比较，并存储批准的输出。</p>
+<p>以常见的几种嵌入式开发板和单片机为例子</p>
+<p>树莓派4B：<br><img src="https://pic3.zhimg.com/80/v2-e4113649f5c864c848977651efe67fde_720w.jpg" alt="树莓派4B"><br>Broadcom BCM2711, Quad core Cortex-A72 (ARM v8) 64-bit SoC @ 1.5GHz</p>
+<p>Raspberry Pi(中文名为“树莓派”,简写为RPi，(或者RasPi &#x2F; RPI) 是为学习计算机编程教育而设计)，只有信用卡大小的微型电脑，其系统基于Linux。</p>
+<p>可以将树莓派理解为一台微型电脑，它与我们平时使用的电脑近乎相同。</p>
+<p>Arduino：<br><img src="https://pic2.zhimg.com/80/v2-296df3f5f79f05cf00f9d1219ed160ed_720w.jpg" alt="Arduino"><br>AVR单片机、ARM芯片</p>
+<p>Arduino是一款便捷灵活、方便上手的开源电子原型平台。</p>
+<p>它构建于开放原始码simple I&#x2F;O介面版，并且具有使用类似Java、C语言的Processing&#x2F;Wiring开发环境。主要包含两个的部分：硬件部分是可以用来做电路连接的Arduino电路板；另外一个则是Arduino IDE，你的计算机中的程序开发环境。只要在IDE中编写程序代码，将程序上传到Arduino电路板后，程序会告诉Arduino电路板要做什么。</p>
+<p>简单来说，arduino是对单片机的二次封装。</p>
+<p>Stm32:<br><img src="https://pic1.zhimg.com/80/v2-66dc8e061c98669e0bf291326dbef7b4_720w.jpg" alt="stm32"><br>ARM Cortex-M内核单片机</p>
+<p>stm32全称是意法半导体32位系列微控制器芯片。STM32系列专为要求高性能、低成本、低功耗的嵌入式应用设计的ARM Cortex®-M0，M0+，M3, M4和M7内核。</p>
+<p>主流产品（STM32F0、STM32F1、STM32F3）、超低功耗产品（STM32L0、STM32L1、STM32L4、STM32L4+）、高性能产品（STM32F2、STM32F4、STM32F7、STM32H7）</p>
+<p>51单片机：<br><img src="https://pic1.zhimg.com/80/v2-5f93514b9dbe056edf726476e000a680_720w.jpg" alt="51单片机"><br>51单片机是对兼容英特尔8051指令系统的单片机的统称</p>
+<p>51单片机广泛应用于家用电器、汽车、工业测控、通信设备中。因为51单片机的指令系统、内部结构相对简单，所以国内许多高校用其进行单片机入门教学。</p>
+<p>51单片机是Intel在1981年推出的由8031微控制器芯片改造升级的、使用CISC指令集的、冯诺依曼架构的、8位的8051微控制器。后Intel将8051微控制器的内核授权给其他芯片厂商,使得市面上广泛出现类似于8051的芯片,这种采用8051内核的芯片被简称为51。</p>
+<p>从上述例子中我们能直观地看到这些开发板和单片机所使用处理器的不同，但是树莓派、Arduino、stm32和我们日常使用的手机均是使用arm架构的处理器，那么手机算单片机吗？</p>
+<p>要回答这个问题，首先要简单介绍一下ARM处理器产品线。</p>
+<p>ARM Cortex内核系列提供非常广泛的具有可扩展性的性能选项，设计人员有机会在多种选项中选择最适合自身应用的内核。Cortex系列组合大体上分为三种类别：</p>
+<p>● Cortex-A—面向性能密集型系统的应用处理器内核</p>
+<p>● Cortex-R—面向实时应用的高性能内核</p>
+<p>● Cortex-M—面向各类嵌入式应用的微控制器内核</p>
+<p><img src="https://pic2.zhimg.com/80/v2-f85640d3f7901185a13f066da1a9b191_720w.jpg" alt="处理器家族"><br>Cortex-A处理器为利用操作系统（例如Linux或者Android）的设备提供了一系列解决方案，这些设备被用于各类应用，从低成本手持设备到智能手机、平板电脑、机顶盒以及企业网络设备等。</p>
+<p>Cortex-R实时处理器为要求可靠性、高可用性、容错功能、可维护性和实时响应的嵌入式系统提供高性能计算解决方案。在数以亿计的产品中得到验证的成熟技术提供极快的上市速度，并利用广泛的 ARM 生态系统、全球和本地语言以及全天候的支持服务，保证快速、低风险的产品开发。</p>
+<p>Cortex-M系列基于ARMv7-M架构（用于Cortex-M3和Cortex-M4）构建，针对成本和功耗敏感的MCU和终端应用（如智能测量、人机接口设备、汽车和工业控制系统、大型家用电器、消费性产品和医疗器械）的混合信号设备进行过优化。</p>
+<p>总结： Cortex-M 系列是MCU，也就是单片机，Cortex-R 系列处理器提供的性能比 Cortex-M 系列提供的性能高得多，而 Cortex-A 系列专用于具有复杂软件操作系统（需使用虚拟内存管理）的面向用户的应用。</p>
+<p>综上所述，只有Cortex-A系列内核的芯片叫处理器。而上述的开发板和单片机只有Raspberry Pi以及我们日常使用的手机是Cortex-A系列内核的芯片。</p>
+<p>单片机和嵌入式系统的结构</p>
+<p>单片机： 软件 —— 硬件<br>嵌入式系统： 软件 ——操作系统——硬件</p>
+<p>有无操作系统的区别</p>
+<p>有操作系统可以实现多任务调度、文件系统、内存管理等复杂功能。</p>
+<p>当系统中存在操作系统的时候，设备驱动变成了连接硬件和内核的桥梁。开发者调用统一的系统调用接口来访问各种设备，方便开发。提供操作方便、简单、提供友好的图形GUI和图形界面，追求易学易用。并且可以使用大量开源的软件，工具，库。</p>
+<p>提供强大的网络功能，支持TCP&#x2F;IP协议及其他协议，提供TCP&#x2F;UDP&#x2F;IP&#x2F;PPP协议支持及统一的MAC访问层接口，为各种移动计算设备预留接口。可以实现远程控制。</p>
+<p>拥有良好的软件移植性，嵌入式系统和具体应用有机地结合在一起，升级换代也是和具体产品同步进行，具有较长的生命周期。</p>
+<p>而对于无操作系统的单片机而言，可以实现的功能相对单一。开发者必须要先了解这个硬件平台，才能进行软件编程，降低了开发效率且软件移植性差。</p>
+<p>单片机的优势</p>
+<p>从上文所述的种种优缺点来看，单片机对比嵌入式系统似乎一无是处，尽管嵌入式系统的性能强大且可实现功能众多，但嵌入式最大的劣势便是其高昂的价格。</p>
+<p>单片机价格低廉，结构简单，使用方便，实现模块化，单片机可靠性高，可工作到10^6 ~10^7小时无故障，处理功能强，速度快。低电压，低功耗，控制功能强，环境适应能力强。</p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+        <tag>嵌入式</tag>
+        <tag>单片机</tag>
       </tags>
   </entry>
   <entry>

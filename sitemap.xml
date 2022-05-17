@@ -164,20 +164,6 @@
 
   
   <url>
-    <loc>https://raidenxe.github.io/tags/GitHub/</loc>
-    <lastmod>2022-05-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://raidenxe.github.io/tags/Git/</loc>
-    <lastmod>2022-05-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://raidenxe.github.io/tags/Linux/</loc>
     <lastmod>2022-05-17</lastmod>
     <changefreq>weekly</changefreq>
@@ -186,6 +172,20 @@
   
   <url>
     <loc>https://raidenxe.github.io/tags/%E8%BF%9B%E7%A8%8B/</loc>
+    <lastmod>2022-05-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://raidenxe.github.io/tags/GitHub/</loc>
+    <lastmod>2022-05-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://raidenxe.github.io/tags/Git/</loc>
     <lastmod>2022-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

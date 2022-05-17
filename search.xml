@@ -43,66 +43,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>单片机和嵌入式系统的区别</title>
-    <url>/archives/cc4d518f.html</url>
-    <content><![CDATA[<h1 id="单片机和嵌入式系统的区别"><a href="#单片机和嵌入式系统的区别" class="headerlink" title="单片机和嵌入式系统的区别"></a>单片机和嵌入式系统的区别</h1><p>嵌入式和单片机并不是一对相对的概念，嵌入式系统包括硬件和软件部分，而单片机是单片微型计算机(Single Chip Microcomputer )的简称，即微控制单元(Microcontroller Unit；MCU) 。单片机可以是嵌入式系统的组成部分。我们可以理解为嵌入式系统是一个大类，单片机是其中一个重要的子类。</p>
-<h1 id="什么是单片机？"><a href="#什么是单片机？" class="headerlink" title="什么是单片机？"></a>什么是单片机？</h1><p>单片机又称单片微控制器，它是将电子计算机的基本环节,如:中央处理器(又称中央处理器,主要由运算器,控制器组成),存储器,总线,输入输出接口等,采用集成电路技术集成在一片硅基片上.由于单片计算机体积很小(仅手指般大小),功能强(具有一个简单计算机的功能)。</p>
-<h1 id="什么是嵌入式系统？"><a href="#什么是嵌入式系统？" class="headerlink" title="什么是嵌入式系统？"></a>什么是嵌入式系统？</h1><p>嵌入式系统是基于微处理器的计算机硬件系统，其软件设计用于执行专用功能，既可以作为独立系统，也可以作为大型系统的一部分。其核心是一个集成电路，旨在为实时操作执行计算。其软件内容只包括软件运行环境及其操作系统。硬件内容包括信号处理器、存储器、通信模块等在内的多方面的内容。</p>
-<p>复杂性从单个微控制器到具有连接外围设备和网络的一套处理器；从无用户界面到复杂的图形用户界面。嵌入式系统的复杂性因设计任务而异。</p>
-<p>嵌入式系统应用范围从数字手表和微波到混合动力汽车和航空电子设备。多达 98% 的制造的微处理器用于嵌入式系统。</p>
-<p>嵌入式系统如何工作？</p>
-<p>嵌入式系统由微控制器或数字信号处理器 (DSP)、专用集成电路 (ASIC)、现场可编程门阵列 (FPGA)、GPU 技术和门阵列管理。这些处理系统与专用于处理电气和&#x2F;或机械接口的组件集成在一起。</p>
-<p>嵌入式系统编程指令，称为固件，存储在只读存储器或闪存芯片中，以有限的计算机硬件资源运行。嵌入式系统通过外围设备与外部世界连接，连接输入和输出设备。</p>
-<p>嵌入式系统的基本结构</p>
-<p><img src="https://pic3.zhimg.com/80/v2-510f561d07185b9ac8ce873cfa42d79e_720w.jpg" alt="嵌入式系统的基本结构"><br>嵌入式系统的基本结构包括以下组件：</p>
-<p>传感器：传感器测量物理量并将其转换为电信号，然后可以由嵌入式系统工程师或任何电子仪器读取。传感器将测量的量存储到存储器中。</p>
-<p>AD转换器：模数转换器将传感器发送的模拟信号转换为数字信号。<br>处理器和 ASIC：处理器评估数据以测量输出并将其存储到内存中。</p>
-<p>DA 转换器：数模转换器将处理器提供的数字数据转换为模拟数据</p>
-<p>执行器：执行器将 DA 转换器给出的输出与存储的实际输出进行比较，并存储批准的输出。</p>
-<p>以常见的几种嵌入式开发板和单片机为例子</p>
-<p>树莓派4B：<br><img src="https://pic3.zhimg.com/80/v2-e4113649f5c864c848977651efe67fde_720w.jpg" alt="树莓派4B"><br>Broadcom BCM2711, Quad core Cortex-A72 (ARM v8) 64-bit SoC @ 1.5GHz</p>
-<p>Raspberry Pi(中文名为“树莓派”,简写为RPi，(或者RasPi &#x2F; RPI) 是为学习计算机编程教育而设计)，只有信用卡大小的微型电脑，其系统基于Linux。</p>
-<p>可以将树莓派理解为一台微型电脑，它与我们平时使用的电脑近乎相同。</p>
-<p>Arduino：<br><img src="https://pic2.zhimg.com/80/v2-296df3f5f79f05cf00f9d1219ed160ed_720w.jpg" alt="Arduino"><br>AVR单片机、ARM芯片</p>
-<p>Arduino是一款便捷灵活、方便上手的开源电子原型平台。</p>
-<p>它构建于开放原始码simple I&#x2F;O介面版，并且具有使用类似Java、C语言的Processing&#x2F;Wiring开发环境。主要包含两个的部分：硬件部分是可以用来做电路连接的Arduino电路板；另外一个则是Arduino IDE，你的计算机中的程序开发环境。只要在IDE中编写程序代码，将程序上传到Arduino电路板后，程序会告诉Arduino电路板要做什么。</p>
-<p>简单来说，arduino是对单片机的二次封装。</p>
-<p>Stm32:<br><img src="https://pic1.zhimg.com/80/v2-66dc8e061c98669e0bf291326dbef7b4_720w.jpg" alt="stm32"><br>ARM Cortex-M内核单片机</p>
-<p>stm32全称是意法半导体32位系列微控制器芯片。STM32系列专为要求高性能、低成本、低功耗的嵌入式应用设计的ARM Cortex®-M0，M0+，M3, M4和M7内核。</p>
-<p>主流产品（STM32F0、STM32F1、STM32F3）、超低功耗产品（STM32L0、STM32L1、STM32L4、STM32L4+）、高性能产品（STM32F2、STM32F4、STM32F7、STM32H7）</p>
-<p>51单片机：<br><img src="https://pic1.zhimg.com/80/v2-5f93514b9dbe056edf726476e000a680_720w.jpg" alt="51单片机"><br>51单片机是对兼容英特尔8051指令系统的单片机的统称</p>
-<p>51单片机广泛应用于家用电器、汽车、工业测控、通信设备中。因为51单片机的指令系统、内部结构相对简单，所以国内许多高校用其进行单片机入门教学。</p>
-<p>51单片机是Intel在1981年推出的由8031微控制器芯片改造升级的、使用CISC指令集的、冯诺依曼架构的、8位的8051微控制器。后Intel将8051微控制器的内核授权给其他芯片厂商,使得市面上广泛出现类似于8051的芯片,这种采用8051内核的芯片被简称为51。</p>
-<p>从上述例子中我们能直观地看到这些开发板和单片机所使用处理器的不同，但是树莓派、Arduino、stm32和我们日常使用的手机均是使用arm架构的处理器，那么手机算单片机吗？</p>
-<p>要回答这个问题，首先要简单介绍一下ARM处理器产品线。</p>
-<p>ARM Cortex内核系列提供非常广泛的具有可扩展性的性能选项，设计人员有机会在多种选项中选择最适合自身应用的内核。Cortex系列组合大体上分为三种类别：</p>
-<p>● Cortex-A—面向性能密集型系统的应用处理器内核</p>
-<p>● Cortex-R—面向实时应用的高性能内核</p>
-<p>● Cortex-M—面向各类嵌入式应用的微控制器内核</p>
-<p><img src="https://pic2.zhimg.com/80/v2-f85640d3f7901185a13f066da1a9b191_720w.jpg" alt="处理器家族"><br>Cortex-A处理器为利用操作系统（例如Linux或者Android）的设备提供了一系列解决方案，这些设备被用于各类应用，从低成本手持设备到智能手机、平板电脑、机顶盒以及企业网络设备等。</p>
-<p>Cortex-R实时处理器为要求可靠性、高可用性、容错功能、可维护性和实时响应的嵌入式系统提供高性能计算解决方案。在数以亿计的产品中得到验证的成熟技术提供极快的上市速度，并利用广泛的 ARM 生态系统、全球和本地语言以及全天候的支持服务，保证快速、低风险的产品开发。</p>
-<p>Cortex-M系列基于ARMv7-M架构（用于Cortex-M3和Cortex-M4）构建，针对成本和功耗敏感的MCU和终端应用（如智能测量、人机接口设备、汽车和工业控制系统、大型家用电器、消费性产品和医疗器械）的混合信号设备进行过优化。</p>
-<p>总结： Cortex-M 系列是MCU，也就是单片机，Cortex-R 系列处理器提供的性能比 Cortex-M 系列提供的性能高得多，而 Cortex-A 系列专用于具有复杂软件操作系统（需使用虚拟内存管理）的面向用户的应用。</p>
-<p>综上所述，只有Cortex-A系列内核的芯片叫处理器。而上述的开发板和单片机只有Raspberry Pi以及我们日常使用的手机是Cortex-A系列内核的芯片。</p>
-<p>单片机和嵌入式系统的结构</p>
-<p>单片机： 软件 —— 硬件<br>嵌入式系统： 软件 ——操作系统——硬件</p>
-<p>有无操作系统的区别</p>
-<p>有操作系统可以实现多任务调度、文件系统、内存管理等复杂功能。</p>
-<p>当系统中存在操作系统的时候，设备驱动变成了连接硬件和内核的桥梁。开发者调用统一的系统调用接口来访问各种设备，方便开发。提供操作方便、简单、提供友好的图形GUI和图形界面，追求易学易用。并且可以使用大量开源的软件，工具，库。</p>
-<p>提供强大的网络功能，支持TCP&#x2F;IP协议及其他协议，提供TCP&#x2F;UDP&#x2F;IP&#x2F;PPP协议支持及统一的MAC访问层接口，为各种移动计算设备预留接口。可以实现远程控制。</p>
-<p>拥有良好的软件移植性，嵌入式系统和具体应用有机地结合在一起，升级换代也是和具体产品同步进行，具有较长的生命周期。</p>
-<p>而对于无操作系统的单片机而言，可以实现的功能相对单一。开发者必须要先了解这个硬件平台，才能进行软件编程，降低了开发效率且软件移植性差。</p>
-<p>单片机的优势</p>
-<p>从上文所述的种种优缺点来看，单片机对比嵌入式系统似乎一无是处，尽管嵌入式系统的性能强大且可实现功能众多，但嵌入式最大的劣势便是其高昂的价格。</p>
-<p>单片机价格低廉，结构简单，使用方便，实现模块化，单片机可靠性高，可工作到10^6 ~10^7小时无故障，处理功能强，速度快。低电压，低功耗，控制功能强，环境适应能力强。</p>
-]]></content>
-      <tags>
-        <tag>嵌入式</tag>
-        <tag>单片机</tag>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux下的fork和exec函数</title>
     <url>/archives/90acc1af.html</url>
     <content><![CDATA[<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>多线程程序设计的概念早在六十年代就被提出，但直到八十年代中期，Unix系统中才引入多线程机制，如今，由于自身的许多优点，多线程编程已经得到了广泛的应用。</p>
@@ -147,6 +87,80 @@
       <tags>
         <tag>Linux</tag>
         <tag>进程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>日常使用Linux系统是什么体验？</title>
+    <url>/archives/a1e2b7b3.html</url>
+    <content><![CDATA[<p>趁着五一小假期，我尝试了去使用Linux作为日常使用的操作系统，这个过程中也是踩了不少的坑，所以想写一篇文章分享一下。</p>
+<p>我个人使用过Kail、CentOS7、Ubuntu16.04、Windows Subsystem for Linux（WSL）作为开发环境，我个人更喜欢Debian Style (.deb)包管理系统，所以最终选择了使用Ubuntu18.04 LTS，打算在开发之余日常使用，满足听音乐，写文档，看看视频等需求。</p>
+<h1 id="Ubuntu的优缺点："><a href="#Ubuntu的优缺点：" class="headerlink" title="Ubuntu的优缺点："></a>Ubuntu的优缺点：</h1><p><img src="https://pic3.zhimg.com/80/v2-c394ee5ef8e79d2c1ee12b659d08ec32_720w.jpg"></p>
+<h1 id="安装Flash插件"><a href="#安装Flash插件" class="headerlink" title="安装Flash插件"></a>安装Flash插件</h1><p>使用Firefox 浏览器时，B站无法播放视频，提示需要下载Flash插件；<br><img src="https://pic1.zhimg.com/80/v2-1b63342350894d7b71807cdb3e57a2fc_720w.jpg"><br>点击页面跳转后却提示现在Adobe官网已经不再提供flash下载；</p>
+<p>（由于 Adobe 在 2020 年 12 月 31 日之后不再支持 Flash Player，并且从 2021 年 1 月12 日开始阻止 Flash 内容在 Flash Player 中运行，因此 Adobe 强烈建议所有用户立即卸载 Flash Player 以帮助保护其系统。）<br><img src="https://pic1.zhimg.com/v2-a372fc674dc8c7eb9ef4e9318e474dc0_r.jpg"></p>
+<p>解决办法是通过终端安装flash插件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install flashplugin-installer</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<h2 id="安装ubuntu-restricted-extras；"><a href="#安装ubuntu-restricted-extras；" class="headerlink" title="安装ubuntu-restricted-extras；"></a>安装ubuntu-restricted-extras；</h2><p>ubuntu-restricted-extras 是一个包含各种基本软件，如 Flash 插件、unrar、gstreamer、mp4、Ubuntu 中的 Chromium 浏览器的编解码器等的软件包。</p>
+<p>Ubuntu提供了一个软件包来安装所有基本的媒体编解码器：ubuntu-restricted-extras。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install ubuntu-restricted-extras</span><br></pre></td></tr></table></figure>
+
+<h1 id="安装Google-Chrome："><a href="#安装Google-Chrome：" class="headerlink" title="安装Google Chrome："></a>安装Google Chrome：</h1><p>直接使用Google浏览器也可以解决上述问题。</p>
+<h2 id="1-下载谷歌浏览器"><a href="#1-下载谷歌浏览器" class="headerlink" title="1.下载谷歌浏览器"></a>1.下载谷歌浏览器</h2><p>下载最新的谷歌浏览器。带wget的deb包：</p>
+<p>wget <a href="https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb">https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb</a></p>
+<h2 id="2-安装谷歌浏览器"><a href="#2-安装谷歌浏览器" class="headerlink" title="2.安装谷歌浏览器"></a>2.安装谷歌浏览器</h2><p>在Ubuntu上安装软件包需要sudo权限。确保以具有sudo权限的用户身份运行以下命令。</p>
+<p>安装谷歌浏览器。通过键入以下内容</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+
+<p>安装deb包：<br>下载好deb包后，输入</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./“安装包名”</span><br></pre></td></tr></table></figure>
+<p>如上文所示</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+
+<h1 id="输入法软件："><a href="#输入法软件：" class="headerlink" title="输入法软件："></a>输入法软件：</h1><h2 id="搜狗输入法："><a href="#搜狗输入法：" class="headerlink" title="搜狗输入法："></a>搜狗输入法：</h2><p>搜狗输入法Linux官网-首页</p>
+<h3 id="1、添加中文语言支持"><a href="#1、添加中文语言支持" class="headerlink" title="1、添加中文语言支持"></a>1、添加中文语言支持</h3><p>打开 系统设置——区域和语言——管理已安装的语言——在“语言”tab下——点击“添加或删除语言”<br><img src="https://pic1.zhimg.com/80/v2-b248e5b921fa3cde2c018dbb74a09a68_720w.jpg"><br>弹出“已安装语言”窗口，勾选中文（简体），点击应用<br><img src="https://pic2.zhimg.com/80/v2-9784e564cfb3f4d55a89b0a9b459e7b5_720w.jpg"><br>回到“语言支持”窗口，在键盘输入法系统中，选择“fcitx”<br><img src="https://pic3.zhimg.com/80/v2-6ac417d2e68d2a9ab99b17f034fd3742_720w.jpg"></p>
+<p>如果在键盘输入法系统中，没有“fcitx”选项时，建议先打开终端手动安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">fcitx：sudo apt-get install fcitx</span><br></pre></td></tr></table></figure>
+<p>等安装成功之后再执行上述步骤</p>
+<p>点击“应用到整个系统”，关闭窗口，重启电脑</p>
+<h3 id="2-通过命令行安装搜狗输入法"><a href="#2-通过命令行安装搜狗输入法" class="headerlink" title="2.通过命令行安装搜狗输入法"></a>2.通过命令行安装搜狗输入法</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i sogoupinyin_版本号_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果安装过程中提示缺少相关依赖，则执行如下命令解决：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt -f install</span><br></pre></td></tr></table></figure>
+<h3 id="3-注销计算机即可正常使用搜狗输入法。"><a href="#3-注销计算机即可正常使用搜狗输入法。" class="headerlink" title="3.注销计算机即可正常使用搜狗输入法。"></a>3.注销计算机即可正常使用搜狗输入法。</h3><h1 id="文档软件："><a href="#文档软件：" class="headerlink" title="文档软件："></a>文档软件：</h1><h2 id="Wps："><a href="#Wps：" class="headerlink" title="Wps："></a>Wps：</h2><p>WPS Office因酷似微软 Office 而广受欢迎。它的界面与微软 Office 几乎一样并且号称与微软 Office 更加兼容。<br><a href="https://www.wps.cn/product/wpslinux">https://www.wps.cn/product/wpslinux</a></p>
+<h2 id="LibreOffice："><a href="#LibreOffice：" class="headerlink" title="LibreOffice："></a>LibreOffice：</h2><p>它是个组件完整的办公软件，包括文档编辑器、电子表格工具、演示软件、数学工具和作图工具。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libreoffice libreoffice-style-breeze</span><br></pre></td></tr></table></figure>
+<h1 id="音乐软件："><a href="#音乐软件：" class="headerlink" title="音乐软件："></a>音乐软件：</h1><h2 id="网易云："><a href="#网易云：" class="headerlink" title="网易云："></a>网易云：</h2><p><a href="https://music.163.com/#/download">https://music.163.com/#/download</a></p>
+<h1 id="聊天软件："><a href="#聊天软件：" class="headerlink" title="聊天软件："></a>聊天软件：</h1><h2 id="QQ："><a href="#QQ：" class="headerlink" title="QQ："></a>QQ：</h2><p><a href="https://im.qq.com/linuxqq/download.html">https://im.qq.com/linuxqq/download.html</a></p>
+<h1 id="其他一些常用软件安装与使用："><a href="#其他一些常用软件安装与使用：" class="headerlink" title="其他一些常用软件安装与使用："></a>其他一些常用软件安装与使用：</h1><h2 id="VNC的使用及常见问题："><a href="#VNC的使用及常见问题：" class="headerlink" title="VNC的使用及常见问题："></a>VNC的使用及常见问题：</h2><h3 id="启动VNC"><a href="#启动VNC" class="headerlink" title="启动VNC"></a>启动VNC</h3><p>设置里打开共享<br><img src="https://pic3.zhimg.com/80/v2-bdad4403c861b8070edf35e06abc3f0a_720w.jpg"><br>设置密码并打开选项<br><img src="https://pic2.zhimg.com/80/v2-fe2ab52e283125190f7d46422d01d1a9_720w.jpg"><br>如果没有屏幕共享选项</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install dconf-editor</span><br></pre></td></tr></table></figure>
+<p>或者，如果尚未安装 vino，请同时执行以下操作：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install vino dconf-editor</span><br></pre></td></tr></table></figure>
+<p>打开dconf-editor工具，终端输入 dconf-editor打开</p>
+<p>打开之后，依次展开org-&gt;gnome-&gt;desktop-&gt;remote-access<br><img src="https://pic2.zhimg.com/80/v2-863b0116f3f2f976dda4a8c19f281259_720w.jpg"><br>打开相关选项即可。</p>
+<h3 id="如果无法连接VNC服务端"><a href="#如果无法连接VNC服务端" class="headerlink" title="如果无法连接VNC服务端"></a>如果无法连接VNC服务端</h3><p>报错信息如下：</p>
+<p>Unable to connect to VNC Server using your chosen security setting. Either upgrade VNC Server to a more recent version from RealVNC, or select a weaker level of encryption</p>
+<p>解决办法</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gsettings <span class="built_in">set</span> org.gnome.Vino require-encryption <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<h2 id="SSR："><a href="#SSR：" class="headerlink" title="SSR："></a>SSR：</h2><p>科学上网工具，下载地址：<br><a href="https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb">https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb</a></p>
+<h2 id="GDebi："><a href="#GDebi：" class="headerlink" title="GDebi："></a>GDebi：</h2><p>Gedbi 是一款小巧的软件包管理器，你可以用它来安装 DEB 文件。它比软件中心更快，而且还能处理依赖问题。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gdebi</span><br></pre></td></tr></table></figure>
+
+<h2 id="Visual-Studio-Code："><a href="#Visual-Studio-Code：" class="headerlink" title="Visual Studio Code："></a>Visual Studio Code：</h2><p><a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a></p>
+<h2 id="Steam："><a href="#Steam：" class="headerlink" title="Steam："></a>Steam：</h2><p><a href="https://store.steampowered.com/about/">https://store.steampowered.com/about/</a></p>
+<h2 id="误删一些安装包导致无法打开系统设置："><a href="#误删一些安装包导致无法打开系统设置：" class="headerlink" title="误删一些安装包导致无法打开系统设置："></a>误删一些安装包导致无法打开系统设置：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gnome-control-center</span><br></pre></td></tr></table></figure>
+
+<h1 id="个人的一些感想："><a href="#个人的一些感想：" class="headerlink" title="个人的一些感想："></a>个人的一些感想：</h1><p>经过几天的使用，我发现Ubuntu在配置好环境后，日常体验还是相当不错的。</p>
+<h2 id="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"><a href="#但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。" class="headerlink" title="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"></a>但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。</h2><p>（2022&#x2F;5&#x2F;12 补充回答）</p>
+<p>因为之前的回答写得过于笼统，我决定补充一下回答。</p>
+<p>首先讲讲为什么都2022年了，Ubuntu22.04都出了，为什么我还在使用Ubuntu18.04，原因也很简单，因为我使用Ubuntu的首要目标是搭建开发环境，而日常使用是其次的，使用18.04也只是因为环境搭建起来比较容易而已。这次没能用上Ubuntu22.04的新桌面GNOME 42，我觉得还是挺遗憾的。</p>
+<p>再来讲讲我自己Linux的使用经历吧，我的Linux使用经验比较浅薄，我在19年年底才开始接触Linux，当时使用的是树莓派4B开发板，系统是Raspberry Pi OS，而我电脑上则是使用WSL，Ubuntu16.04版本。刚开始学习的时候，我算是完完全全的小白，只是知道Linux这么一个东西的存在，很难理解一个黑色的框框（终端）是操作系统。经过一段时间的学习后才算是明白了各种基本命令行的用法。后来在学校的机房里接触到CentOS8和RedHat，自己也出于好奇在虚拟机上跑Kali，学习关于网络的一些东西，但是也没有想过日常去使用这些Linux发行版。其实树莓派系统是有桌面的，但我平时都是用vscode+ssh去开发，所以也没什么接触Linux桌面的机会。可以说在这个假期前，我对Linux桌面的接触接近于0。</p>
+<p>经过这次假期短暂的使用后，接下来再讲讲我的小结，Linux确实可以应付所有的“日常使用”场景的，但在我看来更适合于开发。Linux的使用是有门槛的，即使拥有了桌面，离开了命令行界面（CLI），Linux上的很多操作都寸步难行。虽然我觉得CLI用起来很帅，很高效，但对于以日常使用为目的而不是开发的小白用户来说，CLI便是使用Linux的难点之一。反观Windows出色的图形用户界面（GUI），操作方便直观且学习成本低，在日常使用中普通用户一般也不需要使用到cmd和powershell。我举个不太恰当的例子，Linux发行版就像毛坯房需要自己去动手装修，桌面也只是给了一个基本的框架，自由度高，可以各种自定义各种魔改，比较适合动手能力强爱折腾的用户，而Windows就像已经装修好的样本房，即买即住，适合图省心的用户。（那么如果有一个上手简便，不需要CLI即可操作并且桌面功能完善的发行版一定会受到用户的欢迎吧）</p>
+<p>在软件方面，适配Linux的软件也是远少于Windows，如经典的office全家桶，各类工程软件以及常用软件。Linux下的游戏还是比较匮乏的，数量上远少于Windows。显卡驱动也是Linux的使用难点之一，而最近英伟达已经开源 Linux GPU 内核驱动了，未来可期。希望软件和游戏厂商以后能给Linux做更多的适配吧。</p>
+<p>还有一个问题就是国内特殊的网络环境以及中文互联网资料比较贫瘠，我寻找到的很多资料都已经是过时无效的了，使用好相关论坛可以节省掉不少的时间。</p>
+<p>相比Windows下泛滥的各式流氓软件，Linux则不需要担心这个问题，并且更为干净安全可靠，也没有像微软那样三天两头就更新的各式补丁。</p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -286,77 +300,63 @@
       </tags>
   </entry>
   <entry>
-    <title>日常使用Linux系统是什么体验？</title>
-    <url>/archives/a1e2b7b3.html</url>
-    <content><![CDATA[<p>趁着五一小假期，我尝试了去使用Linux作为日常使用的操作系统，这个过程中也是踩了不少的坑，所以想写一篇文章分享一下。</p>
-<p>我个人使用过Kail、CentOS7、Ubuntu16.04、Windows Subsystem for Linux（WSL）作为开发环境，我个人更喜欢Debian Style (.deb)包管理系统，所以最终选择了使用Ubuntu18.04 LTS，打算在开发之余日常使用，满足听音乐，写文档，看看视频等需求。</p>
-<h1 id="Ubuntu的优缺点："><a href="#Ubuntu的优缺点：" class="headerlink" title="Ubuntu的优缺点："></a>Ubuntu的优缺点：</h1><p><img src="https://pic3.zhimg.com/80/v2-c394ee5ef8e79d2c1ee12b659d08ec32_720w.jpg"></p>
-<h1 id="安装Flash插件"><a href="#安装Flash插件" class="headerlink" title="安装Flash插件"></a>安装Flash插件</h1><p>使用Firefox 浏览器时，B站无法播放视频，提示需要下载Flash插件；<br><img src="https://pic1.zhimg.com/80/v2-1b63342350894d7b71807cdb3e57a2fc_720w.jpg"><br>点击页面跳转后却提示现在Adobe官网已经不再提供flash下载；</p>
-<p>（由于 Adobe 在 2020 年 12 月 31 日之后不再支持 Flash Player，并且从 2021 年 1 月12 日开始阻止 Flash 内容在 Flash Player 中运行，因此 Adobe 强烈建议所有用户立即卸载 Flash Player 以帮助保护其系统。）<br><img src="https://pic1.zhimg.com/v2-a372fc674dc8c7eb9ef4e9318e474dc0_r.jpg"></p>
-<p>解决办法是通过终端安装flash插件：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install flashplugin-installer</span><br></pre></td></tr></table></figure>
-<p>或者</p>
-<h2 id="安装ubuntu-restricted-extras；"><a href="#安装ubuntu-restricted-extras；" class="headerlink" title="安装ubuntu-restricted-extras；"></a>安装ubuntu-restricted-extras；</h2><p>ubuntu-restricted-extras 是一个包含各种基本软件，如 Flash 插件、unrar、gstreamer、mp4、Ubuntu 中的 Chromium 浏览器的编解码器等的软件包。</p>
-<p>Ubuntu提供了一个软件包来安装所有基本的媒体编解码器：ubuntu-restricted-extras。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install ubuntu-restricted-extras</span><br></pre></td></tr></table></figure>
-
-<h1 id="安装Google-Chrome："><a href="#安装Google-Chrome：" class="headerlink" title="安装Google Chrome："></a>安装Google Chrome：</h1><p>直接使用Google浏览器也可以解决上述问题。</p>
-<h2 id="1-下载谷歌浏览器"><a href="#1-下载谷歌浏览器" class="headerlink" title="1.下载谷歌浏览器"></a>1.下载谷歌浏览器</h2><p>下载最新的谷歌浏览器。带wget的deb包：</p>
-<p>wget <a href="https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb">https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb</a></p>
-<h2 id="2-安装谷歌浏览器"><a href="#2-安装谷歌浏览器" class="headerlink" title="2.安装谷歌浏览器"></a>2.安装谷歌浏览器</h2><p>在Ubuntu上安装软件包需要sudo权限。确保以具有sudo权限的用户身份运行以下命令。</p>
-<p>安装谷歌浏览器。通过键入以下内容</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-
-<p>安装deb包：<br>下载好deb包后，输入</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./“安装包名”</span><br></pre></td></tr></table></figure>
-<p>如上文所示</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-
-<h1 id="输入法软件："><a href="#输入法软件：" class="headerlink" title="输入法软件："></a>输入法软件：</h1><h2 id="搜狗输入法："><a href="#搜狗输入法：" class="headerlink" title="搜狗输入法："></a>搜狗输入法：</h2><p>搜狗输入法Linux官网-首页</p>
-<h3 id="1、添加中文语言支持"><a href="#1、添加中文语言支持" class="headerlink" title="1、添加中文语言支持"></a>1、添加中文语言支持</h3><p>打开 系统设置——区域和语言——管理已安装的语言——在“语言”tab下——点击“添加或删除语言”<br><img src="https://pic1.zhimg.com/80/v2-b248e5b921fa3cde2c018dbb74a09a68_720w.jpg"><br>弹出“已安装语言”窗口，勾选中文（简体），点击应用<br><img src="https://pic2.zhimg.com/80/v2-9784e564cfb3f4d55a89b0a9b459e7b5_720w.jpg"><br>回到“语言支持”窗口，在键盘输入法系统中，选择“fcitx”<br><img src="https://pic3.zhimg.com/80/v2-6ac417d2e68d2a9ab99b17f034fd3742_720w.jpg"></p>
-<p>如果在键盘输入法系统中，没有“fcitx”选项时，建议先打开终端手动安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">fcitx：sudo apt-get install fcitx</span><br></pre></td></tr></table></figure>
-<p>等安装成功之后再执行上述步骤</p>
-<p>点击“应用到整个系统”，关闭窗口，重启电脑</p>
-<h3 id="2-通过命令行安装搜狗输入法"><a href="#2-通过命令行安装搜狗输入法" class="headerlink" title="2.通过命令行安装搜狗输入法"></a>2.通过命令行安装搜狗输入法</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i sogoupinyin_版本号_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果安装过程中提示缺少相关依赖，则执行如下命令解决：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt -f install</span><br></pre></td></tr></table></figure>
-<h3 id="3-注销计算机即可正常使用搜狗输入法。"><a href="#3-注销计算机即可正常使用搜狗输入法。" class="headerlink" title="3.注销计算机即可正常使用搜狗输入法。"></a>3.注销计算机即可正常使用搜狗输入法。</h3><h1 id="文档软件："><a href="#文档软件：" class="headerlink" title="文档软件："></a>文档软件：</h1><h2 id="Wps："><a href="#Wps：" class="headerlink" title="Wps："></a>Wps：</h2><p>WPS Office因酷似微软 Office 而广受欢迎。它的界面与微软 Office 几乎一样并且号称与微软 Office 更加兼容。<br><a href="https://www.wps.cn/product/wpslinux">https://www.wps.cn/product/wpslinux</a></p>
-<h2 id="LibreOffice："><a href="#LibreOffice：" class="headerlink" title="LibreOffice："></a>LibreOffice：</h2><p>它是个组件完整的办公软件，包括文档编辑器、电子表格工具、演示软件、数学工具和作图工具。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libreoffice libreoffice-style-breeze</span><br></pre></td></tr></table></figure>
-<h1 id="音乐软件："><a href="#音乐软件：" class="headerlink" title="音乐软件："></a>音乐软件：</h1><h2 id="网易云："><a href="#网易云：" class="headerlink" title="网易云："></a>网易云：</h2><p><a href="https://music.163.com/#/download">https://music.163.com/#/download</a></p>
-<h1 id="聊天软件："><a href="#聊天软件：" class="headerlink" title="聊天软件："></a>聊天软件：</h1><h2 id="QQ："><a href="#QQ：" class="headerlink" title="QQ："></a>QQ：</h2><p><a href="https://im.qq.com/linuxqq/download.html">https://im.qq.com/linuxqq/download.html</a></p>
-<h1 id="其他一些常用软件安装与使用："><a href="#其他一些常用软件安装与使用：" class="headerlink" title="其他一些常用软件安装与使用："></a>其他一些常用软件安装与使用：</h1><h2 id="VNC的使用及常见问题："><a href="#VNC的使用及常见问题：" class="headerlink" title="VNC的使用及常见问题："></a>VNC的使用及常见问题：</h2><h3 id="启动VNC"><a href="#启动VNC" class="headerlink" title="启动VNC"></a>启动VNC</h3><p>设置里打开共享<br><img src="https://pic3.zhimg.com/80/v2-bdad4403c861b8070edf35e06abc3f0a_720w.jpg"><br>设置密码并打开选项<br><img src="https://pic2.zhimg.com/80/v2-fe2ab52e283125190f7d46422d01d1a9_720w.jpg"><br>如果没有屏幕共享选项</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install dconf-editor</span><br></pre></td></tr></table></figure>
-<p>或者，如果尚未安装 vino，请同时执行以下操作：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install vino dconf-editor</span><br></pre></td></tr></table></figure>
-<p>打开dconf-editor工具，终端输入 dconf-editor打开</p>
-<p>打开之后，依次展开org-&gt;gnome-&gt;desktop-&gt;remote-access<br><img src="https://pic2.zhimg.com/80/v2-863b0116f3f2f976dda4a8c19f281259_720w.jpg"><br>打开相关选项即可。</p>
-<h3 id="如果无法连接VNC服务端"><a href="#如果无法连接VNC服务端" class="headerlink" title="如果无法连接VNC服务端"></a>如果无法连接VNC服务端</h3><p>报错信息如下：</p>
-<p>Unable to connect to VNC Server using your chosen security setting. Either upgrade VNC Server to a more recent version from RealVNC, or select a weaker level of encryption</p>
-<p>解决办法</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gsettings <span class="built_in">set</span> org.gnome.Vino require-encryption <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-<h2 id="SSR："><a href="#SSR：" class="headerlink" title="SSR："></a>SSR：</h2><p>科学上网工具，下载地址：<br><a href="https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb">https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb</a></p>
-<h2 id="GDebi："><a href="#GDebi：" class="headerlink" title="GDebi："></a>GDebi：</h2><p>Gedbi 是一款小巧的软件包管理器，你可以用它来安装 DEB 文件。它比软件中心更快，而且还能处理依赖问题。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gdebi</span><br></pre></td></tr></table></figure>
-
-<h2 id="Visual-Studio-Code："><a href="#Visual-Studio-Code：" class="headerlink" title="Visual Studio Code："></a>Visual Studio Code：</h2><p><a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a></p>
-<h2 id="Steam："><a href="#Steam：" class="headerlink" title="Steam："></a>Steam：</h2><p><a href="https://store.steampowered.com/about/">https://store.steampowered.com/about/</a></p>
-<h2 id="误删一些安装包导致无法打开系统设置："><a href="#误删一些安装包导致无法打开系统设置：" class="headerlink" title="误删一些安装包导致无法打开系统设置："></a>误删一些安装包导致无法打开系统设置：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gnome-control-center</span><br></pre></td></tr></table></figure>
-
-<h1 id="个人的一些感想："><a href="#个人的一些感想：" class="headerlink" title="个人的一些感想："></a>个人的一些感想：</h1><p>经过几天的使用，我发现Ubuntu在配置好环境后，日常体验还是相当不错的。</p>
-<h2 id="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"><a href="#但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。" class="headerlink" title="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"></a>但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。</h2><p>（2022&#x2F;5&#x2F;12 补充回答）</p>
-<p>因为之前的回答写得过于笼统，我决定补充一下回答。</p>
-<p>首先讲讲为什么都2022年了，Ubuntu22.04都出了，为什么我还在使用Ubuntu18.04，原因也很简单，因为我使用Ubuntu的首要目标是搭建开发环境，而日常使用是其次的，使用18.04也只是因为环境搭建起来比较容易而已。这次没能用上Ubuntu22.04的新桌面GNOME 42，我觉得还是挺遗憾的。</p>
-<p>再来讲讲我自己Linux的使用经历吧，我的Linux使用经验比较浅薄，我在19年年底才开始接触Linux，当时使用的是树莓派4B开发板，系统是Raspberry Pi OS，而我电脑上则是使用WSL，Ubuntu16.04版本。刚开始学习的时候，我算是完完全全的小白，只是知道Linux这么一个东西的存在，很难理解一个黑色的框框（终端）是操作系统。经过一段时间的学习后才算是明白了各种基本命令行的用法。后来在学校的机房里接触到CentOS8和RedHat，自己也出于好奇在虚拟机上跑Kali，学习关于网络的一些东西，但是也没有想过日常去使用这些Linux发行版。其实树莓派系统是有桌面的，但我平时都是用vscode+ssh去开发，所以也没什么接触Linux桌面的机会。可以说在这个假期前，我对Linux桌面的接触接近于0。</p>
-<p>经过这次假期短暂的使用后，接下来再讲讲我的小结，Linux确实可以应付所有的“日常使用”场景的，但在我看来更适合于开发。Linux的使用是有门槛的，即使拥有了桌面，离开了命令行界面（CLI），Linux上的很多操作都寸步难行。虽然我觉得CLI用起来很帅，很高效，但对于以日常使用为目的而不是开发的小白用户来说，CLI便是使用Linux的难点之一。反观Windows出色的图形用户界面（GUI），操作方便直观且学习成本低，在日常使用中普通用户一般也不需要使用到cmd和powershell。我举个不太恰当的例子，Linux发行版就像毛坯房需要自己去动手装修，桌面也只是给了一个基本的框架，自由度高，可以各种自定义各种魔改，比较适合动手能力强爱折腾的用户，而Windows就像已经装修好的样本房，即买即住，适合图省心的用户。（那么如果有一个上手简便，不需要CLI即可操作并且桌面功能完善的发行版一定会受到用户的欢迎吧）</p>
-<p>在软件方面，适配Linux的软件也是远少于Windows，如经典的office全家桶，各类工程软件以及常用软件。Linux下的游戏还是比较匮乏的，数量上远少于Windows。显卡驱动也是Linux的使用难点之一，而最近英伟达已经开源 Linux GPU 内核驱动了，未来可期。希望软件和游戏厂商以后能给Linux做更多的适配吧。</p>
-<p>还有一个问题就是国内特殊的网络环境以及中文互联网资料比较贫瘠，我寻找到的很多资料都已经是过时无效的了，使用好相关论坛可以节省掉不少的时间。</p>
-<p>相比Windows下泛滥的各式流氓软件，Linux则不需要担心这个问题，并且更为干净安全可靠，也没有像微软那样三天两头就更新的各式补丁。</p>
+    <title>单片机和嵌入式系统的区别</title>
+    <url>/archives/cc4d518f.html</url>
+    <content><![CDATA[<h1 id="单片机和嵌入式系统的区别"><a href="#单片机和嵌入式系统的区别" class="headerlink" title="单片机和嵌入式系统的区别"></a>单片机和嵌入式系统的区别</h1><p>嵌入式和单片机并不是一对相对的概念，嵌入式系统包括硬件和软件部分，而单片机是单片微型计算机(Single Chip Microcomputer )的简称，即微控制单元(Microcontroller Unit；MCU) 。单片机可以是嵌入式系统的组成部分。我们可以理解为嵌入式系统是一个大类，单片机是其中一个重要的子类。</p>
+<h1 id="什么是单片机？"><a href="#什么是单片机？" class="headerlink" title="什么是单片机？"></a>什么是单片机？</h1><p>单片机又称单片微控制器，它是将电子计算机的基本环节,如:中央处理器(又称中央处理器,主要由运算器,控制器组成),存储器,总线,输入输出接口等,采用集成电路技术集成在一片硅基片上.由于单片计算机体积很小(仅手指般大小),功能强(具有一个简单计算机的功能)。</p>
+<h1 id="什么是嵌入式系统？"><a href="#什么是嵌入式系统？" class="headerlink" title="什么是嵌入式系统？"></a>什么是嵌入式系统？</h1><p>嵌入式系统是基于微处理器的计算机硬件系统，其软件设计用于执行专用功能，既可以作为独立系统，也可以作为大型系统的一部分。其核心是一个集成电路，旨在为实时操作执行计算。其软件内容只包括软件运行环境及其操作系统。硬件内容包括信号处理器、存储器、通信模块等在内的多方面的内容。</p>
+<p>复杂性从单个微控制器到具有连接外围设备和网络的一套处理器；从无用户界面到复杂的图形用户界面。嵌入式系统的复杂性因设计任务而异。</p>
+<p>嵌入式系统应用范围从数字手表和微波到混合动力汽车和航空电子设备。多达 98% 的制造的微处理器用于嵌入式系统。</p>
+<p>嵌入式系统如何工作？</p>
+<p>嵌入式系统由微控制器或数字信号处理器 (DSP)、专用集成电路 (ASIC)、现场可编程门阵列 (FPGA)、GPU 技术和门阵列管理。这些处理系统与专用于处理电气和&#x2F;或机械接口的组件集成在一起。</p>
+<p>嵌入式系统编程指令，称为固件，存储在只读存储器或闪存芯片中，以有限的计算机硬件资源运行。嵌入式系统通过外围设备与外部世界连接，连接输入和输出设备。</p>
+<p>嵌入式系统的基本结构</p>
+<p><img src="https://pic3.zhimg.com/80/v2-510f561d07185b9ac8ce873cfa42d79e_720w.jpg" alt="嵌入式系统的基本结构"><br>嵌入式系统的基本结构包括以下组件：</p>
+<p>传感器：传感器测量物理量并将其转换为电信号，然后可以由嵌入式系统工程师或任何电子仪器读取。传感器将测量的量存储到存储器中。</p>
+<p>AD转换器：模数转换器将传感器发送的模拟信号转换为数字信号。<br>处理器和 ASIC：处理器评估数据以测量输出并将其存储到内存中。</p>
+<p>DA 转换器：数模转换器将处理器提供的数字数据转换为模拟数据</p>
+<p>执行器：执行器将 DA 转换器给出的输出与存储的实际输出进行比较，并存储批准的输出。</p>
+<p>以常见的几种嵌入式开发板和单片机为例子</p>
+<p>树莓派4B：<br><img src="https://pic3.zhimg.com/80/v2-e4113649f5c864c848977651efe67fde_720w.jpg" alt="树莓派4B"><br>Broadcom BCM2711, Quad core Cortex-A72 (ARM v8) 64-bit SoC @ 1.5GHz</p>
+<p>Raspberry Pi(中文名为“树莓派”,简写为RPi，(或者RasPi &#x2F; RPI) 是为学习计算机编程教育而设计)，只有信用卡大小的微型电脑，其系统基于Linux。</p>
+<p>可以将树莓派理解为一台微型电脑，它与我们平时使用的电脑近乎相同。</p>
+<p>Arduino：<br><img src="https://pic2.zhimg.com/80/v2-296df3f5f79f05cf00f9d1219ed160ed_720w.jpg" alt="Arduino"><br>AVR单片机、ARM芯片</p>
+<p>Arduino是一款便捷灵活、方便上手的开源电子原型平台。</p>
+<p>它构建于开放原始码simple I&#x2F;O介面版，并且具有使用类似Java、C语言的Processing&#x2F;Wiring开发环境。主要包含两个的部分：硬件部分是可以用来做电路连接的Arduino电路板；另外一个则是Arduino IDE，你的计算机中的程序开发环境。只要在IDE中编写程序代码，将程序上传到Arduino电路板后，程序会告诉Arduino电路板要做什么。</p>
+<p>简单来说，arduino是对单片机的二次封装。</p>
+<p>Stm32:<br><img src="https://pic1.zhimg.com/80/v2-66dc8e061c98669e0bf291326dbef7b4_720w.jpg" alt="stm32"><br>ARM Cortex-M内核单片机</p>
+<p>stm32全称是意法半导体32位系列微控制器芯片。STM32系列专为要求高性能、低成本、低功耗的嵌入式应用设计的ARM Cortex®-M0，M0+，M3, M4和M7内核。</p>
+<p>主流产品（STM32F0、STM32F1、STM32F3）、超低功耗产品（STM32L0、STM32L1、STM32L4、STM32L4+）、高性能产品（STM32F2、STM32F4、STM32F7、STM32H7）</p>
+<p>51单片机：<br><img src="https://pic1.zhimg.com/80/v2-5f93514b9dbe056edf726476e000a680_720w.jpg" alt="51单片机"><br>51单片机是对兼容英特尔8051指令系统的单片机的统称</p>
+<p>51单片机广泛应用于家用电器、汽车、工业测控、通信设备中。因为51单片机的指令系统、内部结构相对简单，所以国内许多高校用其进行单片机入门教学。</p>
+<p>51单片机是Intel在1981年推出的由8031微控制器芯片改造升级的、使用CISC指令集的、冯诺依曼架构的、8位的8051微控制器。后Intel将8051微控制器的内核授权给其他芯片厂商,使得市面上广泛出现类似于8051的芯片,这种采用8051内核的芯片被简称为51。</p>
+<p>从上述例子中我们能直观地看到这些开发板和单片机所使用处理器的不同，但是树莓派、Arduino、stm32和我们日常使用的手机均是使用arm架构的处理器，那么手机算单片机吗？</p>
+<p>要回答这个问题，首先要简单介绍一下ARM处理器产品线。</p>
+<p>ARM Cortex内核系列提供非常广泛的具有可扩展性的性能选项，设计人员有机会在多种选项中选择最适合自身应用的内核。Cortex系列组合大体上分为三种类别：</p>
+<p>● Cortex-A—面向性能密集型系统的应用处理器内核</p>
+<p>● Cortex-R—面向实时应用的高性能内核</p>
+<p>● Cortex-M—面向各类嵌入式应用的微控制器内核</p>
+<p><img src="https://pic2.zhimg.com/80/v2-f85640d3f7901185a13f066da1a9b191_720w.jpg" alt="处理器家族"><br>Cortex-A处理器为利用操作系统（例如Linux或者Android）的设备提供了一系列解决方案，这些设备被用于各类应用，从低成本手持设备到智能手机、平板电脑、机顶盒以及企业网络设备等。</p>
+<p>Cortex-R实时处理器为要求可靠性、高可用性、容错功能、可维护性和实时响应的嵌入式系统提供高性能计算解决方案。在数以亿计的产品中得到验证的成熟技术提供极快的上市速度，并利用广泛的 ARM 生态系统、全球和本地语言以及全天候的支持服务，保证快速、低风险的产品开发。</p>
+<p>Cortex-M系列基于ARMv7-M架构（用于Cortex-M3和Cortex-M4）构建，针对成本和功耗敏感的MCU和终端应用（如智能测量、人机接口设备、汽车和工业控制系统、大型家用电器、消费性产品和医疗器械）的混合信号设备进行过优化。</p>
+<p>总结： Cortex-M 系列是MCU，也就是单片机，Cortex-R 系列处理器提供的性能比 Cortex-M 系列提供的性能高得多，而 Cortex-A 系列专用于具有复杂软件操作系统（需使用虚拟内存管理）的面向用户的应用。</p>
+<p>综上所述，只有Cortex-A系列内核的芯片叫处理器。而上述的开发板和单片机只有Raspberry Pi以及我们日常使用的手机是Cortex-A系列内核的芯片。</p>
+<p>单片机和嵌入式系统的结构</p>
+<p>单片机： 软件 —— 硬件<br>嵌入式系统： 软件 ——操作系统——硬件</p>
+<p>有无操作系统的区别</p>
+<p>有操作系统可以实现多任务调度、文件系统、内存管理等复杂功能。</p>
+<p>当系统中存在操作系统的时候，设备驱动变成了连接硬件和内核的桥梁。开发者调用统一的系统调用接口来访问各种设备，方便开发。提供操作方便、简单、提供友好的图形GUI和图形界面，追求易学易用。并且可以使用大量开源的软件，工具，库。</p>
+<p>提供强大的网络功能，支持TCP&#x2F;IP协议及其他协议，提供TCP&#x2F;UDP&#x2F;IP&#x2F;PPP协议支持及统一的MAC访问层接口，为各种移动计算设备预留接口。可以实现远程控制。</p>
+<p>拥有良好的软件移植性，嵌入式系统和具体应用有机地结合在一起，升级换代也是和具体产品同步进行，具有较长的生命周期。</p>
+<p>而对于无操作系统的单片机而言，可以实现的功能相对单一。开发者必须要先了解这个硬件平台，才能进行软件编程，降低了开发效率且软件移植性差。</p>
+<p>单片机的优势</p>
+<p>从上文所述的种种优缺点来看，单片机对比嵌入式系统似乎一无是处，尽管嵌入式系统的性能强大且可实现功能众多，但嵌入式最大的劣势便是其高昂的价格。</p>
+<p>单片机价格低廉，结构简单，使用方便，实现模块化，单片机可靠性高，可工作到10^6 ~10^7小时无故障，处理功能强，速度快。低电压，低功耗，控制功能强，环境适应能力强。</p>
 ]]></content>
       <tags>
         <tag>Linux</tag>
-        <tag>Ubuntu</tag>
+        <tag>嵌入式</tag>
+        <tag>单片机</tag>
       </tags>
   </entry>
   <entry>
@@ -380,86 +380,6 @@
 ]]></content>
       <tags>
         <tag>树莓派</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>计算机网络知识点总结（七）网络分析之tcpdump抓包</title>
-    <url>/archives/f792503a.html</url>
-    <content><![CDATA[<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p><strong>tcpdump</strong>是一个运行在命令行下的数据包分析器。它允许用户拦截和显示发送或收到过网络连接到该计算机的TCP&#x2F;IP和其他数据包。tcpdump 是一个在BSD许可证下发布的自由软件。</p>
-<p>tcpdump 适用于大多数的类Unix系统 操作系统：包括Linux、Solaris、BSD、Mac OS X、HP-UX和AIX 等等。在这些系统中，tcpdump 需要使用libpcap这个捕捉数据的库。其在Windows下的版本称为WinDump；它需要WinPcap驱动，相当于在Linux平台下的libpcap。</p>
-<h1 id="tcpdump的作用"><a href="#tcpdump的作用" class="headerlink" title="tcpdump的作用"></a>tcpdump的作用</h1><p>TCPDump可以将网络中传送的数据包完全截获下来提供分析。它支持针对网络层、协议、主机、网络或端口的过滤，并提供and、or、not等逻辑语句来帮助你去掉无用的信息。</p>
-<p>Linux作为网络服务器，特别是作为路由器和网关时，数据的采集和分析是不可少的。TcpDump是Linux中强大的网络数据采集分析工具之一。</p>
-<p>也可以使用 tcpdump 的实现特定目的，例如在路由器和网关之间拦截并显示其他用户或计算机通信。通过 tcpdump 分析非加密的流量，如Telnet或HTTP的数据包，查看登录的用户名、密码、网址、正在浏览的网站内容，或任何其他信息。因此系统中存在网络分析工具主要不是对本机安全的威胁，而是对网络上的其他计算机的安全存在威胁。</p>
-<p>有很多用户喜欢使用柏克莱数据包过滤器来限制 tcpdump 产生的数据包数量，这样BPF会只把“感兴趣”的数据包到上层软件，可以避免从操作系统内核向用户态复制其他数据包，降低抓包的CPU的负担以及所需的缓冲区空间，从而减少丢包率。</p>
-<p>用简单的话来定义tcpdump，就是：dump the traffic on a network，根据使用者的定义对网络上的数据包进行截获的包分析工具。</p>
-<p>作为互联网上经典的的系统管理员必备工具，tcpdump以其强大的功能，灵活的截取策略，成为每个高级的系统管理员分析网络，排查问题等所必备的工具之一。</p>
-<h1 id="权限要求"><a href="#权限要求" class="headerlink" title="权限要求"></a>权限要求</h1><p>一些类Unix操作系统，用户有必须拥有超级用户权限方可使用 tcpdump，因为在这些系统需要使用超级用户权限将网络界面设置为混杂模式。然而，可以通过使用 -Z 选项在完成嗅探之后站即下降到一个特定的非特权用户的权限。在某一些类Unix操作系统，数据包嗅探机制可以配置为允许非特权用户可以使用它，如果做到这一点，就不需要超级用户权限。</p>
-<h1 id="tcpdump命令格式"><a href="#tcpdump命令格式" class="headerlink" title="tcpdump命令格式"></a>tcpdump命令格式</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump [-adeflnNOpqStvx][-c&lt;数据包数目&gt;][-<span class="built_in">dd</span>][-ddd][-F&lt;表达文件&gt;][-i&lt;网络界面&gt;][-r&lt;数据包文件&gt;][-s&lt;数据包大小&gt;][-tt][-T&lt;数据包类型&gt;][-vv][-w&lt;数据包文件&gt;][输出数据栏位]</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic4.zhimg.com/80/v2-6e1cf98d900276da039df3060792e94b_720w.jpg"></p>
-<h1 id="tcpdump输出格式"><a href="#tcpdump输出格式" class="headerlink" title="tcpdump输出格式"></a>tcpdump输出格式</h1><p>基本上tcpdump的总的输出格式为：系统时间 来源主机.端口 &gt; 目标主机.端口 数据包参数</p>
-<h1 id="抓包选项："><a href="#抓包选项：" class="headerlink" title="抓包选项："></a>抓包选项：</h1><p>-c：指定要抓取的包数量。</p>
-<p>-i interface：指定tcpdump需要监听的接口。默认会抓取第一个网络接口</p>
-<p>-n：对地址以数字方式显式，否则显式为主机名，也就是说-n选项不做主机名解析。</p>
-<p>-nn：除了-n的作用外，还把端口显示为数值，否则显示端口服务名。</p>
-<p>-P：指定要抓取的包是流入还是流出的包。可以给定的值为”in”、”out”和”inout”，默认为”inout”。</p>
-<p>-s：&lt;数据包大小&gt; 设置每个数据包的大小。</p>
-<p>-S：用绝对而非相对数值列出TCP关联数。</p>
-<p>-t：在每列倾倒资料上不显示时间戳记。</p>
-<p>-tt：在每列倾倒资料上显示未经格式化的时间戳记。</p>
-<h1 id="输出选项："><a href="#输出选项：" class="headerlink" title="输出选项："></a>输出选项：</h1><p>-e：输出的每行中都将包括数据链路层头部信息，例如源MAC和目标MAC。</p>
-<p>-q：快速打印输出。即打印很少的协议相关信息，从而输出行都比较简短。</p>
-<p>-X：输出包的头部数据，会以16进制和ASCII两种方式同时输出。</p>
-<p>-XX：输出包的头部数据，会以16进制和ASCII两种方式同时输出，更详细。</p>
-<p>-v：当分析和打印的时候，产生详细的输出。</p>
-<p>-vv：产生比-v更详细的输出。</p>
-<p>-vvv：产生比-vv更详细的输出。</p>
-<h1 id="参考实例"><a href="#参考实例" class="headerlink" title="参考实例"></a>参考实例</h1><p>我这里使用Kali Linux系统作为演示且使用root权限。</p>
-<h2 id="1-默认启动"><a href="#1-默认启动" class="headerlink" title="1.默认启动"></a>1.默认启动</h2><p>默认情况下，直接启动tcpdump将监视第一个网络接口(非lo口)上所有流通的数据包。这样抓取的结果会非常多，滚动非常快。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic2.zhimg.com/80/v2-e8c1e081f2039f2b1f292467ae9f394d_720w.jpg"></p>
-<p>2.监视指定网络接口的数据包<br>在生产环境中，与默认启动类似同样有大量报文产生，所以可能瞬间导致服务器资源耗尽，慎用。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic4.zhimg.com/80/v2-53faa27c423f5dcbf043ec421bf3209f_720w.jpg"></p>
-<p>3.监视指定主机的数据包</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump host kali-2021</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic1.zhimg.com/80/v2-b767bf42718d6dcb4f7ed3176c89625c_720w.png"></p>
-<p>4.抓取80端口的HTTP报文</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i any port 80</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic1.zhimg.com/80/v2-74c549b71f6efbe446f154282304c8dc_720w.jpg"></p>
-<p>5.显示指定数量包</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -c 20</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic1.zhimg.com/80/v2-b07ea1b0ffae2a584897959667317418_720w.jpg"></p>
-<p>6.精简显示</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -c 10 -q</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic2.zhimg.com/80/v2-bad6150e0a001c934dee99bfd630bda1_720w.jpg"></p>
-<p>7.过滤主机<br>抓取所有经过eth0，目的或源地址是192.168.1.1的网络数据</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 host 192.168.1.1</span><br></pre></td></tr></table></figure>
-<p>指定源地址</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 src host 192.168.1.1 </span><br></pre></td></tr></table></figure>
-<p>指定目的地址</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 dst host 192.168.1.1</span><br></pre></td></tr></table></figure>
-
-<p>8.过滤端口<br>抓取所有经过eth0，目的或源端口是25的网络数据</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 port 25 </span><br></pre></td></tr></table></figure>
-<p>指定源端口</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 src port 25 </span><br></pre></td></tr></table></figure>
-<p>指定目的端口</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 dst port 25</span><br></pre></td></tr></table></figure>
-
-<p>9.网络过滤<br>抓取所有经过eth0，网段为192.168的网络数据</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 net 192.168</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic4.zhimg.com/80/v2-52611f844a206c4da8a6b9eb60b66b53_720w.jpg"></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 src net 192.168</span><br><span class="line">tcpdump -i eth0 dst net 192.168</span><br></pre></td></tr></table></figure>
-
-<p>10.协议过滤</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth1 arp </span><br><span class="line">tcpdump -i eth1 ip </span><br><span class="line">tcpdump -i eth1 tcp </span><br><span class="line">tcpdump -i eth1 udp </span><br><span class="line">tcpdump -i eth1 icmp</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>计算机网络</category>
-      </categories>
-      <tags>
-        <tag>网络安全</tag>
-        <tag>抓包</tag>
-        <tag>计算机网络</tag>
       </tags>
   </entry>
   <entry>
@@ -572,27 +492,83 @@
       </tags>
   </entry>
   <entry>
-    <title>计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</title>
-    <url>/archives/8cdebc07.html</url>
-    <content><![CDATA[<h2 id="什么是Socket？"><a href="#什么是Socket？" class="headerlink" title="什么是Socket？"></a>什么是Socket？</h2><p>Socket允许在相同或不同机器上的两个不同进程之间进行通信。更准确地说，这是一种使用标准 Unix 文件描述符与其他计算机通信的方式。</p>
-<p>在 Unix 中，每个 I&#x2F;O 操作都是通过写入或读取文件描述符来完成的。文件描述符只是与打开的文件相关联的整数，它可以是网络连接、文本文件、终端或其他东西。</p>
-<p>对于程序员来说，套接字的外观和行为很像低级文件描述符。这是因为诸如 read() 和 write() 之类的命令对套接字的工作方式与它们对文件和管道的工作方式相同。</p>
-<p>套接字最初是在 2.1BSD 中引入的，随后在 4.2BSD 中被改进为当前的形式。现在，大多数最新的 UNIX 系统版本都提供了套接字功能。<br><img src="https://pic1.zhimg.com/80/v2-33d5adb9c5bdefa9977a7f64970834a0_720w.jpg" alt="Socket与各种网络协议的关系"><br>如图所示，Socket是为了给应用程序一个更加统一、简洁的API接口而将底层各种协议栈封装起来形成形成的一层接口函数。</p>
-<p>简单举例Socket如何实现客户端和服务端<br><img src="https://pic3.zhimg.com/80/v2-50a90c813007b71ef251e00f5cf7692e_720w.jpg" alt="客户端和服务端信息交互"><br>构建客户端和服务器的方式有所不同，但都涉及到Socket的基本构造。这两个进程都建立了自己的套接字。</p>
-<h2 id="如何构建客户端"><a href="#如何构建客户端" class="headerlink" title="如何构建客户端"></a>如何构建客户端</h2><p>在客户端建立Socket的步骤如下 ：</p>
-<p>1.使用socket()系统调用创建一个套接字。</p>
-<p>2.使用connect()系统调用将套接字连接到服务器的地址。</p>
-<p>3.发送和接收数据。有很多方式可以实现这一点，最简单的方法就是使用read()和write()系统调用。</p>
-<h2 id="如何构建服务端"><a href="#如何构建服务端" class="headerlink" title="如何构建服务端"></a>如何构建服务端</h2><p>在服务器端建立套接字的步骤如下 ：</p>
-<p>1.使用socket()系统调用创建一个套接字。</p>
-<p>2.使用bind()系统调用将套接字绑定到一个地址。对于 Internet 上的服务器套接字，地址由主机上的端口号组成。</p>
-<p>3.通过listen()系统调用监听连接。</p>
-<p>4.通过accept()系统调用接受连接。此调用通常会阻止连接，直到客户端与服务器连接。</p>
-<p>5.使用read()和write()系统调用发送和接收数据。</p>
-]]></content>
+    <title>计算机网络知识点总结（七）网络分析之tcpdump抓包</title>
+    <url>/archives/f792503a.html</url>
+    <content><![CDATA[<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p><strong>tcpdump</strong>是一个运行在命令行下的数据包分析器。它允许用户拦截和显示发送或收到过网络连接到该计算机的TCP&#x2F;IP和其他数据包。tcpdump 是一个在BSD许可证下发布的自由软件。</p>
+<p>tcpdump 适用于大多数的类Unix系统 操作系统：包括Linux、Solaris、BSD、Mac OS X、HP-UX和AIX 等等。在这些系统中，tcpdump 需要使用libpcap这个捕捉数据的库。其在Windows下的版本称为WinDump；它需要WinPcap驱动，相当于在Linux平台下的libpcap。</p>
+<h1 id="tcpdump的作用"><a href="#tcpdump的作用" class="headerlink" title="tcpdump的作用"></a>tcpdump的作用</h1><p>TCPDump可以将网络中传送的数据包完全截获下来提供分析。它支持针对网络层、协议、主机、网络或端口的过滤，并提供and、or、not等逻辑语句来帮助你去掉无用的信息。</p>
+<p>Linux作为网络服务器，特别是作为路由器和网关时，数据的采集和分析是不可少的。TcpDump是Linux中强大的网络数据采集分析工具之一。</p>
+<p>也可以使用 tcpdump 的实现特定目的，例如在路由器和网关之间拦截并显示其他用户或计算机通信。通过 tcpdump 分析非加密的流量，如Telnet或HTTP的数据包，查看登录的用户名、密码、网址、正在浏览的网站内容，或任何其他信息。因此系统中存在网络分析工具主要不是对本机安全的威胁，而是对网络上的其他计算机的安全存在威胁。</p>
+<p>有很多用户喜欢使用柏克莱数据包过滤器来限制 tcpdump 产生的数据包数量，这样BPF会只把“感兴趣”的数据包到上层软件，可以避免从操作系统内核向用户态复制其他数据包，降低抓包的CPU的负担以及所需的缓冲区空间，从而减少丢包率。</p>
+<p>用简单的话来定义tcpdump，就是：dump the traffic on a network，根据使用者的定义对网络上的数据包进行截获的包分析工具。</p>
+<p>作为互联网上经典的的系统管理员必备工具，tcpdump以其强大的功能，灵活的截取策略，成为每个高级的系统管理员分析网络，排查问题等所必备的工具之一。</p>
+<h1 id="权限要求"><a href="#权限要求" class="headerlink" title="权限要求"></a>权限要求</h1><p>一些类Unix操作系统，用户有必须拥有超级用户权限方可使用 tcpdump，因为在这些系统需要使用超级用户权限将网络界面设置为混杂模式。然而，可以通过使用 -Z 选项在完成嗅探之后站即下降到一个特定的非特权用户的权限。在某一些类Unix操作系统，数据包嗅探机制可以配置为允许非特权用户可以使用它，如果做到这一点，就不需要超级用户权限。</p>
+<h1 id="tcpdump命令格式"><a href="#tcpdump命令格式" class="headerlink" title="tcpdump命令格式"></a>tcpdump命令格式</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump [-adeflnNOpqStvx][-c&lt;数据包数目&gt;][-<span class="built_in">dd</span>][-ddd][-F&lt;表达文件&gt;][-i&lt;网络界面&gt;][-r&lt;数据包文件&gt;][-s&lt;数据包大小&gt;][-tt][-T&lt;数据包类型&gt;][-vv][-w&lt;数据包文件&gt;][输出数据栏位]</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-6e1cf98d900276da039df3060792e94b_720w.jpg"></p>
+<h1 id="tcpdump输出格式"><a href="#tcpdump输出格式" class="headerlink" title="tcpdump输出格式"></a>tcpdump输出格式</h1><p>基本上tcpdump的总的输出格式为：系统时间 来源主机.端口 &gt; 目标主机.端口 数据包参数</p>
+<h1 id="抓包选项："><a href="#抓包选项：" class="headerlink" title="抓包选项："></a>抓包选项：</h1><p>-c：指定要抓取的包数量。</p>
+<p>-i interface：指定tcpdump需要监听的接口。默认会抓取第一个网络接口</p>
+<p>-n：对地址以数字方式显式，否则显式为主机名，也就是说-n选项不做主机名解析。</p>
+<p>-nn：除了-n的作用外，还把端口显示为数值，否则显示端口服务名。</p>
+<p>-P：指定要抓取的包是流入还是流出的包。可以给定的值为”in”、”out”和”inout”，默认为”inout”。</p>
+<p>-s：&lt;数据包大小&gt; 设置每个数据包的大小。</p>
+<p>-S：用绝对而非相对数值列出TCP关联数。</p>
+<p>-t：在每列倾倒资料上不显示时间戳记。</p>
+<p>-tt：在每列倾倒资料上显示未经格式化的时间戳记。</p>
+<h1 id="输出选项："><a href="#输出选项：" class="headerlink" title="输出选项："></a>输出选项：</h1><p>-e：输出的每行中都将包括数据链路层头部信息，例如源MAC和目标MAC。</p>
+<p>-q：快速打印输出。即打印很少的协议相关信息，从而输出行都比较简短。</p>
+<p>-X：输出包的头部数据，会以16进制和ASCII两种方式同时输出。</p>
+<p>-XX：输出包的头部数据，会以16进制和ASCII两种方式同时输出，更详细。</p>
+<p>-v：当分析和打印的时候，产生详细的输出。</p>
+<p>-vv：产生比-v更详细的输出。</p>
+<p>-vvv：产生比-vv更详细的输出。</p>
+<h1 id="参考实例"><a href="#参考实例" class="headerlink" title="参考实例"></a>参考实例</h1><p>我这里使用Kali Linux系统作为演示且使用root权限。</p>
+<h2 id="1-默认启动"><a href="#1-默认启动" class="headerlink" title="1.默认启动"></a>1.默认启动</h2><p>默认情况下，直接启动tcpdump将监视第一个网络接口(非lo口)上所有流通的数据包。这样抓取的结果会非常多，滚动非常快。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic2.zhimg.com/80/v2-e8c1e081f2039f2b1f292467ae9f394d_720w.jpg"></p>
+<p>2.监视指定网络接口的数据包<br>在生产环境中，与默认启动类似同样有大量报文产生，所以可能瞬间导致服务器资源耗尽，慎用。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-53faa27c423f5dcbf043ec421bf3209f_720w.jpg"></p>
+<p>3.监视指定主机的数据包</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump host kali-2021</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic1.zhimg.com/80/v2-b767bf42718d6dcb4f7ed3176c89625c_720w.png"></p>
+<p>4.抓取80端口的HTTP报文</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i any port 80</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic1.zhimg.com/80/v2-74c549b71f6efbe446f154282304c8dc_720w.jpg"></p>
+<p>5.显示指定数量包</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -c 20</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic1.zhimg.com/80/v2-b07ea1b0ffae2a584897959667317418_720w.jpg"></p>
+<p>6.精简显示</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -c 10 -q</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic2.zhimg.com/80/v2-bad6150e0a001c934dee99bfd630bda1_720w.jpg"></p>
+<p>7.过滤主机<br>抓取所有经过eth0，目的或源地址是192.168.1.1的网络数据</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 host 192.168.1.1</span><br></pre></td></tr></table></figure>
+<p>指定源地址</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 src host 192.168.1.1 </span><br></pre></td></tr></table></figure>
+<p>指定目的地址</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 dst host 192.168.1.1</span><br></pre></td></tr></table></figure>
+
+<p>8.过滤端口<br>抓取所有经过eth0，目的或源端口是25的网络数据</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 port 25 </span><br></pre></td></tr></table></figure>
+<p>指定源端口</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 src port 25 </span><br></pre></td></tr></table></figure>
+<p>指定目的端口</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 dst port 25</span><br></pre></td></tr></table></figure>
+
+<p>9.网络过滤<br>抓取所有经过eth0，网段为192.168的网络数据</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 net 192.168</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-52611f844a206c4da8a6b9eb60b66b53_720w.jpg"></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 src net 192.168</span><br><span class="line">tcpdump -i eth0 dst net 192.168</span><br></pre></td></tr></table></figure>
+
+<p>10.协议过滤</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth1 arp </span><br><span class="line">tcpdump -i eth1 ip </span><br><span class="line">tcpdump -i eth1 tcp </span><br><span class="line">tcpdump -i eth1 udp </span><br><span class="line">tcpdump -i eth1 icmp</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
       <tags>
         <tag>计算机网络</tag>
-        <tag>Socket</tag>
+        <tag>网络安全</tag>
+        <tag>抓包</tag>
       </tags>
   </entry>
   <entry>
@@ -684,6 +660,30 @@
         <tag>计算机网络</tag>
         <tag>Socket</tag>
         <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</title>
+    <url>/archives/8cdebc07.html</url>
+    <content><![CDATA[<h2 id="什么是Socket？"><a href="#什么是Socket？" class="headerlink" title="什么是Socket？"></a>什么是Socket？</h2><p>Socket允许在相同或不同机器上的两个不同进程之间进行通信。更准确地说，这是一种使用标准 Unix 文件描述符与其他计算机通信的方式。</p>
+<p>在 Unix 中，每个 I&#x2F;O 操作都是通过写入或读取文件描述符来完成的。文件描述符只是与打开的文件相关联的整数，它可以是网络连接、文本文件、终端或其他东西。</p>
+<p>对于程序员来说，套接字的外观和行为很像低级文件描述符。这是因为诸如 read() 和 write() 之类的命令对套接字的工作方式与它们对文件和管道的工作方式相同。</p>
+<p>套接字最初是在 2.1BSD 中引入的，随后在 4.2BSD 中被改进为当前的形式。现在，大多数最新的 UNIX 系统版本都提供了套接字功能。<br><img src="https://pic1.zhimg.com/80/v2-33d5adb9c5bdefa9977a7f64970834a0_720w.jpg" alt="Socket与各种网络协议的关系"><br>如图所示，Socket是为了给应用程序一个更加统一、简洁的API接口而将底层各种协议栈封装起来形成形成的一层接口函数。</p>
+<p>简单举例Socket如何实现客户端和服务端<br><img src="https://pic3.zhimg.com/80/v2-50a90c813007b71ef251e00f5cf7692e_720w.jpg" alt="客户端和服务端信息交互"><br>构建客户端和服务器的方式有所不同，但都涉及到Socket的基本构造。这两个进程都建立了自己的套接字。</p>
+<h2 id="如何构建客户端"><a href="#如何构建客户端" class="headerlink" title="如何构建客户端"></a>如何构建客户端</h2><p>在客户端建立Socket的步骤如下 ：</p>
+<p>1.使用socket()系统调用创建一个套接字。</p>
+<p>2.使用connect()系统调用将套接字连接到服务器的地址。</p>
+<p>3.发送和接收数据。有很多方式可以实现这一点，最简单的方法就是使用read()和write()系统调用。</p>
+<h2 id="如何构建服务端"><a href="#如何构建服务端" class="headerlink" title="如何构建服务端"></a>如何构建服务端</h2><p>在服务器端建立套接字的步骤如下 ：</p>
+<p>1.使用socket()系统调用创建一个套接字。</p>
+<p>2.使用bind()系统调用将套接字绑定到一个地址。对于 Internet 上的服务器套接字，地址由主机上的端口号组成。</p>
+<p>3.通过listen()系统调用监听连接。</p>
+<p>4.通过accept()系统调用接受连接。此调用通常会阻止连接，直到客户端与服务器连接。</p>
+<p>5.使用read()和write()系统调用发送和接收数据。</p>
+]]></content>
+      <tags>
+        <tag>计算机网络</tag>
+        <tag>Socket</tag>
       </tags>
   </entry>
   <entry>

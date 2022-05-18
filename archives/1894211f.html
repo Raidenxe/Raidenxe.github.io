@@ -1,0 +1,346 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Linux 文本三剑客（1）grep命令的使用 | Raidenxe的博客</title><meta name="keywords" content="Linux,grep"><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="三剑客特点及应用场景awk、grep、sed是Linux操作文本的三大利器，合称文本三剑客，也是必须掌握的Linux命令之一。三者的功能都是处理文本，但侧重点各不相同，其中属awk功能最强大，但也最复杂。 grep更适合单纯的查找或匹配文本； sed更适合编辑匹配到的文本； awk更适合格式化文本，对文本进行较复杂格式处理。 正则表达式正则表达式是一种符号表示法，被用来识别文本模式。 在某种程度上">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 文本三剑客（1）grep命令的使用">
+<meta property="og:url" content="https://raidenxe.github.io/archives/1894211f.html">
+<meta property="og:site_name" content="Raidenxe的博客">
+<meta property="og:description" content="三剑客特点及应用场景awk、grep、sed是Linux操作文本的三大利器，合称文本三剑客，也是必须掌握的Linux命令之一。三者的功能都是处理文本，但侧重点各不相同，其中属awk功能最强大，但也最复杂。 grep更适合单纯的查找或匹配文本； sed更适合编辑匹配到的文本； awk更适合格式化文本，对文本进行较复杂格式处理。 正则表达式正则表达式是一种符号表示法，被用来识别文本模式。 在某种程度上">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic1.zhimg.com/v2-bdf1968f78dcbe4de93f1b10c14dba8b_1440w.jpg?source=172ae18b">
+<meta property="article:published_time" content="2022-05-18T13:59:14.000Z">
+<meta property="article:modified_time" content="2022-05-18T14:15:50.902Z">
+<meta property="article:author" content="Raidenxe">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="grep">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic1.zhimg.com/v2-bdf1968f78dcbe4de93f1b10c14dba8b_1440w.jpg?source=172ae18b"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/1894211f"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Linux 文本三剑客（1）grep命令的使用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-05-18 22:15:50'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://pic1.zhimg.com/v2-bdf1968f78dcbe4de93f1b10c14dba8b_1440w.jpg?source=172ae18b')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Raidenxe的博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Linux 文本三剑客（1）grep命令的使用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-05-18T13:59:14.000Z" title="发表于 2022-05-18 21:59:14">2022-05-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-05-18T14:15:50.902Z" title="更新于 2022-05-18 22:15:50">2022-05-18</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Linux学习笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>9分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="三剑客特点及应用场景"><a href="#三剑客特点及应用场景" class="headerlink" title="三剑客特点及应用场景"></a>三剑客特点及应用场景</h1><p>awk、grep、sed是Linux操作文本的三大利器，合称文本三剑客，也是必须掌握的Linux命令之一。三者的功能都是处理文本，但侧重点各不相同，其中属awk功能最强大，但也最复杂。</p>
+<p>grep更适合单纯的查找或匹配文本；</p>
+<p>sed更适合编辑匹配到的文本；</p>
+<p>awk更适合格式化文本，对文本进行较复杂格式处理。<br><img src="https://pic3.zhimg.com/80/v2-bd401d9a5fbaab317b0a66399ef52306_720w.jpg"></p>
+<h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h1><p>正则表达式是一种符号表示法，被用来识别文本模式。</p>
+<p>在某种程度上，它们与匹配文件和路径名的 shell 通配符比较相似，但其规模更庞大。许多命令行工具和大多数的编程语言 都支持正则表达式，以此来帮助解决文本操作问题。</p>
+<p>正则表达式元字符由以下字符组成：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">^ $ . [ ] &#123; &#125; - ? * + ( ) | \</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/v2-dc157303632d607f7bfb58624abeae52_r.jpg"><br><img src="https://pic1.zhimg.com/v2-93f8991f3c04f7db08c2575a8aeede9c_r.jpg"></p>
+<h1 id="grep引言"><a href="#grep引言" class="headerlink" title="grep引言"></a>grep引言</h1><p><strong>grep</strong>是一个最初用于Unix操作系统的命令行工具。在给出文件列表或标准输入后，grep会对匹配一个或多个正则表达式的文本进行搜索，并只输出匹配（或者不匹配）的行或文本。</p>
+<p>grep这个应用程序最早由肯·汤普逊写成。grep原先是ed下的一个应用程序，名称来自于g&#x2F;re&#x2F;p（globally search a regular expression and print，以正则表达式进行全局查找以及打印）。在ed下，输入g&#x2F;re&#x2F;p这个命令后，会将所有符合先定义样式的字符串，以行为单位打印出来。</p>
+<p>在1973年，Unix第四版中，grep首次出现在man页面中。</p>
+<p>grep实用程序是一个家族，存在很多grep的修改版，例如agrep表示“近似的grep”approximate grep用于模糊字符串搜索，fgrep用于固定样式搜索fixed pattern searches，而egrep用于搜索更复杂的正则表达式语法。fgrep和egrep同grep基本上是一样的程序。Tcgrep是用Perl正则表达式语言重写的grep。</p>
+<p>所有grep的修改版都被应用到很多不同的操作系统中。</p>
+<h1 id="grep的作用"><a href="#grep的作用" class="headerlink" title="grep的作用"></a>grep的作用</h1><p>Linux grep 命令用于查找文件里符合条件的字符串。</p>
+<p>换句话说，grep 命令在给定文件中搜索包含与给定字符串或单词匹配的行。对于开发人员和系统管理员来说，它是 Linux 和类 Unix 系统上最有用的命令之一。</p>
+<p>grep 指令用于查找内容包含指定的范本样式的文件，如果发现某文件的内容符合所指定的范本样式，预设 grep 指令会把含有范本样式的那一列显示出来。若不指定任何文件名称，或是所给予的文件名为 -，则 grep 指令会从标准输入设备读取数据。</p>
+<h1 id="grep语法格式"><a href="#grep语法格式" class="headerlink" title="grep语法格式"></a>grep语法格式</h1><p>grep [-abcEFGhHilLnqrsvVwxy][-A&lt;显示行数&gt;][-B&lt;显示列数&gt;][-C&lt;显示列数&gt;][-d&lt;进行动作&gt;][-e&lt;范本样式&gt;][-f&lt;范本文件&gt;][–help][范本样式][文件或目录…]</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">grep [OPTIONS] PATTERN [FILE...]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="常见选项"><a href="#常见选项" class="headerlink" title="常见选项"></a>常见选项</h1><p>–color&#x3D;auto 对匹配到的文本着色显示</p>
+<p>-m # 匹配#次后停止</p>
+<p>-v 显示不被pattern匹配到的行</p>
+<p>-i 忽略字符大小写</p>
+<p>-n 显示匹配的行号</p>
+<p>-c 统计匹配的行数</p>
+<p>-o 仅显示匹配到的字符串</p>
+<p>-q 静默模式，不输出任何信息</p>
+<p>-A # after, 后#行</p>
+<p>-B # before, 前#行</p>
+<p>-C # context, 前后各#行</p>
+<p>-e 实现多个选项间的逻辑or关系,如：grep –e ‘cat ’ -e ‘dog’ file</p>
+<p>-w 匹配整个单词</p>
+<p>-E 使用ERE，相当于egrep</p>
+<p>-F 不支持正则表达式，相当于fgrep</p>
+<p>-f file 根据模式文件处理</p>
+<p>-r 递归目录，但不处理软链接</p>
+<p>-R 递归目录，但处理软链接</p>
+<p>-l 打印包含匹配项的文件名，而不是文本行本身，也可用–files-with-matches 选项来指定</p>
+<p>-L 相似于-l 选项，但是只是打印不包含匹配项的文件名。也可用–files-without-match 来指定。</p>
+<p>-h 应用于多文件搜索，不输出文件名。也可用–no-filename 选项来指定。</p>
+<h1 id="grep实例"><a href="#grep实例" class="headerlink" title="grep实例"></a>grep实例</h1><p>这里我将使用Ubuntu18.04进行效果演示。</p>
+<h2 id="简单搜索和-l-L的使用"><a href="#简单搜索和-l-L的使用" class="headerlink" title="简单搜索和-l,-L的使用"></a>简单搜索和-l,-L的使用</h2><p>为了更好的探究 grep 程序，让我们创建一些文本文件来搜寻：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /bin &gt; dirlist-bin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /usr/bin &gt; dirlist-usr-bin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /sbin &gt; dirlist-sbin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /usr/sbin &gt; dirlist-usr-sbin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> dirlist*.txt</span><br><span class="line">dirlist-bin.txt     dirlist-sbin.txt    dirlist-usr-sbin.txt</span><br><span class="line">dirlist-usr-bin.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-e59933bab98469fb3de636c6614813f2_720w.jpg"><br>够对我们的文件列表执行简单的搜索，像这样：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep bzip dirlist*.txt</span><br><span class="line">dirlist-bin.txt:bzip2</span><br><span class="line">dirlist-bin.txt:bzip2recover</span><br></pre></td></tr></table></figure>
+<p>在这个例子里，grep 程序在所有列出的文件中搜索字符串 bzip，然后找到两个匹配项，其都在文件dirlist-bin.txt 中。如果我们只是对包含匹配项的文件列表，而不是对匹配项本身感兴趣的话，可以指定-l 选项：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -l bzip dirlist*.txt</span><br><span class="line">dirlist-bin.txt</span><br></pre></td></tr></table></figure>
+<p>相反地，如果我们只想查看不包含匹配项的文件列表，我们可以这样操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -L bzip dirlist*.txt</span><br><span class="line">dirlist-sbin.txt</span><br><span class="line">dirlist-usr-bin.txt</span><br><span class="line">dirlist-usr-sbin.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-221f5f6d8b575379938f509c82e1ab86_720w.jpg"></p>
+<h2 id="任何字符"><a href="#任何字符" class="headerlink" title="任何字符"></a>任何字符</h2><p>我们将要查看的第一个元字符是圆点字符，其被用来匹配任意字符。如果我们在正则表达式中包含它， 它将会匹配在此位置的任意一个字符。这里有个例子：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;.zip&#x27;</span> dirlist*.txt</span><br><span class="line">bunzip2</span><br><span class="line">bzip2</span><br><span class="line">bzip2recover</span><br><span class="line">gunzip</span><br><span class="line">gzip</span><br><span class="line">funzip</span><br><span class="line">gpg-zip</span><br><span class="line">preunzip</span><br><span class="line">prezip</span><br><span class="line">prezip-bin</span><br><span class="line">unzip</span><br><span class="line">unzipsfx</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic1.zhimg.com/80/v2-73c837c9727ac4f5a04d9cc5a327c5f4_720w.jpg"><br>我们在文件中查找包含正则表达式“.zip”的文本行。对于搜索结果，有几点需要注意一下。 注意没有找到这个 zip 程序。这是因为在我们的正则表达式中包含的圆点字符把所要求的匹配项的长度增加到四个字符，并且字符串“zip”只包含三个字符，所以这个 zip 程序不匹配。另外，如果我们的文件列表 中有一些文件的扩展名是.zip，则它们也会成为匹配项，因为文件扩展名中的圆点符号也会被看作是 “任意字符”。</p>
+<h2 id="锚点"><a href="#锚点" class="headerlink" title="锚点"></a>锚点</h2><p>在正则表达式中，插入符号和美元符号被看作是锚点。这意味着正则表达式 只有在文本行的开头或末尾被找到时，才算发生一次匹配。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^zip&#x27;</span> dirlist*.txt</span><br><span class="line">zip</span><br><span class="line">zipcloak</span><br><span class="line">zipgrep</span><br><span class="line">zipinfo</span><br><span class="line">zipnote</span><br><span class="line">zipsplit</span><br><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;zip$&#x27;</span> dirlist*.txt</span><br><span class="line">gunzip</span><br><span class="line">gzip</span><br><span class="line">funzip</span><br><span class="line">gpg-zip</span><br><span class="line">preunzip</span><br><span class="line">prezip</span><br><span class="line">unzip</span><br><span class="line">zip</span><br><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^zip$&#x27;</span> dirlist*.txt</span><br><span class="line">zip</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-a52d45fcc04272f07ed47e93ddc46fe6_720w.jpg"><br>这里我们分别在文件列表中搜索行首，行尾以及行首和行尾同时包含字符串“zip”（例如，zip 独占一行）的匹配行。 注意正则表达式‘^$’（行首和行尾之间没有字符）会匹配空行。</p>
+<h2 id="中括号表达式和字符类"><a href="#中括号表达式和字符类" class="headerlink" title="中括号表达式和字符类"></a>中括号表达式和字符类</h2><p>除了能够在正则表达式中的给定位置匹配任意字符之外，通过使用中括号表达式， 我们也能够从一个指定的字符集合中匹配一个单个的字符。通过中括号表达式，我们能够指定 一个字符集合（包含在不加中括号的情况下会被解释为元字符的字符）来被匹配。在这个例子里，使用了一个两个字符的集合：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;[bg]zip&#x27;</span> dirlist*.txt</span><br><span class="line">bzip2</span><br><span class="line">bzip2recover</span><br><span class="line">gzip</span><br></pre></td></tr></table></figure>
+<p>我们匹配包含字符串“bzip”或者“gzip”的任意行。</p>
+<p>一个字符集合可能包含任意多个字符，并且元字符被放置到中括号里面后会失去了它们的特殊含义。 然而，在两种情况下，会在中括号表达式中使用元字符，并且有着不同的含义。第一个元字符 是插入字符，其被用来表示否定；第二个是连字符字符，其被用来表示一个字符区域。</p>
+<h2 id="否定"><a href="#否定" class="headerlink" title="否定"></a>否定</h2><p>如果在正则表示式中的第一个字符是一个插入字符，则剩余的字符被看作是不会在给定的字符位置出现的 字符集合。通过修改之前的例子，我们试验一下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;[^bg]zip&#x27;</span> dirlist*.txt</span><br><span class="line">bunzip2</span><br><span class="line">gunzip</span><br><span class="line">funzip</span><br><span class="line">gpg-zip</span><br><span class="line">preunzip</span><br><span class="line">prezip</span><br><span class="line">prezip-bin</span><br><span class="line">unzip</span><br><span class="line">unzipsfx</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-9668f6f36ee06645cdaa4a8360bff4db_720w.jpg"><br>通过激活否定操作，我们得到一个文件列表，它们的文件名都包含字符串“zip”，并且“zip”的前一个字符 是除了“b”和“g”之外的任意字符。注意文件 zip 没有被发现。一个否定的字符集仍然在给定位置要求一个字符， 但是这个字符必须不是否定字符集的成员。</p>
+<p>这个插入字符如果是中括号表达式中的第一个字符的时候，才会唤醒否定功能；否则，它会失去 它的特殊含义，变成字符集中的一个普通字符。</p>
+<p>通过激活否定操作，我们得到一个文件列表，它们的文件名都包含字符串“zip”，并且“zip”的前一个字符 是除了“b”和“g”之外的任意字符。注意文件 zip 没有被发现。一个否定的字符集仍然在给定位置要求一个字符， 但是这个字符必须不是否定字符集的成员。</p>
+<p>这个插入字符如果是中括号表达式中的第一个字符的时候，才会唤醒否定功能；否则，它会失去它的特殊含义，变成字符集中的一个普通字符。</p>
+<h2 id="传统的字符区域"><a href="#传统的字符区域" class="headerlink" title="传统的字符区域"></a>传统的字符区域</h2><p>如果我们想要构建一个正则表达式，它可以在我们的列表中找到每个以大写字母开头的文件，我们可以这样做：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^[ABCDEFGHIJKLMNOPQRSTUVWXZY]&#x27;</span> dirlist*.txt</span><br></pre></td></tr></table></figure>
+<p>这只是一个在正则表达式中输入26个大写字母的问题。但是输入所有字母无疑是非常繁琐且效率低下的，所以有另外一种方式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^[A-Z]&#x27;</span> dirlist*.txt</span><br><span class="line">MAKEDEV</span><br><span class="line">ControlPanel</span><br><span class="line">GET</span><br><span class="line">HEAD</span><br><span class="line">POST</span><br><span class="line">X</span><br><span class="line">X11</span><br><span class="line">Xorg</span><br><span class="line">MAKEFLOPPIES</span><br><span class="line">NetworkManager</span><br><span class="line">NetworkManagerDispatcher</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic1.zhimg.com/80/v2-a17b774773e9877036b6d8e3fd5c4b70_720w.jpg"><br>通过使用一个三字符区域，我们能够缩写26个字母。任意字符的区域都能按照这种方式表达，包括多个区域，</p>
+<p>比如下面这个表达式就匹配了所有以字母和数字开头的文件名：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^[A-Za-z0-9]&#x27;</span> dirlist*.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-5c992da6b6d03bf5d75719a3adc1da37_720w.jpg"><br>在字符区域中，我们看到这个连字符被特殊对待，所以我们怎样在一个正则表达式中包含一个连字符呢？</p>
+<p>方法就是使连字符成为表达式中的第一个字符。考虑一下这两个例子：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;[A-Z]&#x27;</span> dirlist*.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-d13a74c027775e94e2b44e6d5fcf802a_720w.jpg"><br>这会匹配包含一个大写字母的文件名。然而：</p>
+<p>[me@linuxbox ~]$ grep -h ‘[-AZ]’ dirlist*.txt<br>上面的表达式会匹配包含一个连字符，或一个大写字母“A”，或一个大写字母“Z”的文件名。<br><img src="https://pic3.zhimg.com/80/v2-4bb4ad1611e7f1248eb32f4dcd1cf3a2_720w.jpg"><br>本文部分内容参考自《TLCL》。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/1894211f.html">https://raidenxe.github.io/archives/1894211f.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/">Linux</a><a class="post-meta__tags" href="/tags/grep/">grep</a></div><div class="post_share"><div class="social-share" data-image="https://pic1.zhimg.com/v2-bdf1968f78dcbe4de93f1b10c14dba8b_1440w.jpg?source=172ae18b" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/archives/f792503a.html"><img class="next-cover" src="https://pic1.zhimg.com/v2-82c51530566f33f6120355b3647b11db_1440w.jpg?source=172ae18b" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">计算机网络知识点总结（七）网络分析之tcpdump抓包</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/archives/90acc1af.html" title="Linux下的fork和exec函数"><img class="cover" src="https://pic2.zhimg.com/v2-1a7eb58610755e46dbcc46e787517c08_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-09</div><div class="title">Linux下的fork和exec函数</div></div></a></div><div><a href="/archives/cc4d518f.html" title="单片机和嵌入式系统的区别"><img class="cover" src="https://pica.zhimg.com/v2-13d1a10aa719b8f5e03b94b824fccac2_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-06</div><div class="title">单片机和嵌入式系统的区别</div></div></a></div><div><a href="/archives/aba2a9fd.html" title="常用Linux命令整理"><img class="cover" src="https://pica.zhimg.com/v2-5fd2e93e3fd4c3824d463dd1a0acaba2_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-06</div><div class="title">常用Linux命令整理</div></div></a></div><div><a href="/archives/a1e2b7b3.html" title="日常使用Linux系统是什么体验？"><img class="cover" src="https://pic1.zhimg.com/v2-70854dea311f3e4c308180ea1dc1c973_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-07</div><div class="title">日常使用Linux系统是什么体验？</div></div></a></div><div><a href="/archives/1815c365.html" title="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）"><img class="cover" src="https://pic1.zhimg.com/v2-18f2189eec39d8a665949f2b43c54626_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-12</div><div class="title">计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）</div></div></a></div><div><a href="/archives/7a099087.html" title="计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战"><img class="cover" src="https://pica.zhimg.com/v2-0ccfd39e0b8d5bf6bb8960f7894c1e5d_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-16</div><div class="title">计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="lv-container" data-id="city" data-uid="MTAyMC81NjAxOC8zMjQ4MQ=="></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Raidenxe</div><div class="author-info__description">向着真理和自由，无名的献身。</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E5%89%91%E5%AE%A2%E7%89%B9%E7%82%B9%E5%8F%8A%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">三剑客特点及应用场景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">正则表达式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#grep%E5%BC%95%E8%A8%80"><span class="toc-number">3.</span> <span class="toc-text">grep引言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#grep%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">4.</span> <span class="toc-text">grep的作用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#grep%E8%AF%AD%E6%B3%95%E6%A0%BC%E5%BC%8F"><span class="toc-number">5.</span> <span class="toc-text">grep语法格式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E9%80%89%E9%A1%B9"><span class="toc-number">6.</span> <span class="toc-text">常见选项</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#grep%E5%AE%9E%E4%BE%8B"><span class="toc-number">7.</span> <span class="toc-text">grep实例</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E6%90%9C%E7%B4%A2%E5%92%8C-l-L%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">7.1.</span> <span class="toc-text">简单搜索和-l,-L的使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E4%BD%95%E5%AD%97%E7%AC%A6"><span class="toc-number">7.2.</span> <span class="toc-text">任何字符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%9A%E7%82%B9"><span class="toc-number">7.3.</span> <span class="toc-text">锚点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%AD%E6%8B%AC%E5%8F%B7%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%92%8C%E5%AD%97%E7%AC%A6%E7%B1%BB"><span class="toc-number">7.4.</span> <span class="toc-text">中括号表达式和字符类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%A6%E5%AE%9A"><span class="toc-number">7.5.</span> <span class="toc-text">否定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%A0%E7%BB%9F%E7%9A%84%E5%AD%97%E7%AC%A6%E5%8C%BA%E5%9F%9F"><span class="toc-number">7.6.</span> <span class="toc-text">传统的字符区域</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/1894211f.html" title="Linux 文本三剑客（1）grep命令的使用"><img src="https://pic1.zhimg.com/v2-bdf1968f78dcbe4de93f1b10c14dba8b_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux 文本三剑客（1）grep命令的使用"/></a><div class="content"><a class="title" href="/archives/1894211f.html" title="Linux 文本三剑客（1）grep命令的使用">Linux 文本三剑客（1）grep命令的使用</a><time datetime="2022-05-18T13:59:14.000Z" title="发表于 2022-05-18 21:59:14">2022-05-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/f792503a.html" title="计算机网络知识点总结（七）网络分析之tcpdump抓包"><img src="https://pic1.zhimg.com/v2-82c51530566f33f6120355b3647b11db_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点总结（七）网络分析之tcpdump抓包"/></a><div class="content"><a class="title" href="/archives/f792503a.html" title="计算机网络知识点总结（七）网络分析之tcpdump抓包">计算机网络知识点总结（七）网络分析之tcpdump抓包</a><time datetime="2022-05-17T11:04:36.000Z" title="发表于 2022-05-17 19:04:36">2022-05-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/1815c365.html" title="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）"><img src="https://pic1.zhimg.com/v2-18f2189eec39d8a665949f2b43c54626_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）"/></a><div class="content"><a class="title" href="/archives/1815c365.html" title="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）">计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）</a><time datetime="2022-05-12T08:36:07.000Z" title="发表于 2022-05-12 16:36:07">2022-05-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/90acc1af.html" title="Linux下的fork和exec函数"><img src="https://pic2.zhimg.com/v2-1a7eb58610755e46dbcc46e787517c08_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux下的fork和exec函数"/></a><div class="content"><a class="title" href="/archives/90acc1af.html" title="Linux下的fork和exec函数">Linux下的fork和exec函数</a><time datetime="2022-05-09T14:16:20.000Z" title="发表于 2022-05-09 22:16:20">2022-05-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a1e2b7b3.html" title="日常使用Linux系统是什么体验？"><img src="https://pic1.zhimg.com/v2-70854dea311f3e4c308180ea1dc1c973_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="日常使用Linux系统是什么体验？"/></a><div class="content"><a class="title" href="/archives/a1e2b7b3.html" title="日常使用Linux系统是什么体验？">日常使用Linux系统是什么体验？</a><time datetime="2022-05-07T07:57:50.000Z" title="发表于 2022-05-07 15:57:50">2022-05-07</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://pic1.zhimg.com/v2-bdf1968f78dcbe4de93f1b10c14dba8b_1440w.jpg?source=172ae18b')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Raidenxe</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadLivere () {
+  if (typeof LivereTower === 'object') {
+    window.LivereTower.init()
+  }
+  else {
+    (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+    })(document, 'script');
+  }
+}
+
+if ('Livere' === 'Livere' || !false) {
+  if (false) btf.loadComment(document.getElementById('lv-container'), loadLivere)
+  else loadLivere()
+}
+else {
+  function loadOtherComment () {
+    loadLivere()
+  }
+}</script></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="true"> </div><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="false" data-text="自由,平等,公正,法治,爱国,敬业,诚信,友善,富强,民主,文明,和谐" data-fontsize="15px" data-random="true" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

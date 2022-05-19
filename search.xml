@@ -1,6 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Linux 文本三剑客（1）grep命令的使用</title>
+    <url>/archives/1894211f.html</url>
+    <content><![CDATA[<h1 id="三剑客特点及应用场景"><a href="#三剑客特点及应用场景" class="headerlink" title="三剑客特点及应用场景"></a>三剑客特点及应用场景</h1><p>awk、grep、sed是Linux操作文本的三大利器，合称文本三剑客，也是必须掌握的Linux命令之一。三者的功能都是处理文本，但侧重点各不相同，其中属awk功能最强大，但也最复杂。</p>
+<p>grep更适合单纯的查找或匹配文本；</p>
+<p>sed更适合编辑匹配到的文本；</p>
+<p>awk更适合格式化文本，对文本进行较复杂格式处理。<br><img src="https://pic3.zhimg.com/80/v2-bd401d9a5fbaab317b0a66399ef52306_720w.jpg"></p>
+<h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h1><p>正则表达式是一种符号表示法，被用来识别文本模式。</p>
+<p>在某种程度上，它们与匹配文件和路径名的 shell 通配符比较相似，但其规模更庞大。许多命令行工具和大多数的编程语言 都支持正则表达式，以此来帮助解决文本操作问题。</p>
+<p>正则表达式元字符由以下字符组成：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">^ $ . [ ] &#123; &#125; - ? * + ( ) | \</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/v2-dc157303632d607f7bfb58624abeae52_r.jpg"><br><img src="https://pic1.zhimg.com/v2-93f8991f3c04f7db08c2575a8aeede9c_r.jpg"></p>
+<h1 id="grep引言"><a href="#grep引言" class="headerlink" title="grep引言"></a>grep引言</h1><p><strong>grep</strong>是一个最初用于Unix操作系统的命令行工具。在给出文件列表或标准输入后，grep会对匹配一个或多个正则表达式的文本进行搜索，并只输出匹配（或者不匹配）的行或文本。</p>
+<p>grep这个应用程序最早由肯·汤普逊写成。grep原先是ed下的一个应用程序，名称来自于g&#x2F;re&#x2F;p（globally search a regular expression and print，以正则表达式进行全局查找以及打印）。在ed下，输入g&#x2F;re&#x2F;p这个命令后，会将所有符合先定义样式的字符串，以行为单位打印出来。</p>
+<p>在1973年，Unix第四版中，grep首次出现在man页面中。</p>
+<p>grep实用程序是一个家族，存在很多grep的修改版，例如agrep表示“近似的grep”approximate grep用于模糊字符串搜索，fgrep用于固定样式搜索fixed pattern searches，而egrep用于搜索更复杂的正则表达式语法。fgrep和egrep同grep基本上是一样的程序。Tcgrep是用Perl正则表达式语言重写的grep。</p>
+<p>所有grep的修改版都被应用到很多不同的操作系统中。</p>
+<h1 id="grep的作用"><a href="#grep的作用" class="headerlink" title="grep的作用"></a>grep的作用</h1><p>Linux grep 命令用于查找文件里符合条件的字符串。</p>
+<p>换句话说，grep 命令在给定文件中搜索包含与给定字符串或单词匹配的行。对于开发人员和系统管理员来说，它是 Linux 和类 Unix 系统上最有用的命令之一。</p>
+<p>grep 指令用于查找内容包含指定的范本样式的文件，如果发现某文件的内容符合所指定的范本样式，预设 grep 指令会把含有范本样式的那一列显示出来。若不指定任何文件名称，或是所给予的文件名为 -，则 grep 指令会从标准输入设备读取数据。</p>
+<h1 id="grep语法格式"><a href="#grep语法格式" class="headerlink" title="grep语法格式"></a>grep语法格式</h1><p>grep [-abcEFGhHilLnqrsvVwxy][-A&lt;显示行数&gt;][-B&lt;显示列数&gt;][-C&lt;显示列数&gt;][-d&lt;进行动作&gt;][-e&lt;范本样式&gt;][-f&lt;范本文件&gt;][–help][范本样式][文件或目录…]</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">grep [OPTIONS] PATTERN [FILE...]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="常见选项"><a href="#常见选项" class="headerlink" title="常见选项"></a>常见选项</h1><p>–color&#x3D;auto 对匹配到的文本着色显示</p>
+<p>-m # 匹配#次后停止</p>
+<p>-v 显示不被pattern匹配到的行</p>
+<p>-i 忽略字符大小写</p>
+<p>-n 显示匹配的行号</p>
+<p>-c 统计匹配的行数</p>
+<p>-o 仅显示匹配到的字符串</p>
+<p>-q 静默模式，不输出任何信息</p>
+<p>-A # after, 后#行</p>
+<p>-B # before, 前#行</p>
+<p>-C # context, 前后各#行</p>
+<p>-e 实现多个选项间的逻辑or关系,如：grep –e ‘cat ’ -e ‘dog’ file</p>
+<p>-w 匹配整个单词</p>
+<p>-E 使用ERE，相当于egrep</p>
+<p>-F 不支持正则表达式，相当于fgrep</p>
+<p>-f file 根据模式文件处理</p>
+<p>-r 递归目录，但不处理软链接</p>
+<p>-R 递归目录，但处理软链接</p>
+<p>-l 打印包含匹配项的文件名，而不是文本行本身，也可用–files-with-matches 选项来指定</p>
+<p>-L 相似于-l 选项，但是只是打印不包含匹配项的文件名。也可用–files-without-match 来指定。</p>
+<p>-h 应用于多文件搜索，不输出文件名。也可用–no-filename 选项来指定。</p>
+<h1 id="grep实例"><a href="#grep实例" class="headerlink" title="grep实例"></a>grep实例</h1><p>这里我将使用Ubuntu18.04进行效果演示。</p>
+<h2 id="简单搜索和-l-L的使用"><a href="#简单搜索和-l-L的使用" class="headerlink" title="简单搜索和-l,-L的使用"></a>简单搜索和-l,-L的使用</h2><p>为了更好的探究 grep 程序，让我们创建一些文本文件来搜寻：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /bin &gt; dirlist-bin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /usr/bin &gt; dirlist-usr-bin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /sbin &gt; dirlist-sbin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /usr/sbin &gt; dirlist-usr-sbin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> dirlist*.txt</span><br><span class="line">dirlist-bin.txt     dirlist-sbin.txt    dirlist-usr-sbin.txt</span><br><span class="line">dirlist-usr-bin.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-e59933bab98469fb3de636c6614813f2_720w.jpg"><br>够对我们的文件列表执行简单的搜索，像这样：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep bzip dirlist*.txt</span><br><span class="line">dirlist-bin.txt:bzip2</span><br><span class="line">dirlist-bin.txt:bzip2recover</span><br></pre></td></tr></table></figure>
+<p>在这个例子里，grep 程序在所有列出的文件中搜索字符串 bzip，然后找到两个匹配项，其都在文件dirlist-bin.txt 中。如果我们只是对包含匹配项的文件列表，而不是对匹配项本身感兴趣的话，可以指定-l 选项：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -l bzip dirlist*.txt</span><br><span class="line">dirlist-bin.txt</span><br></pre></td></tr></table></figure>
+<p>相反地，如果我们只想查看不包含匹配项的文件列表，我们可以这样操作：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -L bzip dirlist*.txt</span><br><span class="line">dirlist-sbin.txt</span><br><span class="line">dirlist-usr-bin.txt</span><br><span class="line">dirlist-usr-sbin.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-221f5f6d8b575379938f509c82e1ab86_720w.jpg"></p>
+<h2 id="任何字符"><a href="#任何字符" class="headerlink" title="任何字符"></a>任何字符</h2><p>我们将要查看的第一个元字符是圆点字符，其被用来匹配任意字符。如果我们在正则表达式中包含它， 它将会匹配在此位置的任意一个字符。这里有个例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;.zip&#x27;</span> dirlist*.txt</span><br><span class="line">bunzip2</span><br><span class="line">bzip2</span><br><span class="line">bzip2recover</span><br><span class="line">gunzip</span><br><span class="line">gzip</span><br><span class="line">funzip</span><br><span class="line">gpg-zip</span><br><span class="line">preunzip</span><br><span class="line">prezip</span><br><span class="line">prezip-bin</span><br><span class="line">unzip</span><br><span class="line">unzipsfx</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic1.zhimg.com/80/v2-73c837c9727ac4f5a04d9cc5a327c5f4_720w.jpg"><br>我们在文件中查找包含正则表达式“.zip”的文本行。对于搜索结果，有几点需要注意一下。 注意没有找到这个 zip 程序。这是因为在我们的正则表达式中包含的圆点字符把所要求的匹配项的长度增加到四个字符，并且字符串“zip”只包含三个字符，所以这个 zip 程序不匹配。另外，如果我们的文件列表 中有一些文件的扩展名是.zip，则它们也会成为匹配项，因为文件扩展名中的圆点符号也会被看作是 “任意字符”。</p>
+<h2 id="锚点"><a href="#锚点" class="headerlink" title="锚点"></a>锚点</h2><p>在正则表达式中，插入符号和美元符号被看作是锚点。这意味着正则表达式 只有在文本行的开头或末尾被找到时，才算发生一次匹配。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^zip&#x27;</span> dirlist*.txt</span><br><span class="line">zip</span><br><span class="line">zipcloak</span><br><span class="line">zipgrep</span><br><span class="line">zipinfo</span><br><span class="line">zipnote</span><br><span class="line">zipsplit</span><br><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;zip$&#x27;</span> dirlist*.txt</span><br><span class="line">gunzip</span><br><span class="line">gzip</span><br><span class="line">funzip</span><br><span class="line">gpg-zip</span><br><span class="line">preunzip</span><br><span class="line">prezip</span><br><span class="line">unzip</span><br><span class="line">zip</span><br><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^zip$&#x27;</span> dirlist*.txt</span><br><span class="line">zip</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-a52d45fcc04272f07ed47e93ddc46fe6_720w.jpg"><br>这里我们分别在文件列表中搜索行首，行尾以及行首和行尾同时包含字符串“zip”（例如，zip 独占一行）的匹配行。 注意正则表达式‘^$’（行首和行尾之间没有字符）会匹配空行。</p>
+<h2 id="中括号表达式和字符类"><a href="#中括号表达式和字符类" class="headerlink" title="中括号表达式和字符类"></a>中括号表达式和字符类</h2><p>除了能够在正则表达式中的给定位置匹配任意字符之外，通过使用中括号表达式， 我们也能够从一个指定的字符集合中匹配一个单个的字符。通过中括号表达式，我们能够指定 一个字符集合（包含在不加中括号的情况下会被解释为元字符的字符）来被匹配。在这个例子里，使用了一个两个字符的集合：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;[bg]zip&#x27;</span> dirlist*.txt</span><br><span class="line">bzip2</span><br><span class="line">bzip2recover</span><br><span class="line">gzip</span><br></pre></td></tr></table></figure>
+<p>我们匹配包含字符串“bzip”或者“gzip”的任意行。</p>
+<p>一个字符集合可能包含任意多个字符，并且元字符被放置到中括号里面后会失去了它们的特殊含义。 然而，在两种情况下，会在中括号表达式中使用元字符，并且有着不同的含义。第一个元字符 是插入字符，其被用来表示否定；第二个是连字符字符，其被用来表示一个字符区域。</p>
+<h2 id="否定"><a href="#否定" class="headerlink" title="否定"></a>否定</h2><p>如果在正则表示式中的第一个字符是一个插入字符，则剩余的字符被看作是不会在给定的字符位置出现的 字符集合。通过修改之前的例子，我们试验一下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;[^bg]zip&#x27;</span> dirlist*.txt</span><br><span class="line">bunzip2</span><br><span class="line">gunzip</span><br><span class="line">funzip</span><br><span class="line">gpg-zip</span><br><span class="line">preunzip</span><br><span class="line">prezip</span><br><span class="line">prezip-bin</span><br><span class="line">unzip</span><br><span class="line">unzipsfx</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-9668f6f36ee06645cdaa4a8360bff4db_720w.jpg"><br>通过激活否定操作，我们得到一个文件列表，它们的文件名都包含字符串“zip”，并且“zip”的前一个字符 是除了“b”和“g”之外的任意字符。注意文件 zip 没有被发现。一个否定的字符集仍然在给定位置要求一个字符， 但是这个字符必须不是否定字符集的成员。</p>
+<p>这个插入字符如果是中括号表达式中的第一个字符的时候，才会唤醒否定功能；否则，它会失去 它的特殊含义，变成字符集中的一个普通字符。</p>
+<p>通过激活否定操作，我们得到一个文件列表，它们的文件名都包含字符串“zip”，并且“zip”的前一个字符 是除了“b”和“g”之外的任意字符。注意文件 zip 没有被发现。一个否定的字符集仍然在给定位置要求一个字符， 但是这个字符必须不是否定字符集的成员。</p>
+<p>这个插入字符如果是中括号表达式中的第一个字符的时候，才会唤醒否定功能；否则，它会失去它的特殊含义，变成字符集中的一个普通字符。</p>
+<h2 id="传统的字符区域"><a href="#传统的字符区域" class="headerlink" title="传统的字符区域"></a>传统的字符区域</h2><p>如果我们想要构建一个正则表达式，它可以在我们的列表中找到每个以大写字母开头的文件，我们可以这样做：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^[ABCDEFGHIJKLMNOPQRSTUVWXZY]&#x27;</span> dirlist*.txt</span><br></pre></td></tr></table></figure>
+<p>这只是一个在正则表达式中输入26个大写字母的问题。但是输入所有字母无疑是非常繁琐且效率低下的，所以有另外一种方式：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^[A-Z]&#x27;</span> dirlist*.txt</span><br><span class="line">MAKEDEV</span><br><span class="line">ControlPanel</span><br><span class="line">GET</span><br><span class="line">HEAD</span><br><span class="line">POST</span><br><span class="line">X</span><br><span class="line">X11</span><br><span class="line">Xorg</span><br><span class="line">MAKEFLOPPIES</span><br><span class="line">NetworkManager</span><br><span class="line">NetworkManagerDispatcher</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic1.zhimg.com/80/v2-a17b774773e9877036b6d8e3fd5c4b70_720w.jpg"><br>通过使用一个三字符区域，我们能够缩写26个字母。任意字符的区域都能按照这种方式表达，包括多个区域，</p>
+<p>比如下面这个表达式就匹配了所有以字母和数字开头的文件名：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^[A-Za-z0-9]&#x27;</span> dirlist*.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-5c992da6b6d03bf5d75719a3adc1da37_720w.jpg"><br>在字符区域中，我们看到这个连字符被特殊对待，所以我们怎样在一个正则表达式中包含一个连字符呢？</p>
+<p>方法就是使连字符成为表达式中的第一个字符。考虑一下这两个例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;[A-Z]&#x27;</span> dirlist*.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-d13a74c027775e94e2b44e6d5fcf802a_720w.jpg"><br>这会匹配包含一个大写字母的文件名。然而：</p>
+<p>[me@linuxbox ~]$ grep -h ‘[-AZ]’ dirlist*.txt<br>上面的表达式会匹配包含一个连字符，或一个大写字母“A”，或一个大写字母“Z”的文件名。<br><img src="https://pic3.zhimg.com/80/v2-4bb4ad1611e7f1248eb32f4dcd1cf3a2_720w.jpg"><br>本文部分内容参考自《TLCL》。</p>
+]]></content>
+      <categories>
+        <category>Linux学习笔记</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>grep</tag>
+        <tag>文本编辑器</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>GitHub 443 Timed out的解决方法</title>
     <url>/archives/4dcde7a2.html</url>
     <content><![CDATA[<h1 id="GitHub-443-Timed-out解决办法"><a href="#GitHub-443-Timed-out解决办法" class="headerlink" title="GitHub 443 Timed out解决办法"></a>GitHub 443 Timed out解决办法</h1><h2 id="Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out"><a href="#Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out" class="headerlink" title="Failed to connect to github.com port 443 after 21090 ms: Timed out"></a>Failed to connect to github.com port 443 after 21090 ms: Timed out</h2><p>最近尝试过很多方法都无法解决GitHub的上传问题，包括取消全局代理也无效。</p>
@@ -98,99 +189,8 @@
       </categories>
       <tags>
         <tag>Linux</tag>
+        <tag>文本编辑器</tag>
         <tag>sed</tag>
-        <tag>文本编辑器</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 文本三剑客（1）grep命令的使用</title>
-    <url>/archives/1894211f.html</url>
-    <content><![CDATA[<h1 id="三剑客特点及应用场景"><a href="#三剑客特点及应用场景" class="headerlink" title="三剑客特点及应用场景"></a>三剑客特点及应用场景</h1><p>awk、grep、sed是Linux操作文本的三大利器，合称文本三剑客，也是必须掌握的Linux命令之一。三者的功能都是处理文本，但侧重点各不相同，其中属awk功能最强大，但也最复杂。</p>
-<p>grep更适合单纯的查找或匹配文本；</p>
-<p>sed更适合编辑匹配到的文本；</p>
-<p>awk更适合格式化文本，对文本进行较复杂格式处理。<br><img src="https://pic3.zhimg.com/80/v2-bd401d9a5fbaab317b0a66399ef52306_720w.jpg"></p>
-<h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h1><p>正则表达式是一种符号表示法，被用来识别文本模式。</p>
-<p>在某种程度上，它们与匹配文件和路径名的 shell 通配符比较相似，但其规模更庞大。许多命令行工具和大多数的编程语言 都支持正则表达式，以此来帮助解决文本操作问题。</p>
-<p>正则表达式元字符由以下字符组成：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">^ $ . [ ] &#123; &#125; - ? * + ( ) | \</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic3.zhimg.com/v2-dc157303632d607f7bfb58624abeae52_r.jpg"><br><img src="https://pic1.zhimg.com/v2-93f8991f3c04f7db08c2575a8aeede9c_r.jpg"></p>
-<h1 id="grep引言"><a href="#grep引言" class="headerlink" title="grep引言"></a>grep引言</h1><p><strong>grep</strong>是一个最初用于Unix操作系统的命令行工具。在给出文件列表或标准输入后，grep会对匹配一个或多个正则表达式的文本进行搜索，并只输出匹配（或者不匹配）的行或文本。</p>
-<p>grep这个应用程序最早由肯·汤普逊写成。grep原先是ed下的一个应用程序，名称来自于g&#x2F;re&#x2F;p（globally search a regular expression and print，以正则表达式进行全局查找以及打印）。在ed下，输入g&#x2F;re&#x2F;p这个命令后，会将所有符合先定义样式的字符串，以行为单位打印出来。</p>
-<p>在1973年，Unix第四版中，grep首次出现在man页面中。</p>
-<p>grep实用程序是一个家族，存在很多grep的修改版，例如agrep表示“近似的grep”approximate grep用于模糊字符串搜索，fgrep用于固定样式搜索fixed pattern searches，而egrep用于搜索更复杂的正则表达式语法。fgrep和egrep同grep基本上是一样的程序。Tcgrep是用Perl正则表达式语言重写的grep。</p>
-<p>所有grep的修改版都被应用到很多不同的操作系统中。</p>
-<h1 id="grep的作用"><a href="#grep的作用" class="headerlink" title="grep的作用"></a>grep的作用</h1><p>Linux grep 命令用于查找文件里符合条件的字符串。</p>
-<p>换句话说，grep 命令在给定文件中搜索包含与给定字符串或单词匹配的行。对于开发人员和系统管理员来说，它是 Linux 和类 Unix 系统上最有用的命令之一。</p>
-<p>grep 指令用于查找内容包含指定的范本样式的文件，如果发现某文件的内容符合所指定的范本样式，预设 grep 指令会把含有范本样式的那一列显示出来。若不指定任何文件名称，或是所给予的文件名为 -，则 grep 指令会从标准输入设备读取数据。</p>
-<h1 id="grep语法格式"><a href="#grep语法格式" class="headerlink" title="grep语法格式"></a>grep语法格式</h1><p>grep [-abcEFGhHilLnqrsvVwxy][-A&lt;显示行数&gt;][-B&lt;显示列数&gt;][-C&lt;显示列数&gt;][-d&lt;进行动作&gt;][-e&lt;范本样式&gt;][-f&lt;范本文件&gt;][–help][范本样式][文件或目录…]</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">grep [OPTIONS] PATTERN [FILE...]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h1 id="常见选项"><a href="#常见选项" class="headerlink" title="常见选项"></a>常见选项</h1><p>–color&#x3D;auto 对匹配到的文本着色显示</p>
-<p>-m # 匹配#次后停止</p>
-<p>-v 显示不被pattern匹配到的行</p>
-<p>-i 忽略字符大小写</p>
-<p>-n 显示匹配的行号</p>
-<p>-c 统计匹配的行数</p>
-<p>-o 仅显示匹配到的字符串</p>
-<p>-q 静默模式，不输出任何信息</p>
-<p>-A # after, 后#行</p>
-<p>-B # before, 前#行</p>
-<p>-C # context, 前后各#行</p>
-<p>-e 实现多个选项间的逻辑or关系,如：grep –e ‘cat ’ -e ‘dog’ file</p>
-<p>-w 匹配整个单词</p>
-<p>-E 使用ERE，相当于egrep</p>
-<p>-F 不支持正则表达式，相当于fgrep</p>
-<p>-f file 根据模式文件处理</p>
-<p>-r 递归目录，但不处理软链接</p>
-<p>-R 递归目录，但处理软链接</p>
-<p>-l 打印包含匹配项的文件名，而不是文本行本身，也可用–files-with-matches 选项来指定</p>
-<p>-L 相似于-l 选项，但是只是打印不包含匹配项的文件名。也可用–files-without-match 来指定。</p>
-<p>-h 应用于多文件搜索，不输出文件名。也可用–no-filename 选项来指定。</p>
-<h1 id="grep实例"><a href="#grep实例" class="headerlink" title="grep实例"></a>grep实例</h1><p>这里我将使用Ubuntu18.04进行效果演示。</p>
-<h2 id="简单搜索和-l-L的使用"><a href="#简单搜索和-l-L的使用" class="headerlink" title="简单搜索和-l,-L的使用"></a>简单搜索和-l,-L的使用</h2><p>为了更好的探究 grep 程序，让我们创建一些文本文件来搜寻：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /bin &gt; dirlist-bin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /usr/bin &gt; dirlist-usr-bin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /sbin &gt; dirlist-sbin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /usr/sbin &gt; dirlist-usr-sbin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> dirlist*.txt</span><br><span class="line">dirlist-bin.txt     dirlist-sbin.txt    dirlist-usr-sbin.txt</span><br><span class="line">dirlist-usr-bin.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic3.zhimg.com/80/v2-e59933bab98469fb3de636c6614813f2_720w.jpg"><br>够对我们的文件列表执行简单的搜索，像这样：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep bzip dirlist*.txt</span><br><span class="line">dirlist-bin.txt:bzip2</span><br><span class="line">dirlist-bin.txt:bzip2recover</span><br></pre></td></tr></table></figure>
-<p>在这个例子里，grep 程序在所有列出的文件中搜索字符串 bzip，然后找到两个匹配项，其都在文件dirlist-bin.txt 中。如果我们只是对包含匹配项的文件列表，而不是对匹配项本身感兴趣的话，可以指定-l 选项：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -l bzip dirlist*.txt</span><br><span class="line">dirlist-bin.txt</span><br></pre></td></tr></table></figure>
-<p>相反地，如果我们只想查看不包含匹配项的文件列表，我们可以这样操作：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -L bzip dirlist*.txt</span><br><span class="line">dirlist-sbin.txt</span><br><span class="line">dirlist-usr-bin.txt</span><br><span class="line">dirlist-usr-sbin.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic3.zhimg.com/80/v2-221f5f6d8b575379938f509c82e1ab86_720w.jpg"></p>
-<h2 id="任何字符"><a href="#任何字符" class="headerlink" title="任何字符"></a>任何字符</h2><p>我们将要查看的第一个元字符是圆点字符，其被用来匹配任意字符。如果我们在正则表达式中包含它， 它将会匹配在此位置的任意一个字符。这里有个例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;.zip&#x27;</span> dirlist*.txt</span><br><span class="line">bunzip2</span><br><span class="line">bzip2</span><br><span class="line">bzip2recover</span><br><span class="line">gunzip</span><br><span class="line">gzip</span><br><span class="line">funzip</span><br><span class="line">gpg-zip</span><br><span class="line">preunzip</span><br><span class="line">prezip</span><br><span class="line">prezip-bin</span><br><span class="line">unzip</span><br><span class="line">unzipsfx</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic1.zhimg.com/80/v2-73c837c9727ac4f5a04d9cc5a327c5f4_720w.jpg"><br>我们在文件中查找包含正则表达式“.zip”的文本行。对于搜索结果，有几点需要注意一下。 注意没有找到这个 zip 程序。这是因为在我们的正则表达式中包含的圆点字符把所要求的匹配项的长度增加到四个字符，并且字符串“zip”只包含三个字符，所以这个 zip 程序不匹配。另外，如果我们的文件列表 中有一些文件的扩展名是.zip，则它们也会成为匹配项，因为文件扩展名中的圆点符号也会被看作是 “任意字符”。</p>
-<h2 id="锚点"><a href="#锚点" class="headerlink" title="锚点"></a>锚点</h2><p>在正则表达式中，插入符号和美元符号被看作是锚点。这意味着正则表达式 只有在文本行的开头或末尾被找到时，才算发生一次匹配。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^zip&#x27;</span> dirlist*.txt</span><br><span class="line">zip</span><br><span class="line">zipcloak</span><br><span class="line">zipgrep</span><br><span class="line">zipinfo</span><br><span class="line">zipnote</span><br><span class="line">zipsplit</span><br><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;zip$&#x27;</span> dirlist*.txt</span><br><span class="line">gunzip</span><br><span class="line">gzip</span><br><span class="line">funzip</span><br><span class="line">gpg-zip</span><br><span class="line">preunzip</span><br><span class="line">prezip</span><br><span class="line">unzip</span><br><span class="line">zip</span><br><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^zip$&#x27;</span> dirlist*.txt</span><br><span class="line">zip</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic3.zhimg.com/80/v2-a52d45fcc04272f07ed47e93ddc46fe6_720w.jpg"><br>这里我们分别在文件列表中搜索行首，行尾以及行首和行尾同时包含字符串“zip”（例如，zip 独占一行）的匹配行。 注意正则表达式‘^$’（行首和行尾之间没有字符）会匹配空行。</p>
-<h2 id="中括号表达式和字符类"><a href="#中括号表达式和字符类" class="headerlink" title="中括号表达式和字符类"></a>中括号表达式和字符类</h2><p>除了能够在正则表达式中的给定位置匹配任意字符之外，通过使用中括号表达式， 我们也能够从一个指定的字符集合中匹配一个单个的字符。通过中括号表达式，我们能够指定 一个字符集合（包含在不加中括号的情况下会被解释为元字符的字符）来被匹配。在这个例子里，使用了一个两个字符的集合：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;[bg]zip&#x27;</span> dirlist*.txt</span><br><span class="line">bzip2</span><br><span class="line">bzip2recover</span><br><span class="line">gzip</span><br></pre></td></tr></table></figure>
-<p>我们匹配包含字符串“bzip”或者“gzip”的任意行。</p>
-<p>一个字符集合可能包含任意多个字符，并且元字符被放置到中括号里面后会失去了它们的特殊含义。 然而，在两种情况下，会在中括号表达式中使用元字符，并且有着不同的含义。第一个元字符 是插入字符，其被用来表示否定；第二个是连字符字符，其被用来表示一个字符区域。</p>
-<h2 id="否定"><a href="#否定" class="headerlink" title="否定"></a>否定</h2><p>如果在正则表示式中的第一个字符是一个插入字符，则剩余的字符被看作是不会在给定的字符位置出现的 字符集合。通过修改之前的例子，我们试验一下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;[^bg]zip&#x27;</span> dirlist*.txt</span><br><span class="line">bunzip2</span><br><span class="line">gunzip</span><br><span class="line">funzip</span><br><span class="line">gpg-zip</span><br><span class="line">preunzip</span><br><span class="line">prezip</span><br><span class="line">prezip-bin</span><br><span class="line">unzip</span><br><span class="line">unzipsfx</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic4.zhimg.com/80/v2-9668f6f36ee06645cdaa4a8360bff4db_720w.jpg"><br>通过激活否定操作，我们得到一个文件列表，它们的文件名都包含字符串“zip”，并且“zip”的前一个字符 是除了“b”和“g”之外的任意字符。注意文件 zip 没有被发现。一个否定的字符集仍然在给定位置要求一个字符， 但是这个字符必须不是否定字符集的成员。</p>
-<p>这个插入字符如果是中括号表达式中的第一个字符的时候，才会唤醒否定功能；否则，它会失去 它的特殊含义，变成字符集中的一个普通字符。</p>
-<p>通过激活否定操作，我们得到一个文件列表，它们的文件名都包含字符串“zip”，并且“zip”的前一个字符 是除了“b”和“g”之外的任意字符。注意文件 zip 没有被发现。一个否定的字符集仍然在给定位置要求一个字符， 但是这个字符必须不是否定字符集的成员。</p>
-<p>这个插入字符如果是中括号表达式中的第一个字符的时候，才会唤醒否定功能；否则，它会失去它的特殊含义，变成字符集中的一个普通字符。</p>
-<h2 id="传统的字符区域"><a href="#传统的字符区域" class="headerlink" title="传统的字符区域"></a>传统的字符区域</h2><p>如果我们想要构建一个正则表达式，它可以在我们的列表中找到每个以大写字母开头的文件，我们可以这样做：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^[ABCDEFGHIJKLMNOPQRSTUVWXZY]&#x27;</span> dirlist*.txt</span><br></pre></td></tr></table></figure>
-<p>这只是一个在正则表达式中输入26个大写字母的问题。但是输入所有字母无疑是非常繁琐且效率低下的，所以有另外一种方式：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^[A-Z]&#x27;</span> dirlist*.txt</span><br><span class="line">MAKEDEV</span><br><span class="line">ControlPanel</span><br><span class="line">GET</span><br><span class="line">HEAD</span><br><span class="line">POST</span><br><span class="line">X</span><br><span class="line">X11</span><br><span class="line">Xorg</span><br><span class="line">MAKEFLOPPIES</span><br><span class="line">NetworkManager</span><br><span class="line">NetworkManagerDispatcher</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic1.zhimg.com/80/v2-a17b774773e9877036b6d8e3fd5c4b70_720w.jpg"><br>通过使用一个三字符区域，我们能够缩写26个字母。任意字符的区域都能按照这种方式表达，包括多个区域，</p>
-<p>比如下面这个表达式就匹配了所有以字母和数字开头的文件名：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^[A-Za-z0-9]&#x27;</span> dirlist*.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic4.zhimg.com/80/v2-5c992da6b6d03bf5d75719a3adc1da37_720w.jpg"><br>在字符区域中，我们看到这个连字符被特殊对待，所以我们怎样在一个正则表达式中包含一个连字符呢？</p>
-<p>方法就是使连字符成为表达式中的第一个字符。考虑一下这两个例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;[A-Z]&#x27;</span> dirlist*.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic3.zhimg.com/80/v2-d13a74c027775e94e2b44e6d5fcf802a_720w.jpg"><br>这会匹配包含一个大写字母的文件名。然而：</p>
-<p>[me@linuxbox ~]$ grep -h ‘[-AZ]’ dirlist*.txt<br>上面的表达式会匹配包含一个连字符，或一个大写字母“A”，或一个大写字母“Z”的文件名。<br><img src="https://pic3.zhimg.com/80/v2-4bb4ad1611e7f1248eb32f4dcd1cf3a2_720w.jpg"><br>本文部分内容参考自《TLCL》。</p>
-]]></content>
-      <categories>
-        <category>Linux学习笔记</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>文本编辑器</tag>
-        <tag>grep</tag>
       </tags>
   </entry>
   <entry>
@@ -316,80 +316,6 @@
         <tag>Linux</tag>
         <tag>嵌入式</tag>
         <tag>单片机</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>日常使用Linux系统是什么体验？</title>
-    <url>/archives/a1e2b7b3.html</url>
-    <content><![CDATA[<p>趁着五一小假期，我尝试了去使用Linux作为日常使用的操作系统，这个过程中也是踩了不少的坑，所以想写一篇文章分享一下。</p>
-<p>我个人使用过Kail、CentOS7、Ubuntu16.04、Windows Subsystem for Linux（WSL）作为开发环境，我个人更喜欢Debian Style (.deb)包管理系统，所以最终选择了使用Ubuntu18.04 LTS，打算在开发之余日常使用，满足听音乐，写文档，看看视频等需求。</p>
-<h1 id="Ubuntu的优缺点："><a href="#Ubuntu的优缺点：" class="headerlink" title="Ubuntu的优缺点："></a>Ubuntu的优缺点：</h1><p><img src="https://pic3.zhimg.com/80/v2-c394ee5ef8e79d2c1ee12b659d08ec32_720w.jpg"></p>
-<h1 id="安装Flash插件"><a href="#安装Flash插件" class="headerlink" title="安装Flash插件"></a>安装Flash插件</h1><p>使用Firefox 浏览器时，B站无法播放视频，提示需要下载Flash插件；<br><img src="https://pic1.zhimg.com/80/v2-1b63342350894d7b71807cdb3e57a2fc_720w.jpg"><br>点击页面跳转后却提示现在Adobe官网已经不再提供flash下载；</p>
-<p>（由于 Adobe 在 2020 年 12 月 31 日之后不再支持 Flash Player，并且从 2021 年 1 月12 日开始阻止 Flash 内容在 Flash Player 中运行，因此 Adobe 强烈建议所有用户立即卸载 Flash Player 以帮助保护其系统。）<br><img src="https://pic1.zhimg.com/v2-a372fc674dc8c7eb9ef4e9318e474dc0_r.jpg"></p>
-<p>解决办法是通过终端安装flash插件：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install flashplugin-installer</span><br></pre></td></tr></table></figure>
-<p>或者</p>
-<h2 id="安装ubuntu-restricted-extras；"><a href="#安装ubuntu-restricted-extras；" class="headerlink" title="安装ubuntu-restricted-extras；"></a>安装ubuntu-restricted-extras；</h2><p>ubuntu-restricted-extras 是一个包含各种基本软件，如 Flash 插件、unrar、gstreamer、mp4、Ubuntu 中的 Chromium 浏览器的编解码器等的软件包。</p>
-<p>Ubuntu提供了一个软件包来安装所有基本的媒体编解码器：ubuntu-restricted-extras。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install ubuntu-restricted-extras</span><br></pre></td></tr></table></figure>
-
-<h1 id="安装Google-Chrome："><a href="#安装Google-Chrome：" class="headerlink" title="安装Google Chrome："></a>安装Google Chrome：</h1><p>直接使用Google浏览器也可以解决上述问题。</p>
-<h2 id="1-下载谷歌浏览器"><a href="#1-下载谷歌浏览器" class="headerlink" title="1.下载谷歌浏览器"></a>1.下载谷歌浏览器</h2><p>下载最新的谷歌浏览器。带wget的deb包：</p>
-<p>wget <a href="https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb">https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb</a></p>
-<h2 id="2-安装谷歌浏览器"><a href="#2-安装谷歌浏览器" class="headerlink" title="2.安装谷歌浏览器"></a>2.安装谷歌浏览器</h2><p>在Ubuntu上安装软件包需要sudo权限。确保以具有sudo权限的用户身份运行以下命令。</p>
-<p>安装谷歌浏览器。通过键入以下内容</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-
-<p>安装deb包：<br>下载好deb包后，输入</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./“安装包名”</span><br></pre></td></tr></table></figure>
-<p>如上文所示</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-
-<h1 id="输入法软件："><a href="#输入法软件：" class="headerlink" title="输入法软件："></a>输入法软件：</h1><h2 id="搜狗输入法："><a href="#搜狗输入法：" class="headerlink" title="搜狗输入法："></a>搜狗输入法：</h2><p>搜狗输入法Linux官网-首页</p>
-<h3 id="1、添加中文语言支持"><a href="#1、添加中文语言支持" class="headerlink" title="1、添加中文语言支持"></a>1、添加中文语言支持</h3><p>打开 系统设置——区域和语言——管理已安装的语言——在“语言”tab下——点击“添加或删除语言”<br><img src="https://pic1.zhimg.com/80/v2-b248e5b921fa3cde2c018dbb74a09a68_720w.jpg"><br>弹出“已安装语言”窗口，勾选中文（简体），点击应用<br><img src="https://pic2.zhimg.com/80/v2-9784e564cfb3f4d55a89b0a9b459e7b5_720w.jpg"><br>回到“语言支持”窗口，在键盘输入法系统中，选择“fcitx”<br><img src="https://pic3.zhimg.com/80/v2-6ac417d2e68d2a9ab99b17f034fd3742_720w.jpg"></p>
-<p>如果在键盘输入法系统中，没有“fcitx”选项时，建议先打开终端手动安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">fcitx：sudo apt-get install fcitx</span><br></pre></td></tr></table></figure>
-<p>等安装成功之后再执行上述步骤</p>
-<p>点击“应用到整个系统”，关闭窗口，重启电脑</p>
-<h3 id="2-通过命令行安装搜狗输入法"><a href="#2-通过命令行安装搜狗输入法" class="headerlink" title="2.通过命令行安装搜狗输入法"></a>2.通过命令行安装搜狗输入法</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i sogoupinyin_版本号_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果安装过程中提示缺少相关依赖，则执行如下命令解决：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt -f install</span><br></pre></td></tr></table></figure>
-<h3 id="3-注销计算机即可正常使用搜狗输入法。"><a href="#3-注销计算机即可正常使用搜狗输入法。" class="headerlink" title="3.注销计算机即可正常使用搜狗输入法。"></a>3.注销计算机即可正常使用搜狗输入法。</h3><h1 id="文档软件："><a href="#文档软件：" class="headerlink" title="文档软件："></a>文档软件：</h1><h2 id="Wps："><a href="#Wps：" class="headerlink" title="Wps："></a>Wps：</h2><p>WPS Office因酷似微软 Office 而广受欢迎。它的界面与微软 Office 几乎一样并且号称与微软 Office 更加兼容。<br><a href="https://www.wps.cn/product/wpslinux">https://www.wps.cn/product/wpslinux</a></p>
-<h2 id="LibreOffice："><a href="#LibreOffice：" class="headerlink" title="LibreOffice："></a>LibreOffice：</h2><p>它是个组件完整的办公软件，包括文档编辑器、电子表格工具、演示软件、数学工具和作图工具。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libreoffice libreoffice-style-breeze</span><br></pre></td></tr></table></figure>
-<h1 id="音乐软件："><a href="#音乐软件：" class="headerlink" title="音乐软件："></a>音乐软件：</h1><h2 id="网易云："><a href="#网易云：" class="headerlink" title="网易云："></a>网易云：</h2><p><a href="https://music.163.com/#/download">https://music.163.com/#/download</a></p>
-<h1 id="聊天软件："><a href="#聊天软件：" class="headerlink" title="聊天软件："></a>聊天软件：</h1><h2 id="QQ："><a href="#QQ：" class="headerlink" title="QQ："></a>QQ：</h2><p><a href="https://im.qq.com/linuxqq/download.html">https://im.qq.com/linuxqq/download.html</a></p>
-<h1 id="其他一些常用软件安装与使用："><a href="#其他一些常用软件安装与使用：" class="headerlink" title="其他一些常用软件安装与使用："></a>其他一些常用软件安装与使用：</h1><h2 id="VNC的使用及常见问题："><a href="#VNC的使用及常见问题：" class="headerlink" title="VNC的使用及常见问题："></a>VNC的使用及常见问题：</h2><h3 id="启动VNC"><a href="#启动VNC" class="headerlink" title="启动VNC"></a>启动VNC</h3><p>设置里打开共享<br><img src="https://pic3.zhimg.com/80/v2-bdad4403c861b8070edf35e06abc3f0a_720w.jpg"><br>设置密码并打开选项<br><img src="https://pic2.zhimg.com/80/v2-fe2ab52e283125190f7d46422d01d1a9_720w.jpg"><br>如果没有屏幕共享选项</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install dconf-editor</span><br></pre></td></tr></table></figure>
-<p>或者，如果尚未安装 vino，请同时执行以下操作：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install vino dconf-editor</span><br></pre></td></tr></table></figure>
-<p>打开dconf-editor工具，终端输入 dconf-editor打开</p>
-<p>打开之后，依次展开org-&gt;gnome-&gt;desktop-&gt;remote-access<br><img src="https://pic2.zhimg.com/80/v2-863b0116f3f2f976dda4a8c19f281259_720w.jpg"><br>打开相关选项即可。</p>
-<h3 id="如果无法连接VNC服务端"><a href="#如果无法连接VNC服务端" class="headerlink" title="如果无法连接VNC服务端"></a>如果无法连接VNC服务端</h3><p>报错信息如下：</p>
-<p>Unable to connect to VNC Server using your chosen security setting. Either upgrade VNC Server to a more recent version from RealVNC, or select a weaker level of encryption</p>
-<p>解决办法</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gsettings <span class="built_in">set</span> org.gnome.Vino require-encryption <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-<h2 id="SSR："><a href="#SSR：" class="headerlink" title="SSR："></a>SSR：</h2><p>科学上网工具，下载地址：<br><a href="https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb">https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb</a></p>
-<h2 id="GDebi："><a href="#GDebi：" class="headerlink" title="GDebi："></a>GDebi：</h2><p>Gedbi 是一款小巧的软件包管理器，你可以用它来安装 DEB 文件。它比软件中心更快，而且还能处理依赖问题。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gdebi</span><br></pre></td></tr></table></figure>
-
-<h2 id="Visual-Studio-Code："><a href="#Visual-Studio-Code：" class="headerlink" title="Visual Studio Code："></a>Visual Studio Code：</h2><p><a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a></p>
-<h2 id="Steam："><a href="#Steam：" class="headerlink" title="Steam："></a>Steam：</h2><p><a href="https://store.steampowered.com/about/">https://store.steampowered.com/about/</a></p>
-<h2 id="误删一些安装包导致无法打开系统设置："><a href="#误删一些安装包导致无法打开系统设置：" class="headerlink" title="误删一些安装包导致无法打开系统设置："></a>误删一些安装包导致无法打开系统设置：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gnome-control-center</span><br></pre></td></tr></table></figure>
-
-<h1 id="个人的一些感想："><a href="#个人的一些感想：" class="headerlink" title="个人的一些感想："></a>个人的一些感想：</h1><p>经过几天的使用，我发现Ubuntu在配置好环境后，日常体验还是相当不错的。</p>
-<h2 id="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"><a href="#但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。" class="headerlink" title="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"></a>但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。</h2><p>（2022&#x2F;5&#x2F;12 补充回答）</p>
-<p>因为之前的回答写得过于笼统，我决定补充一下回答。</p>
-<p>首先讲讲为什么都2022年了，Ubuntu22.04都出了，为什么我还在使用Ubuntu18.04，原因也很简单，因为我使用Ubuntu的首要目标是搭建开发环境，而日常使用是其次的，使用18.04也只是因为环境搭建起来比较容易而已。这次没能用上Ubuntu22.04的新桌面GNOME 42，我觉得还是挺遗憾的。</p>
-<p>再来讲讲我自己Linux的使用经历吧，我的Linux使用经验比较浅薄，我在19年年底才开始接触Linux，当时使用的是树莓派4B开发板，系统是Raspberry Pi OS，而我电脑上则是使用WSL，Ubuntu16.04版本。刚开始学习的时候，我算是完完全全的小白，只是知道Linux这么一个东西的存在，很难理解一个黑色的框框（终端）是操作系统。经过一段时间的学习后才算是明白了各种基本命令行的用法。后来在学校的机房里接触到CentOS8和RedHat，自己也出于好奇在虚拟机上跑Kali，学习关于网络的一些东西，但是也没有想过日常去使用这些Linux发行版。其实树莓派系统是有桌面的，但我平时都是用vscode+ssh去开发，所以也没什么接触Linux桌面的机会。可以说在这个假期前，我对Linux桌面的接触接近于0。</p>
-<p>经过这次假期短暂的使用后，接下来再讲讲我的小结，Linux确实可以应付所有的“日常使用”场景的，但在我看来更适合于开发。Linux的使用是有门槛的，即使拥有了桌面，离开了命令行界面（CLI），Linux上的很多操作都寸步难行。虽然我觉得CLI用起来很帅，很高效，但对于以日常使用为目的而不是开发的小白用户来说，CLI便是使用Linux的难点之一。反观Windows出色的图形用户界面（GUI），操作方便直观且学习成本低，在日常使用中普通用户一般也不需要使用到cmd和powershell。我举个不太恰当的例子，Linux发行版就像毛坯房需要自己去动手装修，桌面也只是给了一个基本的框架，自由度高，可以各种自定义各种魔改，比较适合动手能力强爱折腾的用户，而Windows就像已经装修好的样本房，即买即住，适合图省心的用户。（那么如果有一个上手简便，不需要CLI即可操作并且桌面功能完善的发行版一定会受到用户的欢迎吧）</p>
-<p>在软件方面，适配Linux的软件也是远少于Windows，如经典的office全家桶，各类工程软件以及常用软件。Linux下的游戏还是比较匮乏的，数量上远少于Windows。显卡驱动也是Linux的使用难点之一，而最近英伟达已经开源 Linux GPU 内核驱动了，未来可期。希望软件和游戏厂商以后能给Linux做更多的适配吧。</p>
-<p>还有一个问题就是国内特殊的网络环境以及中文互联网资料比较贫瘠，我寻找到的很多资料都已经是过时无效的了，使用好相关论坛可以节省掉不少的时间。</p>
-<p>相比Windows下泛滥的各式流氓软件，Linux则不需要担心这个问题，并且更为干净安全可靠，也没有像微软那样三天两头就更新的各式补丁。</p>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
       </tags>
   </entry>
   <entry>
@@ -529,6 +455,80 @@
       </tags>
   </entry>
   <entry>
+    <title>日常使用Linux系统是什么体验？</title>
+    <url>/archives/a1e2b7b3.html</url>
+    <content><![CDATA[<p>趁着五一小假期，我尝试了去使用Linux作为日常使用的操作系统，这个过程中也是踩了不少的坑，所以想写一篇文章分享一下。</p>
+<p>我个人使用过Kail、CentOS7、Ubuntu16.04、Windows Subsystem for Linux（WSL）作为开发环境，我个人更喜欢Debian Style (.deb)包管理系统，所以最终选择了使用Ubuntu18.04 LTS，打算在开发之余日常使用，满足听音乐，写文档，看看视频等需求。</p>
+<h1 id="Ubuntu的优缺点："><a href="#Ubuntu的优缺点：" class="headerlink" title="Ubuntu的优缺点："></a>Ubuntu的优缺点：</h1><p><img src="https://pic3.zhimg.com/80/v2-c394ee5ef8e79d2c1ee12b659d08ec32_720w.jpg"></p>
+<h1 id="安装Flash插件"><a href="#安装Flash插件" class="headerlink" title="安装Flash插件"></a>安装Flash插件</h1><p>使用Firefox 浏览器时，B站无法播放视频，提示需要下载Flash插件；<br><img src="https://pic1.zhimg.com/80/v2-1b63342350894d7b71807cdb3e57a2fc_720w.jpg"><br>点击页面跳转后却提示现在Adobe官网已经不再提供flash下载；</p>
+<p>（由于 Adobe 在 2020 年 12 月 31 日之后不再支持 Flash Player，并且从 2021 年 1 月12 日开始阻止 Flash 内容在 Flash Player 中运行，因此 Adobe 强烈建议所有用户立即卸载 Flash Player 以帮助保护其系统。）<br><img src="https://pic1.zhimg.com/v2-a372fc674dc8c7eb9ef4e9318e474dc0_r.jpg"></p>
+<p>解决办法是通过终端安装flash插件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install flashplugin-installer</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<h2 id="安装ubuntu-restricted-extras；"><a href="#安装ubuntu-restricted-extras；" class="headerlink" title="安装ubuntu-restricted-extras；"></a>安装ubuntu-restricted-extras；</h2><p>ubuntu-restricted-extras 是一个包含各种基本软件，如 Flash 插件、unrar、gstreamer、mp4、Ubuntu 中的 Chromium 浏览器的编解码器等的软件包。</p>
+<p>Ubuntu提供了一个软件包来安装所有基本的媒体编解码器：ubuntu-restricted-extras。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install ubuntu-restricted-extras</span><br></pre></td></tr></table></figure>
+
+<h1 id="安装Google-Chrome："><a href="#安装Google-Chrome：" class="headerlink" title="安装Google Chrome："></a>安装Google Chrome：</h1><p>直接使用Google浏览器也可以解决上述问题。</p>
+<h2 id="1-下载谷歌浏览器"><a href="#1-下载谷歌浏览器" class="headerlink" title="1.下载谷歌浏览器"></a>1.下载谷歌浏览器</h2><p>下载最新的谷歌浏览器。带wget的deb包：</p>
+<p>wget <a href="https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb">https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb</a></p>
+<h2 id="2-安装谷歌浏览器"><a href="#2-安装谷歌浏览器" class="headerlink" title="2.安装谷歌浏览器"></a>2.安装谷歌浏览器</h2><p>在Ubuntu上安装软件包需要sudo权限。确保以具有sudo权限的用户身份运行以下命令。</p>
+<p>安装谷歌浏览器。通过键入以下内容</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+
+<p>安装deb包：<br>下载好deb包后，输入</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./“安装包名”</span><br></pre></td></tr></table></figure>
+<p>如上文所示</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+
+<h1 id="输入法软件："><a href="#输入法软件：" class="headerlink" title="输入法软件："></a>输入法软件：</h1><h2 id="搜狗输入法："><a href="#搜狗输入法：" class="headerlink" title="搜狗输入法："></a>搜狗输入法：</h2><p>搜狗输入法Linux官网-首页</p>
+<h3 id="1、添加中文语言支持"><a href="#1、添加中文语言支持" class="headerlink" title="1、添加中文语言支持"></a>1、添加中文语言支持</h3><p>打开 系统设置——区域和语言——管理已安装的语言——在“语言”tab下——点击“添加或删除语言”<br><img src="https://pic1.zhimg.com/80/v2-b248e5b921fa3cde2c018dbb74a09a68_720w.jpg"><br>弹出“已安装语言”窗口，勾选中文（简体），点击应用<br><img src="https://pic2.zhimg.com/80/v2-9784e564cfb3f4d55a89b0a9b459e7b5_720w.jpg"><br>回到“语言支持”窗口，在键盘输入法系统中，选择“fcitx”<br><img src="https://pic3.zhimg.com/80/v2-6ac417d2e68d2a9ab99b17f034fd3742_720w.jpg"></p>
+<p>如果在键盘输入法系统中，没有“fcitx”选项时，建议先打开终端手动安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">fcitx：sudo apt-get install fcitx</span><br></pre></td></tr></table></figure>
+<p>等安装成功之后再执行上述步骤</p>
+<p>点击“应用到整个系统”，关闭窗口，重启电脑</p>
+<h3 id="2-通过命令行安装搜狗输入法"><a href="#2-通过命令行安装搜狗输入法" class="headerlink" title="2.通过命令行安装搜狗输入法"></a>2.通过命令行安装搜狗输入法</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i sogoupinyin_版本号_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果安装过程中提示缺少相关依赖，则执行如下命令解决：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt -f install</span><br></pre></td></tr></table></figure>
+<h3 id="3-注销计算机即可正常使用搜狗输入法。"><a href="#3-注销计算机即可正常使用搜狗输入法。" class="headerlink" title="3.注销计算机即可正常使用搜狗输入法。"></a>3.注销计算机即可正常使用搜狗输入法。</h3><h1 id="文档软件："><a href="#文档软件：" class="headerlink" title="文档软件："></a>文档软件：</h1><h2 id="Wps："><a href="#Wps：" class="headerlink" title="Wps："></a>Wps：</h2><p>WPS Office因酷似微软 Office 而广受欢迎。它的界面与微软 Office 几乎一样并且号称与微软 Office 更加兼容。<br><a href="https://www.wps.cn/product/wpslinux">https://www.wps.cn/product/wpslinux</a></p>
+<h2 id="LibreOffice："><a href="#LibreOffice：" class="headerlink" title="LibreOffice："></a>LibreOffice：</h2><p>它是个组件完整的办公软件，包括文档编辑器、电子表格工具、演示软件、数学工具和作图工具。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libreoffice libreoffice-style-breeze</span><br></pre></td></tr></table></figure>
+<h1 id="音乐软件："><a href="#音乐软件：" class="headerlink" title="音乐软件："></a>音乐软件：</h1><h2 id="网易云："><a href="#网易云：" class="headerlink" title="网易云："></a>网易云：</h2><p><a href="https://music.163.com/#/download">https://music.163.com/#/download</a></p>
+<h1 id="聊天软件："><a href="#聊天软件：" class="headerlink" title="聊天软件："></a>聊天软件：</h1><h2 id="QQ："><a href="#QQ：" class="headerlink" title="QQ："></a>QQ：</h2><p><a href="https://im.qq.com/linuxqq/download.html">https://im.qq.com/linuxqq/download.html</a></p>
+<h1 id="其他一些常用软件安装与使用："><a href="#其他一些常用软件安装与使用：" class="headerlink" title="其他一些常用软件安装与使用："></a>其他一些常用软件安装与使用：</h1><h2 id="VNC的使用及常见问题："><a href="#VNC的使用及常见问题：" class="headerlink" title="VNC的使用及常见问题："></a>VNC的使用及常见问题：</h2><h3 id="启动VNC"><a href="#启动VNC" class="headerlink" title="启动VNC"></a>启动VNC</h3><p>设置里打开共享<br><img src="https://pic3.zhimg.com/80/v2-bdad4403c861b8070edf35e06abc3f0a_720w.jpg"><br>设置密码并打开选项<br><img src="https://pic2.zhimg.com/80/v2-fe2ab52e283125190f7d46422d01d1a9_720w.jpg"><br>如果没有屏幕共享选项</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install dconf-editor</span><br></pre></td></tr></table></figure>
+<p>或者，如果尚未安装 vino，请同时执行以下操作：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install vino dconf-editor</span><br></pre></td></tr></table></figure>
+<p>打开dconf-editor工具，终端输入 dconf-editor打开</p>
+<p>打开之后，依次展开org-&gt;gnome-&gt;desktop-&gt;remote-access<br><img src="https://pic2.zhimg.com/80/v2-863b0116f3f2f976dda4a8c19f281259_720w.jpg"><br>打开相关选项即可。</p>
+<h3 id="如果无法连接VNC服务端"><a href="#如果无法连接VNC服务端" class="headerlink" title="如果无法连接VNC服务端"></a>如果无法连接VNC服务端</h3><p>报错信息如下：</p>
+<p>Unable to connect to VNC Server using your chosen security setting. Either upgrade VNC Server to a more recent version from RealVNC, or select a weaker level of encryption</p>
+<p>解决办法</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gsettings <span class="built_in">set</span> org.gnome.Vino require-encryption <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<h2 id="SSR："><a href="#SSR：" class="headerlink" title="SSR："></a>SSR：</h2><p>科学上网工具，下载地址：<br><a href="https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb">https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb</a></p>
+<h2 id="GDebi："><a href="#GDebi：" class="headerlink" title="GDebi："></a>GDebi：</h2><p>Gedbi 是一款小巧的软件包管理器，你可以用它来安装 DEB 文件。它比软件中心更快，而且还能处理依赖问题。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gdebi</span><br></pre></td></tr></table></figure>
+
+<h2 id="Visual-Studio-Code："><a href="#Visual-Studio-Code：" class="headerlink" title="Visual Studio Code："></a>Visual Studio Code：</h2><p><a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a></p>
+<h2 id="Steam："><a href="#Steam：" class="headerlink" title="Steam："></a>Steam：</h2><p><a href="https://store.steampowered.com/about/">https://store.steampowered.com/about/</a></p>
+<h2 id="误删一些安装包导致无法打开系统设置："><a href="#误删一些安装包导致无法打开系统设置：" class="headerlink" title="误删一些安装包导致无法打开系统设置："></a>误删一些安装包导致无法打开系统设置：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gnome-control-center</span><br></pre></td></tr></table></figure>
+
+<h1 id="个人的一些感想："><a href="#个人的一些感想：" class="headerlink" title="个人的一些感想："></a>个人的一些感想：</h1><p>经过几天的使用，我发现Ubuntu在配置好环境后，日常体验还是相当不错的。</p>
+<h2 id="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"><a href="#但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。" class="headerlink" title="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"></a>但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。</h2><p>（2022&#x2F;5&#x2F;12 补充回答）</p>
+<p>因为之前的回答写得过于笼统，我决定补充一下回答。</p>
+<p>首先讲讲为什么都2022年了，Ubuntu22.04都出了，为什么我还在使用Ubuntu18.04，原因也很简单，因为我使用Ubuntu的首要目标是搭建开发环境，而日常使用是其次的，使用18.04也只是因为环境搭建起来比较容易而已。这次没能用上Ubuntu22.04的新桌面GNOME 42，我觉得还是挺遗憾的。</p>
+<p>再来讲讲我自己Linux的使用经历吧，我的Linux使用经验比较浅薄，我在19年年底才开始接触Linux，当时使用的是树莓派4B开发板，系统是Raspberry Pi OS，而我电脑上则是使用WSL，Ubuntu16.04版本。刚开始学习的时候，我算是完完全全的小白，只是知道Linux这么一个东西的存在，很难理解一个黑色的框框（终端）是操作系统。经过一段时间的学习后才算是明白了各种基本命令行的用法。后来在学校的机房里接触到CentOS8和RedHat，自己也出于好奇在虚拟机上跑Kali，学习关于网络的一些东西，但是也没有想过日常去使用这些Linux发行版。其实树莓派系统是有桌面的，但我平时都是用vscode+ssh去开发，所以也没什么接触Linux桌面的机会。可以说在这个假期前，我对Linux桌面的接触接近于0。</p>
+<p>经过这次假期短暂的使用后，接下来再讲讲我的小结，Linux确实可以应付所有的“日常使用”场景的，但在我看来更适合于开发。Linux的使用是有门槛的，即使拥有了桌面，离开了命令行界面（CLI），Linux上的很多操作都寸步难行。虽然我觉得CLI用起来很帅，很高效，但对于以日常使用为目的而不是开发的小白用户来说，CLI便是使用Linux的难点之一。反观Windows出色的图形用户界面（GUI），操作方便直观且学习成本低，在日常使用中普通用户一般也不需要使用到cmd和powershell。我举个不太恰当的例子，Linux发行版就像毛坯房需要自己去动手装修，桌面也只是给了一个基本的框架，自由度高，可以各种自定义各种魔改，比较适合动手能力强爱折腾的用户，而Windows就像已经装修好的样本房，即买即住，适合图省心的用户。（那么如果有一个上手简便，不需要CLI即可操作并且桌面功能完善的发行版一定会受到用户的欢迎吧）</p>
+<p>在软件方面，适配Linux的软件也是远少于Windows，如经典的office全家桶，各类工程软件以及常用软件。Linux下的游戏还是比较匮乏的，数量上远少于Windows。显卡驱动也是Linux的使用难点之一，而最近英伟达已经开源 Linux GPU 内核驱动了，未来可期。希望软件和游戏厂商以后能给Linux做更多的适配吧。</p>
+<p>还有一个问题就是国内特殊的网络环境以及中文互联网资料比较贫瘠，我寻找到的很多资料都已经是过时无效的了，使用好相关论坛可以节省掉不少的时间。</p>
+<p>相比Windows下泛滥的各式流氓软件，Linux则不需要担心这个问题，并且更为干净安全可靠，也没有像微软那样三天两头就更新的各式补丁。</p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>树莓派系统烧录教程</title>
     <url>/archives/6a0755b3.html</url>
     <content><![CDATA[<p>树莓派的系统烧录大体上可分为使用</p>
@@ -549,34 +549,6 @@
 ]]></content>
       <tags>
         <tag>树莓派</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>计算机网络知识点总结（一）</title>
-    <url>/archives/5dd58e55.html</url>
-    <content><![CDATA[<h2 id="计算机网络的定义"><a href="#计算机网络的定义" class="headerlink" title="计算机网络的定义"></a>计算机网络的定义</h2><p>计算机网络是“以相互共享资源的方式互联起来的自治计算机系统的集合”。<br>计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。</p>
-<h2 id="计算机网络的分类"><a href="#计算机网络的分类" class="headerlink" title="计算机网络的分类"></a>计算机网络的分类</h2><p>计算机网络按照其覆盖的地理范围进行分类，可以很好地反映不同类型网络的技术特征。按照覆盖的地理范围划分，计算机网络可以分为以下5类。</p>
-<h3 id="广域网（Wide-Area-Network，WAN）"><a href="#广域网（Wide-Area-Network，WAN）" class="headerlink" title="广域网（Wide Area Network，WAN）"></a>广域网（Wide Area Network，WAN）</h3><h3 id="城域网-Metropolitan-Area-Network，MAN"><a href="#城域网-Metropolitan-Area-Network，MAN" class="headerlink" title="城域网(Metropolitan Area Network，MAN)"></a>城域网(Metropolitan Area Network，MAN)</h3><h3 id="局域网（Local-Area-Network-，LAN）"><a href="#局域网（Local-Area-Network-，LAN）" class="headerlink" title="局域网（Local Area Network ，LAN）"></a>局域网（Local Area Network ，LAN）</h3><h3 id="个人区域网（Personal-Area-Network，PAN）"><a href="#个人区域网（Personal-Area-Network，PAN）" class="headerlink" title="个人区域网（Personal Area Network，PAN）"></a>个人区域网（Personal Area Network，PAN）</h3><h3 id="人体区域网（Body-Area-Network，BAN）"><a href="#人体区域网（Body-Area-Network，BAN）" class="headerlink" title="人体区域网（Body Area Network，BAN）"></a>人体区域网（Body Area Network，BAN）</h3><h3 id="网络体系结构和网络协议"><a href="#网络体系结构和网络协议" class="headerlink" title="网络体系结构和网络协议"></a>网络体系结构和网络协议</h3><h2 id="网络协议"><a href="#网络协议" class="headerlink" title="网络协议"></a>网络协议</h2><p>网络协议类似于人类协议，除了交换报文和采取动作的实体是某些设备（可以是计算机、智能手机、平板电脑、路由器或其他具有网络能力的设备）的硬件或软件组件。在因 特网中，涉及两个或多个远程通信实体的所有活动都受协议的制约。例如，在两台物理上 连接的计算机中，硬件实现的协议控制了在两块网络接口卡间的“线上”的比特流；在端 系统中，拥塞控制协议控制了在发送方和接收方之间传输的分组发送的速率；路由器中的协议决定了分组从源到目的地的路径。<br>协议（protocol）定义了在两个或多个通信实体之间交换的报文的格式和顺序，以及报文发送和&#x2F;或接收一条报文或其他事件所采取的动作。<br>因特网（更一般地说是计算机网络）广泛地使用了协议。不同的协议用于完成不同的通信任务。<br>    层次（layer）结构事处理计算机网络问题最基本的方法。对于一些难以处理的复杂问题，通常是采用若干个容易处理的、小一些的问题，“化整为零，分而治之”的方法去解决。<br>接口是同一主机内相邻层之间交换信息的连接点。<br>对于结构复杂的网络协议体系来说，最好的组织方是层次结构模型。计算机网络引入了一个重要的概念——网络体系结构（network architecture）。</p>
-<h2 id="OSI-参考模型"><a href="#OSI-参考模型" class="headerlink" title="OSI 参考模型"></a>OSI 参考模型</h2><p>1974年，IBM公司提出世界第一个网络体系结构——系统网络体系结构（SNA）。1974年，国际标准化组织（ISO）发布了著名的ISO&#x2F;IEC7498标准，定义了网络互联的7层框架，即开放系统互连（Open System Interconnect，OSI）参考模型。<br>开放系统互连 (OSI) 模型描述了计算机系统用于通过网络进行通信的七个层次。OSI参考模型包括以下七层：物理层、数据链路层、网络层、传输层、会话层、表示层和应用层。<br><img src="https://pic3.zhimg.com/80/v2-82a2e89aa4a4218d23a8aedba5b77ad2_720w.jpg" alt="OSI七层模型"></p>
-<p>现代互联网不是基于 OSI，而是基于更简单的 TCP&#x2F;IP 模型。然而，OSI 7 层模型仍然被广泛使用，因为它有助于可视化和传达网络的运行方式，并有助于隔离和解决网络问题。<br>我们将“自上而下”地描述 OSI 层，从直接为最终用户服务的应用程序层，一直到物理层。<br><img src="https://pic1.zhimg.com/80/v2-112f5d6be901f464ec832561b4f98f48_720w.jpg" alt="主机、路由器和链路层交换机，每个包含了不同的层，反映了它们的功能差异"></p>
-<h3 id="7-应用层"><a href="#7-应用层" class="headerlink" title="7.应用层"></a>7.应用层</h3><p>应用层由最终用户软件使用，例如 Web 浏览器和电子邮件客户端。它提供允许软件发送和接收信息并向用户呈现有意义的数据的协议。应用层协议的一些示例是超文本传输协议(HTTP)、文件传输协议 (FTP)、邮局协议 (POP)、简单邮件传输协议 (SMTP) 和域名系统 (DNS)。</p>
-<h3 id="6-表示层"><a href="#6-表示层" class="headerlink" title="6.表示层"></a>6.表示层</h3><p>表示层为应用层准备数据。它定义了两个设备应如何编码、加密和压缩数据，以便在另一端正确接收数据。表示层获取应用层传输的任何数据，并准备好通过会话层传输。</p>
-<h3 id="5-会话层"><a href="#5-会话层" class="headerlink" title="5.会话层"></a>5.会话层</h3><p>会话层在设备之间创建通信通道，称为会话。它负责打开会话，确保它们在传输数据时保持打开和功能，并在通信结束时关闭它们。会话层还可以在数据传输期间设置检查点——如果会话中断，设备可以从上一个检查点恢复数据传输。</p>
-<h3 id="4-传输层"><a href="#4-传输层" class="headerlink" title="4.传输层"></a>4.传输层</h3><p>传输层获取会话层中传输的数据，并在发送端将其分解为“段”。它负责在接收端重新组装段，将其转换回会话层可以使用的数据。传输层进行流量控制，以与接收设备的连接速度相匹配的速率发送数据，以及错误控制，检查数据是否接收错误，如果没有，则重新请求。</p>
-<h3 id="3-网络层"><a href="#3-网络层" class="headerlink" title="3.网络层"></a>3.网络层</h3><p>网络层有两个主要功能。一种是将分段分解为网络数据包，然后在接收端重新组装数据包。另一种是通过发现跨物理网络的最佳路径来路由数据包。网络层使用网络地址（通常是 Internet 协议地址）将数据包路由到目标节点。</p>
-<h3 id="2-数据链路层"><a href="#2-数据链路层" class="headerlink" title="2.数据链路层"></a>2.数据链路层</h3><p>数据链路层在网络上两个物理连接的节点之间建立和终止连接。它将数据包分解成帧并将它们从源发送到目标。该层由两部分组成——逻辑链路控制 (LLC)，它识别网络协议、执行错误检查和同步帧，以及媒体访问控制 (MAC)，它使用 MAC 地址连接设备并定义传输和接收数据的权限。</p>
-<h3 id="1-物理层"><a href="#1-物理层" class="headerlink" title="1.物理层"></a>1.物理层</h3><p>物理层负责网络节点之间的物理有线或无线连接。它定义了连接器、连接设备的电缆或无线技术，并负责传输原始数据，这只是一系列 0 和 1，同时负责比特率控制。<br>OSI模型的优点<br>OSI 模型帮助计算机网络的用户和运营商：<br>•	确定构建网络所需的硬件和软件。<br>•	了解并传达组件通过网络进行通信的过程。<br>•	通过确定导致问题的网络层并将工作重点放在该层来执行故障排除。<br>OSI 模型帮助网络设备制造商和网络软件供应商：<br>•	创建可以与任何其他供应商的产品进行通信的设备和软件，从而实现开放的互操作性<br>•	定义他们的产品应该使用的网络部分。<br>•	与用户沟通他们的产品在哪些网络层运行——例如，仅在应用层，或跨堆栈。</p>
-<h2 id="OSI-与-TCP-x2F-IP-模型"><a href="#OSI-与-TCP-x2F-IP-模型" class="headerlink" title="OSI 与 TCP&#x2F;IP 模型"></a>OSI 与 TCP&#x2F;IP 模型</h2><p><img src="https://pic3.zhimg.com/80/v2-c39270e61b82808e07c29a4f143199d2_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
-<p>传输控制协议&#x2F;互联网协议(TCP&#x2F;IP) 比 OSI 模型更早，由美国国防部 (DoD) 创建。模型之间的一个关键区别是 TCP&#x2F;IP 更简单，将几个 OSI 层合并为一个：</p>
-<p><img src="https://pic4.zhimg.com/80/v2-1127aaa36d2eff825865f1020568d18f_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
-<p>OSI 第 5、6、7 层在 TCP&#x2F;IP 中合并为一个应用层<br>OSI 第 1 层、第 2 层在 TCP&#x2F;IP 中合并为一个网络访问层 - 但是 TCP&#x2F;IP 不负责排序和确认功能，将这些留给底层传输层。<br>其他重要区别：<br>TCP&#x2F;IP 是一种功能模型，旨在解决特定的通信问题，它基于特定的标准协议。OSI 是一个通用的、独立于协议的模型，旨在描述所有形式的网络通信。<br>在 TCP&#x2F;IP 中，大多数应用程序使用所有层，而在 OSI 中简单应用程序不使用所有七层。只有第 1、2 和 3 层是必需的才能启用任何数据通信。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/PicWarehouse/img/%E9%A3%8E%E6%99%AF008.png" alt="TCP/IP与OSI对应关系"></p>
-]]></content>
-      <categories>
-        <category>计算机网络</category>
-      </categories>
-      <tags>
-        <tag>计算机网络</tag>
       </tags>
   </entry>
   <entry>
@@ -654,9 +626,37 @@
         <category>计算机网络</category>
       </categories>
       <tags>
-        <tag>计算机网络</tag>
         <tag>网络安全</tag>
         <tag>抓包</tag>
+        <tag>计算机网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机网络知识点总结（一）</title>
+    <url>/archives/5dd58e55.html</url>
+    <content><![CDATA[<h2 id="计算机网络的定义"><a href="#计算机网络的定义" class="headerlink" title="计算机网络的定义"></a>计算机网络的定义</h2><p>计算机网络是“以相互共享资源的方式互联起来的自治计算机系统的集合”。<br>计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。</p>
+<h2 id="计算机网络的分类"><a href="#计算机网络的分类" class="headerlink" title="计算机网络的分类"></a>计算机网络的分类</h2><p>计算机网络按照其覆盖的地理范围进行分类，可以很好地反映不同类型网络的技术特征。按照覆盖的地理范围划分，计算机网络可以分为以下5类。</p>
+<h3 id="广域网（Wide-Area-Network，WAN）"><a href="#广域网（Wide-Area-Network，WAN）" class="headerlink" title="广域网（Wide Area Network，WAN）"></a>广域网（Wide Area Network，WAN）</h3><h3 id="城域网-Metropolitan-Area-Network，MAN"><a href="#城域网-Metropolitan-Area-Network，MAN" class="headerlink" title="城域网(Metropolitan Area Network，MAN)"></a>城域网(Metropolitan Area Network，MAN)</h3><h3 id="局域网（Local-Area-Network-，LAN）"><a href="#局域网（Local-Area-Network-，LAN）" class="headerlink" title="局域网（Local Area Network ，LAN）"></a>局域网（Local Area Network ，LAN）</h3><h3 id="个人区域网（Personal-Area-Network，PAN）"><a href="#个人区域网（Personal-Area-Network，PAN）" class="headerlink" title="个人区域网（Personal Area Network，PAN）"></a>个人区域网（Personal Area Network，PAN）</h3><h3 id="人体区域网（Body-Area-Network，BAN）"><a href="#人体区域网（Body-Area-Network，BAN）" class="headerlink" title="人体区域网（Body Area Network，BAN）"></a>人体区域网（Body Area Network，BAN）</h3><h3 id="网络体系结构和网络协议"><a href="#网络体系结构和网络协议" class="headerlink" title="网络体系结构和网络协议"></a>网络体系结构和网络协议</h3><h2 id="网络协议"><a href="#网络协议" class="headerlink" title="网络协议"></a>网络协议</h2><p>网络协议类似于人类协议，除了交换报文和采取动作的实体是某些设备（可以是计算机、智能手机、平板电脑、路由器或其他具有网络能力的设备）的硬件或软件组件。在因 特网中，涉及两个或多个远程通信实体的所有活动都受协议的制约。例如，在两台物理上 连接的计算机中，硬件实现的协议控制了在两块网络接口卡间的“线上”的比特流；在端 系统中，拥塞控制协议控制了在发送方和接收方之间传输的分组发送的速率；路由器中的协议决定了分组从源到目的地的路径。<br>协议（protocol）定义了在两个或多个通信实体之间交换的报文的格式和顺序，以及报文发送和&#x2F;或接收一条报文或其他事件所采取的动作。<br>因特网（更一般地说是计算机网络）广泛地使用了协议。不同的协议用于完成不同的通信任务。<br>    层次（layer）结构事处理计算机网络问题最基本的方法。对于一些难以处理的复杂问题，通常是采用若干个容易处理的、小一些的问题，“化整为零，分而治之”的方法去解决。<br>接口是同一主机内相邻层之间交换信息的连接点。<br>对于结构复杂的网络协议体系来说，最好的组织方是层次结构模型。计算机网络引入了一个重要的概念——网络体系结构（network architecture）。</p>
+<h2 id="OSI-参考模型"><a href="#OSI-参考模型" class="headerlink" title="OSI 参考模型"></a>OSI 参考模型</h2><p>1974年，IBM公司提出世界第一个网络体系结构——系统网络体系结构（SNA）。1974年，国际标准化组织（ISO）发布了著名的ISO&#x2F;IEC7498标准，定义了网络互联的7层框架，即开放系统互连（Open System Interconnect，OSI）参考模型。<br>开放系统互连 (OSI) 模型描述了计算机系统用于通过网络进行通信的七个层次。OSI参考模型包括以下七层：物理层、数据链路层、网络层、传输层、会话层、表示层和应用层。<br><img src="https://pic3.zhimg.com/80/v2-82a2e89aa4a4218d23a8aedba5b77ad2_720w.jpg" alt="OSI七层模型"></p>
+<p>现代互联网不是基于 OSI，而是基于更简单的 TCP&#x2F;IP 模型。然而，OSI 7 层模型仍然被广泛使用，因为它有助于可视化和传达网络的运行方式，并有助于隔离和解决网络问题。<br>我们将“自上而下”地描述 OSI 层，从直接为最终用户服务的应用程序层，一直到物理层。<br><img src="https://pic1.zhimg.com/80/v2-112f5d6be901f464ec832561b4f98f48_720w.jpg" alt="主机、路由器和链路层交换机，每个包含了不同的层，反映了它们的功能差异"></p>
+<h3 id="7-应用层"><a href="#7-应用层" class="headerlink" title="7.应用层"></a>7.应用层</h3><p>应用层由最终用户软件使用，例如 Web 浏览器和电子邮件客户端。它提供允许软件发送和接收信息并向用户呈现有意义的数据的协议。应用层协议的一些示例是超文本传输协议(HTTP)、文件传输协议 (FTP)、邮局协议 (POP)、简单邮件传输协议 (SMTP) 和域名系统 (DNS)。</p>
+<h3 id="6-表示层"><a href="#6-表示层" class="headerlink" title="6.表示层"></a>6.表示层</h3><p>表示层为应用层准备数据。它定义了两个设备应如何编码、加密和压缩数据，以便在另一端正确接收数据。表示层获取应用层传输的任何数据，并准备好通过会话层传输。</p>
+<h3 id="5-会话层"><a href="#5-会话层" class="headerlink" title="5.会话层"></a>5.会话层</h3><p>会话层在设备之间创建通信通道，称为会话。它负责打开会话，确保它们在传输数据时保持打开和功能，并在通信结束时关闭它们。会话层还可以在数据传输期间设置检查点——如果会话中断，设备可以从上一个检查点恢复数据传输。</p>
+<h3 id="4-传输层"><a href="#4-传输层" class="headerlink" title="4.传输层"></a>4.传输层</h3><p>传输层获取会话层中传输的数据，并在发送端将其分解为“段”。它负责在接收端重新组装段，将其转换回会话层可以使用的数据。传输层进行流量控制，以与接收设备的连接速度相匹配的速率发送数据，以及错误控制，检查数据是否接收错误，如果没有，则重新请求。</p>
+<h3 id="3-网络层"><a href="#3-网络层" class="headerlink" title="3.网络层"></a>3.网络层</h3><p>网络层有两个主要功能。一种是将分段分解为网络数据包，然后在接收端重新组装数据包。另一种是通过发现跨物理网络的最佳路径来路由数据包。网络层使用网络地址（通常是 Internet 协议地址）将数据包路由到目标节点。</p>
+<h3 id="2-数据链路层"><a href="#2-数据链路层" class="headerlink" title="2.数据链路层"></a>2.数据链路层</h3><p>数据链路层在网络上两个物理连接的节点之间建立和终止连接。它将数据包分解成帧并将它们从源发送到目标。该层由两部分组成——逻辑链路控制 (LLC)，它识别网络协议、执行错误检查和同步帧，以及媒体访问控制 (MAC)，它使用 MAC 地址连接设备并定义传输和接收数据的权限。</p>
+<h3 id="1-物理层"><a href="#1-物理层" class="headerlink" title="1.物理层"></a>1.物理层</h3><p>物理层负责网络节点之间的物理有线或无线连接。它定义了连接器、连接设备的电缆或无线技术，并负责传输原始数据，这只是一系列 0 和 1，同时负责比特率控制。<br>OSI模型的优点<br>OSI 模型帮助计算机网络的用户和运营商：<br>•	确定构建网络所需的硬件和软件。<br>•	了解并传达组件通过网络进行通信的过程。<br>•	通过确定导致问题的网络层并将工作重点放在该层来执行故障排除。<br>OSI 模型帮助网络设备制造商和网络软件供应商：<br>•	创建可以与任何其他供应商的产品进行通信的设备和软件，从而实现开放的互操作性<br>•	定义他们的产品应该使用的网络部分。<br>•	与用户沟通他们的产品在哪些网络层运行——例如，仅在应用层，或跨堆栈。</p>
+<h2 id="OSI-与-TCP-x2F-IP-模型"><a href="#OSI-与-TCP-x2F-IP-模型" class="headerlink" title="OSI 与 TCP&#x2F;IP 模型"></a>OSI 与 TCP&#x2F;IP 模型</h2><p><img src="https://pic3.zhimg.com/80/v2-c39270e61b82808e07c29a4f143199d2_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
+<p>传输控制协议&#x2F;互联网协议(TCP&#x2F;IP) 比 OSI 模型更早，由美国国防部 (DoD) 创建。模型之间的一个关键区别是 TCP&#x2F;IP 更简单，将几个 OSI 层合并为一个：</p>
+<p><img src="https://pic4.zhimg.com/80/v2-1127aaa36d2eff825865f1020568d18f_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
+<p>OSI 第 5、6、7 层在 TCP&#x2F;IP 中合并为一个应用层<br>OSI 第 1 层、第 2 层在 TCP&#x2F;IP 中合并为一个网络访问层 - 但是 TCP&#x2F;IP 不负责排序和确认功能，将这些留给底层传输层。<br>其他重要区别：<br>TCP&#x2F;IP 是一种功能模型，旨在解决特定的通信问题，它基于特定的标准协议。OSI 是一个通用的、独立于协议的模型，旨在描述所有形式的网络通信。<br>在 TCP&#x2F;IP 中，大多数应用程序使用所有层，而在 OSI 中简单应用程序不使用所有七层。只有第 1、2 和 3 层是必需的才能启用任何数据通信。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/PicWarehouse/img/%E9%A3%8E%E6%99%AF008.png" alt="TCP/IP与OSI对应关系"></p>
+]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>计算机网络</tag>
       </tags>
   </entry>
   <entry>
@@ -849,6 +849,28 @@
       </tags>
   </entry>
   <entry>
+    <title>计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序</title>
+    <url>/archives/cf06f66d.html</url>
+    <content><![CDATA[<p>在上文中，讲述了Socket的一些基本函数以及如何简单使用Socket搭建一个单工聊天的聊天室程序。</p>
+<p>本文的目标便是对这个简单的程序加以改进，使其能实现服务端和客户端之间的相互通信。如果想更深入理解，推荐大家阅读《UNIX网络编程卷1套接字联网API》这本书。</p>
+<h2 id="首先需要补充一些我之前没有提到过的知识点。"><a href="#首先需要补充一些我之前没有提到过的知识点。" class="headerlink" title="首先需要补充一些我之前没有提到过的知识点。"></a>首先需要补充一些我之前没有提到过的知识点。</h2><h3 id="Socket处于网络协议的哪个层次？"><a href="#Socket处于网络协议的哪个层次？" class="headerlink" title="Socket处于网络协议的哪个层次？"></a>Socket处于网络协议的哪个层次？</h3><p><img src="https://pic4.zhimg.com/80/v2-728b741914df045b9cdfb918a30d1843_720w.jpg" alt="socket网络层次"><br>套接字编程接口是从顶上三层（网际协议的应用层）进入传输层的接口。</p>
+<h3 id="为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口"><a href="#为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口" class="headerlink" title="为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口?"></a>为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口?</h3><p>这样设计有两个理由，如图1-14右侧所注。理由之一是顶上三层处理具体网络应用（如FTP、Telnet或HTTPO的所有细节，却对通信细节了解很少;底下四层对具体网络应用了解不多，却处理所有的通信细节:发送数据，等待确认，给无序到达的数据排序，计算并验证校验和，等等。理由之二是顶上三层通常构成所谓的用户进程user process口,底下四层却通常作为操作系统内核的一部分提供。Unix与其他现代操作系统都提供分隔用户进程与内核的机制。由此可见，第4层和第5层之间的接口是构建API的自然位置。</p>
+<h2 id="TCP实现框架"><a href="#TCP实现框架" class="headerlink" title="TCP实现框架"></a>TCP实现框架</h2><p><img src="https://pic1.zhimg.com/80/v2-dfaeec3f74165f5a74c278a513d54ab8_720w.jpg" alt="TCP实现框架"></p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>目前该代码尚不完善，仅供参考，只能实现一发送一接收的“伪”半双工通信。真正的半双工(Half Duplex)数据传输，数据可以随时发送，只是不能同时传输。</p>
+<h2 id="Sever-cpp"><a href="#Sever-cpp" class="headerlink" title="Sever.cpp"></a>Sever.cpp</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PORT 7000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024 <span class="comment">//缓冲区大小宏定义</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">const</span> <span class="type">char</span> *ip = argv[<span class="number">1</span>];</span><br><span class="line"> <span class="type">int</span> port = <span class="built_in">atoi</span>(argv[<span class="number">2</span>]); <span class="comment">//将输入的端口号由字符串转换为整数类型</span></span><br><span class="line">    <span class="comment">//结构体定义与初始化</span></span><br><span class="line"> <span class="type">int</span> sockSer = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>); <span class="comment">//若成功则返回一个sockfd（套接字描述符）</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> server_sockaddr;            <span class="comment">//一般是储存地址和端口的。用于信息的显示及存储使用</span></span><br><span class="line">                                                   <span class="comment">//设置 sockaddr_in 结构体中相关参数</span></span><br><span class="line"> server_sockaddr.sin_family = AF_INET;</span><br><span class="line"> server_sockaddr.sin_port = <span class="built_in">htons</span>(PORT); <span class="comment">//将一个无符号短整型数值转换为网络字节序，即大端模式(big-endian) </span></span><br><span class="line">                                            <span class="comment">// printf(&quot;%d\n&quot;,INADDR_ANY);</span></span><br><span class="line">    <span class="comment">// INADDR_ANY就是指定地址为0.0.0.0的地址，这个地址事实上表示不确定地址，或“所有地址”、“任意地址”。</span></span><br><span class="line">    <span class="comment">//一般来说，在各个系统中均定义成为0值。</span></span><br><span class="line">    <span class="comment">// server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY); //将主机的无符号长整形数转换成网络字节顺序。</span></span><br><span class="line"> <span class="built_in">inet_pton</span>(AF_INET, ip, &amp;server_sockaddr.sin_addr); <span class="comment">//将小端字节序转换为网络字节序</span></span><br><span class="line"> </span><br><span class="line"> <span class="built_in">assert</span>(sockSer &gt;= <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> ret = <span class="built_in">bind</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;server_sockaddr, <span class="built_in">sizeof</span>(server_sockaddr)); <span class="comment">//绑定IP地址、端口号等信息</span></span><br><span class="line"> <span class="built_in">assert</span>(ret != <span class="number">-1</span>);</span><br><span class="line"> ret = <span class="built_in">listen</span>(sockSer, <span class="number">5</span>); <span class="comment">//监听有无连接请求</span></span><br><span class="line"> <span class="built_in">assert</span>(ret != <span class="number">-1</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> client_addr;</span><br><span class="line"> <span class="type">socklen_t</span> client_addrlength = <span class="built_in">sizeof</span>(client_addr);</span><br><span class="line">    <span class="comment">///成功返回非负描述字，出错返回-1</span></span><br><span class="line"> <span class="type">int</span> connfd = <span class="built_in">accept</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;client_addr, &amp;client_addrlength); <span class="comment">//从监听队列中取出第一个已完成的连接</span></span><br><span class="line"> <span class="type">char</span> buffer_recv[BUFFER_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> <span class="type">char</span> buffer_send[BUFFER_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="keyword">if</span> (connfd &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;errno is : %d\n&quot;</span>, errno);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">memset</span>(buffer_recv, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> <span class="built_in">memset</span>(buffer_send, <span class="number">0</span>, BUFFER_SIZE); <span class="comment">//每次需要为缓冲区清空</span></span><br><span class="line"> </span><br><span class="line"> ret = <span class="built_in">recv</span>(connfd, buffer_recv, BUFFER_SIZE - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer_recv, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">// recv为quit表示客户端请求断开连接，退出循环</span></span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;client:%s&quot;</span>, buffer_recv);</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;server:&quot;</span>);</span><br><span class="line"> <span class="built_in">fgets</span>(buffer_send, BUFFER_SIZE, stdin);</span><br><span class="line"> <span class="built_in">send</span>(connfd, buffer_send, <span class="built_in">strlen</span>(buffer_send), <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer_send, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">// send为quit表示服务器请求断开连接，退出循环</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">close</span>(connfd);</span><br><span class="line"> <span class="built_in">close</span>(sockSer); <span class="comment">//关闭socket套接字描述符</span></span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Client-cpp"><a href="#Client-cpp" class="headerlink" title="Client.cpp"></a>Client.cpp</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">const</span> <span class="type">char</span> *ip = argv[<span class="number">1</span>];</span><br><span class="line"> <span class="type">int</span> port = <span class="built_in">atoi</span>(argv[<span class="number">2</span>]);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> sockCli = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//定义sockaddr_in</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> servaddr;</span><br><span class="line"> <span class="built_in">memset</span>(&amp;servaddr, <span class="number">0</span>, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> servaddr.sin_family = AF_INET;</span><br><span class="line"> servaddr.sin_port = <span class="built_in">htons</span>(port); <span class="comment">//服务器端口</span></span><br><span class="line">    <span class="comment">// servaddr.sin_addr.s_addr = htons(port);</span></span><br><span class="line"> <span class="built_in">inet_pton</span>(AF_INET, ip, &amp;servaddr.sin_addr); <span class="comment">//将点分文本的IP地址转换为二进制网络字节序的IP地址</span></span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> sockfd = <span class="built_in">socket</span>(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line"> <span class="built_in">assert</span>(sockfd &gt;= <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> connfd = <span class="built_in">connect</span>(sockfd, (<span class="keyword">struct</span> sockaddr *)&amp;servaddr, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> </span><br><span class="line"> <span class="type">char</span> sendbuf[BUFFER_SIZE];</span><br><span class="line"> <span class="type">char</span> recvbuf[BUFFER_SIZE];</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="keyword">if</span> (connfd &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;connection failed\n&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">memset</span>(sendbuf, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> <span class="built_in">memset</span>(recvbuf, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;client:&quot;</span>);</span><br><span class="line"> <span class="built_in">fgets</span>(sendbuf, BUFFER_SIZE, stdin);</span><br><span class="line"> <span class="built_in">send</span>(sockfd, sendbuf, <span class="built_in">strlen</span>(sendbuf), <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(sendbuf, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">//send为quit表示客户端请求断开连接，退出循环</span></span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> ret = <span class="built_in">recv</span>(sockfd, recvbuf, BUFFER_SIZE - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(recvbuf, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">//recv为quit表示服务器请求断开连接，退出循环</span></span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;server:%s&quot;</span>, recvbuf);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="built_in">close</span>(connfd);</span><br><span class="line"> <span class="built_in">close</span>(sockCli);</span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>计算机网络</tag>
+        <tag>Socket</tag>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll</title>
     <url>/archives/884564f6.html</url>
     <content><![CDATA[<h1 id="什么是IO多路复用？"><a href="#什么是IO多路复用？" class="headerlink" title="什么是IO多路复用？"></a>什么是IO多路复用？</h1><p>IO即为网络I&#x2F;O，多路即为多个TCP连接，复用即为共用一个线程或者进程，模型最大的优势是系统开销小，不必创建也不必维护过多的线程或进程。</p>
@@ -916,28 +938,6 @@
       <tags>
         <tag>Linux</tag>
         <tag>计算机网络</tag>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序</title>
-    <url>/archives/cf06f66d.html</url>
-    <content><![CDATA[<p>在上文中，讲述了Socket的一些基本函数以及如何简单使用Socket搭建一个单工聊天的聊天室程序。</p>
-<p>本文的目标便是对这个简单的程序加以改进，使其能实现服务端和客户端之间的相互通信。如果想更深入理解，推荐大家阅读《UNIX网络编程卷1套接字联网API》这本书。</p>
-<h2 id="首先需要补充一些我之前没有提到过的知识点。"><a href="#首先需要补充一些我之前没有提到过的知识点。" class="headerlink" title="首先需要补充一些我之前没有提到过的知识点。"></a>首先需要补充一些我之前没有提到过的知识点。</h2><h3 id="Socket处于网络协议的哪个层次？"><a href="#Socket处于网络协议的哪个层次？" class="headerlink" title="Socket处于网络协议的哪个层次？"></a>Socket处于网络协议的哪个层次？</h3><p><img src="https://pic4.zhimg.com/80/v2-728b741914df045b9cdfb918a30d1843_720w.jpg" alt="socket网络层次"><br>套接字编程接口是从顶上三层（网际协议的应用层）进入传输层的接口。</p>
-<h3 id="为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口"><a href="#为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口" class="headerlink" title="为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口?"></a>为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口?</h3><p>这样设计有两个理由，如图1-14右侧所注。理由之一是顶上三层处理具体网络应用（如FTP、Telnet或HTTPO的所有细节，却对通信细节了解很少;底下四层对具体网络应用了解不多，却处理所有的通信细节:发送数据，等待确认，给无序到达的数据排序，计算并验证校验和，等等。理由之二是顶上三层通常构成所谓的用户进程user process口,底下四层却通常作为操作系统内核的一部分提供。Unix与其他现代操作系统都提供分隔用户进程与内核的机制。由此可见，第4层和第5层之间的接口是构建API的自然位置。</p>
-<h2 id="TCP实现框架"><a href="#TCP实现框架" class="headerlink" title="TCP实现框架"></a>TCP实现框架</h2><p><img src="https://pic1.zhimg.com/80/v2-dfaeec3f74165f5a74c278a513d54ab8_720w.jpg" alt="TCP实现框架"></p>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>目前该代码尚不完善，仅供参考，只能实现一发送一接收的“伪”半双工通信。真正的半双工(Half Duplex)数据传输，数据可以随时发送，只是不能同时传输。</p>
-<h2 id="Sever-cpp"><a href="#Sever-cpp" class="headerlink" title="Sever.cpp"></a>Sever.cpp</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PORT 7000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024 <span class="comment">//缓冲区大小宏定义</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">const</span> <span class="type">char</span> *ip = argv[<span class="number">1</span>];</span><br><span class="line"> <span class="type">int</span> port = <span class="built_in">atoi</span>(argv[<span class="number">2</span>]); <span class="comment">//将输入的端口号由字符串转换为整数类型</span></span><br><span class="line">    <span class="comment">//结构体定义与初始化</span></span><br><span class="line"> <span class="type">int</span> sockSer = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>); <span class="comment">//若成功则返回一个sockfd（套接字描述符）</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> server_sockaddr;            <span class="comment">//一般是储存地址和端口的。用于信息的显示及存储使用</span></span><br><span class="line">                                                   <span class="comment">//设置 sockaddr_in 结构体中相关参数</span></span><br><span class="line"> server_sockaddr.sin_family = AF_INET;</span><br><span class="line"> server_sockaddr.sin_port = <span class="built_in">htons</span>(PORT); <span class="comment">//将一个无符号短整型数值转换为网络字节序，即大端模式(big-endian) </span></span><br><span class="line">                                            <span class="comment">// printf(&quot;%d\n&quot;,INADDR_ANY);</span></span><br><span class="line">    <span class="comment">// INADDR_ANY就是指定地址为0.0.0.0的地址，这个地址事实上表示不确定地址，或“所有地址”、“任意地址”。</span></span><br><span class="line">    <span class="comment">//一般来说，在各个系统中均定义成为0值。</span></span><br><span class="line">    <span class="comment">// server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY); //将主机的无符号长整形数转换成网络字节顺序。</span></span><br><span class="line"> <span class="built_in">inet_pton</span>(AF_INET, ip, &amp;server_sockaddr.sin_addr); <span class="comment">//将小端字节序转换为网络字节序</span></span><br><span class="line"> </span><br><span class="line"> <span class="built_in">assert</span>(sockSer &gt;= <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> ret = <span class="built_in">bind</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;server_sockaddr, <span class="built_in">sizeof</span>(server_sockaddr)); <span class="comment">//绑定IP地址、端口号等信息</span></span><br><span class="line"> <span class="built_in">assert</span>(ret != <span class="number">-1</span>);</span><br><span class="line"> ret = <span class="built_in">listen</span>(sockSer, <span class="number">5</span>); <span class="comment">//监听有无连接请求</span></span><br><span class="line"> <span class="built_in">assert</span>(ret != <span class="number">-1</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> client_addr;</span><br><span class="line"> <span class="type">socklen_t</span> client_addrlength = <span class="built_in">sizeof</span>(client_addr);</span><br><span class="line">    <span class="comment">///成功返回非负描述字，出错返回-1</span></span><br><span class="line"> <span class="type">int</span> connfd = <span class="built_in">accept</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;client_addr, &amp;client_addrlength); <span class="comment">//从监听队列中取出第一个已完成的连接</span></span><br><span class="line"> <span class="type">char</span> buffer_recv[BUFFER_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> <span class="type">char</span> buffer_send[BUFFER_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="keyword">if</span> (connfd &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;errno is : %d\n&quot;</span>, errno);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">memset</span>(buffer_recv, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> <span class="built_in">memset</span>(buffer_send, <span class="number">0</span>, BUFFER_SIZE); <span class="comment">//每次需要为缓冲区清空</span></span><br><span class="line"> </span><br><span class="line"> ret = <span class="built_in">recv</span>(connfd, buffer_recv, BUFFER_SIZE - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer_recv, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">// recv为quit表示客户端请求断开连接，退出循环</span></span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;client:%s&quot;</span>, buffer_recv);</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;server:&quot;</span>);</span><br><span class="line"> <span class="built_in">fgets</span>(buffer_send, BUFFER_SIZE, stdin);</span><br><span class="line"> <span class="built_in">send</span>(connfd, buffer_send, <span class="built_in">strlen</span>(buffer_send), <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer_send, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">// send为quit表示服务器请求断开连接，退出循环</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">close</span>(connfd);</span><br><span class="line"> <span class="built_in">close</span>(sockSer); <span class="comment">//关闭socket套接字描述符</span></span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Client-cpp"><a href="#Client-cpp" class="headerlink" title="Client.cpp"></a>Client.cpp</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">const</span> <span class="type">char</span> *ip = argv[<span class="number">1</span>];</span><br><span class="line"> <span class="type">int</span> port = <span class="built_in">atoi</span>(argv[<span class="number">2</span>]);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> sockCli = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//定义sockaddr_in</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> servaddr;</span><br><span class="line"> <span class="built_in">memset</span>(&amp;servaddr, <span class="number">0</span>, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> servaddr.sin_family = AF_INET;</span><br><span class="line"> servaddr.sin_port = <span class="built_in">htons</span>(port); <span class="comment">//服务器端口</span></span><br><span class="line">    <span class="comment">// servaddr.sin_addr.s_addr = htons(port);</span></span><br><span class="line"> <span class="built_in">inet_pton</span>(AF_INET, ip, &amp;servaddr.sin_addr); <span class="comment">//将点分文本的IP地址转换为二进制网络字节序的IP地址</span></span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> sockfd = <span class="built_in">socket</span>(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line"> <span class="built_in">assert</span>(sockfd &gt;= <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> connfd = <span class="built_in">connect</span>(sockfd, (<span class="keyword">struct</span> sockaddr *)&amp;servaddr, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> </span><br><span class="line"> <span class="type">char</span> sendbuf[BUFFER_SIZE];</span><br><span class="line"> <span class="type">char</span> recvbuf[BUFFER_SIZE];</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="keyword">if</span> (connfd &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;connection failed\n&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">memset</span>(sendbuf, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> <span class="built_in">memset</span>(recvbuf, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;client:&quot;</span>);</span><br><span class="line"> <span class="built_in">fgets</span>(sendbuf, BUFFER_SIZE, stdin);</span><br><span class="line"> <span class="built_in">send</span>(sockfd, sendbuf, <span class="built_in">strlen</span>(sendbuf), <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(sendbuf, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">//send为quit表示客户端请求断开连接，退出循环</span></span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> ret = <span class="built_in">recv</span>(sockfd, recvbuf, BUFFER_SIZE - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(recvbuf, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">//recv为quit表示服务器请求断开连接，退出循环</span></span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;server:%s&quot;</span>, recvbuf);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="built_in">close</span>(connfd);</span><br><span class="line"> <span class="built_in">close</span>(sockCli);</span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>计算机网络</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>计算机网络</tag>
-        <tag>Socket</tag>
         <tag>C++</tag>
       </tags>
   </entry>

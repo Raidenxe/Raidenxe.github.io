@@ -1,0 +1,334 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Linux 文本三剑客（2）sed命令的使用 | Raidenxe的博客</title><meta name="keywords" content="Linux,文本编辑器,sed"><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="sed引言sed（意为流编辑器，源自英语“stream editor”的缩写）是一个使用简单紧凑的编程语言来解析和转换文本Unix实用程序。虽然在某些方面类似于允许脚本编辑的编辑器，但只需对输入进行一次传递即可工作，因此效率更高。但是，它能够过滤管道中的文本，这特别将其与其他类型的编辑器区分开来。 sed由贝尔实验室的李·E·麦克马洪于1973年至1974年开发， 并且现在大多数操作系统都可以使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 文本三剑客（2）sed命令的使用">
+<meta property="og:url" content="https://raidenxe.github.io/archives/ef07d954.html">
+<meta property="og:site_name" content="Raidenxe的博客">
+<meta property="og:description" content="sed引言sed（意为流编辑器，源自英语“stream editor”的缩写）是一个使用简单紧凑的编程语言来解析和转换文本Unix实用程序。虽然在某些方面类似于允许脚本编辑的编辑器，但只需对输入进行一次传递即可工作，因此效率更高。但是，它能够过滤管道中的文本，这特别将其与其他类型的编辑器区分开来。 sed由贝尔实验室的李·E·麦克马洪于1973年至1974年开发， 并且现在大多数操作系统都可以使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic3.zhimg.com/v2-a151d3592ecf5d6abb44b392f5d569e3_1440w.jpg?source=172ae18b">
+<meta property="article:published_time" content="2022-05-19T12:51:58.000Z">
+<meta property="article:modified_time" content="2022-05-19T13:18:53.895Z">
+<meta property="article:author" content="Raidenxe">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="文本编辑器">
+<meta property="article:tag" content="sed">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic3.zhimg.com/v2-a151d3592ecf5d6abb44b392f5d569e3_1440w.jpg?source=172ae18b"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/ef07d954"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Linux 文本三剑客（2）sed命令的使用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-05-19 21:18:53'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">16</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://pic3.zhimg.com/v2-a151d3592ecf5d6abb44b392f5d569e3_1440w.jpg?source=172ae18b')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Raidenxe的博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Linux 文本三剑客（2）sed命令的使用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-05-19T12:51:58.000Z" title="发表于 2022-05-19 20:51:58">2022-05-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-05-19T13:18:53.895Z" title="更新于 2022-05-19 21:18:53">2022-05-19</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Linux学习笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>12分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="sed引言"><a href="#sed引言" class="headerlink" title="sed引言"></a>sed引言</h1><p><strong>sed</strong>（意为流编辑器，源自英语“stream editor”的缩写）是一个使用简单紧凑的编程语言来解析和转换文本Unix实用程序。虽然在某些方面类似于允许脚本编辑的编辑器，但只需对输入进行一次传递即可工作，因此效率更高。但是，它能够过滤管道中的文本，这特别将其与其他类型的编辑器区分开来。</p>
+<p>sed由贝尔实验室的李·E·麦克马洪于1973年至1974年开发， 并且现在大多数操作系统都可以使用。 sed基于交互式编辑器ed（“editor”，1971）和早期qed（“quick editor”，1965-66）的脚本功能。sed是最早支持正则表达式的工具之一，至今仍然用于文本处理，特别是用于替换命令。用于纯文本字符串操作和“流编辑”的常用工具还有AWK和Perl 。</p>
+<h1 id="sed-工作原理"><a href="#sed-工作原理" class="headerlink" title="sed 工作原理"></a>sed 工作原理</h1><p><img src="https://pic4.zhimg.com/80/v2-ee5564a376f0655b18e9722b2e14baeb_720w.jpg"><br>sed 和 vi 不同，sed是行编辑器。</p>
+<p>sed是从文件或管道中读取一行，处理一行，输出一行；再读取一行，再处理一行，再输出一行，直到最后一行。每当处理一行时，把当前处理的行存储在临时缓冲区中，称为<strong>模式空间</strong>（Pattern Space），接着用sed命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送往屏幕。接着处理下一行，这样不断重复，直到文件末尾。一次处理一行的设计模式使得sed性能很高，sed在读取大文件时不会出现卡顿的现象。如果使用vi命令打开几十M上百M的文件，明显会出现有卡顿的现象，这是因为vi命令打开文件是一次性将文件加载到内存，然后再打开。Sed就避免了这种情况，一行一行的处理，打开速度非常快，执行速度也很快。</p>
+<h1 id="sed的作用"><a href="#sed的作用" class="headerlink" title="sed的作用"></a>sed的作用</h1><p>sed 是一款非常强大的程序，它能够针对文本流完成相当复杂的编辑任务。它最常用于简单的行任务，而不是长长的脚本。许多用户喜欢使用其它工具，来执行较大的工作。 在这些工具中最著名的是 awk 和 perl。</p>
+<p>sed 可依照脚本的指令来处理、编辑文本文件。</p>
+<p>sed 主要用来自动编辑一个或多个文件、简化对文件的反复操作、编写转换程序等。</p>
+<p>可以实现增删改查，取行、替换、查找等功能。</p>
+<h1 id="sed语法格式"><a href="#sed语法格式" class="headerlink" title="sed语法格式"></a>sed语法格式</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed [-hnV][-e&lt;script&gt;][-f&lt;script文件&gt;][文本文件]</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed OPTIONS... [SCRIPT] [INPUTFILE...]</span><br></pre></td></tr></table></figure>
+
+<h1 id="参数说明："><a href="#参数说明：" class="headerlink" title="参数说明："></a>参数说明：</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-e &lt;script&gt;或--expression=&lt;script&gt; 以选项中指定的script来处理输入的文本文件。</span><br><span class="line">-f &lt;script文件&gt;或--file=&lt;script文件&gt; 以选项中指定的script文件来处理输入的文本文件。</span><br></pre></td></tr></table></figure>
+<p>-h或–help 显示帮助。<br>-n或–quiet或–silent 仅显示script处理后的结果。<br>-V或–version 显示版本信息。  </p>
+<h1 id="动作说明："><a href="#动作说明：" class="headerlink" title="动作说明："></a>动作说明：</h1><p>a ：新增， a 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行)～<br>c ：取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行！<br>d ：删除，d 后面通常不接任何字串；<br>i ：插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；<br>p ：打印，亦即将某个选择的数据印出。通常 p 会与参数 sed -n 一起运行<br>s ：取代，查找替换,支持使用其它分隔符，可以是其它形式：s@@@，s### 替换修饰符<br>g ：行内全局替换</p>
+<h1 id="sed实例"><a href="#sed实例" class="headerlink" title="sed实例"></a>sed实例</h1><p>这里我将使用Ubuntu18.04进行效果演示。</p>
+<p>为了更好的探究 sed 程序，让我们创建一个包含以下数据的名为distros.txt文本文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Fedora         10       11/25/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">SUSE         10.3     10/04/2007</span><br><span class="line">Fedora         8        11/08/2007</span><br><span class="line">Ubuntu         6.10     10/26/2006</span><br><span class="line">Fedora         7        05/31/2007</span><br><span class="line">SUSE         11.0     06/19/2008</span><br><span class="line">Ubuntu         7.10     10/18/2007</span><br><span class="line">Ubuntu         7.04     04/19/2007</span><br><span class="line">Fedora         6        10/24/2006</span><br><span class="line">Fedora         9        05/13/2008</span><br><span class="line">Ubuntu         6.06     06/01/2006</span><br><span class="line">SUSE         10.2     12/07/2006</span><br><span class="line">Ubuntu         8.10     10/30/2008</span><br><span class="line">Fedora         5        03/20/2006</span><br><span class="line">SUSE         10.1     05/11/2006</span><br></pre></td></tr></table></figure>
+<h2 id="sed简单输出"><a href="#sed简单输出" class="headerlink" title="sed简单输出"></a>sed简单输出</h2><p>通过 distros.txt 文件，我们将演示sed的各种用法。</p>
+<p>首先，输出distros.txt文件的1-5行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;1,5p&#x27;</span> distros.txt</span><br><span class="line">SUSE           10.2     12/07/2006</span><br><span class="line">Fedora         10       11/25/2008</span><br><span class="line">SUSE           11.0     06/19/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">Fedora         8        11/08/2007</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic2.zhimg.com/80/v2-b5e76901ff2f6e31815901d9e811cba9_720w.jpg"><br>在这个例子中，我们打印出一系列的文本行，开始于第一行，直到第五行。为此，我们使用 p 命令， 其就是简单地把匹配的文本行打印出来。然而为了高效，我们必须包含选项 -n（不自动打印选项）， 让 sed 不要默认地打印每一行。</p>
+<p>sed默认显示所有内容，所以不加-n的话，如下图所示，会把目标行和所有内容都显示出来。<br><img src="https://pic3.zhimg.com/80/v2-37f017cd0aa45565ffe51f1ae7a764ae_720w.jpg"></p>
+<h2 id="sed查询"><a href="#sed查询" class="headerlink" title="sed查询"></a>sed查询</h2><p>下一步，我们将试用一下正则表达式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;/SUSE/p&#x27;</span> distros.txt</span><br><span class="line">SUSE         10.2     12/07/2006</span><br><span class="line">SUSE         11.0     06/19/2008</span><br><span class="line">SUSE         10.3     10/04/2007</span><br><span class="line">SUSE         10.1     05/11/2006</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-ff03bd19c7c885739849e0e349965cf6_720w.jpg"><br>通过包含由斜杠界定的正则表达式 ‘&#x2F;SUSE&#x2F;’，我们能够孤立出包含它的文本行，和 grep 程序的功能是相同的。</p>
+<p>试着否定上面的操作，通过给这个地址添加一个感叹号：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;/SUSE/!p&#x27;</span> distros.txt</span><br><span class="line">Fedora         10       11/25/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">Fedora         8        11/08/2007</span><br><span class="line">Ubuntu         6.10     10/26/2006</span><br><span class="line">Fedora         7        05/31/2007</span><br><span class="line">Ubuntu         7.10     10/18/2007</span><br><span class="line">Ubuntu         7.04     04/19/2007</span><br><span class="line">Fedora         6        10/24/2006</span><br><span class="line">Fedora         9        05/13/2008</span><br><span class="line">Ubuntu         6.06     06/01/2006</span><br><span class="line">Ubuntu         8.10     10/30/2008</span><br><span class="line">Fedora         5        03/20/2006</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic1.zhimg.com/80/v2-657275ae8e21f36a956078f047e42f34_720w.jpg"><br>这里我们看到期望的结果：输出了文件中所有的文本行，除了那些匹配这个正则表达式的文本行。</p>
+<p>目前为止，我们已经知道了两个 sed 的编辑命令，s 和 p。</p>
+<h2 id="sed编辑修改"><a href="#sed编辑修改" class="headerlink" title="sed编辑修改"></a>sed编辑修改</h2><p>到目前为止，这个 s 命令是最常使用的编辑命令。我们将仅仅演示一些它的功能，通过编辑我们的 distros.txt 文件。我们以前讨论过 distros.txt 文件中的日期字段不是“友好地计算机”模式。 文件中的日期格式是 MM&#x2F;DD&#x2F;YYYY，但如果格式是 YYYY-MM-DD 会更好一些（利于排序）。手动修改 日期格式不仅浪费时间而且易出错，但是有了 sed，只需一步就能完成修改：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed <span class="string">&#x27;s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/&#x27;</span> distros.txt</span><br><span class="line"></span><br><span class="line">SUSE           10.2     2006-12-07</span><br><span class="line">Fedora         10       2008-11-25</span><br><span class="line">SUSE           11.0     2008-06-19</span><br><span class="line">Ubuntu         8.04     2008-04-24</span><br><span class="line">Fedora         8        2007-11-08</span><br><span class="line">SUSE           10.3     2007-10-04</span><br><span class="line">Ubuntu         6.10     2006-10-26</span><br><span class="line">Fedora         7        2007-05-31</span><br><span class="line">Ubuntu         7.10     2007-10-18</span><br><span class="line">Ubuntu         7.04     2007-04-19</span><br><span class="line">SUSE           10.1     2006-05-11</span><br><span class="line">Fedora         6        2006-10-24</span><br><span class="line">Fedora         9        2008-05-13</span><br><span class="line">Ubuntu         6.06     2006-06-01</span><br><span class="line">Ubuntu         8.10     2008-10-30</span><br><span class="line">Fedora         5        2006-03-20</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-06814637d7798a93654cfcec1b2feaee_720w.jpg"><br>这个命令看起来很丑陋。但是它起作用了。仅用一步，我们就更改了文件中的日期格式。 它也是一个关于为什么有时候会开玩笑地把正则表达式称为是“只写”媒介的完美的例子。我们 能写正则表达式，但是有时候我们不能读它们。在我们恐惧地忍不住要逃离此命令之前，让我们看一下 怎样来构建它。首先，我们知道此命令有这样一个基本的结构：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed <span class="string">&#x27;s/regexp/replacement/&#x27;</span> distros.txt</span><br></pre></td></tr></table></figure>
+<p>我们下一步是要弄明白一个正则表达式将要孤立出日期。因为日期是 MM&#x2F;DD&#x2F;YYYY 格式，并且 出现在文本行的末尾，我们可以使用这样的表达式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[0-9]&#123;2&#125;/[0-9]&#123;2&#125;/[0-9]&#123;4&#125;$</span><br></pre></td></tr></table></figure>
+<p>此表达式匹配两位数字，一个斜杠，两位数字，一个斜杠，四位数字，以及行尾。如此关心regexp， 那么replacement又怎样呢？为了解决此问题，我们必须介绍一个正则表达式的新功能，它出现 在一些使用 BRE 的应用程序中。这个功能叫做逆参照，像这样工作：如果序列\n出现在replacement中 ，这里 n 是指从 1 到 9 的数字，则这个序列指的是在前面正则表达式中相对应的子表达式。为了 创建这个子表达式，我们简单地把它们用圆括号括起来，像这样：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">([0-9]&#123;2&#125;)/([0-9]&#123;2&#125;)/([0-9]&#123;4&#125;)$</span><br></pre></td></tr></table></figure>
+<p>现在我们有了三个子表达式。第一个表达式包含月份，第二个包含某月中的某天，以及第三个包含年份。 现在我们就可以构建replacement，如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\3-\1-\2</span><br></pre></td></tr></table></figure>
+<p>此表达式给出了年份，一个短划线，月份，一个短划线，和某天。</p>
+<p>现在我们的命令看起来像下面这样：</p>
+<p>sed ‘s&#x2F;([0-9]{2})&#x2F;([0-9]{2})&#x2F;([0-9]{4})$&#x2F;\3-\1-\2&#x2F;‘ distros.txt<br>我们还有两个问题。第一个是当 sed 试图解释这个 s 命令的时候在我们表达式中额外的斜杠将会使 sed 迷惑。 第二个是由于sed默认情况下只接受基本的正则表达式，在表达式中的几个字符会 被当作文字字面值，而不是元字符。我们能够通过反斜杠的自由应用来转义令人不快的字符解决这两个问题。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed <span class="string">&#x27;s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/&#x27;</span> distros.txt</span><br></pre></td></tr></table></figure>
+
+<h2 id="sed替换"><a href="#sed替换" class="headerlink" title="sed替换"></a>sed替换</h2><p>s 命令的另一个功能是使用可选标志，其跟随替代字符串。一个最重要的可选标志是 g 标志，其 指示 sed 对某个文本行全范围地执行查找和替代操作，不仅仅是对第一个实例，这是默认行为。 这里有个例子：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">echo</span> <span class="string">&quot;aaabbbccc&quot;</span> | sed <span class="string">&#x27;s/b/B/&#x27;</span></span><br><span class="line">aaaBbbccc</span><br></pre></td></tr></table></figure>
+<p>我们看到虽然执行了替换操作，但是只针对第一个字母 “b” 实例，然而剩余的实例没有更改。通过添加 g 标志， 我们能够更改所有的实例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">echo</span> <span class="string">&quot;aaabbbccc&quot;</span> | sed <span class="string">&#x27;s/b/B/g&#x27;</span></span><br><span class="line">aaaBBBccc</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic4.zhimg.com/80/v2-943f6225d54eb4c480aef90c6b82200f_720w.jpg"></p>
+<h2 id="sed脚本"><a href="#sed脚本" class="headerlink" title="sed脚本"></a>sed脚本</h2><p>目前为止，通过命令行我们只让 sed 执行单个命令。使用-f 选项，也有可能在一个脚本文件中构建更加复杂的命令。 为了演示，我们将使用 sed 和 distros.txt 文件来生成一个报告。我们的报告以开头标题，修改过的日期，以及 大写的发行版名称为特征。为此，我们需要编写一个脚本，所以我们将打开文本编辑器，然后输入以下文字：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># sed script to produce Linux distributions report</span></span><br><span class="line"></span><br><span class="line">1 i\</span><br><span class="line">\</span><br><span class="line">Linux Distributions Report\</span><br><span class="line"></span><br><span class="line">s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/</span><br><span class="line">y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/</span><br></pre></td></tr></table></figure>
+<p>我们将把 sed 脚本保存为 distros.sed 文件，然后像这样运行它：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -f distros.sed distros.txt</span><br><span class="line">Linux Distributions Report</span><br><span class="line">SUSE	10.2	2006-12-07</span><br><span class="line">FEDORA	10	    2008-11-25</span><br><span class="line">SUSE	11.0	2008-06-19</span><br><span class="line">UBUNTU	8.04	2008-04-24</span><br><span class="line">FEDORA	8	    2007-11-08</span><br><span class="line">SUSE	10.3	2007-10-04</span><br><span class="line">UBUNTU	6.10	2006-10-26</span><br><span class="line">FEDORA	7	    2007-05-31</span><br><span class="line">UBUNTU	7.10	2007-10-18</span><br><span class="line">UBUNTU	7.04	2007-04-19</span><br><span class="line">SUSE	10.1	2006-05-11</span><br><span class="line">FEDORA	6	    2006-10-24</span><br><span class="line">FEDORA	9	    2008-05-13</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-607a1decdae2246716fd6c082c9146a7_720w.jpg"><br>正如我们所见，我们的脚本文件产生了期望的结果，但是它是如何做到的呢？让我们再看一下我们的脚本文件。 我们将使用 cat 来给每行文本编号：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">cat</span> -n distros.sed</span><br><span class="line">1 <span class="comment"># sed script to produce Linux distributions report</span></span><br><span class="line">2</span><br><span class="line">3 1 i\</span><br><span class="line">4 \</span><br><span class="line">5 Linux Distributions Report\</span><br><span class="line">6</span><br><span class="line">7 s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/</span><br><span class="line">8 y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic2.zhimg.com/80/v2-0415afdc86a25eb61b3489e56db4fe01_720w.jpg"></p>
+<h3 id="脚本文件详解："><a href="#脚本文件详解：" class="headerlink" title="脚本文件详解："></a>脚本文件详解：</h3><p>我们脚本文件的<strong>第一行</strong>是一条注释。如同 Linux 系统中的许多配置文件和编程语言一样，注释以#字符开始， 然后是文本注释。注释可以被放到脚本中的任意地方（虽然不在命令本身之中），且对任何可能需要理解和／或维护脚本的人们都很有帮助。</p>
+<p><strong>第二行</strong>是一个空行。正如注释一样，添加空白行是为了提高程序的可读性。</p>
+<p>许多 sed 命令支持行地址。这些行地址被用来指定对输入文本的哪一行执行操作。行地址可能被 表示为单独的行号，行号范围，以及特殊的行号“$”，它表示输入文本的最后一行。</p>
+<p><strong>从第三行到第六行</strong>所包含地文本要被插入到地址 1 处，也就是输入文本的第一行中。这个 i 命令之后是反斜杠回车符，来产生一个转义的回车符，或者就是所谓的连行符。这个序列能够 被用在许多环境下，包括 shell 脚本，从而允许把回车符嵌入到文本流中，而没有通知解释器（在这是指 sed 解释器）已经到达了文本行的末尾。这个 i 命令，同样地，命令 a（追加文本， 而不是插入文本）和 c（取代文本）命令都允许多个文本行，只要每个文本行，除了最后一行，以一个 连行符结束。实际上，脚本的第六行是插入文本的末尾，它以一个普通的回车符结尾，而不是一个连行符，通知解释器 i 命令结束了。</p>
+<p>注意：一个连行符由一个反斜杠字符其后紧跟一个回车符组成。它们之间不允许有空白字符。</p>
+<p><strong>第七行</strong>是我们的查找和替代命令。因为命令之前没有添加地址，所以输入流中的每一行文本 都得服从它的操作。</p>
+<p><strong>第八行</strong>执行小写字母到大写字母的字符替换操作。注意不同于 tr 命令，这个 sed 中的 y 命令不 支持字符区域（例如，[a-z]），也不支持 POSIX 字符集。再说一次，因为 y 命令之前不带地址， 所以它会操作输入流的每一行。</p>
+<p>本文部分内容参考自《TLCL》。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/ef07d954.html">https://raidenxe.github.io/archives/ef07d954.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/">Linux</a><a class="post-meta__tags" href="/tags/%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/">文本编辑器</a><a class="post-meta__tags" href="/tags/sed/">sed</a></div><div class="post_share"><div class="social-share" data-image="https://pic3.zhimg.com/v2-a151d3592ecf5d6abb44b392f5d569e3_1440w.jpg?source=172ae18b" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/archives/1894211f.html"><img class="next-cover" src="https://pic1.zhimg.com/v2-bdf1968f78dcbe4de93f1b10c14dba8b_1440w.jpg?source=172ae18b" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Linux 文本三剑客（1）grep命令的使用</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/archives/1894211f.html" title="Linux 文本三剑客（1）grep命令的使用"><img class="cover" src="https://pic1.zhimg.com/v2-bdf1968f78dcbe4de93f1b10c14dba8b_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-18</div><div class="title">Linux 文本三剑客（1）grep命令的使用</div></div></a></div><div><a href="/archives/90acc1af.html" title="Linux下的fork和exec函数"><img class="cover" src="https://pic2.zhimg.com/v2-1a7eb58610755e46dbcc46e787517c08_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-09</div><div class="title">Linux下的fork和exec函数</div></div></a></div><div><a href="/archives/cc4d518f.html" title="单片机和嵌入式系统的区别"><img class="cover" src="https://pica.zhimg.com/v2-13d1a10aa719b8f5e03b94b824fccac2_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-06</div><div class="title">单片机和嵌入式系统的区别</div></div></a></div><div><a href="/archives/aba2a9fd.html" title="常用Linux命令整理"><img class="cover" src="https://pica.zhimg.com/v2-5fd2e93e3fd4c3824d463dd1a0acaba2_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-06</div><div class="title">常用Linux命令整理</div></div></a></div><div><a href="/archives/a1e2b7b3.html" title="日常使用Linux系统是什么体验？"><img class="cover" src="https://pic1.zhimg.com/v2-70854dea311f3e4c308180ea1dc1c973_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-07</div><div class="title">日常使用Linux系统是什么体验？</div></div></a></div><div><a href="/archives/7a099087.html" title="计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战"><img class="cover" src="https://pica.zhimg.com/v2-0ccfd39e0b8d5bf6bb8960f7894c1e5d_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-16</div><div class="title">计算机网络知识点总结（三）Socket基本函数详解，C++ Socket入门实战</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="lv-container" data-id="city" data-uid="MTAyMC81NjAxOC8zMjQ4MQ=="></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Raidenxe</div><div class="author-info__description">向着真理和自由，无名的献身。</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">16</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#sed%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">sed引言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#sed-%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">sed 工作原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#sed%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">sed的作用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#sed%E8%AF%AD%E6%B3%95%E6%A0%BC%E5%BC%8F"><span class="toc-number">4.</span> <span class="toc-text">sed语法格式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E%EF%BC%9A"><span class="toc-number">5.</span> <span class="toc-text">参数说明：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8A%A8%E4%BD%9C%E8%AF%B4%E6%98%8E%EF%BC%9A"><span class="toc-number">6.</span> <span class="toc-text">动作说明：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#sed%E5%AE%9E%E4%BE%8B"><span class="toc-number">7.</span> <span class="toc-text">sed实例</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#sed%E7%AE%80%E5%8D%95%E8%BE%93%E5%87%BA"><span class="toc-number">7.1.</span> <span class="toc-text">sed简单输出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sed%E6%9F%A5%E8%AF%A2"><span class="toc-number">7.2.</span> <span class="toc-text">sed查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sed%E7%BC%96%E8%BE%91%E4%BF%AE%E6%94%B9"><span class="toc-number">7.3.</span> <span class="toc-text">sed编辑修改</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sed%E6%9B%BF%E6%8D%A2"><span class="toc-number">7.4.</span> <span class="toc-text">sed替换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sed%E8%84%9A%E6%9C%AC"><span class="toc-number">7.5.</span> <span class="toc-text">sed脚本</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%84%9A%E6%9C%AC%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3%EF%BC%9A"><span class="toc-number">7.5.1.</span> <span class="toc-text">脚本文件详解：</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/ef07d954.html" title="Linux 文本三剑客（2）sed命令的使用"><img src="https://pic3.zhimg.com/v2-a151d3592ecf5d6abb44b392f5d569e3_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux 文本三剑客（2）sed命令的使用"/></a><div class="content"><a class="title" href="/archives/ef07d954.html" title="Linux 文本三剑客（2）sed命令的使用">Linux 文本三剑客（2）sed命令的使用</a><time datetime="2022-05-19T12:51:58.000Z" title="发表于 2022-05-19 20:51:58">2022-05-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/1894211f.html" title="Linux 文本三剑客（1）grep命令的使用"><img src="https://pic1.zhimg.com/v2-bdf1968f78dcbe4de93f1b10c14dba8b_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux 文本三剑客（1）grep命令的使用"/></a><div class="content"><a class="title" href="/archives/1894211f.html" title="Linux 文本三剑客（1）grep命令的使用">Linux 文本三剑客（1）grep命令的使用</a><time datetime="2022-05-18T13:59:14.000Z" title="发表于 2022-05-18 21:59:14">2022-05-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/f792503a.html" title="计算机网络知识点总结（七）网络分析之tcpdump抓包"><img src="https://pic1.zhimg.com/v2-82c51530566f33f6120355b3647b11db_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点总结（七）网络分析之tcpdump抓包"/></a><div class="content"><a class="title" href="/archives/f792503a.html" title="计算机网络知识点总结（七）网络分析之tcpdump抓包">计算机网络知识点总结（七）网络分析之tcpdump抓包</a><time datetime="2022-05-17T11:04:36.000Z" title="发表于 2022-05-17 19:04:36">2022-05-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/1815c365.html" title="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）"><img src="https://pic1.zhimg.com/v2-18f2189eec39d8a665949f2b43c54626_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）"/></a><div class="content"><a class="title" href="/archives/1815c365.html" title="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）">计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）</a><time datetime="2022-05-12T08:36:07.000Z" title="发表于 2022-05-12 16:36:07">2022-05-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/90acc1af.html" title="Linux下的fork和exec函数"><img src="https://pic2.zhimg.com/v2-1a7eb58610755e46dbcc46e787517c08_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux下的fork和exec函数"/></a><div class="content"><a class="title" href="/archives/90acc1af.html" title="Linux下的fork和exec函数">Linux下的fork和exec函数</a><time datetime="2022-05-09T14:16:20.000Z" title="发表于 2022-05-09 22:16:20">2022-05-09</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://pic3.zhimg.com/v2-a151d3592ecf5d6abb44b392f5d569e3_1440w.jpg?source=172ae18b')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Raidenxe</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadLivere () {
+  if (typeof LivereTower === 'object') {
+    window.LivereTower.init()
+  }
+  else {
+    (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+    })(document, 'script');
+  }
+}
+
+if ('Livere' === 'Livere' || !false) {
+  if (false) btf.loadComment(document.getElementById('lv-container'), loadLivere)
+  else loadLivere()
+}
+else {
+  function loadOtherComment () {
+    loadLivere()
+  }
+}</script></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="true"> </div><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="false" data-text="自由,平等,公正,法治,爱国,敬业,诚信,友善,富强,民主,文明,和谐" data-fontsize="15px" data-random="true" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

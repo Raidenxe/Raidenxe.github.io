@@ -112,6 +112,85 @@
       <tags>
         <tag>Linux</tag>
         <tag>grep</tag>
+        <tag>文本编辑器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 文本三剑客（2）sed命令的使用</title>
+    <url>/archives/ef07d954.html</url>
+    <content><![CDATA[<h1 id="sed引言"><a href="#sed引言" class="headerlink" title="sed引言"></a>sed引言</h1><p><strong>sed</strong>（意为流编辑器，源自英语“stream editor”的缩写）是一个使用简单紧凑的编程语言来解析和转换文本Unix实用程序。虽然在某些方面类似于允许脚本编辑的编辑器，但只需对输入进行一次传递即可工作，因此效率更高。但是，它能够过滤管道中的文本，这特别将其与其他类型的编辑器区分开来。</p>
+<p>sed由贝尔实验室的李·E·麦克马洪于1973年至1974年开发， 并且现在大多数操作系统都可以使用。 sed基于交互式编辑器ed（“editor”，1971）和早期qed（“quick editor”，1965-66）的脚本功能。sed是最早支持正则表达式的工具之一，至今仍然用于文本处理，特别是用于替换命令。用于纯文本字符串操作和“流编辑”的常用工具还有AWK和Perl 。</p>
+<h1 id="sed-工作原理"><a href="#sed-工作原理" class="headerlink" title="sed 工作原理"></a>sed 工作原理</h1><p><img src="https://pic4.zhimg.com/80/v2-ee5564a376f0655b18e9722b2e14baeb_720w.jpg"><br>sed 和 vi 不同，sed是行编辑器。</p>
+<p>sed是从文件或管道中读取一行，处理一行，输出一行；再读取一行，再处理一行，再输出一行，直到最后一行。每当处理一行时，把当前处理的行存储在临时缓冲区中，称为<strong>模式空间</strong>（Pattern Space），接着用sed命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送往屏幕。接着处理下一行，这样不断重复，直到文件末尾。一次处理一行的设计模式使得sed性能很高，sed在读取大文件时不会出现卡顿的现象。如果使用vi命令打开几十M上百M的文件，明显会出现有卡顿的现象，这是因为vi命令打开文件是一次性将文件加载到内存，然后再打开。Sed就避免了这种情况，一行一行的处理，打开速度非常快，执行速度也很快。</p>
+<h1 id="sed的作用"><a href="#sed的作用" class="headerlink" title="sed的作用"></a>sed的作用</h1><p>sed 是一款非常强大的程序，它能够针对文本流完成相当复杂的编辑任务。它最常用于简单的行任务，而不是长长的脚本。许多用户喜欢使用其它工具，来执行较大的工作。 在这些工具中最著名的是 awk 和 perl。</p>
+<p>sed 可依照脚本的指令来处理、编辑文本文件。</p>
+<p>sed 主要用来自动编辑一个或多个文件、简化对文件的反复操作、编写转换程序等。</p>
+<p>可以实现增删改查，取行、替换、查找等功能。</p>
+<h1 id="sed语法格式"><a href="#sed语法格式" class="headerlink" title="sed语法格式"></a>sed语法格式</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed [-hnV][-e&lt;script&gt;][-f&lt;script文件&gt;][文本文件]</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed OPTIONS... [SCRIPT] [INPUTFILE...]</span><br></pre></td></tr></table></figure>
+
+<h1 id="参数说明："><a href="#参数说明：" class="headerlink" title="参数说明："></a>参数说明：</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-e &lt;script&gt;或--expression=&lt;script&gt; 以选项中指定的script来处理输入的文本文件。</span><br><span class="line">-f &lt;script文件&gt;或--file=&lt;script文件&gt; 以选项中指定的script文件来处理输入的文本文件。</span><br></pre></td></tr></table></figure>
+<p>-h或–help 显示帮助。<br>-n或–quiet或–silent 仅显示script处理后的结果。<br>-V或–version 显示版本信息。  </p>
+<h1 id="动作说明："><a href="#动作说明：" class="headerlink" title="动作说明："></a>动作说明：</h1><p>a ：新增， a 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行)～<br>c ：取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行！<br>d ：删除，d 后面通常不接任何字串；<br>i ：插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；<br>p ：打印，亦即将某个选择的数据印出。通常 p 会与参数 sed -n 一起运行<br>s ：取代，查找替换,支持使用其它分隔符，可以是其它形式：s@@@，s### 替换修饰符<br>g ：行内全局替换</p>
+<h1 id="sed实例"><a href="#sed实例" class="headerlink" title="sed实例"></a>sed实例</h1><p>这里我将使用Ubuntu18.04进行效果演示。</p>
+<p>为了更好的探究 sed 程序，让我们创建一个包含以下数据的名为distros.txt文本文件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Fedora         10       11/25/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">SUSE         10.3     10/04/2007</span><br><span class="line">Fedora         8        11/08/2007</span><br><span class="line">Ubuntu         6.10     10/26/2006</span><br><span class="line">Fedora         7        05/31/2007</span><br><span class="line">SUSE         11.0     06/19/2008</span><br><span class="line">Ubuntu         7.10     10/18/2007</span><br><span class="line">Ubuntu         7.04     04/19/2007</span><br><span class="line">Fedora         6        10/24/2006</span><br><span class="line">Fedora         9        05/13/2008</span><br><span class="line">Ubuntu         6.06     06/01/2006</span><br><span class="line">SUSE         10.2     12/07/2006</span><br><span class="line">Ubuntu         8.10     10/30/2008</span><br><span class="line">Fedora         5        03/20/2006</span><br><span class="line">SUSE         10.1     05/11/2006</span><br></pre></td></tr></table></figure>
+<h2 id="sed简单输出"><a href="#sed简单输出" class="headerlink" title="sed简单输出"></a>sed简单输出</h2><p>通过 distros.txt 文件，我们将演示sed的各种用法。</p>
+<p>首先，输出distros.txt文件的1-5行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;1,5p&#x27;</span> distros.txt</span><br><span class="line">SUSE           10.2     12/07/2006</span><br><span class="line">Fedora         10       11/25/2008</span><br><span class="line">SUSE           11.0     06/19/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">Fedora         8        11/08/2007</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic2.zhimg.com/80/v2-b5e76901ff2f6e31815901d9e811cba9_720w.jpg"><br>在这个例子中，我们打印出一系列的文本行，开始于第一行，直到第五行。为此，我们使用 p 命令， 其就是简单地把匹配的文本行打印出来。然而为了高效，我们必须包含选项 -n（不自动打印选项）， 让 sed 不要默认地打印每一行。</p>
+<p>sed默认显示所有内容，所以不加-n的话，如下图所示，会把目标行和所有内容都显示出来。<br><img src="https://pic3.zhimg.com/80/v2-37f017cd0aa45565ffe51f1ae7a764ae_720w.jpg"></p>
+<h2 id="sed查询"><a href="#sed查询" class="headerlink" title="sed查询"></a>sed查询</h2><p>下一步，我们将试用一下正则表达式：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;/SUSE/p&#x27;</span> distros.txt</span><br><span class="line">SUSE         10.2     12/07/2006</span><br><span class="line">SUSE         11.0     06/19/2008</span><br><span class="line">SUSE         10.3     10/04/2007</span><br><span class="line">SUSE         10.1     05/11/2006</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-ff03bd19c7c885739849e0e349965cf6_720w.jpg"><br>通过包含由斜杠界定的正则表达式 ‘&#x2F;SUSE&#x2F;’，我们能够孤立出包含它的文本行，和 grep 程序的功能是相同的。</p>
+<p>试着否定上面的操作，通过给这个地址添加一个感叹号：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;/SUSE/!p&#x27;</span> distros.txt</span><br><span class="line">Fedora         10       11/25/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">Fedora         8        11/08/2007</span><br><span class="line">Ubuntu         6.10     10/26/2006</span><br><span class="line">Fedora         7        05/31/2007</span><br><span class="line">Ubuntu         7.10     10/18/2007</span><br><span class="line">Ubuntu         7.04     04/19/2007</span><br><span class="line">Fedora         6        10/24/2006</span><br><span class="line">Fedora         9        05/13/2008</span><br><span class="line">Ubuntu         6.06     06/01/2006</span><br><span class="line">Ubuntu         8.10     10/30/2008</span><br><span class="line">Fedora         5        03/20/2006</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic1.zhimg.com/80/v2-657275ae8e21f36a956078f047e42f34_720w.jpg"><br>这里我们看到期望的结果：输出了文件中所有的文本行，除了那些匹配这个正则表达式的文本行。</p>
+<p>目前为止，我们已经知道了两个 sed 的编辑命令，s 和 p。</p>
+<h2 id="sed编辑修改"><a href="#sed编辑修改" class="headerlink" title="sed编辑修改"></a>sed编辑修改</h2><p>到目前为止，这个 s 命令是最常使用的编辑命令。我们将仅仅演示一些它的功能，通过编辑我们的 distros.txt 文件。我们以前讨论过 distros.txt 文件中的日期字段不是“友好地计算机”模式。 文件中的日期格式是 MM&#x2F;DD&#x2F;YYYY，但如果格式是 YYYY-MM-DD 会更好一些（利于排序）。手动修改 日期格式不仅浪费时间而且易出错，但是有了 sed，只需一步就能完成修改：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed <span class="string">&#x27;s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/&#x27;</span> distros.txt</span><br><span class="line"></span><br><span class="line">SUSE           10.2     2006-12-07</span><br><span class="line">Fedora         10       2008-11-25</span><br><span class="line">SUSE           11.0     2008-06-19</span><br><span class="line">Ubuntu         8.04     2008-04-24</span><br><span class="line">Fedora         8        2007-11-08</span><br><span class="line">SUSE           10.3     2007-10-04</span><br><span class="line">Ubuntu         6.10     2006-10-26</span><br><span class="line">Fedora         7        2007-05-31</span><br><span class="line">Ubuntu         7.10     2007-10-18</span><br><span class="line">Ubuntu         7.04     2007-04-19</span><br><span class="line">SUSE           10.1     2006-05-11</span><br><span class="line">Fedora         6        2006-10-24</span><br><span class="line">Fedora         9        2008-05-13</span><br><span class="line">Ubuntu         6.06     2006-06-01</span><br><span class="line">Ubuntu         8.10     2008-10-30</span><br><span class="line">Fedora         5        2006-03-20</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-06814637d7798a93654cfcec1b2feaee_720w.jpg"><br>这个命令看起来很丑陋。但是它起作用了。仅用一步，我们就更改了文件中的日期格式。 它也是一个关于为什么有时候会开玩笑地把正则表达式称为是“只写”媒介的完美的例子。我们 能写正则表达式，但是有时候我们不能读它们。在我们恐惧地忍不住要逃离此命令之前，让我们看一下 怎样来构建它。首先，我们知道此命令有这样一个基本的结构：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed <span class="string">&#x27;s/regexp/replacement/&#x27;</span> distros.txt</span><br></pre></td></tr></table></figure>
+<p>我们下一步是要弄明白一个正则表达式将要孤立出日期。因为日期是 MM&#x2F;DD&#x2F;YYYY 格式，并且 出现在文本行的末尾，我们可以使用这样的表达式：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[0-9]&#123;2&#125;/[0-9]&#123;2&#125;/[0-9]&#123;4&#125;$</span><br></pre></td></tr></table></figure>
+<p>此表达式匹配两位数字，一个斜杠，两位数字，一个斜杠，四位数字，以及行尾。如此关心regexp， 那么replacement又怎样呢？为了解决此问题，我们必须介绍一个正则表达式的新功能，它出现 在一些使用 BRE 的应用程序中。这个功能叫做逆参照，像这样工作：如果序列\n出现在replacement中 ，这里 n 是指从 1 到 9 的数字，则这个序列指的是在前面正则表达式中相对应的子表达式。为了 创建这个子表达式，我们简单地把它们用圆括号括起来，像这样：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">([0-9]&#123;2&#125;)/([0-9]&#123;2&#125;)/([0-9]&#123;4&#125;)$</span><br></pre></td></tr></table></figure>
+<p>现在我们有了三个子表达式。第一个表达式包含月份，第二个包含某月中的某天，以及第三个包含年份。 现在我们就可以构建replacement，如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">\3-\1-\2</span><br></pre></td></tr></table></figure>
+<p>此表达式给出了年份，一个短划线，月份，一个短划线，和某天。</p>
+<p>现在我们的命令看起来像下面这样：</p>
+<p>sed ‘s&#x2F;([0-9]{2})&#x2F;([0-9]{2})&#x2F;([0-9]{4})$&#x2F;\3-\1-\2&#x2F;‘ distros.txt<br>我们还有两个问题。第一个是当 sed 试图解释这个 s 命令的时候在我们表达式中额外的斜杠将会使 sed 迷惑。 第二个是由于sed默认情况下只接受基本的正则表达式，在表达式中的几个字符会 被当作文字字面值，而不是元字符。我们能够通过反斜杠的自由应用来转义令人不快的字符解决这两个问题。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed <span class="string">&#x27;s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/&#x27;</span> distros.txt</span><br></pre></td></tr></table></figure>
+
+<h2 id="sed替换"><a href="#sed替换" class="headerlink" title="sed替换"></a>sed替换</h2><p>s 命令的另一个功能是使用可选标志，其跟随替代字符串。一个最重要的可选标志是 g 标志，其 指示 sed 对某个文本行全范围地执行查找和替代操作，不仅仅是对第一个实例，这是默认行为。 这里有个例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">echo</span> <span class="string">&quot;aaabbbccc&quot;</span> | sed <span class="string">&#x27;s/b/B/&#x27;</span></span><br><span class="line">aaaBbbccc</span><br></pre></td></tr></table></figure>
+<p>我们看到虽然执行了替换操作，但是只针对第一个字母 “b” 实例，然而剩余的实例没有更改。通过添加 g 标志， 我们能够更改所有的实例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">echo</span> <span class="string">&quot;aaabbbccc&quot;</span> | sed <span class="string">&#x27;s/b/B/g&#x27;</span></span><br><span class="line">aaaBBBccc</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic4.zhimg.com/80/v2-943f6225d54eb4c480aef90c6b82200f_720w.jpg"></p>
+<h2 id="sed脚本"><a href="#sed脚本" class="headerlink" title="sed脚本"></a>sed脚本</h2><p>目前为止，通过命令行我们只让 sed 执行单个命令。使用-f 选项，也有可能在一个脚本文件中构建更加复杂的命令。 为了演示，我们将使用 sed 和 distros.txt 文件来生成一个报告。我们的报告以开头标题，修改过的日期，以及 大写的发行版名称为特征。为此，我们需要编写一个脚本，所以我们将打开文本编辑器，然后输入以下文字：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># sed script to produce Linux distributions report</span></span><br><span class="line"></span><br><span class="line">1 i\</span><br><span class="line">\</span><br><span class="line">Linux Distributions Report\</span><br><span class="line"></span><br><span class="line">s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/</span><br><span class="line">y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/</span><br></pre></td></tr></table></figure>
+<p>我们将把 sed 脚本保存为 distros.sed 文件，然后像这样运行它：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -f distros.sed distros.txt</span><br><span class="line">Linux Distributions Report</span><br><span class="line">SUSE	10.2	2006-12-07</span><br><span class="line">FEDORA	10	    2008-11-25</span><br><span class="line">SUSE	11.0	2008-06-19</span><br><span class="line">UBUNTU	8.04	2008-04-24</span><br><span class="line">FEDORA	8	    2007-11-08</span><br><span class="line">SUSE	10.3	2007-10-04</span><br><span class="line">UBUNTU	6.10	2006-10-26</span><br><span class="line">FEDORA	7	    2007-05-31</span><br><span class="line">UBUNTU	7.10	2007-10-18</span><br><span class="line">UBUNTU	7.04	2007-04-19</span><br><span class="line">SUSE	10.1	2006-05-11</span><br><span class="line">FEDORA	6	    2006-10-24</span><br><span class="line">FEDORA	9	    2008-05-13</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-607a1decdae2246716fd6c082c9146a7_720w.jpg"><br>正如我们所见，我们的脚本文件产生了期望的结果，但是它是如何做到的呢？让我们再看一下我们的脚本文件。 我们将使用 cat 来给每行文本编号：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">cat</span> -n distros.sed</span><br><span class="line">1 <span class="comment"># sed script to produce Linux distributions report</span></span><br><span class="line">2</span><br><span class="line">3 1 i\</span><br><span class="line">4 \</span><br><span class="line">5 Linux Distributions Report\</span><br><span class="line">6</span><br><span class="line">7 s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/</span><br><span class="line">8 y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic2.zhimg.com/80/v2-0415afdc86a25eb61b3489e56db4fe01_720w.jpg"></p>
+<h3 id="脚本文件详解："><a href="#脚本文件详解：" class="headerlink" title="脚本文件详解："></a>脚本文件详解：</h3><p>我们脚本文件的<strong>第一行</strong>是一条注释。如同 Linux 系统中的许多配置文件和编程语言一样，注释以#字符开始， 然后是文本注释。注释可以被放到脚本中的任意地方（虽然不在命令本身之中），且对任何可能需要理解和／或维护脚本的人们都很有帮助。</p>
+<p><strong>第二行</strong>是一个空行。正如注释一样，添加空白行是为了提高程序的可读性。</p>
+<p>许多 sed 命令支持行地址。这些行地址被用来指定对输入文本的哪一行执行操作。行地址可能被 表示为单独的行号，行号范围，以及特殊的行号“$”，它表示输入文本的最后一行。</p>
+<p><strong>从第三行到第六行</strong>所包含地文本要被插入到地址 1 处，也就是输入文本的第一行中。这个 i 命令之后是反斜杠回车符，来产生一个转义的回车符，或者就是所谓的连行符。这个序列能够 被用在许多环境下，包括 shell 脚本，从而允许把回车符嵌入到文本流中，而没有通知解释器（在这是指 sed 解释器）已经到达了文本行的末尾。这个 i 命令，同样地，命令 a（追加文本， 而不是插入文本）和 c（取代文本）命令都允许多个文本行，只要每个文本行，除了最后一行，以一个 连行符结束。实际上，脚本的第六行是插入文本的末尾，它以一个普通的回车符结尾，而不是一个连行符，通知解释器 i 命令结束了。</p>
+<p>注意：一个连行符由一个反斜杠字符其后紧跟一个回车符组成。它们之间不允许有空白字符。</p>
+<p><strong>第七行</strong>是我们的查找和替代命令。因为命令之前没有添加地址，所以输入流中的每一行文本 都得服从它的操作。</p>
+<p><strong>第八行</strong>执行小写字母到大写字母的字符替换操作。注意不同于 tr 命令，这个 sed 中的 y 命令不 支持字符区域（例如，[a-z]），也不支持 POSIX 字符集。再说一次，因为 y 命令之前不带地址， 所以它会操作输入流的每一行。</p>
+<p>本文部分内容参考自《TLCL》。</p>
+]]></content>
+      <categories>
+        <category>Linux学习笔记</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>文本编辑器</tag>
+        <tag>sed</tag>
       </tags>
   </entry>
   <entry>
@@ -237,29 +316,6 @@
         <tag>Linux</tag>
         <tag>嵌入式</tag>
         <tag>单片机</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>树莓派系统烧录教程</title>
-    <url>/archives/6a0755b3.html</url>
-    <content><![CDATA[<p>树莓派的系统烧录大体上可分为使用</p>
-<p>官方的烧录工具Raspberry Pi Imager烧录和使用第三方烧录工具烧录。</p>
-<p>官方的烧录工具胜在操作简单，方便快捷，所以这里使用Raspberry Pi Imager进行演示。</p>
-<p>具体步骤如下：</p>
-<p>首先准备好tf卡和读卡器</p>
-<p>然后进入官网下载 <a href="https://link.zhihu.com/?target=https://www.raspberrypi.com/software/">Raspberry Pi Imager</a></p>
-<p><img src="https://pic4.zhimg.com/80/v2-8a14d7c95dec632584c034d0dc88b28b_720w.jpg" alt="选择download for windows"></p>
-<p>安装Raspberry Pi Imager<br><img src="https://pic1.zhimg.com/80/v2-c4e4c22348914ce68edf31226bb6f340_720w.jpg" alt="点击Install"><br><img src="https://pic2.zhimg.com/80/v2-84775579e1f5e109e7cfb486f4aab445_720w.jpg" alt="Finish"></p>
-<p>打开Raspberry Pi Imager<br><img src="https://pic4.zhimg.com/80/v2-4eae49e0a08f4a124f1a8a74ebc7970b_720w.jpg" alt="点击CHOOSE OS选项"></p>
-<p>这里我们可以看到有很多系统可供选择，可以自行选择适合的系统，</p>
-<p>这里我们选择带有树莓派桌面的第一个系统为例<br><img src="https://pic2.zhimg.com/80/v2-112d84b8ae1fa0b9dcd92a6325576ae9_720w.jpg" alt="点击Raspberry PI OS(32-bit)"></p>
-<p>选择对应的存储设备<br><img src="https://pic1.zhimg.com/80/v2-a5d82eae153723595f4c1944cf3f797c_720w.jpg" alt="点击CHOOSE STORAGE选项"><br><img src="https://pic3.zhimg.com/80/v2-f6cf4fe01e8b59da659a6e37c9db9aae_720w.jpg" alt="注意所选盘符是否为目标tf卡"></p>
-<p>烧录程序<br><img src="https://pic4.zhimg.com/80/v2-16125a207574f1440b2e52738d1a7c47_720w.jpg" alt="点击WRITE"><br><img src="https://pic1.zhimg.com/80/v2-71484bd203bca4874eeb82a93026a360_720w.jpg" alt="点击yes"></p>
-<p>接下来耐心等待即可<br><img src="https://pic4.zhimg.com/80/v2-7d813e812b9816d4339a448576daa9bf_720w.jpg" alt="等进度条达100％即完成树莓派系统的烧录"></p>
-<p>如果出现报错，可以尝试重新烧录系统。</p>
-]]></content>
-      <tags>
-        <tag>树莓派</tag>
       </tags>
   </entry>
   <entry>
@@ -399,34 +455,6 @@
       </tags>
   </entry>
   <entry>
-    <title>计算机网络知识点总结（一）</title>
-    <url>/archives/5dd58e55.html</url>
-    <content><![CDATA[<h2 id="计算机网络的定义"><a href="#计算机网络的定义" class="headerlink" title="计算机网络的定义"></a>计算机网络的定义</h2><p>计算机网络是“以相互共享资源的方式互联起来的自治计算机系统的集合”。<br>计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。</p>
-<h2 id="计算机网络的分类"><a href="#计算机网络的分类" class="headerlink" title="计算机网络的分类"></a>计算机网络的分类</h2><p>计算机网络按照其覆盖的地理范围进行分类，可以很好地反映不同类型网络的技术特征。按照覆盖的地理范围划分，计算机网络可以分为以下5类。</p>
-<h3 id="广域网（Wide-Area-Network，WAN）"><a href="#广域网（Wide-Area-Network，WAN）" class="headerlink" title="广域网（Wide Area Network，WAN）"></a>广域网（Wide Area Network，WAN）</h3><h3 id="城域网-Metropolitan-Area-Network，MAN"><a href="#城域网-Metropolitan-Area-Network，MAN" class="headerlink" title="城域网(Metropolitan Area Network，MAN)"></a>城域网(Metropolitan Area Network，MAN)</h3><h3 id="局域网（Local-Area-Network-，LAN）"><a href="#局域网（Local-Area-Network-，LAN）" class="headerlink" title="局域网（Local Area Network ，LAN）"></a>局域网（Local Area Network ，LAN）</h3><h3 id="个人区域网（Personal-Area-Network，PAN）"><a href="#个人区域网（Personal-Area-Network，PAN）" class="headerlink" title="个人区域网（Personal Area Network，PAN）"></a>个人区域网（Personal Area Network，PAN）</h3><h3 id="人体区域网（Body-Area-Network，BAN）"><a href="#人体区域网（Body-Area-Network，BAN）" class="headerlink" title="人体区域网（Body Area Network，BAN）"></a>人体区域网（Body Area Network，BAN）</h3><h3 id="网络体系结构和网络协议"><a href="#网络体系结构和网络协议" class="headerlink" title="网络体系结构和网络协议"></a>网络体系结构和网络协议</h3><h2 id="网络协议"><a href="#网络协议" class="headerlink" title="网络协议"></a>网络协议</h2><p>网络协议类似于人类协议，除了交换报文和采取动作的实体是某些设备（可以是计算机、智能手机、平板电脑、路由器或其他具有网络能力的设备）的硬件或软件组件。在因 特网中，涉及两个或多个远程通信实体的所有活动都受协议的制约。例如，在两台物理上 连接的计算机中，硬件实现的协议控制了在两块网络接口卡间的“线上”的比特流；在端 系统中，拥塞控制协议控制了在发送方和接收方之间传输的分组发送的速率；路由器中的协议决定了分组从源到目的地的路径。<br>协议（protocol）定义了在两个或多个通信实体之间交换的报文的格式和顺序，以及报文发送和&#x2F;或接收一条报文或其他事件所采取的动作。<br>因特网（更一般地说是计算机网络）广泛地使用了协议。不同的协议用于完成不同的通信任务。<br>    层次（layer）结构事处理计算机网络问题最基本的方法。对于一些难以处理的复杂问题，通常是采用若干个容易处理的、小一些的问题，“化整为零，分而治之”的方法去解决。<br>接口是同一主机内相邻层之间交换信息的连接点。<br>对于结构复杂的网络协议体系来说，最好的组织方是层次结构模型。计算机网络引入了一个重要的概念——网络体系结构（network architecture）。</p>
-<h2 id="OSI-参考模型"><a href="#OSI-参考模型" class="headerlink" title="OSI 参考模型"></a>OSI 参考模型</h2><p>1974年，IBM公司提出世界第一个网络体系结构——系统网络体系结构（SNA）。1974年，国际标准化组织（ISO）发布了著名的ISO&#x2F;IEC7498标准，定义了网络互联的7层框架，即开放系统互连（Open System Interconnect，OSI）参考模型。<br>开放系统互连 (OSI) 模型描述了计算机系统用于通过网络进行通信的七个层次。OSI参考模型包括以下七层：物理层、数据链路层、网络层、传输层、会话层、表示层和应用层。<br><img src="https://pic3.zhimg.com/80/v2-82a2e89aa4a4218d23a8aedba5b77ad2_720w.jpg" alt="OSI七层模型"></p>
-<p>现代互联网不是基于 OSI，而是基于更简单的 TCP&#x2F;IP 模型。然而，OSI 7 层模型仍然被广泛使用，因为它有助于可视化和传达网络的运行方式，并有助于隔离和解决网络问题。<br>我们将“自上而下”地描述 OSI 层，从直接为最终用户服务的应用程序层，一直到物理层。<br><img src="https://pic1.zhimg.com/80/v2-112f5d6be901f464ec832561b4f98f48_720w.jpg" alt="主机、路由器和链路层交换机，每个包含了不同的层，反映了它们的功能差异"></p>
-<h3 id="7-应用层"><a href="#7-应用层" class="headerlink" title="7.应用层"></a>7.应用层</h3><p>应用层由最终用户软件使用，例如 Web 浏览器和电子邮件客户端。它提供允许软件发送和接收信息并向用户呈现有意义的数据的协议。应用层协议的一些示例是超文本传输协议(HTTP)、文件传输协议 (FTP)、邮局协议 (POP)、简单邮件传输协议 (SMTP) 和域名系统 (DNS)。</p>
-<h3 id="6-表示层"><a href="#6-表示层" class="headerlink" title="6.表示层"></a>6.表示层</h3><p>表示层为应用层准备数据。它定义了两个设备应如何编码、加密和压缩数据，以便在另一端正确接收数据。表示层获取应用层传输的任何数据，并准备好通过会话层传输。</p>
-<h3 id="5-会话层"><a href="#5-会话层" class="headerlink" title="5.会话层"></a>5.会话层</h3><p>会话层在设备之间创建通信通道，称为会话。它负责打开会话，确保它们在传输数据时保持打开和功能，并在通信结束时关闭它们。会话层还可以在数据传输期间设置检查点——如果会话中断，设备可以从上一个检查点恢复数据传输。</p>
-<h3 id="4-传输层"><a href="#4-传输层" class="headerlink" title="4.传输层"></a>4.传输层</h3><p>传输层获取会话层中传输的数据，并在发送端将其分解为“段”。它负责在接收端重新组装段，将其转换回会话层可以使用的数据。传输层进行流量控制，以与接收设备的连接速度相匹配的速率发送数据，以及错误控制，检查数据是否接收错误，如果没有，则重新请求。</p>
-<h3 id="3-网络层"><a href="#3-网络层" class="headerlink" title="3.网络层"></a>3.网络层</h3><p>网络层有两个主要功能。一种是将分段分解为网络数据包，然后在接收端重新组装数据包。另一种是通过发现跨物理网络的最佳路径来路由数据包。网络层使用网络地址（通常是 Internet 协议地址）将数据包路由到目标节点。</p>
-<h3 id="2-数据链路层"><a href="#2-数据链路层" class="headerlink" title="2.数据链路层"></a>2.数据链路层</h3><p>数据链路层在网络上两个物理连接的节点之间建立和终止连接。它将数据包分解成帧并将它们从源发送到目标。该层由两部分组成——逻辑链路控制 (LLC)，它识别网络协议、执行错误检查和同步帧，以及媒体访问控制 (MAC)，它使用 MAC 地址连接设备并定义传输和接收数据的权限。</p>
-<h3 id="1-物理层"><a href="#1-物理层" class="headerlink" title="1.物理层"></a>1.物理层</h3><p>物理层负责网络节点之间的物理有线或无线连接。它定义了连接器、连接设备的电缆或无线技术，并负责传输原始数据，这只是一系列 0 和 1，同时负责比特率控制。<br>OSI模型的优点<br>OSI 模型帮助计算机网络的用户和运营商：<br>•	确定构建网络所需的硬件和软件。<br>•	了解并传达组件通过网络进行通信的过程。<br>•	通过确定导致问题的网络层并将工作重点放在该层来执行故障排除。<br>OSI 模型帮助网络设备制造商和网络软件供应商：<br>•	创建可以与任何其他供应商的产品进行通信的设备和软件，从而实现开放的互操作性<br>•	定义他们的产品应该使用的网络部分。<br>•	与用户沟通他们的产品在哪些网络层运行——例如，仅在应用层，或跨堆栈。</p>
-<h2 id="OSI-与-TCP-x2F-IP-模型"><a href="#OSI-与-TCP-x2F-IP-模型" class="headerlink" title="OSI 与 TCP&#x2F;IP 模型"></a>OSI 与 TCP&#x2F;IP 模型</h2><p><img src="https://pic3.zhimg.com/80/v2-c39270e61b82808e07c29a4f143199d2_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
-<p>传输控制协议&#x2F;互联网协议(TCP&#x2F;IP) 比 OSI 模型更早，由美国国防部 (DoD) 创建。模型之间的一个关键区别是 TCP&#x2F;IP 更简单，将几个 OSI 层合并为一个：</p>
-<p><img src="https://pic4.zhimg.com/80/v2-1127aaa36d2eff825865f1020568d18f_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
-<p>OSI 第 5、6、7 层在 TCP&#x2F;IP 中合并为一个应用层<br>OSI 第 1 层、第 2 层在 TCP&#x2F;IP 中合并为一个网络访问层 - 但是 TCP&#x2F;IP 不负责排序和确认功能，将这些留给底层传输层。<br>其他重要区别：<br>TCP&#x2F;IP 是一种功能模型，旨在解决特定的通信问题，它基于特定的标准协议。OSI 是一个通用的、独立于协议的模型，旨在描述所有形式的网络通信。<br>在 TCP&#x2F;IP 中，大多数应用程序使用所有层，而在 OSI 中简单应用程序不使用所有七层。只有第 1、2 和 3 层是必需的才能启用任何数据通信。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/PicWarehouse/img/%E9%A3%8E%E6%99%AF008.png" alt="TCP/IP与OSI对应关系"></p>
-]]></content>
-      <categories>
-        <category>计算机网络</category>
-      </categories>
-      <tags>
-        <tag>计算机网络</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>日常使用Linux系统是什么体验？</title>
     <url>/archives/a1e2b7b3.html</url>
     <content><![CDATA[<p>趁着五一小假期，我尝试了去使用Linux作为日常使用的操作系统，这个过程中也是踩了不少的坑，所以想写一篇文章分享一下。</p>
@@ -498,6 +526,57 @@
       <tags>
         <tag>Linux</tag>
         <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>树莓派系统烧录教程</title>
+    <url>/archives/6a0755b3.html</url>
+    <content><![CDATA[<p>树莓派的系统烧录大体上可分为使用</p>
+<p>官方的烧录工具Raspberry Pi Imager烧录和使用第三方烧录工具烧录。</p>
+<p>官方的烧录工具胜在操作简单，方便快捷，所以这里使用Raspberry Pi Imager进行演示。</p>
+<p>具体步骤如下：</p>
+<p>首先准备好tf卡和读卡器</p>
+<p>然后进入官网下载 <a href="https://link.zhihu.com/?target=https://www.raspberrypi.com/software/">Raspberry Pi Imager</a></p>
+<p><img src="https://pic4.zhimg.com/80/v2-8a14d7c95dec632584c034d0dc88b28b_720w.jpg" alt="选择download for windows"></p>
+<p>安装Raspberry Pi Imager<br><img src="https://pic1.zhimg.com/80/v2-c4e4c22348914ce68edf31226bb6f340_720w.jpg" alt="点击Install"><br><img src="https://pic2.zhimg.com/80/v2-84775579e1f5e109e7cfb486f4aab445_720w.jpg" alt="Finish"></p>
+<p>打开Raspberry Pi Imager<br><img src="https://pic4.zhimg.com/80/v2-4eae49e0a08f4a124f1a8a74ebc7970b_720w.jpg" alt="点击CHOOSE OS选项"></p>
+<p>这里我们可以看到有很多系统可供选择，可以自行选择适合的系统，</p>
+<p>这里我们选择带有树莓派桌面的第一个系统为例<br><img src="https://pic2.zhimg.com/80/v2-112d84b8ae1fa0b9dcd92a6325576ae9_720w.jpg" alt="点击Raspberry PI OS(32-bit)"></p>
+<p>选择对应的存储设备<br><img src="https://pic1.zhimg.com/80/v2-a5d82eae153723595f4c1944cf3f797c_720w.jpg" alt="点击CHOOSE STORAGE选项"><br><img src="https://pic3.zhimg.com/80/v2-f6cf4fe01e8b59da659a6e37c9db9aae_720w.jpg" alt="注意所选盘符是否为目标tf卡"></p>
+<p>烧录程序<br><img src="https://pic4.zhimg.com/80/v2-16125a207574f1440b2e52738d1a7c47_720w.jpg" alt="点击WRITE"><br><img src="https://pic1.zhimg.com/80/v2-71484bd203bca4874eeb82a93026a360_720w.jpg" alt="点击yes"></p>
+<p>接下来耐心等待即可<br><img src="https://pic4.zhimg.com/80/v2-7d813e812b9816d4339a448576daa9bf_720w.jpg" alt="等进度条达100％即完成树莓派系统的烧录"></p>
+<p>如果出现报错，可以尝试重新烧录系统。</p>
+]]></content>
+      <tags>
+        <tag>树莓派</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机网络知识点总结（一）</title>
+    <url>/archives/5dd58e55.html</url>
+    <content><![CDATA[<h2 id="计算机网络的定义"><a href="#计算机网络的定义" class="headerlink" title="计算机网络的定义"></a>计算机网络的定义</h2><p>计算机网络是“以相互共享资源的方式互联起来的自治计算机系统的集合”。<br>计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。</p>
+<h2 id="计算机网络的分类"><a href="#计算机网络的分类" class="headerlink" title="计算机网络的分类"></a>计算机网络的分类</h2><p>计算机网络按照其覆盖的地理范围进行分类，可以很好地反映不同类型网络的技术特征。按照覆盖的地理范围划分，计算机网络可以分为以下5类。</p>
+<h3 id="广域网（Wide-Area-Network，WAN）"><a href="#广域网（Wide-Area-Network，WAN）" class="headerlink" title="广域网（Wide Area Network，WAN）"></a>广域网（Wide Area Network，WAN）</h3><h3 id="城域网-Metropolitan-Area-Network，MAN"><a href="#城域网-Metropolitan-Area-Network，MAN" class="headerlink" title="城域网(Metropolitan Area Network，MAN)"></a>城域网(Metropolitan Area Network，MAN)</h3><h3 id="局域网（Local-Area-Network-，LAN）"><a href="#局域网（Local-Area-Network-，LAN）" class="headerlink" title="局域网（Local Area Network ，LAN）"></a>局域网（Local Area Network ，LAN）</h3><h3 id="个人区域网（Personal-Area-Network，PAN）"><a href="#个人区域网（Personal-Area-Network，PAN）" class="headerlink" title="个人区域网（Personal Area Network，PAN）"></a>个人区域网（Personal Area Network，PAN）</h3><h3 id="人体区域网（Body-Area-Network，BAN）"><a href="#人体区域网（Body-Area-Network，BAN）" class="headerlink" title="人体区域网（Body Area Network，BAN）"></a>人体区域网（Body Area Network，BAN）</h3><h3 id="网络体系结构和网络协议"><a href="#网络体系结构和网络协议" class="headerlink" title="网络体系结构和网络协议"></a>网络体系结构和网络协议</h3><h2 id="网络协议"><a href="#网络协议" class="headerlink" title="网络协议"></a>网络协议</h2><p>网络协议类似于人类协议，除了交换报文和采取动作的实体是某些设备（可以是计算机、智能手机、平板电脑、路由器或其他具有网络能力的设备）的硬件或软件组件。在因 特网中，涉及两个或多个远程通信实体的所有活动都受协议的制约。例如，在两台物理上 连接的计算机中，硬件实现的协议控制了在两块网络接口卡间的“线上”的比特流；在端 系统中，拥塞控制协议控制了在发送方和接收方之间传输的分组发送的速率；路由器中的协议决定了分组从源到目的地的路径。<br>协议（protocol）定义了在两个或多个通信实体之间交换的报文的格式和顺序，以及报文发送和&#x2F;或接收一条报文或其他事件所采取的动作。<br>因特网（更一般地说是计算机网络）广泛地使用了协议。不同的协议用于完成不同的通信任务。<br>    层次（layer）结构事处理计算机网络问题最基本的方法。对于一些难以处理的复杂问题，通常是采用若干个容易处理的、小一些的问题，“化整为零，分而治之”的方法去解决。<br>接口是同一主机内相邻层之间交换信息的连接点。<br>对于结构复杂的网络协议体系来说，最好的组织方是层次结构模型。计算机网络引入了一个重要的概念——网络体系结构（network architecture）。</p>
+<h2 id="OSI-参考模型"><a href="#OSI-参考模型" class="headerlink" title="OSI 参考模型"></a>OSI 参考模型</h2><p>1974年，IBM公司提出世界第一个网络体系结构——系统网络体系结构（SNA）。1974年，国际标准化组织（ISO）发布了著名的ISO&#x2F;IEC7498标准，定义了网络互联的7层框架，即开放系统互连（Open System Interconnect，OSI）参考模型。<br>开放系统互连 (OSI) 模型描述了计算机系统用于通过网络进行通信的七个层次。OSI参考模型包括以下七层：物理层、数据链路层、网络层、传输层、会话层、表示层和应用层。<br><img src="https://pic3.zhimg.com/80/v2-82a2e89aa4a4218d23a8aedba5b77ad2_720w.jpg" alt="OSI七层模型"></p>
+<p>现代互联网不是基于 OSI，而是基于更简单的 TCP&#x2F;IP 模型。然而，OSI 7 层模型仍然被广泛使用，因为它有助于可视化和传达网络的运行方式，并有助于隔离和解决网络问题。<br>我们将“自上而下”地描述 OSI 层，从直接为最终用户服务的应用程序层，一直到物理层。<br><img src="https://pic1.zhimg.com/80/v2-112f5d6be901f464ec832561b4f98f48_720w.jpg" alt="主机、路由器和链路层交换机，每个包含了不同的层，反映了它们的功能差异"></p>
+<h3 id="7-应用层"><a href="#7-应用层" class="headerlink" title="7.应用层"></a>7.应用层</h3><p>应用层由最终用户软件使用，例如 Web 浏览器和电子邮件客户端。它提供允许软件发送和接收信息并向用户呈现有意义的数据的协议。应用层协议的一些示例是超文本传输协议(HTTP)、文件传输协议 (FTP)、邮局协议 (POP)、简单邮件传输协议 (SMTP) 和域名系统 (DNS)。</p>
+<h3 id="6-表示层"><a href="#6-表示层" class="headerlink" title="6.表示层"></a>6.表示层</h3><p>表示层为应用层准备数据。它定义了两个设备应如何编码、加密和压缩数据，以便在另一端正确接收数据。表示层获取应用层传输的任何数据，并准备好通过会话层传输。</p>
+<h3 id="5-会话层"><a href="#5-会话层" class="headerlink" title="5.会话层"></a>5.会话层</h3><p>会话层在设备之间创建通信通道，称为会话。它负责打开会话，确保它们在传输数据时保持打开和功能，并在通信结束时关闭它们。会话层还可以在数据传输期间设置检查点——如果会话中断，设备可以从上一个检查点恢复数据传输。</p>
+<h3 id="4-传输层"><a href="#4-传输层" class="headerlink" title="4.传输层"></a>4.传输层</h3><p>传输层获取会话层中传输的数据，并在发送端将其分解为“段”。它负责在接收端重新组装段，将其转换回会话层可以使用的数据。传输层进行流量控制，以与接收设备的连接速度相匹配的速率发送数据，以及错误控制，检查数据是否接收错误，如果没有，则重新请求。</p>
+<h3 id="3-网络层"><a href="#3-网络层" class="headerlink" title="3.网络层"></a>3.网络层</h3><p>网络层有两个主要功能。一种是将分段分解为网络数据包，然后在接收端重新组装数据包。另一种是通过发现跨物理网络的最佳路径来路由数据包。网络层使用网络地址（通常是 Internet 协议地址）将数据包路由到目标节点。</p>
+<h3 id="2-数据链路层"><a href="#2-数据链路层" class="headerlink" title="2.数据链路层"></a>2.数据链路层</h3><p>数据链路层在网络上两个物理连接的节点之间建立和终止连接。它将数据包分解成帧并将它们从源发送到目标。该层由两部分组成——逻辑链路控制 (LLC)，它识别网络协议、执行错误检查和同步帧，以及媒体访问控制 (MAC)，它使用 MAC 地址连接设备并定义传输和接收数据的权限。</p>
+<h3 id="1-物理层"><a href="#1-物理层" class="headerlink" title="1.物理层"></a>1.物理层</h3><p>物理层负责网络节点之间的物理有线或无线连接。它定义了连接器、连接设备的电缆或无线技术，并负责传输原始数据，这只是一系列 0 和 1，同时负责比特率控制。<br>OSI模型的优点<br>OSI 模型帮助计算机网络的用户和运营商：<br>•	确定构建网络所需的硬件和软件。<br>•	了解并传达组件通过网络进行通信的过程。<br>•	通过确定导致问题的网络层并将工作重点放在该层来执行故障排除。<br>OSI 模型帮助网络设备制造商和网络软件供应商：<br>•	创建可以与任何其他供应商的产品进行通信的设备和软件，从而实现开放的互操作性<br>•	定义他们的产品应该使用的网络部分。<br>•	与用户沟通他们的产品在哪些网络层运行——例如，仅在应用层，或跨堆栈。</p>
+<h2 id="OSI-与-TCP-x2F-IP-模型"><a href="#OSI-与-TCP-x2F-IP-模型" class="headerlink" title="OSI 与 TCP&#x2F;IP 模型"></a>OSI 与 TCP&#x2F;IP 模型</h2><p><img src="https://pic3.zhimg.com/80/v2-c39270e61b82808e07c29a4f143199d2_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
+<p>传输控制协议&#x2F;互联网协议(TCP&#x2F;IP) 比 OSI 模型更早，由美国国防部 (DoD) 创建。模型之间的一个关键区别是 TCP&#x2F;IP 更简单，将几个 OSI 层合并为一个：</p>
+<p><img src="https://pic4.zhimg.com/80/v2-1127aaa36d2eff825865f1020568d18f_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
+<p>OSI 第 5、6、7 层在 TCP&#x2F;IP 中合并为一个应用层<br>OSI 第 1 层、第 2 层在 TCP&#x2F;IP 中合并为一个网络访问层 - 但是 TCP&#x2F;IP 不负责排序和确认功能，将这些留给底层传输层。<br>其他重要区别：<br>TCP&#x2F;IP 是一种功能模型，旨在解决特定的通信问题，它基于特定的标准协议。OSI 是一个通用的、独立于协议的模型，旨在描述所有形式的网络通信。<br>在 TCP&#x2F;IP 中，大多数应用程序使用所有层，而在 OSI 中简单应用程序不使用所有七层。只有第 1、2 和 3 层是必需的才能启用任何数据通信。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/PicWarehouse/img/%E9%A3%8E%E6%99%AF008.png" alt="TCP/IP与OSI对应关系"></p>
+]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>计算机网络</tag>
       </tags>
   </entry>
   <entry>

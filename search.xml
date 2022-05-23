@@ -1,80 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Linux 文本三剑客（2）sed命令的使用</title>
-    <url>/archives/ef07d954.html</url>
-    <content><![CDATA[<h1 id="sed引言"><a href="#sed引言" class="headerlink" title="sed引言"></a>sed引言</h1><p><strong>sed</strong>（意为流编辑器，源自英语“stream editor”的缩写）是一个使用简单紧凑的编程语言来解析和转换文本Unix实用程序。虽然在某些方面类似于允许脚本编辑的编辑器，但只需对输入进行一次传递即可工作，因此效率更高。但是，它能够过滤管道中的文本，这特别将其与其他类型的编辑器区分开来。</p>
-<p>sed由贝尔实验室的李·E·麦克马洪于1973年至1974年开发， 并且现在大多数操作系统都可以使用。 sed基于交互式编辑器ed（“editor”，1971）和早期qed（“quick editor”，1965-66）的脚本功能。sed是最早支持正则表达式的工具之一，至今仍然用于文本处理，特别是用于替换命令。用于纯文本字符串操作和“流编辑”的常用工具还有AWK和Perl 。</p>
-<h1 id="sed-工作原理"><a href="#sed-工作原理" class="headerlink" title="sed 工作原理"></a>sed 工作原理</h1><p><img src="https://pic4.zhimg.com/80/v2-ee5564a376f0655b18e9722b2e14baeb_720w.jpg"><br>sed 和 vi 不同，sed是行编辑器。</p>
-<p>sed是从文件或管道中读取一行，处理一行，输出一行；再读取一行，再处理一行，再输出一行，直到最后一行。每当处理一行时，把当前处理的行存储在临时缓冲区中，称为<strong>模式空间</strong>（Pattern Space），接着用sed命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送往屏幕。接着处理下一行，这样不断重复，直到文件末尾。一次处理一行的设计模式使得sed性能很高，sed在读取大文件时不会出现卡顿的现象。如果使用vi命令打开几十M上百M的文件，明显会出现有卡顿的现象，这是因为vi命令打开文件是一次性将文件加载到内存，然后再打开。Sed就避免了这种情况，一行一行的处理，打开速度非常快，执行速度也很快。</p>
-<h1 id="sed的作用"><a href="#sed的作用" class="headerlink" title="sed的作用"></a>sed的作用</h1><p>sed 是一款非常强大的程序，它能够针对文本流完成相当复杂的编辑任务。它最常用于简单的行任务，而不是长长的脚本。许多用户喜欢使用其它工具，来执行较大的工作。 在这些工具中最著名的是 awk 和 perl。</p>
-<p>sed 可依照脚本的指令来处理、编辑文本文件。</p>
-<p>sed 主要用来自动编辑一个或多个文件、简化对文件的反复操作、编写转换程序等。</p>
-<p>可以实现增删改查，取行、替换、查找等功能。</p>
-<h1 id="sed语法格式"><a href="#sed语法格式" class="headerlink" title="sed语法格式"></a>sed语法格式</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed [-hnV][-e&lt;script&gt;][-f&lt;script文件&gt;][文本文件]</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed OPTIONS... [SCRIPT] [INPUTFILE...]</span><br></pre></td></tr></table></figure>
-
-<h1 id="参数说明："><a href="#参数说明：" class="headerlink" title="参数说明："></a>参数说明：</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-e &lt;script&gt;或--expression=&lt;script&gt; 以选项中指定的script来处理输入的文本文件。</span><br><span class="line">-f &lt;script文件&gt;或--file=&lt;script文件&gt; 以选项中指定的script文件来处理输入的文本文件。</span><br></pre></td></tr></table></figure>
-<p>-h或–help 显示帮助。<br>-n或–quiet或–silent 仅显示script处理后的结果。<br>-V或–version 显示版本信息。  </p>
-<h1 id="动作说明："><a href="#动作说明：" class="headerlink" title="动作说明："></a>动作说明：</h1><p>a ：新增， a 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行)～<br>c ：取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行！<br>d ：删除，d 后面通常不接任何字串；<br>i ：插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；<br>p ：打印，亦即将某个选择的数据印出。通常 p 会与参数 sed -n 一起运行<br>s ：取代，查找替换,支持使用其它分隔符，可以是其它形式：s@@@，s### 替换修饰符<br>g ：行内全局替换</p>
-<h1 id="sed实例"><a href="#sed实例" class="headerlink" title="sed实例"></a>sed实例</h1><p>这里我将使用Ubuntu18.04进行效果演示。</p>
-<p>为了更好的探究 sed 程序，让我们创建一个包含以下数据的名为distros.txt文本文件：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Fedora         10       11/25/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">SUSE         10.3     10/04/2007</span><br><span class="line">Fedora         8        11/08/2007</span><br><span class="line">Ubuntu         6.10     10/26/2006</span><br><span class="line">Fedora         7        05/31/2007</span><br><span class="line">SUSE         11.0     06/19/2008</span><br><span class="line">Ubuntu         7.10     10/18/2007</span><br><span class="line">Ubuntu         7.04     04/19/2007</span><br><span class="line">Fedora         6        10/24/2006</span><br><span class="line">Fedora         9        05/13/2008</span><br><span class="line">Ubuntu         6.06     06/01/2006</span><br><span class="line">SUSE         10.2     12/07/2006</span><br><span class="line">Ubuntu         8.10     10/30/2008</span><br><span class="line">Fedora         5        03/20/2006</span><br><span class="line">SUSE         10.1     05/11/2006</span><br></pre></td></tr></table></figure>
-<h2 id="sed简单输出"><a href="#sed简单输出" class="headerlink" title="sed简单输出"></a>sed简单输出</h2><p>通过 distros.txt 文件，我们将演示sed的各种用法。</p>
-<p>首先，输出distros.txt文件的1-5行：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;1,5p&#x27;</span> distros.txt</span><br><span class="line">SUSE           10.2     12/07/2006</span><br><span class="line">Fedora         10       11/25/2008</span><br><span class="line">SUSE           11.0     06/19/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">Fedora         8        11/08/2007</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic2.zhimg.com/80/v2-b5e76901ff2f6e31815901d9e811cba9_720w.jpg"><br>在这个例子中，我们打印出一系列的文本行，开始于第一行，直到第五行。为此，我们使用 p 命令， 其就是简单地把匹配的文本行打印出来。然而为了高效，我们必须包含选项 -n（不自动打印选项）， 让 sed 不要默认地打印每一行。</p>
-<p>sed默认显示所有内容，所以不加-n的话，如下图所示，会把目标行和所有内容都显示出来。<br><img src="https://pic3.zhimg.com/80/v2-37f017cd0aa45565ffe51f1ae7a764ae_720w.jpg"></p>
-<h2 id="sed查询"><a href="#sed查询" class="headerlink" title="sed查询"></a>sed查询</h2><p>下一步，我们将试用一下正则表达式：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;/SUSE/p&#x27;</span> distros.txt</span><br><span class="line">SUSE         10.2     12/07/2006</span><br><span class="line">SUSE         11.0     06/19/2008</span><br><span class="line">SUSE         10.3     10/04/2007</span><br><span class="line">SUSE         10.1     05/11/2006</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic3.zhimg.com/80/v2-ff03bd19c7c885739849e0e349965cf6_720w.jpg"><br>通过包含由斜杠界定的正则表达式 ‘&#x2F;SUSE&#x2F;’，我们能够孤立出包含它的文本行，和 grep 程序的功能是相同的。</p>
-<p>试着否定上面的操作，通过给这个地址添加一个感叹号：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;/SUSE/!p&#x27;</span> distros.txt</span><br><span class="line">Fedora         10       11/25/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">Fedora         8        11/08/2007</span><br><span class="line">Ubuntu         6.10     10/26/2006</span><br><span class="line">Fedora         7        05/31/2007</span><br><span class="line">Ubuntu         7.10     10/18/2007</span><br><span class="line">Ubuntu         7.04     04/19/2007</span><br><span class="line">Fedora         6        10/24/2006</span><br><span class="line">Fedora         9        05/13/2008</span><br><span class="line">Ubuntu         6.06     06/01/2006</span><br><span class="line">Ubuntu         8.10     10/30/2008</span><br><span class="line">Fedora         5        03/20/2006</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic1.zhimg.com/80/v2-657275ae8e21f36a956078f047e42f34_720w.jpg"><br>这里我们看到期望的结果：输出了文件中所有的文本行，除了那些匹配这个正则表达式的文本行。</p>
-<p>目前为止，我们已经知道了两个 sed 的编辑命令，s 和 p。</p>
-<h2 id="sed编辑修改"><a href="#sed编辑修改" class="headerlink" title="sed编辑修改"></a>sed编辑修改</h2><p>到目前为止，这个 s 命令是最常使用的编辑命令。我们将仅仅演示一些它的功能，通过编辑我们的 distros.txt 文件。我们以前讨论过 distros.txt 文件中的日期字段不是“友好地计算机”模式。 文件中的日期格式是 MM&#x2F;DD&#x2F;YYYY，但如果格式是 YYYY-MM-DD 会更好一些（利于排序）。手动修改 日期格式不仅浪费时间而且易出错，但是有了 sed，只需一步就能完成修改：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed <span class="string">&#x27;s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/&#x27;</span> distros.txt</span><br><span class="line"></span><br><span class="line">SUSE           10.2     2006-12-07</span><br><span class="line">Fedora         10       2008-11-25</span><br><span class="line">SUSE           11.0     2008-06-19</span><br><span class="line">Ubuntu         8.04     2008-04-24</span><br><span class="line">Fedora         8        2007-11-08</span><br><span class="line">SUSE           10.3     2007-10-04</span><br><span class="line">Ubuntu         6.10     2006-10-26</span><br><span class="line">Fedora         7        2007-05-31</span><br><span class="line">Ubuntu         7.10     2007-10-18</span><br><span class="line">Ubuntu         7.04     2007-04-19</span><br><span class="line">SUSE           10.1     2006-05-11</span><br><span class="line">Fedora         6        2006-10-24</span><br><span class="line">Fedora         9        2008-05-13</span><br><span class="line">Ubuntu         6.06     2006-06-01</span><br><span class="line">Ubuntu         8.10     2008-10-30</span><br><span class="line">Fedora         5        2006-03-20</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic3.zhimg.com/80/v2-06814637d7798a93654cfcec1b2feaee_720w.jpg"><br>这个命令看起来很丑陋。但是它起作用了。仅用一步，我们就更改了文件中的日期格式。 它也是一个关于为什么有时候会开玩笑地把正则表达式称为是“只写”媒介的完美的例子。我们 能写正则表达式，但是有时候我们不能读它们。在我们恐惧地忍不住要逃离此命令之前，让我们看一下 怎样来构建它。首先，我们知道此命令有这样一个基本的结构：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed <span class="string">&#x27;s/regexp/replacement/&#x27;</span> distros.txt</span><br></pre></td></tr></table></figure>
-<p>我们下一步是要弄明白一个正则表达式将要孤立出日期。因为日期是 MM&#x2F;DD&#x2F;YYYY 格式，并且 出现在文本行的末尾，我们可以使用这样的表达式：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[0-9]&#123;2&#125;/[0-9]&#123;2&#125;/[0-9]&#123;4&#125;$</span><br></pre></td></tr></table></figure>
-<p>此表达式匹配两位数字，一个斜杠，两位数字，一个斜杠，四位数字，以及行尾。如此关心regexp， 那么replacement又怎样呢？为了解决此问题，我们必须介绍一个正则表达式的新功能，它出现 在一些使用 BRE 的应用程序中。这个功能叫做逆参照，像这样工作：如果序列\n出现在replacement中 ，这里 n 是指从 1 到 9 的数字，则这个序列指的是在前面正则表达式中相对应的子表达式。为了 创建这个子表达式，我们简单地把它们用圆括号括起来，像这样：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">([0-9]&#123;2&#125;)/([0-9]&#123;2&#125;)/([0-9]&#123;4&#125;)$</span><br></pre></td></tr></table></figure>
-<p>现在我们有了三个子表达式。第一个表达式包含月份，第二个包含某月中的某天，以及第三个包含年份。 现在我们就可以构建replacement，如下所示：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">\3-\1-\2</span><br></pre></td></tr></table></figure>
-<p>此表达式给出了年份，一个短划线，月份，一个短划线，和某天。</p>
-<p>现在我们的命令看起来像下面这样：</p>
-<p>sed ‘s&#x2F;([0-9]{2})&#x2F;([0-9]{2})&#x2F;([0-9]{4})$&#x2F;\3-\1-\2&#x2F;‘ distros.txt<br>我们还有两个问题。第一个是当 sed 试图解释这个 s 命令的时候在我们表达式中额外的斜杠将会使 sed 迷惑。 第二个是由于sed默认情况下只接受基本的正则表达式，在表达式中的几个字符会 被当作文字字面值，而不是元字符。我们能够通过反斜杠的自由应用来转义令人不快的字符解决这两个问题。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed <span class="string">&#x27;s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/&#x27;</span> distros.txt</span><br></pre></td></tr></table></figure>
-
-<h2 id="sed替换"><a href="#sed替换" class="headerlink" title="sed替换"></a>sed替换</h2><p>s 命令的另一个功能是使用可选标志，其跟随替代字符串。一个最重要的可选标志是 g 标志，其 指示 sed 对某个文本行全范围地执行查找和替代操作，不仅仅是对第一个实例，这是默认行为。 这里有个例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">echo</span> <span class="string">&quot;aaabbbccc&quot;</span> | sed <span class="string">&#x27;s/b/B/&#x27;</span></span><br><span class="line">aaaBbbccc</span><br></pre></td></tr></table></figure>
-<p>我们看到虽然执行了替换操作，但是只针对第一个字母 “b” 实例，然而剩余的实例没有更改。通过添加 g 标志， 我们能够更改所有的实例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">echo</span> <span class="string">&quot;aaabbbccc&quot;</span> | sed <span class="string">&#x27;s/b/B/g&#x27;</span></span><br><span class="line">aaaBBBccc</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://pic4.zhimg.com/80/v2-943f6225d54eb4c480aef90c6b82200f_720w.jpg"></p>
-<h2 id="sed脚本"><a href="#sed脚本" class="headerlink" title="sed脚本"></a>sed脚本</h2><p>目前为止，通过命令行我们只让 sed 执行单个命令。使用-f 选项，也有可能在一个脚本文件中构建更加复杂的命令。 为了演示，我们将使用 sed 和 distros.txt 文件来生成一个报告。我们的报告以开头标题，修改过的日期，以及 大写的发行版名称为特征。为此，我们需要编写一个脚本，所以我们将打开文本编辑器，然后输入以下文字：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># sed script to produce Linux distributions report</span></span><br><span class="line"></span><br><span class="line">1 i\</span><br><span class="line">\</span><br><span class="line">Linux Distributions Report\</span><br><span class="line"></span><br><span class="line">s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/</span><br><span class="line">y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/</span><br></pre></td></tr></table></figure>
-<p>我们将把 sed 脚本保存为 distros.sed 文件，然后像这样运行它：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -f distros.sed distros.txt</span><br><span class="line">Linux Distributions Report</span><br><span class="line">SUSE	10.2	2006-12-07</span><br><span class="line">FEDORA	10	    2008-11-25</span><br><span class="line">SUSE	11.0	2008-06-19</span><br><span class="line">UBUNTU	8.04	2008-04-24</span><br><span class="line">FEDORA	8	    2007-11-08</span><br><span class="line">SUSE	10.3	2007-10-04</span><br><span class="line">UBUNTU	6.10	2006-10-26</span><br><span class="line">FEDORA	7	    2007-05-31</span><br><span class="line">UBUNTU	7.10	2007-10-18</span><br><span class="line">UBUNTU	7.04	2007-04-19</span><br><span class="line">SUSE	10.1	2006-05-11</span><br><span class="line">FEDORA	6	    2006-10-24</span><br><span class="line">FEDORA	9	    2008-05-13</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic4.zhimg.com/80/v2-607a1decdae2246716fd6c082c9146a7_720w.jpg"><br>正如我们所见，我们的脚本文件产生了期望的结果，但是它是如何做到的呢？让我们再看一下我们的脚本文件。 我们将使用 cat 来给每行文本编号：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">cat</span> -n distros.sed</span><br><span class="line">1 <span class="comment"># sed script to produce Linux distributions report</span></span><br><span class="line">2</span><br><span class="line">3 1 i\</span><br><span class="line">4 \</span><br><span class="line">5 Linux Distributions Report\</span><br><span class="line">6</span><br><span class="line">7 s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/</span><br><span class="line">8 y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic2.zhimg.com/80/v2-0415afdc86a25eb61b3489e56db4fe01_720w.jpg"></p>
-<h3 id="脚本文件详解："><a href="#脚本文件详解：" class="headerlink" title="脚本文件详解："></a>脚本文件详解：</h3><p>我们脚本文件的<strong>第一行</strong>是一条注释。如同 Linux 系统中的许多配置文件和编程语言一样，注释以#字符开始， 然后是文本注释。注释可以被放到脚本中的任意地方（虽然不在命令本身之中），且对任何可能需要理解和／或维护脚本的人们都很有帮助。</p>
-<p><strong>第二行</strong>是一个空行。正如注释一样，添加空白行是为了提高程序的可读性。</p>
-<p>许多 sed 命令支持行地址。这些行地址被用来指定对输入文本的哪一行执行操作。行地址可能被 表示为单独的行号，行号范围，以及特殊的行号“$”，它表示输入文本的最后一行。</p>
-<p><strong>从第三行到第六行</strong>所包含地文本要被插入到地址 1 处，也就是输入文本的第一行中。这个 i 命令之后是反斜杠回车符，来产生一个转义的回车符，或者就是所谓的连行符。这个序列能够 被用在许多环境下，包括 shell 脚本，从而允许把回车符嵌入到文本流中，而没有通知解释器（在这是指 sed 解释器）已经到达了文本行的末尾。这个 i 命令，同样地，命令 a（追加文本， 而不是插入文本）和 c（取代文本）命令都允许多个文本行，只要每个文本行，除了最后一行，以一个 连行符结束。实际上，脚本的第六行是插入文本的末尾，它以一个普通的回车符结尾，而不是一个连行符，通知解释器 i 命令结束了。</p>
-<p>注意：一个连行符由一个反斜杠字符其后紧跟一个回车符组成。它们之间不允许有空白字符。</p>
-<p><strong>第七行</strong>是我们的查找和替代命令。因为命令之前没有添加地址，所以输入流中的每一行文本 都得服从它的操作。</p>
-<p><strong>第八行</strong>执行小写字母到大写字母的字符替换操作。注意不同于 tr 命令，这个 sed 中的 y 命令不 支持字符区域（例如，[a-z]），也不支持 POSIX 字符集。再说一次，因为 y 命令之前不带地址， 所以它会操作输入流的每一行。</p>
-<p>本文部分内容参考自《TLCL》。</p>
+    <title>GitHub 443 Timed out的解决方法</title>
+    <url>/archives/4dcde7a2.html</url>
+    <content><![CDATA[<h1 id="GitHub-443-Timed-out解决办法"><a href="#GitHub-443-Timed-out解决办法" class="headerlink" title="GitHub 443 Timed out解决办法"></a>GitHub 443 Timed out解决办法</h1><h2 id="Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out"><a href="#Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out" class="headerlink" title="Failed to connect to github.com port 443 after 21090 ms: Timed out"></a>Failed to connect to github.com port 443 after 21090 ms: Timed out</h2><p>最近尝试过很多方法都无法解决GitHub的上传问题，包括取消全局代理也无效。</p>
+<p>取消全局代理：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global --<span class="built_in">unset</span> http.proxy</span><br><span class="line">git config --global --<span class="built_in">unset</span> https.proxy</span><br></pre></td></tr></table></figure>
+<p>无奈之下只能选择修改hosts文件。</p>
+<p>登录以下三个网站获取对应的ip地址，写入hosts文件即可。</p>
+<p><a href="https://ipaddress.com/website/github.com">GitHub IP地址</a></p>
+<p><img src="https://pic3.zhimg.com/80/v2-7a0b82ecaa96fdc3efda9e4295ab1eee_720w.jpg" alt="GitHub IP地址"></p>
+<p><a href="https://ipaddress.com/website/github.global.ssl.fastly.net#ipinfo">github.global.ssl.Fastly.net IP地址</a></p>
+<p><img src="https://pic2.zhimg.com/80/v2-aed12d6e1e2bedebba9e1444bbdc83dd_720w.jpg" alt="github.global.ssl.Fastly.net IP地址"></p>
+<p><a href="https://ipaddress.com/website/assets-cdn.github.com">assets-cdn.Github.com IP地址</a></p>
+<p><img src="https://pic1.zhimg.com/80/v2-05f981b555f81338eb2bb15b5ebb5338_720w.jpg" alt="assets-cdn.Github.com IP地址"></p>
+<p>如下图所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">140.82.112.4 http://GitHub.com</span><br><span class="line"></span><br><span class="line">199.232.69.194 http://github.global.ssl.Fastly.net</span><br><span class="line"></span><br><span class="line">185.199.108.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.109.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.110.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.111.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>实测有效</p>
+<p><img src="https://pic3.zhimg.com/80/v2-8ed6c75a78b8c4418f8b802d5ae38a26_720w.jpg"></p>
+]]></content>
+      <tags>
+        <tag>GitHub</tag>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 文本三剑客（1）grep命令的使用</title>
+    <url>/archives/1894211f.html</url>
+    <content><![CDATA[<h1 id="三剑客特点及应用场景"><a href="#三剑客特点及应用场景" class="headerlink" title="三剑客特点及应用场景"></a>三剑客特点及应用场景</h1><p>awk、grep、sed是Linux操作文本的三大利器，合称文本三剑客，也是必须掌握的Linux命令之一。三者的功能都是处理文本，但侧重点各不相同，其中属awk功能最强大，但也最复杂。</p>
+<p>grep更适合单纯的查找或匹配文本；</p>
+<p>sed更适合编辑匹配到的文本；</p>
+<p>awk更适合格式化文本，对文本进行较复杂格式处理。<br><img src="https://pic3.zhimg.com/80/v2-bd401d9a5fbaab317b0a66399ef52306_720w.jpg"></p>
+<h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h1><p>正则表达式是一种符号表示法，被用来识别文本模式。</p>
+<p>在某种程度上，它们与匹配文件和路径名的 shell 通配符比较相似，但其规模更庞大。许多命令行工具和大多数的编程语言 都支持正则表达式，以此来帮助解决文本操作问题。</p>
+<p>正则表达式元字符由以下字符组成：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">^ $ . [ ] &#123; &#125; - ? * + ( ) | \</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/v2-dc157303632d607f7bfb58624abeae52_r.jpg"><br><img src="https://pic1.zhimg.com/v2-93f8991f3c04f7db08c2575a8aeede9c_r.jpg"></p>
+<h1 id="grep引言"><a href="#grep引言" class="headerlink" title="grep引言"></a>grep引言</h1><p><strong>grep</strong>是一个最初用于Unix操作系统的命令行工具。在给出文件列表或标准输入后，grep会对匹配一个或多个正则表达式的文本进行搜索，并只输出匹配（或者不匹配）的行或文本。</p>
+<p>grep这个应用程序最早由肯·汤普逊写成。grep原先是ed下的一个应用程序，名称来自于g&#x2F;re&#x2F;p（globally search a regular expression and print，以正则表达式进行全局查找以及打印）。在ed下，输入g&#x2F;re&#x2F;p这个命令后，会将所有符合先定义样式的字符串，以行为单位打印出来。</p>
+<p>在1973年，Unix第四版中，grep首次出现在man页面中。</p>
+<p>grep实用程序是一个家族，存在很多grep的修改版，例如agrep表示“近似的grep”approximate grep用于模糊字符串搜索，fgrep用于固定样式搜索fixed pattern searches，而egrep用于搜索更复杂的正则表达式语法。fgrep和egrep同grep基本上是一样的程序。Tcgrep是用Perl正则表达式语言重写的grep。</p>
+<p>所有grep的修改版都被应用到很多不同的操作系统中。</p>
+<h1 id="grep的作用"><a href="#grep的作用" class="headerlink" title="grep的作用"></a>grep的作用</h1><p>Linux grep 命令用于查找文件里符合条件的字符串。</p>
+<p>换句话说，grep 命令在给定文件中搜索包含与给定字符串或单词匹配的行。对于开发人员和系统管理员来说，它是 Linux 和类 Unix 系统上最有用的命令之一。</p>
+<p>grep 指令用于查找内容包含指定的范本样式的文件，如果发现某文件的内容符合所指定的范本样式，预设 grep 指令会把含有范本样式的那一列显示出来。若不指定任何文件名称，或是所给予的文件名为 -，则 grep 指令会从标准输入设备读取数据。</p>
+<h1 id="grep语法格式"><a href="#grep语法格式" class="headerlink" title="grep语法格式"></a>grep语法格式</h1><p>grep [-abcEFGhHilLnqrsvVwxy][-A&lt;显示行数&gt;][-B&lt;显示列数&gt;][-C&lt;显示列数&gt;][-d&lt;进行动作&gt;][-e&lt;范本样式&gt;][-f&lt;范本文件&gt;][–help][范本样式][文件或目录…]</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">grep [OPTIONS] PATTERN [FILE...]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="常见选项"><a href="#常见选项" class="headerlink" title="常见选项"></a>常见选项</h1><p>–color&#x3D;auto 对匹配到的文本着色显示</p>
+<p>-m # 匹配#次后停止</p>
+<p>-v 显示不被pattern匹配到的行</p>
+<p>-i 忽略字符大小写</p>
+<p>-n 显示匹配的行号</p>
+<p>-c 统计匹配的行数</p>
+<p>-o 仅显示匹配到的字符串</p>
+<p>-q 静默模式，不输出任何信息</p>
+<p>-A # after, 后#行</p>
+<p>-B # before, 前#行</p>
+<p>-C # context, 前后各#行</p>
+<p>-e 实现多个选项间的逻辑or关系,如：grep –e ‘cat ’ -e ‘dog’ file</p>
+<p>-w 匹配整个单词</p>
+<p>-E 使用ERE，相当于egrep</p>
+<p>-F 不支持正则表达式，相当于fgrep</p>
+<p>-f file 根据模式文件处理</p>
+<p>-r 递归目录，但不处理软链接</p>
+<p>-R 递归目录，但处理软链接</p>
+<p>-l 打印包含匹配项的文件名，而不是文本行本身，也可用–files-with-matches 选项来指定</p>
+<p>-L 相似于-l 选项，但是只是打印不包含匹配项的文件名。也可用–files-without-match 来指定。</p>
+<p>-h 应用于多文件搜索，不输出文件名。也可用–no-filename 选项来指定。</p>
+<h1 id="grep实例"><a href="#grep实例" class="headerlink" title="grep实例"></a>grep实例</h1><p>这里我将使用Ubuntu18.04进行效果演示。</p>
+<h2 id="简单搜索和-l-L的使用"><a href="#简单搜索和-l-L的使用" class="headerlink" title="简单搜索和-l,-L的使用"></a>简单搜索和-l,-L的使用</h2><p>为了更好的探究 grep 程序，让我们创建一些文本文件来搜寻：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /bin &gt; dirlist-bin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /usr/bin &gt; dirlist-usr-bin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /sbin &gt; dirlist-sbin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /usr/sbin &gt; dirlist-usr-sbin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> dirlist*.txt</span><br><span class="line">dirlist-bin.txt     dirlist-sbin.txt    dirlist-usr-sbin.txt</span><br><span class="line">dirlist-usr-bin.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-e59933bab98469fb3de636c6614813f2_720w.jpg"><br>够对我们的文件列表执行简单的搜索，像这样：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep bzip dirlist*.txt</span><br><span class="line">dirlist-bin.txt:bzip2</span><br><span class="line">dirlist-bin.txt:bzip2recover</span><br></pre></td></tr></table></figure>
+<p>在这个例子里，grep 程序在所有列出的文件中搜索字符串 bzip，然后找到两个匹配项，其都在文件dirlist-bin.txt 中。如果我们只是对包含匹配项的文件列表，而不是对匹配项本身感兴趣的话，可以指定-l 选项：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -l bzip dirlist*.txt</span><br><span class="line">dirlist-bin.txt</span><br></pre></td></tr></table></figure>
+<p>相反地，如果我们只想查看不包含匹配项的文件列表，我们可以这样操作：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -L bzip dirlist*.txt</span><br><span class="line">dirlist-sbin.txt</span><br><span class="line">dirlist-usr-bin.txt</span><br><span class="line">dirlist-usr-sbin.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-221f5f6d8b575379938f509c82e1ab86_720w.jpg"></p>
+<h2 id="任何字符"><a href="#任何字符" class="headerlink" title="任何字符"></a>任何字符</h2><p>我们将要查看的第一个元字符是圆点字符，其被用来匹配任意字符。如果我们在正则表达式中包含它， 它将会匹配在此位置的任意一个字符。这里有个例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;.zip&#x27;</span> dirlist*.txt</span><br><span class="line">bunzip2</span><br><span class="line">bzip2</span><br><span class="line">bzip2recover</span><br><span class="line">gunzip</span><br><span class="line">gzip</span><br><span class="line">funzip</span><br><span class="line">gpg-zip</span><br><span class="line">preunzip</span><br><span class="line">prezip</span><br><span class="line">prezip-bin</span><br><span class="line">unzip</span><br><span class="line">unzipsfx</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic1.zhimg.com/80/v2-73c837c9727ac4f5a04d9cc5a327c5f4_720w.jpg"><br>我们在文件中查找包含正则表达式“.zip”的文本行。对于搜索结果，有几点需要注意一下。 注意没有找到这个 zip 程序。这是因为在我们的正则表达式中包含的圆点字符把所要求的匹配项的长度增加到四个字符，并且字符串“zip”只包含三个字符，所以这个 zip 程序不匹配。另外，如果我们的文件列表 中有一些文件的扩展名是.zip，则它们也会成为匹配项，因为文件扩展名中的圆点符号也会被看作是 “任意字符”。</p>
+<h2 id="锚点"><a href="#锚点" class="headerlink" title="锚点"></a>锚点</h2><p>在正则表达式中，插入符号和美元符号被看作是锚点。这意味着正则表达式 只有在文本行的开头或末尾被找到时，才算发生一次匹配。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^zip&#x27;</span> dirlist*.txt</span><br><span class="line">zip</span><br><span class="line">zipcloak</span><br><span class="line">zipgrep</span><br><span class="line">zipinfo</span><br><span class="line">zipnote</span><br><span class="line">zipsplit</span><br><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;zip$&#x27;</span> dirlist*.txt</span><br><span class="line">gunzip</span><br><span class="line">gzip</span><br><span class="line">funzip</span><br><span class="line">gpg-zip</span><br><span class="line">preunzip</span><br><span class="line">prezip</span><br><span class="line">unzip</span><br><span class="line">zip</span><br><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^zip$&#x27;</span> dirlist*.txt</span><br><span class="line">zip</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-a52d45fcc04272f07ed47e93ddc46fe6_720w.jpg"><br>这里我们分别在文件列表中搜索行首，行尾以及行首和行尾同时包含字符串“zip”（例如，zip 独占一行）的匹配行。 注意正则表达式‘^$’（行首和行尾之间没有字符）会匹配空行。</p>
+<h2 id="中括号表达式和字符类"><a href="#中括号表达式和字符类" class="headerlink" title="中括号表达式和字符类"></a>中括号表达式和字符类</h2><p>除了能够在正则表达式中的给定位置匹配任意字符之外，通过使用中括号表达式， 我们也能够从一个指定的字符集合中匹配一个单个的字符。通过中括号表达式，我们能够指定 一个字符集合（包含在不加中括号的情况下会被解释为元字符的字符）来被匹配。在这个例子里，使用了一个两个字符的集合：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;[bg]zip&#x27;</span> dirlist*.txt</span><br><span class="line">bzip2</span><br><span class="line">bzip2recover</span><br><span class="line">gzip</span><br></pre></td></tr></table></figure>
+<p>我们匹配包含字符串“bzip”或者“gzip”的任意行。</p>
+<p>一个字符集合可能包含任意多个字符，并且元字符被放置到中括号里面后会失去了它们的特殊含义。 然而，在两种情况下，会在中括号表达式中使用元字符，并且有着不同的含义。第一个元字符 是插入字符，其被用来表示否定；第二个是连字符字符，其被用来表示一个字符区域。</p>
+<h2 id="否定"><a href="#否定" class="headerlink" title="否定"></a>否定</h2><p>如果在正则表示式中的第一个字符是一个插入字符，则剩余的字符被看作是不会在给定的字符位置出现的 字符集合。通过修改之前的例子，我们试验一下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;[^bg]zip&#x27;</span> dirlist*.txt</span><br><span class="line">bunzip2</span><br><span class="line">gunzip</span><br><span class="line">funzip</span><br><span class="line">gpg-zip</span><br><span class="line">preunzip</span><br><span class="line">prezip</span><br><span class="line">prezip-bin</span><br><span class="line">unzip</span><br><span class="line">unzipsfx</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-9668f6f36ee06645cdaa4a8360bff4db_720w.jpg"><br>通过激活否定操作，我们得到一个文件列表，它们的文件名都包含字符串“zip”，并且“zip”的前一个字符 是除了“b”和“g”之外的任意字符。注意文件 zip 没有被发现。一个否定的字符集仍然在给定位置要求一个字符， 但是这个字符必须不是否定字符集的成员。</p>
+<p>这个插入字符如果是中括号表达式中的第一个字符的时候，才会唤醒否定功能；否则，它会失去 它的特殊含义，变成字符集中的一个普通字符。</p>
+<p>通过激活否定操作，我们得到一个文件列表，它们的文件名都包含字符串“zip”，并且“zip”的前一个字符 是除了“b”和“g”之外的任意字符。注意文件 zip 没有被发现。一个否定的字符集仍然在给定位置要求一个字符， 但是这个字符必须不是否定字符集的成员。</p>
+<p>这个插入字符如果是中括号表达式中的第一个字符的时候，才会唤醒否定功能；否则，它会失去它的特殊含义，变成字符集中的一个普通字符。</p>
+<h2 id="传统的字符区域"><a href="#传统的字符区域" class="headerlink" title="传统的字符区域"></a>传统的字符区域</h2><p>如果我们想要构建一个正则表达式，它可以在我们的列表中找到每个以大写字母开头的文件，我们可以这样做：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^[ABCDEFGHIJKLMNOPQRSTUVWXZY]&#x27;</span> dirlist*.txt</span><br></pre></td></tr></table></figure>
+<p>这只是一个在正则表达式中输入26个大写字母的问题。但是输入所有字母无疑是非常繁琐且效率低下的，所以有另外一种方式：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^[A-Z]&#x27;</span> dirlist*.txt</span><br><span class="line">MAKEDEV</span><br><span class="line">ControlPanel</span><br><span class="line">GET</span><br><span class="line">HEAD</span><br><span class="line">POST</span><br><span class="line">X</span><br><span class="line">X11</span><br><span class="line">Xorg</span><br><span class="line">MAKEFLOPPIES</span><br><span class="line">NetworkManager</span><br><span class="line">NetworkManagerDispatcher</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic1.zhimg.com/80/v2-a17b774773e9877036b6d8e3fd5c4b70_720w.jpg"><br>通过使用一个三字符区域，我们能够缩写26个字母。任意字符的区域都能按照这种方式表达，包括多个区域，</p>
+<p>比如下面这个表达式就匹配了所有以字母和数字开头的文件名：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^[A-Za-z0-9]&#x27;</span> dirlist*.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-5c992da6b6d03bf5d75719a3adc1da37_720w.jpg"><br>在字符区域中，我们看到这个连字符被特殊对待，所以我们怎样在一个正则表达式中包含一个连字符呢？</p>
+<p>方法就是使连字符成为表达式中的第一个字符。考虑一下这两个例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;[A-Z]&#x27;</span> dirlist*.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-d13a74c027775e94e2b44e6d5fcf802a_720w.jpg"><br>这会匹配包含一个大写字母的文件名。然而：</p>
+<p>[me@linuxbox ~]$ grep -h ‘[-AZ]’ dirlist*.txt<br>上面的表达式会匹配包含一个连字符，或一个大写字母“A”，或一个大写字母“Z”的文件名。<br><img src="https://pic3.zhimg.com/80/v2-4bb4ad1611e7f1248eb32f4dcd1cf3a2_720w.jpg"><br>本文部分内容参考自《TLCL》。</p>
 ]]></content>
       <categories>
         <category>Linux学习笔记</category>
       </categories>
       <tags>
         <tag>Linux</tag>
-        <tag>sed</tag>
+        <tag>grep</tag>
         <tag>文本编辑器</tag>
       </tags>
   </entry>
@@ -156,69 +193,82 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux下的fork和exec函数</title>
-    <url>/archives/90acc1af.html</url>
-    <content><![CDATA[<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>多线程程序设计的概念早在六十年代就被提出，但直到八十年代中期，Unix系统中才引入多线程机制，如今，由于自身的许多优点，多线程编程已经得到了广泛的应用。</p>
-<p>fork函数是Unix系统最杰出的成就之一，它是七十年代UNIX早期的开发者经过长期在理论和实践上的艰苦探索后取得的成果，一方面，它使操作系统在进程管理上付出了最小的代价，另一方面，又为程序员提供了一个简洁明了的多进程方法。</p>
-<h1 id="Linux下进程的结构"><a href="#Linux下进程的结构" class="headerlink" title="Linux下进程的结构"></a>Linux下进程的结构</h1><p>Linux下一个进程在内存里有三部分的数据，就是”代码段”、”堆栈段”和”数据段”。其实学过汇编语言的人一定知道，一般的CPU都有上述三种段寄存器，以方便操作系统的运行。这三个部分也是构成一个完整的执行序列的必要的部分。</p>
-<p>“代码段”，顾名思义，就是存放了程序代码的数据，假如机器中有数个进程运行相同的一个程序，那么它们就可以使用相同的代码段。”堆栈段”存放的就是子程序的返回地址、子程序的参数以及程序的局部变量。而数据段则存放程序的全局变量，常数以及动态数据分配的数据空间（比如用malloc之类的函数取得的空间）。这其中有许多细节问题，这里限于篇幅就不多介绍了。系统如果同时运行数个相同的程序，它们之间就不能使用同一个堆栈段和数据段。　　</p>
-<h1 id="Linux下的进程控制"><a href="#Linux下的进程控制" class="headerlink" title="Linux下的进程控制"></a>Linux下的进程控制</h1><p><img src="https://pic4.zhimg.com/80/v2-eacfccfbb95739f120d80f78582b332f_720w.jpg"><br>在传统的Unix环境下，有两个基本的操作用于创建和修改进程：</p>
-<p>函数fork( )用来创建一个新的进程，该进程几乎是当前进程的一个完全拷贝；</p>
-<p>函数族exec( )用来启动另外的进程以取代当前运行的进程。</p>
-<p>Linux的进程控制和传统的Unix进程控制基本一致，只在一些细节的地方有些区别，例如在Linux系统中调用vfork和fork完全相同，而在有些版本的Unix系统中，vfork调用有不同的功能。</p>
-<p>fork函数（包括有些系统可能提供的它的各种变体）是Unix中派生新进程的唯一方法。fork函数也是编写并发服务器程序的基础之一。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta"># fork函数</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line">include &lt;unistd.h&gt;</span><br><span class="line"><span class="type">pid_t</span> <span class="title function_">fork</span><span class="params">(<span class="type">void</span>)</span> ;<span class="comment">// 返回:在子进程中为o，在父进程中为子进程ID，若出错则为-1</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://pic4.zhimg.com/80/v2-1fe39319fb80fc6891b8ee5522614f6b_720w.jpg"><br>fork在英文中是”分叉”的意思。为什么取这个名字呢？因为一个进程在运行中，如果使用了fork，就产生了另一个进程，于是进程就”分叉”了，所以这个名字取得很形象。</p>
-<h2 id="fork的返回值"><a href="#fork的返回值" class="headerlink" title="fork的返回值"></a>fork的返回值</h2><p>如果你以前从未接触过该函数，那么理解fork最困难之处在于调用它一次，它却返回两次。它在调用进程（称为父进程）中返回一次，返回值是新派生进程（称为子进程）的进程ID号，在子进程又返回一次，返回值为0。</p>
-<p>因此，返回值本身告知当前进程是子进程还是父进程。</p>
-<p>fork在子进程返回0，而不是父进程的进程ID的原因在于：任何子进程只有一个父进程，而且子进程总是可以通过调用getpid取得父进程的进程ID。相反，父进程可以有许多子进程，而且无法获取各个子进程的进程ID。如果父进程想要跟踪所有子进程的进程ID，那么它必须记录每次调用fork的返回值。</p>
-<p>父进程中调用fork之前打开的所有描述符在fork返回之后由子进程分享。我们将看到网络服务器利用了这个特性:父进程调用accept之后调用fork。所接受的已连接套接字随后就在父进程与子进程之间共享。通常情况下，子进程接着读写这个己连接套接字，父进程则关闭这个已连接套接字。</p>
-<h2 id="fork的两个典型用法"><a href="#fork的两个典型用法" class="headerlink" title="fork的两个典型用法"></a>fork的两个典型用法</h2><p>(1) 一个进程创建一个自身的副本,这样每个副本都可以在另一个副本执行其他任务的同时处理各自的某个操作。这是网络服务器的典型用法。</p>
-<p>(2) 一个进程想要执行另一个程序。既然创建新进程的唯一办法是调用fork，该进程于是首先调用fork创建一个自身的副本，然后其中一个副本（通常为子进程）调用exec把自身替换成新的程序。这是诸如shell之类程序的典型用法。</p>
-<h2 id="用法例外"><a href="#用法例外" class="headerlink" title="用法例外"></a>用法例外</h2><p>fork() 通过复制调用进程来创建一个新进程，新进程称为子进程，是调用进程（称为父进程）的完全副本，但以下情况除外：</p>
-<p>1.子进程有自己唯一的进程 ID，并且这个 PID 不匹配任何现有进程组的 ID。</p>
-<p>2.子进程的父进程 ID 与父进程 ID 相同。</p>
-<p>3.子进程不会继承其父进程的内存锁和信号量调整。</p>
-<p>4.子代不会从其父代继承未完成的异步 I&#x2F;O 操作，也不会从其父代继承任何异步 I&#x2F;O 上下文。</p>
-<h1 id="exec-函数族"><a href="#exec-函数族" class="headerlink" title="exec( )函数族"></a>exec( )函数族</h1><p>下面我们来看看一个进程如何来启动另一个程序的执行。</p>
-<p>在Linux中要使用exec函数族。</p>
-<h2 id="exec-函数族的作用"><a href="#exec-函数族的作用" class="headerlink" title="exec( )函数族的作用"></a>exec( )函数族的作用</h2><p><img src="https://pic1.zhimg.com/80/v2-e31f805cf04b4d3973aa080f9e2bce68_720w.jpg"><br>exec把当前进程映像替换成新的程序文件，而且该新程序通常从main函数开始执行。进程ID并不改变。我们称调用exec的进程为调用进程(calling process)，称新执行的程序为新程序(new program)。</p>
-<h2 id="6个exec函数族"><a href="#6个exec函数族" class="headerlink" title="6个exec函数族"></a>6个exec函数族</h2><p>系统调用execve（）对当前进程进行替换，替换者为一个指定的程序，其参数包括文件名（filename）、参数列表（argv）以及环境变量（envp）。exec函数族当然不止一个，但它们大致相同，在 Linux中，它们分别是：execl，execlp，execle，execv，execve和execvp。</p>
-<h2 id="6个exec函数之间的区别"><a href="#6个exec函数之间的区别" class="headerlink" title="6个exec函数之间的区别:"></a>6个exec函数之间的区别:</h2><p>(a）待执行的程序文件是由文件名(filename）还是由路径名（pathname）指定;</p>
-<p>(b）新程序的参数是一一列出还是由一个指针数组来引用;</p>
-<p>(c）把调用进程的环境传递给新程序还是给新程序指定新的环境。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">execl</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">const</span> <span class="type">char</span> *arg0， ... <span class="comment">/* (char *) 0*/</span> )</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execv</span> <span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">char</span> *<span class="type">const</span> *argv[ ] )</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execle</span> <span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">const</span> <span class="type">char</span> *arg0, ...</span></span><br><span class="line"><span class="params"><span class="comment">/*( char * ) 0, char *const envp [ ] */</span>)</span> ;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execve</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">char</span> *<span class="type">const</span> argv[],<span class="type">char</span> *<span class="type">const</span> envp [])</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execlp</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *filename，<span class="type">const</span> <span class="type">char</span> *arg0，... <span class="comment">/* (char *) 0*/</span> )</span>;</span><br><span class="line"><span class="type">int</span>. execvp(<span class="type">const</span> <span class="type">char</span> *filename,<span class="type">char</span> *<span class="type">const</span> argv[] );</span><br><span class="line"><span class="comment">//均返回:若成功则不返回，若出错则为-1</span></span><br></pre></td></tr></table></figure>
+    <title>Linux 文本三剑客（2）sed命令的使用</title>
+    <url>/archives/ef07d954.html</url>
+    <content><![CDATA[<h1 id="sed引言"><a href="#sed引言" class="headerlink" title="sed引言"></a>sed引言</h1><p><strong>sed</strong>（意为流编辑器，源自英语“stream editor”的缩写）是一个使用简单紧凑的编程语言来解析和转换文本Unix实用程序。虽然在某些方面类似于允许脚本编辑的编辑器，但只需对输入进行一次传递即可工作，因此效率更高。但是，它能够过滤管道中的文本，这特别将其与其他类型的编辑器区分开来。</p>
+<p>sed由贝尔实验室的李·E·麦克马洪于1973年至1974年开发， 并且现在大多数操作系统都可以使用。 sed基于交互式编辑器ed（“editor”，1971）和早期qed（“quick editor”，1965-66）的脚本功能。sed是最早支持正则表达式的工具之一，至今仍然用于文本处理，特别是用于替换命令。用于纯文本字符串操作和“流编辑”的常用工具还有AWK和Perl 。</p>
+<h1 id="sed-工作原理"><a href="#sed-工作原理" class="headerlink" title="sed 工作原理"></a>sed 工作原理</h1><p><img src="https://pic4.zhimg.com/80/v2-ee5564a376f0655b18e9722b2e14baeb_720w.jpg"><br>sed 和 vi 不同，sed是行编辑器。</p>
+<p>sed是从文件或管道中读取一行，处理一行，输出一行；再读取一行，再处理一行，再输出一行，直到最后一行。每当处理一行时，把当前处理的行存储在临时缓冲区中，称为<strong>模式空间</strong>（Pattern Space），接着用sed命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送往屏幕。接着处理下一行，这样不断重复，直到文件末尾。一次处理一行的设计模式使得sed性能很高，sed在读取大文件时不会出现卡顿的现象。如果使用vi命令打开几十M上百M的文件，明显会出现有卡顿的现象，这是因为vi命令打开文件是一次性将文件加载到内存，然后再打开。Sed就避免了这种情况，一行一行的处理，打开速度非常快，执行速度也很快。</p>
+<h1 id="sed的作用"><a href="#sed的作用" class="headerlink" title="sed的作用"></a>sed的作用</h1><p>sed 是一款非常强大的程序，它能够针对文本流完成相当复杂的编辑任务。它最常用于简单的行任务，而不是长长的脚本。许多用户喜欢使用其它工具，来执行较大的工作。 在这些工具中最著名的是 awk 和 perl。</p>
+<p>sed 可依照脚本的指令来处理、编辑文本文件。</p>
+<p>sed 主要用来自动编辑一个或多个文件、简化对文件的反复操作、编写转换程序等。</p>
+<p>可以实现增删改查，取行、替换、查找等功能。</p>
+<h1 id="sed语法格式"><a href="#sed语法格式" class="headerlink" title="sed语法格式"></a>sed语法格式</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed [-hnV][-e&lt;script&gt;][-f&lt;script文件&gt;][文本文件]</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed OPTIONS... [SCRIPT] [INPUTFILE...]</span><br></pre></td></tr></table></figure>
 
-<p>这些函数只在出错时才返回到调用者。否则，控制将被传递给新程序的起始点，通常就是main函数。</p>
-<p>这6个函数间的关系如图4-12所示。一般来说，只有execve是内核中的系统调用，其他5个都是调用execve的库函数。<br><img src="https://pic2.zhimg.com/80/v2-14fd9241c4671aa8c057c7c3e33da765_720w.jpg"><br>(1) 上面那行的3个函数把新程序的每个参数字符串指定成exec的一个独立参数，并以一个空指针结束可变数量的这些参数。下面那行的3个函数都有一个作为exec参数的argv数组，其中含有指向新程序各个参数字符串的所有指针。既然没有指定参数字符串的数目，这个argv数组必须含有一个用于指定其末尾的空指针。</p>
-<p>(2) 左列2个函数指定一个filename参数。exec将使用当前的PATH环境变量把该文件名参数转换为一个路径名。然而一旦这2个函数的filename参数中含有一个斜杠（&#x2F;)，就不再使用PATH环境变量。右两列4个函数指定一个全限定的pathname参数。</p>
-<p>(3) 左两列4个函数不显式指定一个环境指针。相反，它们使用外部变量environ的当前值来构造一个传递给新程序的环境列表。右列2个函数显式指定一个环境列表，其envp指针数组必须以一个空指针结束。</p>
-<p>进程在调用exec之前打开着的描述符通常跨exec继续保持打开。我们使用限定词“通常”是因为本默认行为可以使用fcntl设置FD_CLOEXEc描述符标志禁止掉。inetd服务器就利用了这个特性。</p>
-<h1 id="fork和exec代码示例："><a href="#fork和exec代码示例：" class="headerlink" title="fork和exec代码示例："></a>fork和exec代码示例：</h1><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//C程序来说明fork（）的用法&amp;</span></span><br><span class="line"><span class="comment">//exec（）系统调用以创建进程</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line"><span class="type">pid_t</span> pid;</span><br><span class="line"><span class="type">int</span> ret = <span class="number">1</span>;</span><br><span class="line"><span class="type">int</span> status;</span><br><span class="line">pid = fork();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (pid == <span class="number">-1</span>)&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// pid == -1 表示发生了错误</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;can&#x27;t fork, error occured\n&quot;</span>);</span><br><span class="line">	<span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>)&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// pid == 0 表示创建了子进程</span></span><br><span class="line">	<span class="comment">// getpid() 返回调用进程的进程id</span></span><br><span class="line">	<span class="comment">// 返回子进程的进程id</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;child process, pid = %u\n&quot;</span>,getpid());</span><br><span class="line">	<span class="comment">// 返回子进程的父进程，即父进程本身</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;parent of child process, pid = %u\n&quot;</span>,getppid());</span><br><span class="line"></span><br><span class="line">	<span class="comment">// argv list第一个参数应该指向</span></span><br><span class="line">	<span class="comment">// 与正在执行的文件关联的文件名</span></span><br><span class="line">	<span class="comment">// 数组指针必须以NULL结尾</span></span><br><span class="line">	<span class="comment">// 指针</span></span><br><span class="line">	<span class="type">char</span> * argv_list[] = &#123;<span class="string">&quot;ls&quot;</span>,<span class="string">&quot;-lart&quot;</span>,<span class="string">&quot;/home&quot;</span>,<span class="literal">NULL</span>&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// execv（）仅在发生错误时返回。</span></span><br><span class="line">	<span class="comment">// 返回值为-1</span></span><br><span class="line">	execv(<span class="string">&quot;ls&quot;</span>,argv_list);</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">	<span class="comment">// 为pid返回一个正数</span></span><br><span class="line">	<span class="comment">// 父进程</span></span><br><span class="line">	<span class="comment">// getppid（）返回进程的父进程id</span></span><br><span class="line">	<span class="comment">// 调用进程</span></span><br><span class="line">        <span class="comment">// 返回父进程ID的父进程</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Parent Of parent process, pid = %u\n&quot;</span>,getppid());</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;parent process, pid = %u\n&quot;</span>,getpid());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">		<span class="comment">// 父进程对子进程调用waitpid（）</span></span><br><span class="line">		<span class="comment">// waitpid（）系统调用暂停</span></span><br><span class="line">		<span class="comment">// 调用进程直到pid指定的子进程</span></span><br><span class="line">		<span class="comment">// 状态改变</span></span><br><span class="line">		<span class="comment">// 有关所有标志或选项，请参见wait（）手册</span></span><br><span class="line">		<span class="keyword">if</span> (waitpid(pid, &amp;status, <span class="number">0</span>) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">if</span> (WIFEXITED(status) &amp;&amp; !WEXITSTATUS(status))</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;program execution successful\n&quot;</span>);</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (WIFEXITED(status) &amp;&amp; WEXITSTATUS(status)) &#123;</span><br><span class="line">				<span class="keyword">if</span> (WEXITSTATUS(status) == <span class="number">127</span>) &#123;</span><br><span class="line"></span><br><span class="line">					<span class="comment">// execv failed</span></span><br><span class="line">					<span class="built_in">printf</span>(<span class="string">&quot;execv failed\n&quot;</span>);</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">					<span class="built_in">printf</span>(<span class="string">&quot;program terminated normally,&quot;</span></span><br><span class="line">					<span class="string">&quot; but returned a non-zero status\n&quot;</span>);			</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;program didn&#x27;t terminate normally\n&quot;</span>);		</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// waitpid() failed</span></span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;waitpid() failed\n&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>本文部分内容参考自《UNIX网络编程卷1套接字联网API》。</p>
+<h1 id="参数说明："><a href="#参数说明：" class="headerlink" title="参数说明："></a>参数说明：</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-e &lt;script&gt;或--expression=&lt;script&gt; 以选项中指定的script来处理输入的文本文件。</span><br><span class="line">-f &lt;script文件&gt;或--file=&lt;script文件&gt; 以选项中指定的script文件来处理输入的文本文件。</span><br></pre></td></tr></table></figure>
+<p>-h或–help 显示帮助。<br>-n或–quiet或–silent 仅显示script处理后的结果。<br>-V或–version 显示版本信息。  </p>
+<h1 id="动作说明："><a href="#动作说明：" class="headerlink" title="动作说明："></a>动作说明：</h1><p>a ：新增， a 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行)～<br>c ：取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行！<br>d ：删除，d 后面通常不接任何字串；<br>i ：插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；<br>p ：打印，亦即将某个选择的数据印出。通常 p 会与参数 sed -n 一起运行<br>s ：取代，查找替换,支持使用其它分隔符，可以是其它形式：s@@@，s### 替换修饰符<br>g ：行内全局替换</p>
+<h1 id="sed实例"><a href="#sed实例" class="headerlink" title="sed实例"></a>sed实例</h1><p>这里我将使用Ubuntu18.04进行效果演示。</p>
+<p>为了更好的探究 sed 程序，让我们创建一个包含以下数据的名为distros.txt文本文件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Fedora         10       11/25/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">SUSE         10.3     10/04/2007</span><br><span class="line">Fedora         8        11/08/2007</span><br><span class="line">Ubuntu         6.10     10/26/2006</span><br><span class="line">Fedora         7        05/31/2007</span><br><span class="line">SUSE         11.0     06/19/2008</span><br><span class="line">Ubuntu         7.10     10/18/2007</span><br><span class="line">Ubuntu         7.04     04/19/2007</span><br><span class="line">Fedora         6        10/24/2006</span><br><span class="line">Fedora         9        05/13/2008</span><br><span class="line">Ubuntu         6.06     06/01/2006</span><br><span class="line">SUSE         10.2     12/07/2006</span><br><span class="line">Ubuntu         8.10     10/30/2008</span><br><span class="line">Fedora         5        03/20/2006</span><br><span class="line">SUSE         10.1     05/11/2006</span><br></pre></td></tr></table></figure>
+<h2 id="sed简单输出"><a href="#sed简单输出" class="headerlink" title="sed简单输出"></a>sed简单输出</h2><p>通过 distros.txt 文件，我们将演示sed的各种用法。</p>
+<p>首先，输出distros.txt文件的1-5行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;1,5p&#x27;</span> distros.txt</span><br><span class="line">SUSE           10.2     12/07/2006</span><br><span class="line">Fedora         10       11/25/2008</span><br><span class="line">SUSE           11.0     06/19/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">Fedora         8        11/08/2007</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic2.zhimg.com/80/v2-b5e76901ff2f6e31815901d9e811cba9_720w.jpg"><br>在这个例子中，我们打印出一系列的文本行，开始于第一行，直到第五行。为此，我们使用 p 命令， 其就是简单地把匹配的文本行打印出来。然而为了高效，我们必须包含选项 -n（不自动打印选项）， 让 sed 不要默认地打印每一行。</p>
+<p>sed默认显示所有内容，所以不加-n的话，如下图所示，会把目标行和所有内容都显示出来。<br><img src="https://pic3.zhimg.com/80/v2-37f017cd0aa45565ffe51f1ae7a764ae_720w.jpg"></p>
+<h2 id="sed查询"><a href="#sed查询" class="headerlink" title="sed查询"></a>sed查询</h2><p>下一步，我们将试用一下正则表达式：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;/SUSE/p&#x27;</span> distros.txt</span><br><span class="line">SUSE         10.2     12/07/2006</span><br><span class="line">SUSE         11.0     06/19/2008</span><br><span class="line">SUSE         10.3     10/04/2007</span><br><span class="line">SUSE         10.1     05/11/2006</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-ff03bd19c7c885739849e0e349965cf6_720w.jpg"><br>通过包含由斜杠界定的正则表达式 ‘&#x2F;SUSE&#x2F;’，我们能够孤立出包含它的文本行，和 grep 程序的功能是相同的。</p>
+<p>试着否定上面的操作，通过给这个地址添加一个感叹号：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;/SUSE/!p&#x27;</span> distros.txt</span><br><span class="line">Fedora         10       11/25/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">Fedora         8        11/08/2007</span><br><span class="line">Ubuntu         6.10     10/26/2006</span><br><span class="line">Fedora         7        05/31/2007</span><br><span class="line">Ubuntu         7.10     10/18/2007</span><br><span class="line">Ubuntu         7.04     04/19/2007</span><br><span class="line">Fedora         6        10/24/2006</span><br><span class="line">Fedora         9        05/13/2008</span><br><span class="line">Ubuntu         6.06     06/01/2006</span><br><span class="line">Ubuntu         8.10     10/30/2008</span><br><span class="line">Fedora         5        03/20/2006</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic1.zhimg.com/80/v2-657275ae8e21f36a956078f047e42f34_720w.jpg"><br>这里我们看到期望的结果：输出了文件中所有的文本行，除了那些匹配这个正则表达式的文本行。</p>
+<p>目前为止，我们已经知道了两个 sed 的编辑命令，s 和 p。</p>
+<h2 id="sed编辑修改"><a href="#sed编辑修改" class="headerlink" title="sed编辑修改"></a>sed编辑修改</h2><p>到目前为止，这个 s 命令是最常使用的编辑命令。我们将仅仅演示一些它的功能，通过编辑我们的 distros.txt 文件。我们以前讨论过 distros.txt 文件中的日期字段不是“友好地计算机”模式。 文件中的日期格式是 MM&#x2F;DD&#x2F;YYYY，但如果格式是 YYYY-MM-DD 会更好一些（利于排序）。手动修改 日期格式不仅浪费时间而且易出错，但是有了 sed，只需一步就能完成修改：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed <span class="string">&#x27;s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/&#x27;</span> distros.txt</span><br><span class="line"></span><br><span class="line">SUSE           10.2     2006-12-07</span><br><span class="line">Fedora         10       2008-11-25</span><br><span class="line">SUSE           11.0     2008-06-19</span><br><span class="line">Ubuntu         8.04     2008-04-24</span><br><span class="line">Fedora         8        2007-11-08</span><br><span class="line">SUSE           10.3     2007-10-04</span><br><span class="line">Ubuntu         6.10     2006-10-26</span><br><span class="line">Fedora         7        2007-05-31</span><br><span class="line">Ubuntu         7.10     2007-10-18</span><br><span class="line">Ubuntu         7.04     2007-04-19</span><br><span class="line">SUSE           10.1     2006-05-11</span><br><span class="line">Fedora         6        2006-10-24</span><br><span class="line">Fedora         9        2008-05-13</span><br><span class="line">Ubuntu         6.06     2006-06-01</span><br><span class="line">Ubuntu         8.10     2008-10-30</span><br><span class="line">Fedora         5        2006-03-20</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-06814637d7798a93654cfcec1b2feaee_720w.jpg"><br>这个命令看起来很丑陋。但是它起作用了。仅用一步，我们就更改了文件中的日期格式。 它也是一个关于为什么有时候会开玩笑地把正则表达式称为是“只写”媒介的完美的例子。我们 能写正则表达式，但是有时候我们不能读它们。在我们恐惧地忍不住要逃离此命令之前，让我们看一下 怎样来构建它。首先，我们知道此命令有这样一个基本的结构：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed <span class="string">&#x27;s/regexp/replacement/&#x27;</span> distros.txt</span><br></pre></td></tr></table></figure>
+<p>我们下一步是要弄明白一个正则表达式将要孤立出日期。因为日期是 MM&#x2F;DD&#x2F;YYYY 格式，并且 出现在文本行的末尾，我们可以使用这样的表达式：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[0-9]&#123;2&#125;/[0-9]&#123;2&#125;/[0-9]&#123;4&#125;$</span><br></pre></td></tr></table></figure>
+<p>此表达式匹配两位数字，一个斜杠，两位数字，一个斜杠，四位数字，以及行尾。如此关心regexp， 那么replacement又怎样呢？为了解决此问题，我们必须介绍一个正则表达式的新功能，它出现 在一些使用 BRE 的应用程序中。这个功能叫做逆参照，像这样工作：如果序列\n出现在replacement中 ，这里 n 是指从 1 到 9 的数字，则这个序列指的是在前面正则表达式中相对应的子表达式。为了 创建这个子表达式，我们简单地把它们用圆括号括起来，像这样：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">([0-9]&#123;2&#125;)/([0-9]&#123;2&#125;)/([0-9]&#123;4&#125;)$</span><br></pre></td></tr></table></figure>
+<p>现在我们有了三个子表达式。第一个表达式包含月份，第二个包含某月中的某天，以及第三个包含年份。 现在我们就可以构建replacement，如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">\3-\1-\2</span><br></pre></td></tr></table></figure>
+<p>此表达式给出了年份，一个短划线，月份，一个短划线，和某天。</p>
+<p>现在我们的命令看起来像下面这样：</p>
+<p>sed ‘s&#x2F;([0-9]{2})&#x2F;([0-9]{2})&#x2F;([0-9]{4})$&#x2F;\3-\1-\2&#x2F;‘ distros.txt<br>我们还有两个问题。第一个是当 sed 试图解释这个 s 命令的时候在我们表达式中额外的斜杠将会使 sed 迷惑。 第二个是由于sed默认情况下只接受基本的正则表达式，在表达式中的几个字符会 被当作文字字面值，而不是元字符。我们能够通过反斜杠的自由应用来转义令人不快的字符解决这两个问题。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed <span class="string">&#x27;s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/&#x27;</span> distros.txt</span><br></pre></td></tr></table></figure>
+
+<h2 id="sed替换"><a href="#sed替换" class="headerlink" title="sed替换"></a>sed替换</h2><p>s 命令的另一个功能是使用可选标志，其跟随替代字符串。一个最重要的可选标志是 g 标志，其 指示 sed 对某个文本行全范围地执行查找和替代操作，不仅仅是对第一个实例，这是默认行为。 这里有个例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">echo</span> <span class="string">&quot;aaabbbccc&quot;</span> | sed <span class="string">&#x27;s/b/B/&#x27;</span></span><br><span class="line">aaaBbbccc</span><br></pre></td></tr></table></figure>
+<p>我们看到虽然执行了替换操作，但是只针对第一个字母 “b” 实例，然而剩余的实例没有更改。通过添加 g 标志， 我们能够更改所有的实例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">echo</span> <span class="string">&quot;aaabbbccc&quot;</span> | sed <span class="string">&#x27;s/b/B/g&#x27;</span></span><br><span class="line">aaaBBBccc</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic4.zhimg.com/80/v2-943f6225d54eb4c480aef90c6b82200f_720w.jpg"></p>
+<h2 id="sed脚本"><a href="#sed脚本" class="headerlink" title="sed脚本"></a>sed脚本</h2><p>目前为止，通过命令行我们只让 sed 执行单个命令。使用-f 选项，也有可能在一个脚本文件中构建更加复杂的命令。 为了演示，我们将使用 sed 和 distros.txt 文件来生成一个报告。我们的报告以开头标题，修改过的日期，以及 大写的发行版名称为特征。为此，我们需要编写一个脚本，所以我们将打开文本编辑器，然后输入以下文字：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># sed script to produce Linux distributions report</span></span><br><span class="line"></span><br><span class="line">1 i\</span><br><span class="line">\</span><br><span class="line">Linux Distributions Report\</span><br><span class="line"></span><br><span class="line">s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/</span><br><span class="line">y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/</span><br></pre></td></tr></table></figure>
+<p>我们将把 sed 脚本保存为 distros.sed 文件，然后像这样运行它：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -f distros.sed distros.txt</span><br><span class="line">Linux Distributions Report</span><br><span class="line">SUSE	10.2	2006-12-07</span><br><span class="line">FEDORA	10	    2008-11-25</span><br><span class="line">SUSE	11.0	2008-06-19</span><br><span class="line">UBUNTU	8.04	2008-04-24</span><br><span class="line">FEDORA	8	    2007-11-08</span><br><span class="line">SUSE	10.3	2007-10-04</span><br><span class="line">UBUNTU	6.10	2006-10-26</span><br><span class="line">FEDORA	7	    2007-05-31</span><br><span class="line">UBUNTU	7.10	2007-10-18</span><br><span class="line">UBUNTU	7.04	2007-04-19</span><br><span class="line">SUSE	10.1	2006-05-11</span><br><span class="line">FEDORA	6	    2006-10-24</span><br><span class="line">FEDORA	9	    2008-05-13</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-607a1decdae2246716fd6c082c9146a7_720w.jpg"><br>正如我们所见，我们的脚本文件产生了期望的结果，但是它是如何做到的呢？让我们再看一下我们的脚本文件。 我们将使用 cat 来给每行文本编号：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">cat</span> -n distros.sed</span><br><span class="line">1 <span class="comment"># sed script to produce Linux distributions report</span></span><br><span class="line">2</span><br><span class="line">3 1 i\</span><br><span class="line">4 \</span><br><span class="line">5 Linux Distributions Report\</span><br><span class="line">6</span><br><span class="line">7 s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/</span><br><span class="line">8 y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic2.zhimg.com/80/v2-0415afdc86a25eb61b3489e56db4fe01_720w.jpg"></p>
+<h3 id="脚本文件详解："><a href="#脚本文件详解：" class="headerlink" title="脚本文件详解："></a>脚本文件详解：</h3><p>我们脚本文件的<strong>第一行</strong>是一条注释。如同 Linux 系统中的许多配置文件和编程语言一样，注释以#字符开始， 然后是文本注释。注释可以被放到脚本中的任意地方（虽然不在命令本身之中），且对任何可能需要理解和／或维护脚本的人们都很有帮助。</p>
+<p><strong>第二行</strong>是一个空行。正如注释一样，添加空白行是为了提高程序的可读性。</p>
+<p>许多 sed 命令支持行地址。这些行地址被用来指定对输入文本的哪一行执行操作。行地址可能被 表示为单独的行号，行号范围，以及特殊的行号“$”，它表示输入文本的最后一行。</p>
+<p><strong>从第三行到第六行</strong>所包含地文本要被插入到地址 1 处，也就是输入文本的第一行中。这个 i 命令之后是反斜杠回车符，来产生一个转义的回车符，或者就是所谓的连行符。这个序列能够 被用在许多环境下，包括 shell 脚本，从而允许把回车符嵌入到文本流中，而没有通知解释器（在这是指 sed 解释器）已经到达了文本行的末尾。这个 i 命令，同样地，命令 a（追加文本， 而不是插入文本）和 c（取代文本）命令都允许多个文本行，只要每个文本行，除了最后一行，以一个 连行符结束。实际上，脚本的第六行是插入文本的末尾，它以一个普通的回车符结尾，而不是一个连行符，通知解释器 i 命令结束了。</p>
+<p>注意：一个连行符由一个反斜杠字符其后紧跟一个回车符组成。它们之间不允许有空白字符。</p>
+<p><strong>第七行</strong>是我们的查找和替代命令。因为命令之前没有添加地址，所以输入流中的每一行文本 都得服从它的操作。</p>
+<p><strong>第八行</strong>执行小写字母到大写字母的字符替换操作。注意不同于 tr 命令，这个 sed 中的 y 命令不 支持字符区域（例如，[a-z]），也不支持 POSIX 字符集。再说一次，因为 y 命令之前不带地址， 所以它会操作输入流的每一行。</p>
+<p>本文部分内容参考自《TLCL》。</p>
 ]]></content>
+      <categories>
+        <category>Linux学习笔记</category>
+      </categories>
       <tags>
         <tag>Linux</tag>
-        <tag>进程</tag>
+        <tag>文本编辑器</tag>
+        <tag>sed</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Hello World</title>
-    <url>/archives/4a17b156.html</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
   </entry>
   <entry>
     <title>单片机和嵌入式系统的区别</title>
@@ -278,30 +328,6 @@
         <tag>Linux</tag>
         <tag>嵌入式</tag>
         <tag>单片机</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>GitHub 443 Timed out的解决方法</title>
-    <url>/archives/4dcde7a2.html</url>
-    <content><![CDATA[<h1 id="GitHub-443-Timed-out解决办法"><a href="#GitHub-443-Timed-out解决办法" class="headerlink" title="GitHub 443 Timed out解决办法"></a>GitHub 443 Timed out解决办法</h1><h2 id="Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out"><a href="#Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out" class="headerlink" title="Failed to connect to github.com port 443 after 21090 ms: Timed out"></a>Failed to connect to github.com port 443 after 21090 ms: Timed out</h2><p>最近尝试过很多方法都无法解决GitHub的上传问题，包括取消全局代理也无效。</p>
-<p>取消全局代理：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global --<span class="built_in">unset</span> http.proxy</span><br><span class="line">git config --global --<span class="built_in">unset</span> https.proxy</span><br></pre></td></tr></table></figure>
-<p>无奈之下只能选择修改hosts文件。</p>
-<p>登录以下三个网站获取对应的ip地址，写入hosts文件即可。</p>
-<p><a href="https://ipaddress.com/website/github.com">GitHub IP地址</a></p>
-<p><img src="https://pic3.zhimg.com/80/v2-7a0b82ecaa96fdc3efda9e4295ab1eee_720w.jpg" alt="GitHub IP地址"></p>
-<p><a href="https://ipaddress.com/website/github.global.ssl.fastly.net#ipinfo">github.global.ssl.Fastly.net IP地址</a></p>
-<p><img src="https://pic2.zhimg.com/80/v2-aed12d6e1e2bedebba9e1444bbdc83dd_720w.jpg" alt="github.global.ssl.Fastly.net IP地址"></p>
-<p><a href="https://ipaddress.com/website/assets-cdn.github.com">assets-cdn.Github.com IP地址</a></p>
-<p><img src="https://pic1.zhimg.com/80/v2-05f981b555f81338eb2bb15b5ebb5338_720w.jpg" alt="assets-cdn.Github.com IP地址"></p>
-<p>如下图所示：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">140.82.112.4 http://GitHub.com</span><br><span class="line"></span><br><span class="line">199.232.69.194 http://github.global.ssl.Fastly.net</span><br><span class="line"></span><br><span class="line">185.199.108.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.109.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.110.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.111.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>实测有效</p>
-<p><img src="https://pic3.zhimg.com/80/v2-8ed6c75a78b8c4418f8b802d5ae38a26_720w.jpg"></p>
-]]></content>
-      <tags>
-        <tag>GitHub</tag>
-        <tag>Git</tag>
       </tags>
   </entry>
   <entry>
@@ -515,6 +541,71 @@
       </tags>
   </entry>
   <entry>
+    <title>Hello World</title>
+    <url>/archives/4a17b156.html</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Linux下的fork和exec函数</title>
+    <url>/archives/90acc1af.html</url>
+    <content><![CDATA[<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>多线程程序设计的概念早在六十年代就被提出，但直到八十年代中期，Unix系统中才引入多线程机制，如今，由于自身的许多优点，多线程编程已经得到了广泛的应用。</p>
+<p>fork函数是Unix系统最杰出的成就之一，它是七十年代UNIX早期的开发者经过长期在理论和实践上的艰苦探索后取得的成果，一方面，它使操作系统在进程管理上付出了最小的代价，另一方面，又为程序员提供了一个简洁明了的多进程方法。</p>
+<h1 id="Linux下进程的结构"><a href="#Linux下进程的结构" class="headerlink" title="Linux下进程的结构"></a>Linux下进程的结构</h1><p>Linux下一个进程在内存里有三部分的数据，就是”代码段”、”堆栈段”和”数据段”。其实学过汇编语言的人一定知道，一般的CPU都有上述三种段寄存器，以方便操作系统的运行。这三个部分也是构成一个完整的执行序列的必要的部分。</p>
+<p>“代码段”，顾名思义，就是存放了程序代码的数据，假如机器中有数个进程运行相同的一个程序，那么它们就可以使用相同的代码段。”堆栈段”存放的就是子程序的返回地址、子程序的参数以及程序的局部变量。而数据段则存放程序的全局变量，常数以及动态数据分配的数据空间（比如用malloc之类的函数取得的空间）。这其中有许多细节问题，这里限于篇幅就不多介绍了。系统如果同时运行数个相同的程序，它们之间就不能使用同一个堆栈段和数据段。　　</p>
+<h1 id="Linux下的进程控制"><a href="#Linux下的进程控制" class="headerlink" title="Linux下的进程控制"></a>Linux下的进程控制</h1><p><img src="https://pic4.zhimg.com/80/v2-eacfccfbb95739f120d80f78582b332f_720w.jpg"><br>在传统的Unix环境下，有两个基本的操作用于创建和修改进程：</p>
+<p>函数fork( )用来创建一个新的进程，该进程几乎是当前进程的一个完全拷贝；</p>
+<p>函数族exec( )用来启动另外的进程以取代当前运行的进程。</p>
+<p>Linux的进程控制和传统的Unix进程控制基本一致，只在一些细节的地方有些区别，例如在Linux系统中调用vfork和fork完全相同，而在有些版本的Unix系统中，vfork调用有不同的功能。</p>
+<p>fork函数（包括有些系统可能提供的它的各种变体）是Unix中派生新进程的唯一方法。fork函数也是编写并发服务器程序的基础之一。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta"># fork函数</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line">include &lt;unistd.h&gt;</span><br><span class="line"><span class="type">pid_t</span> <span class="title function_">fork</span><span class="params">(<span class="type">void</span>)</span> ;<span class="comment">// 返回:在子进程中为o，在父进程中为子进程ID，若出错则为-1</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-1fe39319fb80fc6891b8ee5522614f6b_720w.jpg"><br>fork在英文中是”分叉”的意思。为什么取这个名字呢？因为一个进程在运行中，如果使用了fork，就产生了另一个进程，于是进程就”分叉”了，所以这个名字取得很形象。</p>
+<h2 id="fork的返回值"><a href="#fork的返回值" class="headerlink" title="fork的返回值"></a>fork的返回值</h2><p>如果你以前从未接触过该函数，那么理解fork最困难之处在于调用它一次，它却返回两次。它在调用进程（称为父进程）中返回一次，返回值是新派生进程（称为子进程）的进程ID号，在子进程又返回一次，返回值为0。</p>
+<p>因此，返回值本身告知当前进程是子进程还是父进程。</p>
+<p>fork在子进程返回0，而不是父进程的进程ID的原因在于：任何子进程只有一个父进程，而且子进程总是可以通过调用getpid取得父进程的进程ID。相反，父进程可以有许多子进程，而且无法获取各个子进程的进程ID。如果父进程想要跟踪所有子进程的进程ID，那么它必须记录每次调用fork的返回值。</p>
+<p>父进程中调用fork之前打开的所有描述符在fork返回之后由子进程分享。我们将看到网络服务器利用了这个特性:父进程调用accept之后调用fork。所接受的已连接套接字随后就在父进程与子进程之间共享。通常情况下，子进程接着读写这个己连接套接字，父进程则关闭这个已连接套接字。</p>
+<h2 id="fork的两个典型用法"><a href="#fork的两个典型用法" class="headerlink" title="fork的两个典型用法"></a>fork的两个典型用法</h2><p>(1) 一个进程创建一个自身的副本,这样每个副本都可以在另一个副本执行其他任务的同时处理各自的某个操作。这是网络服务器的典型用法。</p>
+<p>(2) 一个进程想要执行另一个程序。既然创建新进程的唯一办法是调用fork，该进程于是首先调用fork创建一个自身的副本，然后其中一个副本（通常为子进程）调用exec把自身替换成新的程序。这是诸如shell之类程序的典型用法。</p>
+<h2 id="用法例外"><a href="#用法例外" class="headerlink" title="用法例外"></a>用法例外</h2><p>fork() 通过复制调用进程来创建一个新进程，新进程称为子进程，是调用进程（称为父进程）的完全副本，但以下情况除外：</p>
+<p>1.子进程有自己唯一的进程 ID，并且这个 PID 不匹配任何现有进程组的 ID。</p>
+<p>2.子进程的父进程 ID 与父进程 ID 相同。</p>
+<p>3.子进程不会继承其父进程的内存锁和信号量调整。</p>
+<p>4.子代不会从其父代继承未完成的异步 I&#x2F;O 操作，也不会从其父代继承任何异步 I&#x2F;O 上下文。</p>
+<h1 id="exec-函数族"><a href="#exec-函数族" class="headerlink" title="exec( )函数族"></a>exec( )函数族</h1><p>下面我们来看看一个进程如何来启动另一个程序的执行。</p>
+<p>在Linux中要使用exec函数族。</p>
+<h2 id="exec-函数族的作用"><a href="#exec-函数族的作用" class="headerlink" title="exec( )函数族的作用"></a>exec( )函数族的作用</h2><p><img src="https://pic1.zhimg.com/80/v2-e31f805cf04b4d3973aa080f9e2bce68_720w.jpg"><br>exec把当前进程映像替换成新的程序文件，而且该新程序通常从main函数开始执行。进程ID并不改变。我们称调用exec的进程为调用进程(calling process)，称新执行的程序为新程序(new program)。</p>
+<h2 id="6个exec函数族"><a href="#6个exec函数族" class="headerlink" title="6个exec函数族"></a>6个exec函数族</h2><p>系统调用execve（）对当前进程进行替换，替换者为一个指定的程序，其参数包括文件名（filename）、参数列表（argv）以及环境变量（envp）。exec函数族当然不止一个，但它们大致相同，在 Linux中，它们分别是：execl，execlp，execle，execv，execve和execvp。</p>
+<h2 id="6个exec函数之间的区别"><a href="#6个exec函数之间的区别" class="headerlink" title="6个exec函数之间的区别:"></a>6个exec函数之间的区别:</h2><p>(a）待执行的程序文件是由文件名(filename）还是由路径名（pathname）指定;</p>
+<p>(b）新程序的参数是一一列出还是由一个指针数组来引用;</p>
+<p>(c）把调用进程的环境传递给新程序还是给新程序指定新的环境。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">execl</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">const</span> <span class="type">char</span> *arg0， ... <span class="comment">/* (char *) 0*/</span> )</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execv</span> <span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">char</span> *<span class="type">const</span> *argv[ ] )</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execle</span> <span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">const</span> <span class="type">char</span> *arg0, ...</span></span><br><span class="line"><span class="params"><span class="comment">/*( char * ) 0, char *const envp [ ] */</span>)</span> ;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execve</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">char</span> *<span class="type">const</span> argv[],<span class="type">char</span> *<span class="type">const</span> envp [])</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execlp</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *filename，<span class="type">const</span> <span class="type">char</span> *arg0，... <span class="comment">/* (char *) 0*/</span> )</span>;</span><br><span class="line"><span class="type">int</span>. execvp(<span class="type">const</span> <span class="type">char</span> *filename,<span class="type">char</span> *<span class="type">const</span> argv[] );</span><br><span class="line"><span class="comment">//均返回:若成功则不返回，若出错则为-1</span></span><br></pre></td></tr></table></figure>
+
+<p>这些函数只在出错时才返回到调用者。否则，控制将被传递给新程序的起始点，通常就是main函数。</p>
+<p>这6个函数间的关系如图4-12所示。一般来说，只有execve是内核中的系统调用，其他5个都是调用execve的库函数。<br><img src="https://pic2.zhimg.com/80/v2-14fd9241c4671aa8c057c7c3e33da765_720w.jpg"><br>(1) 上面那行的3个函数把新程序的每个参数字符串指定成exec的一个独立参数，并以一个空指针结束可变数量的这些参数。下面那行的3个函数都有一个作为exec参数的argv数组，其中含有指向新程序各个参数字符串的所有指针。既然没有指定参数字符串的数目，这个argv数组必须含有一个用于指定其末尾的空指针。</p>
+<p>(2) 左列2个函数指定一个filename参数。exec将使用当前的PATH环境变量把该文件名参数转换为一个路径名。然而一旦这2个函数的filename参数中含有一个斜杠（&#x2F;)，就不再使用PATH环境变量。右两列4个函数指定一个全限定的pathname参数。</p>
+<p>(3) 左两列4个函数不显式指定一个环境指针。相反，它们使用外部变量environ的当前值来构造一个传递给新程序的环境列表。右列2个函数显式指定一个环境列表，其envp指针数组必须以一个空指针结束。</p>
+<p>进程在调用exec之前打开着的描述符通常跨exec继续保持打开。我们使用限定词“通常”是因为本默认行为可以使用fcntl设置FD_CLOEXEc描述符标志禁止掉。inetd服务器就利用了这个特性。</p>
+<h1 id="fork和exec代码示例："><a href="#fork和exec代码示例：" class="headerlink" title="fork和exec代码示例："></a>fork和exec代码示例：</h1><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//C程序来说明fork（）的用法&amp;</span></span><br><span class="line"><span class="comment">//exec（）系统调用以创建进程</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line"><span class="type">pid_t</span> pid;</span><br><span class="line"><span class="type">int</span> ret = <span class="number">1</span>;</span><br><span class="line"><span class="type">int</span> status;</span><br><span class="line">pid = fork();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (pid == <span class="number">-1</span>)&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// pid == -1 表示发生了错误</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;can&#x27;t fork, error occured\n&quot;</span>);</span><br><span class="line">	<span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>)&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// pid == 0 表示创建了子进程</span></span><br><span class="line">	<span class="comment">// getpid() 返回调用进程的进程id</span></span><br><span class="line">	<span class="comment">// 返回子进程的进程id</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;child process, pid = %u\n&quot;</span>,getpid());</span><br><span class="line">	<span class="comment">// 返回子进程的父进程，即父进程本身</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;parent of child process, pid = %u\n&quot;</span>,getppid());</span><br><span class="line"></span><br><span class="line">	<span class="comment">// argv list第一个参数应该指向</span></span><br><span class="line">	<span class="comment">// 与正在执行的文件关联的文件名</span></span><br><span class="line">	<span class="comment">// 数组指针必须以NULL结尾</span></span><br><span class="line">	<span class="comment">// 指针</span></span><br><span class="line">	<span class="type">char</span> * argv_list[] = &#123;<span class="string">&quot;ls&quot;</span>,<span class="string">&quot;-lart&quot;</span>,<span class="string">&quot;/home&quot;</span>,<span class="literal">NULL</span>&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// execv（）仅在发生错误时返回。</span></span><br><span class="line">	<span class="comment">// 返回值为-1</span></span><br><span class="line">	execv(<span class="string">&quot;ls&quot;</span>,argv_list);</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">	<span class="comment">// 为pid返回一个正数</span></span><br><span class="line">	<span class="comment">// 父进程</span></span><br><span class="line">	<span class="comment">// getppid（）返回进程的父进程id</span></span><br><span class="line">	<span class="comment">// 调用进程</span></span><br><span class="line">        <span class="comment">// 返回父进程ID的父进程</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Parent Of parent process, pid = %u\n&quot;</span>,getppid());</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;parent process, pid = %u\n&quot;</span>,getpid());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">		<span class="comment">// 父进程对子进程调用waitpid（）</span></span><br><span class="line">		<span class="comment">// waitpid（）系统调用暂停</span></span><br><span class="line">		<span class="comment">// 调用进程直到pid指定的子进程</span></span><br><span class="line">		<span class="comment">// 状态改变</span></span><br><span class="line">		<span class="comment">// 有关所有标志或选项，请参见wait（）手册</span></span><br><span class="line">		<span class="keyword">if</span> (waitpid(pid, &amp;status, <span class="number">0</span>) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">if</span> (WIFEXITED(status) &amp;&amp; !WEXITSTATUS(status))</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;program execution successful\n&quot;</span>);</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (WIFEXITED(status) &amp;&amp; WEXITSTATUS(status)) &#123;</span><br><span class="line">				<span class="keyword">if</span> (WEXITSTATUS(status) == <span class="number">127</span>) &#123;</span><br><span class="line"></span><br><span class="line">					<span class="comment">// execv failed</span></span><br><span class="line">					<span class="built_in">printf</span>(<span class="string">&quot;execv failed\n&quot;</span>);</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">					<span class="built_in">printf</span>(<span class="string">&quot;program terminated normally,&quot;</span></span><br><span class="line">					<span class="string">&quot; but returned a non-zero status\n&quot;</span>);			</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;program didn&#x27;t terminate normally\n&quot;</span>);		</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// waitpid() failed</span></span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;waitpid() failed\n&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本文部分内容参考自《UNIX网络编程卷1套接字联网API》。</p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+        <tag>进程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>树莓派系统烧录教程</title>
     <url>/archives/6a0755b3.html</url>
     <content><![CDATA[<p>树莓派的系统烧录大体上可分为使用</p>
@@ -535,97 +626,6 @@
 ]]></content>
       <tags>
         <tag>树莓派</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 文本三剑客（1）grep命令的使用</title>
-    <url>/archives/1894211f.html</url>
-    <content><![CDATA[<h1 id="三剑客特点及应用场景"><a href="#三剑客特点及应用场景" class="headerlink" title="三剑客特点及应用场景"></a>三剑客特点及应用场景</h1><p>awk、grep、sed是Linux操作文本的三大利器，合称文本三剑客，也是必须掌握的Linux命令之一。三者的功能都是处理文本，但侧重点各不相同，其中属awk功能最强大，但也最复杂。</p>
-<p>grep更适合单纯的查找或匹配文本；</p>
-<p>sed更适合编辑匹配到的文本；</p>
-<p>awk更适合格式化文本，对文本进行较复杂格式处理。<br><img src="https://pic3.zhimg.com/80/v2-bd401d9a5fbaab317b0a66399ef52306_720w.jpg"></p>
-<h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h1><p>正则表达式是一种符号表示法，被用来识别文本模式。</p>
-<p>在某种程度上，它们与匹配文件和路径名的 shell 通配符比较相似，但其规模更庞大。许多命令行工具和大多数的编程语言 都支持正则表达式，以此来帮助解决文本操作问题。</p>
-<p>正则表达式元字符由以下字符组成：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">^ $ . [ ] &#123; &#125; - ? * + ( ) | \</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic3.zhimg.com/v2-dc157303632d607f7bfb58624abeae52_r.jpg"><br><img src="https://pic1.zhimg.com/v2-93f8991f3c04f7db08c2575a8aeede9c_r.jpg"></p>
-<h1 id="grep引言"><a href="#grep引言" class="headerlink" title="grep引言"></a>grep引言</h1><p><strong>grep</strong>是一个最初用于Unix操作系统的命令行工具。在给出文件列表或标准输入后，grep会对匹配一个或多个正则表达式的文本进行搜索，并只输出匹配（或者不匹配）的行或文本。</p>
-<p>grep这个应用程序最早由肯·汤普逊写成。grep原先是ed下的一个应用程序，名称来自于g&#x2F;re&#x2F;p（globally search a regular expression and print，以正则表达式进行全局查找以及打印）。在ed下，输入g&#x2F;re&#x2F;p这个命令后，会将所有符合先定义样式的字符串，以行为单位打印出来。</p>
-<p>在1973年，Unix第四版中，grep首次出现在man页面中。</p>
-<p>grep实用程序是一个家族，存在很多grep的修改版，例如agrep表示“近似的grep”approximate grep用于模糊字符串搜索，fgrep用于固定样式搜索fixed pattern searches，而egrep用于搜索更复杂的正则表达式语法。fgrep和egrep同grep基本上是一样的程序。Tcgrep是用Perl正则表达式语言重写的grep。</p>
-<p>所有grep的修改版都被应用到很多不同的操作系统中。</p>
-<h1 id="grep的作用"><a href="#grep的作用" class="headerlink" title="grep的作用"></a>grep的作用</h1><p>Linux grep 命令用于查找文件里符合条件的字符串。</p>
-<p>换句话说，grep 命令在给定文件中搜索包含与给定字符串或单词匹配的行。对于开发人员和系统管理员来说，它是 Linux 和类 Unix 系统上最有用的命令之一。</p>
-<p>grep 指令用于查找内容包含指定的范本样式的文件，如果发现某文件的内容符合所指定的范本样式，预设 grep 指令会把含有范本样式的那一列显示出来。若不指定任何文件名称，或是所给予的文件名为 -，则 grep 指令会从标准输入设备读取数据。</p>
-<h1 id="grep语法格式"><a href="#grep语法格式" class="headerlink" title="grep语法格式"></a>grep语法格式</h1><p>grep [-abcEFGhHilLnqrsvVwxy][-A&lt;显示行数&gt;][-B&lt;显示列数&gt;][-C&lt;显示列数&gt;][-d&lt;进行动作&gt;][-e&lt;范本样式&gt;][-f&lt;范本文件&gt;][–help][范本样式][文件或目录…]</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">grep [OPTIONS] PATTERN [FILE...]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h1 id="常见选项"><a href="#常见选项" class="headerlink" title="常见选项"></a>常见选项</h1><p>–color&#x3D;auto 对匹配到的文本着色显示</p>
-<p>-m # 匹配#次后停止</p>
-<p>-v 显示不被pattern匹配到的行</p>
-<p>-i 忽略字符大小写</p>
-<p>-n 显示匹配的行号</p>
-<p>-c 统计匹配的行数</p>
-<p>-o 仅显示匹配到的字符串</p>
-<p>-q 静默模式，不输出任何信息</p>
-<p>-A # after, 后#行</p>
-<p>-B # before, 前#行</p>
-<p>-C # context, 前后各#行</p>
-<p>-e 实现多个选项间的逻辑or关系,如：grep –e ‘cat ’ -e ‘dog’ file</p>
-<p>-w 匹配整个单词</p>
-<p>-E 使用ERE，相当于egrep</p>
-<p>-F 不支持正则表达式，相当于fgrep</p>
-<p>-f file 根据模式文件处理</p>
-<p>-r 递归目录，但不处理软链接</p>
-<p>-R 递归目录，但处理软链接</p>
-<p>-l 打印包含匹配项的文件名，而不是文本行本身，也可用–files-with-matches 选项来指定</p>
-<p>-L 相似于-l 选项，但是只是打印不包含匹配项的文件名。也可用–files-without-match 来指定。</p>
-<p>-h 应用于多文件搜索，不输出文件名。也可用–no-filename 选项来指定。</p>
-<h1 id="grep实例"><a href="#grep实例" class="headerlink" title="grep实例"></a>grep实例</h1><p>这里我将使用Ubuntu18.04进行效果演示。</p>
-<h2 id="简单搜索和-l-L的使用"><a href="#简单搜索和-l-L的使用" class="headerlink" title="简单搜索和-l,-L的使用"></a>简单搜索和-l,-L的使用</h2><p>为了更好的探究 grep 程序，让我们创建一些文本文件来搜寻：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /bin &gt; dirlist-bin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /usr/bin &gt; dirlist-usr-bin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /sbin &gt; dirlist-sbin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> /usr/sbin &gt; dirlist-usr-sbin.txt</span><br><span class="line">[me@linuxbox ~]$ <span class="built_in">ls</span> dirlist*.txt</span><br><span class="line">dirlist-bin.txt     dirlist-sbin.txt    dirlist-usr-sbin.txt</span><br><span class="line">dirlist-usr-bin.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic3.zhimg.com/80/v2-e59933bab98469fb3de636c6614813f2_720w.jpg"><br>够对我们的文件列表执行简单的搜索，像这样：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep bzip dirlist*.txt</span><br><span class="line">dirlist-bin.txt:bzip2</span><br><span class="line">dirlist-bin.txt:bzip2recover</span><br></pre></td></tr></table></figure>
-<p>在这个例子里，grep 程序在所有列出的文件中搜索字符串 bzip，然后找到两个匹配项，其都在文件dirlist-bin.txt 中。如果我们只是对包含匹配项的文件列表，而不是对匹配项本身感兴趣的话，可以指定-l 选项：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -l bzip dirlist*.txt</span><br><span class="line">dirlist-bin.txt</span><br></pre></td></tr></table></figure>
-<p>相反地，如果我们只想查看不包含匹配项的文件列表，我们可以这样操作：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -L bzip dirlist*.txt</span><br><span class="line">dirlist-sbin.txt</span><br><span class="line">dirlist-usr-bin.txt</span><br><span class="line">dirlist-usr-sbin.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic3.zhimg.com/80/v2-221f5f6d8b575379938f509c82e1ab86_720w.jpg"></p>
-<h2 id="任何字符"><a href="#任何字符" class="headerlink" title="任何字符"></a>任何字符</h2><p>我们将要查看的第一个元字符是圆点字符，其被用来匹配任意字符。如果我们在正则表达式中包含它， 它将会匹配在此位置的任意一个字符。这里有个例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;.zip&#x27;</span> dirlist*.txt</span><br><span class="line">bunzip2</span><br><span class="line">bzip2</span><br><span class="line">bzip2recover</span><br><span class="line">gunzip</span><br><span class="line">gzip</span><br><span class="line">funzip</span><br><span class="line">gpg-zip</span><br><span class="line">preunzip</span><br><span class="line">prezip</span><br><span class="line">prezip-bin</span><br><span class="line">unzip</span><br><span class="line">unzipsfx</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic1.zhimg.com/80/v2-73c837c9727ac4f5a04d9cc5a327c5f4_720w.jpg"><br>我们在文件中查找包含正则表达式“.zip”的文本行。对于搜索结果，有几点需要注意一下。 注意没有找到这个 zip 程序。这是因为在我们的正则表达式中包含的圆点字符把所要求的匹配项的长度增加到四个字符，并且字符串“zip”只包含三个字符，所以这个 zip 程序不匹配。另外，如果我们的文件列表 中有一些文件的扩展名是.zip，则它们也会成为匹配项，因为文件扩展名中的圆点符号也会被看作是 “任意字符”。</p>
-<h2 id="锚点"><a href="#锚点" class="headerlink" title="锚点"></a>锚点</h2><p>在正则表达式中，插入符号和美元符号被看作是锚点。这意味着正则表达式 只有在文本行的开头或末尾被找到时，才算发生一次匹配。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^zip&#x27;</span> dirlist*.txt</span><br><span class="line">zip</span><br><span class="line">zipcloak</span><br><span class="line">zipgrep</span><br><span class="line">zipinfo</span><br><span class="line">zipnote</span><br><span class="line">zipsplit</span><br><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;zip$&#x27;</span> dirlist*.txt</span><br><span class="line">gunzip</span><br><span class="line">gzip</span><br><span class="line">funzip</span><br><span class="line">gpg-zip</span><br><span class="line">preunzip</span><br><span class="line">prezip</span><br><span class="line">unzip</span><br><span class="line">zip</span><br><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^zip$&#x27;</span> dirlist*.txt</span><br><span class="line">zip</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic3.zhimg.com/80/v2-a52d45fcc04272f07ed47e93ddc46fe6_720w.jpg"><br>这里我们分别在文件列表中搜索行首，行尾以及行首和行尾同时包含字符串“zip”（例如，zip 独占一行）的匹配行。 注意正则表达式‘^$’（行首和行尾之间没有字符）会匹配空行。</p>
-<h2 id="中括号表达式和字符类"><a href="#中括号表达式和字符类" class="headerlink" title="中括号表达式和字符类"></a>中括号表达式和字符类</h2><p>除了能够在正则表达式中的给定位置匹配任意字符之外，通过使用中括号表达式， 我们也能够从一个指定的字符集合中匹配一个单个的字符。通过中括号表达式，我们能够指定 一个字符集合（包含在不加中括号的情况下会被解释为元字符的字符）来被匹配。在这个例子里，使用了一个两个字符的集合：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;[bg]zip&#x27;</span> dirlist*.txt</span><br><span class="line">bzip2</span><br><span class="line">bzip2recover</span><br><span class="line">gzip</span><br></pre></td></tr></table></figure>
-<p>我们匹配包含字符串“bzip”或者“gzip”的任意行。</p>
-<p>一个字符集合可能包含任意多个字符，并且元字符被放置到中括号里面后会失去了它们的特殊含义。 然而，在两种情况下，会在中括号表达式中使用元字符，并且有着不同的含义。第一个元字符 是插入字符，其被用来表示否定；第二个是连字符字符，其被用来表示一个字符区域。</p>
-<h2 id="否定"><a href="#否定" class="headerlink" title="否定"></a>否定</h2><p>如果在正则表示式中的第一个字符是一个插入字符，则剩余的字符被看作是不会在给定的字符位置出现的 字符集合。通过修改之前的例子，我们试验一下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;[^bg]zip&#x27;</span> dirlist*.txt</span><br><span class="line">bunzip2</span><br><span class="line">gunzip</span><br><span class="line">funzip</span><br><span class="line">gpg-zip</span><br><span class="line">preunzip</span><br><span class="line">prezip</span><br><span class="line">prezip-bin</span><br><span class="line">unzip</span><br><span class="line">unzipsfx</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic4.zhimg.com/80/v2-9668f6f36ee06645cdaa4a8360bff4db_720w.jpg"><br>通过激活否定操作，我们得到一个文件列表，它们的文件名都包含字符串“zip”，并且“zip”的前一个字符 是除了“b”和“g”之外的任意字符。注意文件 zip 没有被发现。一个否定的字符集仍然在给定位置要求一个字符， 但是这个字符必须不是否定字符集的成员。</p>
-<p>这个插入字符如果是中括号表达式中的第一个字符的时候，才会唤醒否定功能；否则，它会失去 它的特殊含义，变成字符集中的一个普通字符。</p>
-<p>通过激活否定操作，我们得到一个文件列表，它们的文件名都包含字符串“zip”，并且“zip”的前一个字符 是除了“b”和“g”之外的任意字符。注意文件 zip 没有被发现。一个否定的字符集仍然在给定位置要求一个字符， 但是这个字符必须不是否定字符集的成员。</p>
-<p>这个插入字符如果是中括号表达式中的第一个字符的时候，才会唤醒否定功能；否则，它会失去它的特殊含义，变成字符集中的一个普通字符。</p>
-<h2 id="传统的字符区域"><a href="#传统的字符区域" class="headerlink" title="传统的字符区域"></a>传统的字符区域</h2><p>如果我们想要构建一个正则表达式，它可以在我们的列表中找到每个以大写字母开头的文件，我们可以这样做：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^[ABCDEFGHIJKLMNOPQRSTUVWXZY]&#x27;</span> dirlist*.txt</span><br></pre></td></tr></table></figure>
-<p>这只是一个在正则表达式中输入26个大写字母的问题。但是输入所有字母无疑是非常繁琐且效率低下的，所以有另外一种方式：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^[A-Z]&#x27;</span> dirlist*.txt</span><br><span class="line">MAKEDEV</span><br><span class="line">ControlPanel</span><br><span class="line">GET</span><br><span class="line">HEAD</span><br><span class="line">POST</span><br><span class="line">X</span><br><span class="line">X11</span><br><span class="line">Xorg</span><br><span class="line">MAKEFLOPPIES</span><br><span class="line">NetworkManager</span><br><span class="line">NetworkManagerDispatcher</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic1.zhimg.com/80/v2-a17b774773e9877036b6d8e3fd5c4b70_720w.jpg"><br>通过使用一个三字符区域，我们能够缩写26个字母。任意字符的区域都能按照这种方式表达，包括多个区域，</p>
-<p>比如下面这个表达式就匹配了所有以字母和数字开头的文件名：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;^[A-Za-z0-9]&#x27;</span> dirlist*.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic4.zhimg.com/80/v2-5c992da6b6d03bf5d75719a3adc1da37_720w.jpg"><br>在字符区域中，我们看到这个连字符被特殊对待，所以我们怎样在一个正则表达式中包含一个连字符呢？</p>
-<p>方法就是使连字符成为表达式中的第一个字符。考虑一下这两个例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ grep -h <span class="string">&#x27;[A-Z]&#x27;</span> dirlist*.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic3.zhimg.com/80/v2-d13a74c027775e94e2b44e6d5fcf802a_720w.jpg"><br>这会匹配包含一个大写字母的文件名。然而：</p>
-<p>[me@linuxbox ~]$ grep -h ‘[-AZ]’ dirlist*.txt<br>上面的表达式会匹配包含一个连字符，或一个大写字母“A”，或一个大写字母“Z”的文件名。<br><img src="https://pic3.zhimg.com/80/v2-4bb4ad1611e7f1248eb32f4dcd1cf3a2_720w.jpg"><br>本文部分内容参考自《TLCL》。</p>
-]]></content>
-      <categories>
-        <category>Linux学习笔记</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>文本编辑器</tag>
-        <tag>grep</tag>
       </tags>
   </entry>
   <entry>
@@ -734,6 +734,81 @@
         <tag>计算机网络</tag>
         <tag>网络安全</tag>
         <tag>抓包</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）</title>
+    <url>/archives/1815c365.html</url>
+    <content><![CDATA[<p>本文使用fork函数实现并发TCP服务器，关于fork函数的用法可以参考我的文章：<br><a href="https://raidenxe.github.io/archives/90acc1af.html">Linux 下的 fork 和 exec 函数</a></p>
+<h1 id="服务器基本结构"><a href="#服务器基本结构" class="headerlink" title="服务器基本结构"></a>服务器基本结构</h1><p>本文的目标是编写一个完整的TCP客户&#x2F;服务器程序示例。这个简单的例子是执行如下步骤的一个回射服务器:</p>
+<p>(1) 客户从标准输入读入一行文本，并写给服务器;</p>
+<p>(2) 服务器从网络输入读入这行文本，并回射给客户;</p>
+<p>(3) 客户从网络输入读入这行回射文本，并显示在标准输出上。</p>
+<p>结构如下：<br><img src="https://pic3.zhimg.com/80/v2-7c83c25ffa290ff2fb8b07310ace85f6_720w.jpg"></p>
+<h1 id="迭代服务器和并发服务器"><a href="#迭代服务器和并发服务器" class="headerlink" title="迭代服务器和并发服务器"></a>迭代服务器和并发服务器</h1><p><strong>迭代服务器</strong>以串行方式一次处理一个客户端。</p>
+<p><strong>迭代服务器</strong>会依次处理客户端的连接 ，只要当前连接的任务没有完成，服务器的进程就会一直被占用，直到任务完成后，服务器关闭这个socket，释放连接。</p>
+<p><strong>并发服务器</strong>：服务器可以是迭代的，即它遍历每个客户端并一次服务一个请求。</p>
+<p>或者，一台服务器可以同时并行处理多个客户端，这种类型的服务器称为并发服务器。</p>
+<p>并发服务器主要通过三种方式：进程、线程和IO复用来分别实现。</p>
+<h2 id="迭代服务器程序轮廓"><a href="#迭代服务器程序轮廓" class="headerlink" title="迭代服务器程序轮廓"></a>迭代服务器程序轮廓</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> listenfd,connfd;</span><br><span class="line"> listenfd = socket( ... );</span><br><span class="line"> bind(listen, ... );</span><br><span class="line"> listen(listenfd,LISTENQ);</span><br><span class="line"> <span class="keyword">for</span>(;;)</span><br><span class="line"> &#123;</span><br><span class="line"> connfd = accept(listenfd, ... ); </span><br><span class="line"> doit(connfd);</span><br><span class="line"> close(connfd);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="并发服务器程序轮廓"><a href="#并发服务器程序轮廓" class="headerlink" title="并发服务器程序轮廓"></a>并发服务器程序轮廓</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">pid_t</span> pid;</span><br><span class="line"><span class="type">int</span> listenfd,connfd;</span><br><span class="line">listenfd = socket( ... );</span><br><span class="line">bind(listen, ... );</span><br><span class="line">listen(listenfd,LISTENQ);</span><br><span class="line"><span class="keyword">for</span>(;;)</span><br><span class="line">&#123;</span><br><span class="line">connfd = accept(listenfd, ... );</span><br><span class="line"><span class="keyword">if</span>((pid = fork()) == <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">close(listenfd);</span><br><span class="line">doit(connfd);</span><br><span class="line">close(connfd);</span><br><span class="line"><span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line">close(connfd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="并发服务器的运行流程"><a href="#并发服务器的运行流程" class="headerlink" title="并发服务器的运行流程"></a>并发服务器的运行流程</h2><p>我们在同一个主机上启动客户，并指定服务器主机的IP地址为127.0.0.1（环回地址)。当然我们也可以指定该地址为该主机的普通（非环回）IP地址。</p>
+<p>客户调用socket和connect，后者引起TCP的三路握手过程。当三路握手完成后，客户中的connect和服务器中的accept均返回，连接于是建立。接着发生的步骤如下:</p>
+<p>(1)客户调用send函数，该函数将阻塞于fgets调用，因为我们还未曾键入过一行文本。</p>
+<p>(2)当服务器中的accept返回时，服务器调用fork，再由子进程调用write函数返回输入信息。调用read，而read在等待客户送入一行文本期间阻塞。</p>
+<p>(3)另一方面，服务器父进程再次调用accept并阻塞，等待下一个客户连接。</p>
+<p>至此，我们有3个都在睡眠（即已阻塞）的进程:客户进程、服务器父进程和服务器子进程。</p>
+<p>至此连接已经建立，不论我们在客户的标准输入中键入什么，都会回射到它的标准输出中。</p>
+<h1 id="POSIX信号处理"><a href="#POSIX信号处理" class="headerlink" title="POSIX信号处理"></a>POSIX信号处理</h1><p><strong>信号</strong>(signal）就是告知某个进程发生了某个事件的通知，有时也称为软件中断( softwareinterrupt)。信号通常是异步发生的，也就是说进程预先不知道信号的准确发生时刻。</p>
+<p>信号可以:</p>
+<p>由一个进程发给另一个进程（或自身)；</p>
+<p>由内核发给某个进程。</p>
+<p>上一节结尾提到的SIGCHLD信号就是由内核在任何一个进程终止时发给它的父进程的一个信号。</p>
+<p>（1）每个信号都有一个与之关联的处置( disposition)，也称为行为(action)。我们通过调用sigaction函数（稍后讨论）来设定一个信号的处置，并有三种选择。</p>
+<p>我们可以提供一个函数，只要有特定信号发生它就被调用。这样的函数称为信号处理函数( signal handler),这种行为称为捕获( catching)信号。有两个信号不能被捕获，它们是SIGKILL和SIGSTOP。信号处理函数由信号值这个单一的整数参数来调用，且没有返回值，其函数原型如下:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">handler</span> <span class="params">( <span class="type">int</span> signo)</span> ;</span><br></pre></td></tr></table></figure>
+<p>对于大多数信号来说，调用sigaction函数并指定信号发生时所调用的函数就是捕获信号所需做的全部工作。不过我们稍后将看到，SIGIO、SIGPoLL和SIGURG这些个别信号还要求捕获它们的进程做些额外工作。</p>
+<p>(2)我们可以把某个信号的处置设定为STG_IG来忽略(ignore）它。SIGKILL和STGSTOP这两个信号不能被忽略。</p>
+<p>(3)我们可以把某个信号的处置设定为SIG_DFL来启用它的默认(default）处置。默认处置通常是在收到信号后终止进程,其中某些信号还在当前工作目录产生一个进程的核心映像(coreimage，也称为内存影像)。另有个别信号的默认处置是忽略，SIGCHLD和SIGURG（带外数据到达时发送，见第24章）就是本书中出现的默认处置为忽略的两个信号。</p>
+<h2 id="signal函数"><a href="#signal函数" class="headerlink" title="signal函数"></a>signal函数</h2><p>建立信号处置的POSIX方法就是调用sigaction函数。不过这有点复杂，因为该函数的参数之一是我们必须分配并填写的结构。简单些的方法就是调用signal函数，其第一个参数是信号名，第二个参数或为指向函数的指针，或为常值SIG_IGN或STIG_DFL。然而signal是早于POSIX出现的历史悠久的函数。调用它时，不同的实现提供不同的信号语义以达成后向兼容，而POSIX则明确规定了调用sigaction时的信号语义。我们的解决办法是定义自己的signal函数，它只是调用POSIX的sigaction函数。这就以所期望的POSIX语义提供了一个简单的接口。</p>
+<p>函数定义如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">sighandler_tsignal(int__sig, sighandler_t__handler)</span><br></pre></td></tr></table></figure>
+<p>第一个参数-信号类型共有64个，通过在终端键入 kill -l查看。<br><img src="https://pic2.zhimg.com/80/v2-18461fd503682cac3b1721b9c92c8195_720w.jpg"></p>
+<p>第二个参数是捕获到该信号的处理方式，这里我们选择自己定义对于信号的反应函数，即下文的处理僵死进程。</p>
+<p>这里我们选择使用SIGCHLD信号。（其他信号类型和作用，这里就不作赘述了）</p>
+<p>其作用是：进程Terminate或Stop的时候，SIGCHLD会发送给它的父进程。缺省情况下该Signal会被忽略。</p>
+<h2 id="如何处理SIGCHLD信号"><a href="#如何处理SIGCHLD信号" class="headerlink" title="如何处理SIGCHLD信号"></a>如何处理SIGCHLD信号</h2><p>设置僵尸（zombie）状态的目的是维护子进程的信息，以便于父进程在某个时刻获取。这里面包含：子进程的进程ID、终止状态以及资源利用信息（CPU时间、内存使用量）。如果一个进程终止，而该进程有子进程处于僵尸状态，那么它的所有僵尸子进程的父进程会变成init进程，进程ID&#x3D;1。init进程会清理（wait）这些僵尸进程。</p>
+<h1 id="处理僵死进程"><a href="#处理僵死进程" class="headerlink" title="处理僵死进程"></a>处理僵死进程</h1><p>我们显然不愿意留存僵死进程。它们占用内核中的空间，最终可能导致我们耗尽进程资源。无论何时我们fork子进程都得wait它们，以防它们变成僵死进程。为此我们建立一个俘获SIGCHLD信号的信号处理函数，在函数体中我们调用wait。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">signal (SIGCHLD,sig_chld) ;</span><br></pre></td></tr></table></figure>
+<p>我们就建立了该信号处理函数。(这必须在fork第一个子进程之前完成，且只做一次。）我们接着定义名为sig__chld的这个信号处理函数。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">sig_chld</span><span class="params">(<span class="type">int</span> sig)</span></span><br><span class="line">&#123;</span><br><span class="line"> <span class="type">pid_t</span> pid;</span><br><span class="line"> <span class="type">int</span> stat;</span><br><span class="line"> <span class="keyword">while</span>((pid = waitpid(<span class="number">-1</span>,&amp;stat,WNOHANG))&gt;<span class="number">0</span>)</span><br><span class="line"> <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;child &quot;</span> &lt;&lt; pid &lt;&lt; <span class="string">&quot; termination&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"> <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="wait和waitpid函数"><a href="#wait和waitpid函数" class="headerlink" title="wait和waitpid函数"></a>wait和waitpid函数</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="type">pid_t</span> <span class="title function_">wait</span><span class="params">(<span class="type">int</span> *statloc)</span> ;</span><br><span class="line">pid.t <span class="title function_">waitpid</span><span class="params">(<span class="type">pid_t</span> pid ,<span class="type">int</span> *statioc,<span class="type">int</span> options )</span> ;</span><br><span class="line"><span class="comment">//均返回:若成功则为进程D，若出错则为O或-1</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="wait函数的原理："><a href="#wait函数的原理：" class="headerlink" title="wait函数的原理："></a>wait函数的原理：</h2><p>进程调用wait，然后阻塞自己，然后寻找僵尸子进程，找到了则销毁子进程然后返回，没有找到则一直阻塞直到找到僵尸子进程为止。</p>
+<h2 id="waitpid函数："><a href="#waitpid函数：" class="headerlink" title="waitpid函数："></a>waitpid函数：</h2><h3 id="pid参数："><a href="#pid参数：" class="headerlink" title="pid参数："></a>pid参数：</h3><p>1)pid&gt;0:只等待进程ID等于pid的子进程，不管其它已经有多少子进程运行结束退出了，只要指定的子进程还没有结束,waitpid就会一直等下去<br>2)pid&#x3D;-1:等待任何一个子进程，没有限制，此时和wait函数作用一模一样<br>3）pid&lt;-1：等待一个指定进程组中的任何子进程，进程组号&#x3D;pid的绝对值<br>4）pid&#x3D;0：等待一个指定进程组中的任何子进程，进程组号为pid的值   </p>
+<h3 id="options参数"><a href="#options参数" class="headerlink" title="options参数:"></a>options参数:</h3><p>1)options&#x3D;WNOHANG,即使子进程没有退出，它也会立即返回，不会像wait那样永远等下去<br>2）options&#x3D;WUNTRECED，子进程睡眠则马上返回，但结束状态不予理会<br>3）options&#x3D;0，不使用该参数<br>和wait函数相比，waitpid其实是wait函数的封装，waitpid可以指定等待的子进程，并且指定返回的条件。</p>
+<h2 id="wait和waitpid函数的用法"><a href="#wait和waitpid函数的用法" class="headerlink" title="wait和waitpid函数的用法"></a>wait和waitpid函数的用法</h2><p>函数wait和waitpid均返回两个值:已终止子进程的进程ID号，以及通过statloc指针返回的子进程终止状态（一个整数)。</p>
+<p>我们可以调用三个宏来检查终止状态，并辨别子进程是正常终止、由某个信号杀死还是仅仅由作业控制停止而已。另有些宏用于接着获取子进程的退出状态、杀死子进程的信号值或停止子进程的作业控制信号值。</p>
+<p>如果调用wait的进程没有已终止的子进程，不过有一个或多个子进程仍在执行，那么wait将阻塞到现有子进程第一个终止为止。</p>
+<p>waitpid函数就等待哪个进程以及是否阻塞给了我们更多的控制。首先，pid参数允许我们指定想等待的进程ID，值-1表示等待第一个终止的子进程。(另有一些处理进程组ID的可选值，不过本书中用不上。）其次，options参数允许我们指定附加选项。最常用的选项是WNOHANG，它告知内核在没有已终止子进程时不要阻塞。</p>
+<h2 id="wait和waitpid的区别"><a href="#wait和waitpid的区别" class="headerlink" title="wait和waitpid的区别"></a>wait和waitpid的区别</h2><p>waitpid采用了WNOHANG参数，所以waitpid不会阻塞，也就是说父进程不会阻塞在那里等待子进程返回，它会立即返回然后去做自己的事情，所以需要加个循环直到等待到进程为止，相当于轮询。</p>
+<p>而在一些情况下，比如同一信号多个实例的递交，建立一个信号处理函数并在其中调用wait并不足以防止出现僵死进程。</p>
+<p>正确的解决办法是调用waitpia而不是wait。原因在于，我们在一个循环内调用waitpid，以获取所有已终止子进程的状态。我们必须指定WNOHANG选项，它告知waitpid在有尚未终止的子进程在运行时不要阻塞。我们不能在循环内调用wait，因为没有办法防止wait在正运行的子进程尚有未终止时阻塞。</p>
+<h1 id="并发TCP服务器代码实现"><a href="#并发TCP服务器代码实现" class="headerlink" title="并发TCP服务器代码实现"></a>并发TCP服务器代码实现</h1><p>server.cpp</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="type">const</span> <span class="type">int</span> BUF_SIZE = <span class="number">1024</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PORT 7000</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sig_chld</span><span class="params">(<span class="type">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">pid_t</span> pid;</span><br><span class="line"> <span class="type">int</span> stat;</span><br><span class="line"> <span class="keyword">while</span>((pid = <span class="built_in">waitpid</span>(<span class="number">-1</span>,&amp;stat,WNOHANG))&gt;<span class="number">0</span>)</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;child &quot;</span> &lt;&lt; pid &lt;&lt; <span class="string">&quot; termination&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">int</span> serv_sockfd;</span><br><span class="line"> <span class="type">int</span> client_sockfd;</span><br><span class="line"> </span><br><span class="line"> <span class="type">char</span> buf[BUF_SIZE];</span><br><span class="line"> <span class="built_in">memset</span>(buf,<span class="number">0</span>,<span class="built_in">sizeof</span>(buf));</span><br><span class="line"> </span><br><span class="line"> sockaddr_in serv_addr;</span><br><span class="line"> sockaddr_in client_addr;</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">memset</span>(&amp;serv_addr,<span class="number">0</span>,<span class="built_in">sizeof</span>(serv_addr));</span><br><span class="line"> serv_addr.sin_family = AF_INET;</span><br><span class="line"> serv_addr.sin_addr.s_addr = INADDR_ANY;</span><br><span class="line"> serv_addr.sin_port = <span class="built_in">htons</span>(PORT);</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((serv_sockfd = <span class="built_in">socket</span>(PF_INET,SOCK_STREAM,<span class="number">0</span>))&lt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;socket error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((<span class="built_in">bind</span>(serv_sockfd,(sockaddr *)&amp;serv_addr,<span class="built_in">sizeof</span>(serv_addr)))&lt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;bind error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-2</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((<span class="built_in">listen</span>(serv_sockfd,<span class="number">5</span>))&lt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;listen error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-3</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;listening...&quot;</span> &lt;&lt; endl;</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">signal</span>(SIGCHLD,sig_chld);</span><br><span class="line"> </span><br><span class="line"> <span class="type">socklen_t</span> sin_size;</span><br><span class="line"> <span class="type">int</span> read_len=<span class="number">0</span>;</span><br><span class="line"> <span class="type">int</span> child_pid;</span><br><span class="line"> <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> sin_size = <span class="built_in">sizeof</span>(client_addr);</span><br><span class="line"> <span class="built_in">memset</span>(&amp;client_addr,<span class="number">0</span>,<span class="built_in">sizeof</span>(client_addr));</span><br><span class="line"> <span class="keyword">if</span>((client_sockfd = <span class="built_in">accept</span>(serv_sockfd,(sockaddr*)&amp;client_addr,&amp;sin_size))&lt;<span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="keyword">if</span>(errno == EINTR || errno == ECONNABORTED)</span><br><span class="line"> <span class="keyword">continue</span>;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;accept error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-4</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((child_pid = fork())==<span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;client &quot;</span> &lt;&lt;<span class="built_in">inet_ntoa</span>(client_addr.sin_addr) &lt;&lt; <span class="string">&quot; 进程号：&quot;</span>&lt;&lt; <span class="built_in">getpid</span>() &lt;&lt; endl;</span><br><span class="line"> <span class="built_in">write</span>(client_sockfd,<span class="string">&quot;Welcome to my server\n&quot;</span>,<span class="number">21</span>);</span><br><span class="line"> <span class="built_in">close</span>(serv_sockfd);</span><br><span class="line"> <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">memset</span>(buf,<span class="number">0</span>,<span class="built_in">sizeof</span>(buf));</span><br><span class="line"> <span class="keyword">if</span>((read_len = <span class="built_in">read</span>(client_sockfd,buf,BUF_SIZE))&lt;=<span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line"> <span class="built_in">close</span>(client_sockfd);</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;read error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">-5</span>);</span><br><span class="line">                &#125;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;Client&quot;</span>&lt;&lt; <span class="built_in">getpid</span>()  &lt;&lt; <span class="string">&quot; say:&quot;</span>&lt;&lt;buf &lt;&lt; endl;</span><br><span class="line"> <span class="built_in">write</span>(client_sockfd,buf,read_len);</span><br><span class="line">            &#125;</span><br><span class="line"> <span class="built_in">close</span>(client_sockfd);</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">-6</span>);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span> <span class="keyword">if</span>(child_pid&gt;<span class="number">0</span>)</span><br><span class="line"> <span class="built_in">close</span>(client_sockfd);</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>客户端程序可以参考我的另一篇文章：<br><a href="https://raidenxe.github.io/archives/7a099087.html">计算机网络知识点总结（三）Socket 基本函数详解，C++ Socket 入门实战</a></p>
+]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Socket</tag>
+        <tag>C++</tag>
       </tags>
   </entry>
   <entry>
@@ -848,81 +923,6 @@
       <tags>
         <tag>计算机网络</tag>
         <tag>Socket</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）</title>
-    <url>/archives/1815c365.html</url>
-    <content><![CDATA[<p>本文使用fork函数实现并发TCP服务器，关于fork函数的用法可以参考我的文章：<br><a href="https://raidenxe.github.io/archives/90acc1af.html">Linux 下的 fork 和 exec 函数</a></p>
-<h1 id="服务器基本结构"><a href="#服务器基本结构" class="headerlink" title="服务器基本结构"></a>服务器基本结构</h1><p>本文的目标是编写一个完整的TCP客户&#x2F;服务器程序示例。这个简单的例子是执行如下步骤的一个回射服务器:</p>
-<p>(1) 客户从标准输入读入一行文本，并写给服务器;</p>
-<p>(2) 服务器从网络输入读入这行文本，并回射给客户;</p>
-<p>(3) 客户从网络输入读入这行回射文本，并显示在标准输出上。</p>
-<p>结构如下：<br><img src="https://pic3.zhimg.com/80/v2-7c83c25ffa290ff2fb8b07310ace85f6_720w.jpg"></p>
-<h1 id="迭代服务器和并发服务器"><a href="#迭代服务器和并发服务器" class="headerlink" title="迭代服务器和并发服务器"></a>迭代服务器和并发服务器</h1><p><strong>迭代服务器</strong>以串行方式一次处理一个客户端。</p>
-<p><strong>迭代服务器</strong>会依次处理客户端的连接 ，只要当前连接的任务没有完成，服务器的进程就会一直被占用，直到任务完成后，服务器关闭这个socket，释放连接。</p>
-<p><strong>并发服务器</strong>：服务器可以是迭代的，即它遍历每个客户端并一次服务一个请求。</p>
-<p>或者，一台服务器可以同时并行处理多个客户端，这种类型的服务器称为并发服务器。</p>
-<p>并发服务器主要通过三种方式：进程、线程和IO复用来分别实现。</p>
-<h2 id="迭代服务器程序轮廓"><a href="#迭代服务器程序轮廓" class="headerlink" title="迭代服务器程序轮廓"></a>迭代服务器程序轮廓</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> listenfd,connfd;</span><br><span class="line"> listenfd = socket( ... );</span><br><span class="line"> bind(listen, ... );</span><br><span class="line"> listen(listenfd,LISTENQ);</span><br><span class="line"> <span class="keyword">for</span>(;;)</span><br><span class="line"> &#123;</span><br><span class="line"> connfd = accept(listenfd, ... ); </span><br><span class="line"> doit(connfd);</span><br><span class="line"> close(connfd);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<h2 id="并发服务器程序轮廓"><a href="#并发服务器程序轮廓" class="headerlink" title="并发服务器程序轮廓"></a>并发服务器程序轮廓</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">pid_t</span> pid;</span><br><span class="line"><span class="type">int</span> listenfd,connfd;</span><br><span class="line">listenfd = socket( ... );</span><br><span class="line">bind(listen, ... );</span><br><span class="line">listen(listenfd,LISTENQ);</span><br><span class="line"><span class="keyword">for</span>(;;)</span><br><span class="line">&#123;</span><br><span class="line">connfd = accept(listenfd, ... );</span><br><span class="line"><span class="keyword">if</span>((pid = fork()) == <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">close(listenfd);</span><br><span class="line">doit(connfd);</span><br><span class="line">close(connfd);</span><br><span class="line"><span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line">close(connfd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="并发服务器的运行流程"><a href="#并发服务器的运行流程" class="headerlink" title="并发服务器的运行流程"></a>并发服务器的运行流程</h2><p>我们在同一个主机上启动客户，并指定服务器主机的IP地址为127.0.0.1（环回地址)。当然我们也可以指定该地址为该主机的普通（非环回）IP地址。</p>
-<p>客户调用socket和connect，后者引起TCP的三路握手过程。当三路握手完成后，客户中的connect和服务器中的accept均返回，连接于是建立。接着发生的步骤如下:</p>
-<p>(1)客户调用send函数，该函数将阻塞于fgets调用，因为我们还未曾键入过一行文本。</p>
-<p>(2)当服务器中的accept返回时，服务器调用fork，再由子进程调用write函数返回输入信息。调用read，而read在等待客户送入一行文本期间阻塞。</p>
-<p>(3)另一方面，服务器父进程再次调用accept并阻塞，等待下一个客户连接。</p>
-<p>至此，我们有3个都在睡眠（即已阻塞）的进程:客户进程、服务器父进程和服务器子进程。</p>
-<p>至此连接已经建立，不论我们在客户的标准输入中键入什么，都会回射到它的标准输出中。</p>
-<h1 id="POSIX信号处理"><a href="#POSIX信号处理" class="headerlink" title="POSIX信号处理"></a>POSIX信号处理</h1><p><strong>信号</strong>(signal）就是告知某个进程发生了某个事件的通知，有时也称为软件中断( softwareinterrupt)。信号通常是异步发生的，也就是说进程预先不知道信号的准确发生时刻。</p>
-<p>信号可以:</p>
-<p>由一个进程发给另一个进程（或自身)；</p>
-<p>由内核发给某个进程。</p>
-<p>上一节结尾提到的SIGCHLD信号就是由内核在任何一个进程终止时发给它的父进程的一个信号。</p>
-<p>（1）每个信号都有一个与之关联的处置( disposition)，也称为行为(action)。我们通过调用sigaction函数（稍后讨论）来设定一个信号的处置，并有三种选择。</p>
-<p>我们可以提供一个函数，只要有特定信号发生它就被调用。这样的函数称为信号处理函数( signal handler),这种行为称为捕获( catching)信号。有两个信号不能被捕获，它们是SIGKILL和SIGSTOP。信号处理函数由信号值这个单一的整数参数来调用，且没有返回值，其函数原型如下:</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">handler</span> <span class="params">( <span class="type">int</span> signo)</span> ;</span><br></pre></td></tr></table></figure>
-<p>对于大多数信号来说，调用sigaction函数并指定信号发生时所调用的函数就是捕获信号所需做的全部工作。不过我们稍后将看到，SIGIO、SIGPoLL和SIGURG这些个别信号还要求捕获它们的进程做些额外工作。</p>
-<p>(2)我们可以把某个信号的处置设定为STG_IG来忽略(ignore）它。SIGKILL和STGSTOP这两个信号不能被忽略。</p>
-<p>(3)我们可以把某个信号的处置设定为SIG_DFL来启用它的默认(default）处置。默认处置通常是在收到信号后终止进程,其中某些信号还在当前工作目录产生一个进程的核心映像(coreimage，也称为内存影像)。另有个别信号的默认处置是忽略，SIGCHLD和SIGURG（带外数据到达时发送，见第24章）就是本书中出现的默认处置为忽略的两个信号。</p>
-<h2 id="signal函数"><a href="#signal函数" class="headerlink" title="signal函数"></a>signal函数</h2><p>建立信号处置的POSIX方法就是调用sigaction函数。不过这有点复杂，因为该函数的参数之一是我们必须分配并填写的结构。简单些的方法就是调用signal函数，其第一个参数是信号名，第二个参数或为指向函数的指针，或为常值SIG_IGN或STIG_DFL。然而signal是早于POSIX出现的历史悠久的函数。调用它时，不同的实现提供不同的信号语义以达成后向兼容，而POSIX则明确规定了调用sigaction时的信号语义。我们的解决办法是定义自己的signal函数，它只是调用POSIX的sigaction函数。这就以所期望的POSIX语义提供了一个简单的接口。</p>
-<p>函数定义如下：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">sighandler_tsignal(int__sig, sighandler_t__handler)</span><br></pre></td></tr></table></figure>
-<p>第一个参数-信号类型共有64个，通过在终端键入 kill -l查看。<br><img src="https://pic2.zhimg.com/80/v2-18461fd503682cac3b1721b9c92c8195_720w.jpg"></p>
-<p>第二个参数是捕获到该信号的处理方式，这里我们选择自己定义对于信号的反应函数，即下文的处理僵死进程。</p>
-<p>这里我们选择使用SIGCHLD信号。（其他信号类型和作用，这里就不作赘述了）</p>
-<p>其作用是：进程Terminate或Stop的时候，SIGCHLD会发送给它的父进程。缺省情况下该Signal会被忽略。</p>
-<h2 id="如何处理SIGCHLD信号"><a href="#如何处理SIGCHLD信号" class="headerlink" title="如何处理SIGCHLD信号"></a>如何处理SIGCHLD信号</h2><p>设置僵尸（zombie）状态的目的是维护子进程的信息，以便于父进程在某个时刻获取。这里面包含：子进程的进程ID、终止状态以及资源利用信息（CPU时间、内存使用量）。如果一个进程终止，而该进程有子进程处于僵尸状态，那么它的所有僵尸子进程的父进程会变成init进程，进程ID&#x3D;1。init进程会清理（wait）这些僵尸进程。</p>
-<h1 id="处理僵死进程"><a href="#处理僵死进程" class="headerlink" title="处理僵死进程"></a>处理僵死进程</h1><p>我们显然不愿意留存僵死进程。它们占用内核中的空间，最终可能导致我们耗尽进程资源。无论何时我们fork子进程都得wait它们，以防它们变成僵死进程。为此我们建立一个俘获SIGCHLD信号的信号处理函数，在函数体中我们调用wait。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">signal (SIGCHLD,sig_chld) ;</span><br></pre></td></tr></table></figure>
-<p>我们就建立了该信号处理函数。(这必须在fork第一个子进程之前完成，且只做一次。）我们接着定义名为sig__chld的这个信号处理函数。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">sig_chld</span><span class="params">(<span class="type">int</span> sig)</span></span><br><span class="line">&#123;</span><br><span class="line"> <span class="type">pid_t</span> pid;</span><br><span class="line"> <span class="type">int</span> stat;</span><br><span class="line"> <span class="keyword">while</span>((pid = waitpid(<span class="number">-1</span>,&amp;stat,WNOHANG))&gt;<span class="number">0</span>)</span><br><span class="line"> <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;child &quot;</span> &lt;&lt; pid &lt;&lt; <span class="string">&quot; termination&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"> <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="wait和waitpid函数"><a href="#wait和waitpid函数" class="headerlink" title="wait和waitpid函数"></a>wait和waitpid函数</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="type">pid_t</span> <span class="title function_">wait</span><span class="params">(<span class="type">int</span> *statloc)</span> ;</span><br><span class="line">pid.t <span class="title function_">waitpid</span><span class="params">(<span class="type">pid_t</span> pid ,<span class="type">int</span> *statioc,<span class="type">int</span> options )</span> ;</span><br><span class="line"><span class="comment">//均返回:若成功则为进程D，若出错则为O或-1</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="wait函数的原理："><a href="#wait函数的原理：" class="headerlink" title="wait函数的原理："></a>wait函数的原理：</h2><p>进程调用wait，然后阻塞自己，然后寻找僵尸子进程，找到了则销毁子进程然后返回，没有找到则一直阻塞直到找到僵尸子进程为止。</p>
-<h2 id="waitpid函数："><a href="#waitpid函数：" class="headerlink" title="waitpid函数："></a>waitpid函数：</h2><h3 id="pid参数："><a href="#pid参数：" class="headerlink" title="pid参数："></a>pid参数：</h3><p>1)pid&gt;0:只等待进程ID等于pid的子进程，不管其它已经有多少子进程运行结束退出了，只要指定的子进程还没有结束,waitpid就会一直等下去<br>2)pid&#x3D;-1:等待任何一个子进程，没有限制，此时和wait函数作用一模一样<br>3）pid&lt;-1：等待一个指定进程组中的任何子进程，进程组号&#x3D;pid的绝对值<br>4）pid&#x3D;0：等待一个指定进程组中的任何子进程，进程组号为pid的值   </p>
-<h3 id="options参数"><a href="#options参数" class="headerlink" title="options参数:"></a>options参数:</h3><p>1)options&#x3D;WNOHANG,即使子进程没有退出，它也会立即返回，不会像wait那样永远等下去<br>2）options&#x3D;WUNTRECED，子进程睡眠则马上返回，但结束状态不予理会<br>3）options&#x3D;0，不使用该参数<br>和wait函数相比，waitpid其实是wait函数的封装，waitpid可以指定等待的子进程，并且指定返回的条件。</p>
-<h2 id="wait和waitpid函数的用法"><a href="#wait和waitpid函数的用法" class="headerlink" title="wait和waitpid函数的用法"></a>wait和waitpid函数的用法</h2><p>函数wait和waitpid均返回两个值:已终止子进程的进程ID号，以及通过statloc指针返回的子进程终止状态（一个整数)。</p>
-<p>我们可以调用三个宏来检查终止状态，并辨别子进程是正常终止、由某个信号杀死还是仅仅由作业控制停止而已。另有些宏用于接着获取子进程的退出状态、杀死子进程的信号值或停止子进程的作业控制信号值。</p>
-<p>如果调用wait的进程没有已终止的子进程，不过有一个或多个子进程仍在执行，那么wait将阻塞到现有子进程第一个终止为止。</p>
-<p>waitpid函数就等待哪个进程以及是否阻塞给了我们更多的控制。首先，pid参数允许我们指定想等待的进程ID，值-1表示等待第一个终止的子进程。(另有一些处理进程组ID的可选值，不过本书中用不上。）其次，options参数允许我们指定附加选项。最常用的选项是WNOHANG，它告知内核在没有已终止子进程时不要阻塞。</p>
-<h2 id="wait和waitpid的区别"><a href="#wait和waitpid的区别" class="headerlink" title="wait和waitpid的区别"></a>wait和waitpid的区别</h2><p>waitpid采用了WNOHANG参数，所以waitpid不会阻塞，也就是说父进程不会阻塞在那里等待子进程返回，它会立即返回然后去做自己的事情，所以需要加个循环直到等待到进程为止，相当于轮询。</p>
-<p>而在一些情况下，比如同一信号多个实例的递交，建立一个信号处理函数并在其中调用wait并不足以防止出现僵死进程。</p>
-<p>正确的解决办法是调用waitpia而不是wait。原因在于，我们在一个循环内调用waitpid，以获取所有已终止子进程的状态。我们必须指定WNOHANG选项，它告知waitpid在有尚未终止的子进程在运行时不要阻塞。我们不能在循环内调用wait，因为没有办法防止wait在正运行的子进程尚有未终止时阻塞。</p>
-<h1 id="并发TCP服务器代码实现"><a href="#并发TCP服务器代码实现" class="headerlink" title="并发TCP服务器代码实现"></a>并发TCP服务器代码实现</h1><p>server.cpp</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="type">const</span> <span class="type">int</span> BUF_SIZE = <span class="number">1024</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PORT 7000</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sig_chld</span><span class="params">(<span class="type">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">pid_t</span> pid;</span><br><span class="line"> <span class="type">int</span> stat;</span><br><span class="line"> <span class="keyword">while</span>((pid = <span class="built_in">waitpid</span>(<span class="number">-1</span>,&amp;stat,WNOHANG))&gt;<span class="number">0</span>)</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;child &quot;</span> &lt;&lt; pid &lt;&lt; <span class="string">&quot; termination&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">int</span> serv_sockfd;</span><br><span class="line"> <span class="type">int</span> client_sockfd;</span><br><span class="line"> </span><br><span class="line"> <span class="type">char</span> buf[BUF_SIZE];</span><br><span class="line"> <span class="built_in">memset</span>(buf,<span class="number">0</span>,<span class="built_in">sizeof</span>(buf));</span><br><span class="line"> </span><br><span class="line"> sockaddr_in serv_addr;</span><br><span class="line"> sockaddr_in client_addr;</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">memset</span>(&amp;serv_addr,<span class="number">0</span>,<span class="built_in">sizeof</span>(serv_addr));</span><br><span class="line"> serv_addr.sin_family = AF_INET;</span><br><span class="line"> serv_addr.sin_addr.s_addr = INADDR_ANY;</span><br><span class="line"> serv_addr.sin_port = <span class="built_in">htons</span>(PORT);</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((serv_sockfd = <span class="built_in">socket</span>(PF_INET,SOCK_STREAM,<span class="number">0</span>))&lt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;socket error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((<span class="built_in">bind</span>(serv_sockfd,(sockaddr *)&amp;serv_addr,<span class="built_in">sizeof</span>(serv_addr)))&lt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;bind error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-2</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((<span class="built_in">listen</span>(serv_sockfd,<span class="number">5</span>))&lt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;listen error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-3</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;listening...&quot;</span> &lt;&lt; endl;</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">signal</span>(SIGCHLD,sig_chld);</span><br><span class="line"> </span><br><span class="line"> <span class="type">socklen_t</span> sin_size;</span><br><span class="line"> <span class="type">int</span> read_len=<span class="number">0</span>;</span><br><span class="line"> <span class="type">int</span> child_pid;</span><br><span class="line"> <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> sin_size = <span class="built_in">sizeof</span>(client_addr);</span><br><span class="line"> <span class="built_in">memset</span>(&amp;client_addr,<span class="number">0</span>,<span class="built_in">sizeof</span>(client_addr));</span><br><span class="line"> <span class="keyword">if</span>((client_sockfd = <span class="built_in">accept</span>(serv_sockfd,(sockaddr*)&amp;client_addr,&amp;sin_size))&lt;<span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="keyword">if</span>(errno == EINTR || errno == ECONNABORTED)</span><br><span class="line"> <span class="keyword">continue</span>;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;accept error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">-4</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span>((child_pid = fork())==<span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;client &quot;</span> &lt;&lt;<span class="built_in">inet_ntoa</span>(client_addr.sin_addr) &lt;&lt; <span class="string">&quot; 进程号：&quot;</span>&lt;&lt; <span class="built_in">getpid</span>() &lt;&lt; endl;</span><br><span class="line"> <span class="built_in">write</span>(client_sockfd,<span class="string">&quot;Welcome to my server\n&quot;</span>,<span class="number">21</span>);</span><br><span class="line"> <span class="built_in">close</span>(serv_sockfd);</span><br><span class="line"> <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">memset</span>(buf,<span class="number">0</span>,<span class="built_in">sizeof</span>(buf));</span><br><span class="line"> <span class="keyword">if</span>((read_len = <span class="built_in">read</span>(client_sockfd,buf,BUF_SIZE))&lt;=<span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line"> <span class="built_in">close</span>(client_sockfd);</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;read error&quot;</span> &lt;&lt; endl;</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">-5</span>);</span><br><span class="line">                &#125;</span><br><span class="line"> cout &lt;&lt; <span class="string">&quot;Client&quot;</span>&lt;&lt; <span class="built_in">getpid</span>()  &lt;&lt; <span class="string">&quot; say:&quot;</span>&lt;&lt;buf &lt;&lt; endl;</span><br><span class="line"> <span class="built_in">write</span>(client_sockfd,buf,read_len);</span><br><span class="line">            &#125;</span><br><span class="line"> <span class="built_in">close</span>(client_sockfd);</span><br><span class="line"> <span class="built_in">exit</span>(<span class="number">-6</span>);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span> <span class="keyword">if</span>(child_pid&gt;<span class="number">0</span>)</span><br><span class="line"> <span class="built_in">close</span>(client_sockfd);</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<p>客户端程序可以参考我的另一篇文章：<br><a href="https://raidenxe.github.io/archives/7a099087.html">计算机网络知识点总结（三）Socket 基本函数详解，C++ Socket 入门实战</a></p>
-]]></content>
-      <categories>
-        <category>计算机网络</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Socket</tag>
-        <tag>C++</tag>
       </tags>
   </entry>
   <entry>

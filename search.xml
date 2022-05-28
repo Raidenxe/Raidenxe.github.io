@@ -116,50 +116,81 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux下的fork和exec函数</title>
-    <url>/archives/90acc1af.html</url>
-    <content><![CDATA[<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>多线程程序设计的概念早在六十年代就被提出，但直到八十年代中期，Unix系统中才引入多线程机制，如今，由于自身的许多优点，多线程编程已经得到了广泛的应用。</p>
-<p>fork函数是Unix系统最杰出的成就之一，它是七十年代UNIX早期的开发者经过长期在理论和实践上的艰苦探索后取得的成果，一方面，它使操作系统在进程管理上付出了最小的代价，另一方面，又为程序员提供了一个简洁明了的多进程方法。</p>
-<h1 id="Linux下进程的结构"><a href="#Linux下进程的结构" class="headerlink" title="Linux下进程的结构"></a>Linux下进程的结构</h1><p>Linux下一个进程在内存里有三部分的数据，就是”代码段”、”堆栈段”和”数据段”。其实学过汇编语言的人一定知道，一般的CPU都有上述三种段寄存器，以方便操作系统的运行。这三个部分也是构成一个完整的执行序列的必要的部分。</p>
-<p>“代码段”，顾名思义，就是存放了程序代码的数据，假如机器中有数个进程运行相同的一个程序，那么它们就可以使用相同的代码段。”堆栈段”存放的就是子程序的返回地址、子程序的参数以及程序的局部变量。而数据段则存放程序的全局变量，常数以及动态数据分配的数据空间（比如用malloc之类的函数取得的空间）。这其中有许多细节问题，这里限于篇幅就不多介绍了。系统如果同时运行数个相同的程序，它们之间就不能使用同一个堆栈段和数据段。　　</p>
-<h1 id="Linux下的进程控制"><a href="#Linux下的进程控制" class="headerlink" title="Linux下的进程控制"></a>Linux下的进程控制</h1><p><img src="https://pic4.zhimg.com/80/v2-eacfccfbb95739f120d80f78582b332f_720w.jpg"><br>在传统的Unix环境下，有两个基本的操作用于创建和修改进程：</p>
-<p>函数fork( )用来创建一个新的进程，该进程几乎是当前进程的一个完全拷贝；</p>
-<p>函数族exec( )用来启动另外的进程以取代当前运行的进程。</p>
-<p>Linux的进程控制和传统的Unix进程控制基本一致，只在一些细节的地方有些区别，例如在Linux系统中调用vfork和fork完全相同，而在有些版本的Unix系统中，vfork调用有不同的功能。</p>
-<p>fork函数（包括有些系统可能提供的它的各种变体）是Unix中派生新进程的唯一方法。fork函数也是编写并发服务器程序的基础之一。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta"># fork函数</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line">include &lt;unistd.h&gt;</span><br><span class="line"><span class="type">pid_t</span> <span class="title function_">fork</span><span class="params">(<span class="type">void</span>)</span> ;<span class="comment">// 返回:在子进程中为o，在父进程中为子进程ID，若出错则为-1</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://pic4.zhimg.com/80/v2-1fe39319fb80fc6891b8ee5522614f6b_720w.jpg"><br>fork在英文中是”分叉”的意思。为什么取这个名字呢？因为一个进程在运行中，如果使用了fork，就产生了另一个进程，于是进程就”分叉”了，所以这个名字取得很形象。</p>
-<h2 id="fork的返回值"><a href="#fork的返回值" class="headerlink" title="fork的返回值"></a>fork的返回值</h2><p>如果你以前从未接触过该函数，那么理解fork最困难之处在于调用它一次，它却返回两次。它在调用进程（称为父进程）中返回一次，返回值是新派生进程（称为子进程）的进程ID号，在子进程又返回一次，返回值为0。</p>
-<p>因此，返回值本身告知当前进程是子进程还是父进程。</p>
-<p>fork在子进程返回0，而不是父进程的进程ID的原因在于：任何子进程只有一个父进程，而且子进程总是可以通过调用getpid取得父进程的进程ID。相反，父进程可以有许多子进程，而且无法获取各个子进程的进程ID。如果父进程想要跟踪所有子进程的进程ID，那么它必须记录每次调用fork的返回值。</p>
-<p>父进程中调用fork之前打开的所有描述符在fork返回之后由子进程分享。我们将看到网络服务器利用了这个特性:父进程调用accept之后调用fork。所接受的已连接套接字随后就在父进程与子进程之间共享。通常情况下，子进程接着读写这个己连接套接字，父进程则关闭这个已连接套接字。</p>
-<h2 id="fork的两个典型用法"><a href="#fork的两个典型用法" class="headerlink" title="fork的两个典型用法"></a>fork的两个典型用法</h2><p>(1) 一个进程创建一个自身的副本,这样每个副本都可以在另一个副本执行其他任务的同时处理各自的某个操作。这是网络服务器的典型用法。</p>
-<p>(2) 一个进程想要执行另一个程序。既然创建新进程的唯一办法是调用fork，该进程于是首先调用fork创建一个自身的副本，然后其中一个副本（通常为子进程）调用exec把自身替换成新的程序。这是诸如shell之类程序的典型用法。</p>
-<h2 id="用法例外"><a href="#用法例外" class="headerlink" title="用法例外"></a>用法例外</h2><p>fork() 通过复制调用进程来创建一个新进程，新进程称为子进程，是调用进程（称为父进程）的完全副本，但以下情况除外：</p>
-<p>1.子进程有自己唯一的进程 ID，并且这个 PID 不匹配任何现有进程组的 ID。</p>
-<p>2.子进程的父进程 ID 与父进程 ID 相同。</p>
-<p>3.子进程不会继承其父进程的内存锁和信号量调整。</p>
-<p>4.子代不会从其父代继承未完成的异步 I&#x2F;O 操作，也不会从其父代继承任何异步 I&#x2F;O 上下文。</p>
-<h1 id="exec-函数族"><a href="#exec-函数族" class="headerlink" title="exec( )函数族"></a>exec( )函数族</h1><p>下面我们来看看一个进程如何来启动另一个程序的执行。</p>
-<p>在Linux中要使用exec函数族。</p>
-<h2 id="exec-函数族的作用"><a href="#exec-函数族的作用" class="headerlink" title="exec( )函数族的作用"></a>exec( )函数族的作用</h2><p><img src="https://pic1.zhimg.com/80/v2-e31f805cf04b4d3973aa080f9e2bce68_720w.jpg"><br>exec把当前进程映像替换成新的程序文件，而且该新程序通常从main函数开始执行。进程ID并不改变。我们称调用exec的进程为调用进程(calling process)，称新执行的程序为新程序(new program)。</p>
-<h2 id="6个exec函数族"><a href="#6个exec函数族" class="headerlink" title="6个exec函数族"></a>6个exec函数族</h2><p>系统调用execve（）对当前进程进行替换，替换者为一个指定的程序，其参数包括文件名（filename）、参数列表（argv）以及环境变量（envp）。exec函数族当然不止一个，但它们大致相同，在 Linux中，它们分别是：execl，execlp，execle，execv，execve和execvp。</p>
-<h2 id="6个exec函数之间的区别"><a href="#6个exec函数之间的区别" class="headerlink" title="6个exec函数之间的区别:"></a>6个exec函数之间的区别:</h2><p>(a）待执行的程序文件是由文件名(filename）还是由路径名（pathname）指定;</p>
-<p>(b）新程序的参数是一一列出还是由一个指针数组来引用;</p>
-<p>(c）把调用进程的环境传递给新程序还是给新程序指定新的环境。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">execl</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">const</span> <span class="type">char</span> *arg0， ... <span class="comment">/* (char *) 0*/</span> )</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execv</span> <span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">char</span> *<span class="type">const</span> *argv[ ] )</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execle</span> <span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">const</span> <span class="type">char</span> *arg0, ...</span></span><br><span class="line"><span class="params"><span class="comment">/*( char * ) 0, char *const envp [ ] */</span>)</span> ;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execve</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">char</span> *<span class="type">const</span> argv[],<span class="type">char</span> *<span class="type">const</span> envp [])</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execlp</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *filename，<span class="type">const</span> <span class="type">char</span> *arg0，... <span class="comment">/* (char *) 0*/</span> )</span>;</span><br><span class="line"><span class="type">int</span>. execvp(<span class="type">const</span> <span class="type">char</span> *filename,<span class="type">char</span> *<span class="type">const</span> argv[] );</span><br><span class="line"><span class="comment">//均返回:若成功则不返回，若出错则为-1</span></span><br></pre></td></tr></table></figure>
+    <title>Linux 文本三剑客（2）sed命令的使用</title>
+    <url>/archives/ef07d954.html</url>
+    <content><![CDATA[<h1 id="sed引言"><a href="#sed引言" class="headerlink" title="sed引言"></a>sed引言</h1><p><strong>sed</strong>（意为流编辑器，源自英语“stream editor”的缩写）是一个使用简单紧凑的编程语言来解析和转换文本Unix实用程序。虽然在某些方面类似于允许脚本编辑的编辑器，但只需对输入进行一次传递即可工作，因此效率更高。但是，它能够过滤管道中的文本，这特别将其与其他类型的编辑器区分开来。</p>
+<p>sed由贝尔实验室的李·E·麦克马洪于1973年至1974年开发， 并且现在大多数操作系统都可以使用。 sed基于交互式编辑器ed（“editor”，1971）和早期qed（“quick editor”，1965-66）的脚本功能。sed是最早支持正则表达式的工具之一，至今仍然用于文本处理，特别是用于替换命令。用于纯文本字符串操作和“流编辑”的常用工具还有AWK和Perl 。</p>
+<h1 id="sed-工作原理"><a href="#sed-工作原理" class="headerlink" title="sed 工作原理"></a>sed 工作原理</h1><p><img src="https://pic4.zhimg.com/80/v2-ee5564a376f0655b18e9722b2e14baeb_720w.jpg"><br>sed 和 vi 不同，sed是行编辑器。</p>
+<p>sed是从文件或管道中读取一行，处理一行，输出一行；再读取一行，再处理一行，再输出一行，直到最后一行。每当处理一行时，把当前处理的行存储在临时缓冲区中，称为<strong>模式空间</strong>（Pattern Space），接着用sed命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送往屏幕。接着处理下一行，这样不断重复，直到文件末尾。一次处理一行的设计模式使得sed性能很高，sed在读取大文件时不会出现卡顿的现象。如果使用vi命令打开几十M上百M的文件，明显会出现有卡顿的现象，这是因为vi命令打开文件是一次性将文件加载到内存，然后再打开。Sed就避免了这种情况，一行一行的处理，打开速度非常快，执行速度也很快。</p>
+<h1 id="sed的作用"><a href="#sed的作用" class="headerlink" title="sed的作用"></a>sed的作用</h1><p>sed 是一款非常强大的程序，它能够针对文本流完成相当复杂的编辑任务。它最常用于简单的行任务，而不是长长的脚本。许多用户喜欢使用其它工具，来执行较大的工作。 在这些工具中最著名的是 awk 和 perl。</p>
+<p>sed 可依照脚本的指令来处理、编辑文本文件。</p>
+<p>sed 主要用来自动编辑一个或多个文件、简化对文件的反复操作、编写转换程序等。</p>
+<p>可以实现增删改查，取行、替换、查找等功能。</p>
+<h1 id="sed语法格式"><a href="#sed语法格式" class="headerlink" title="sed语法格式"></a>sed语法格式</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed [-hnV][-e&lt;script&gt;][-f&lt;script文件&gt;][文本文件]</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed OPTIONS... [SCRIPT] [INPUTFILE...]</span><br></pre></td></tr></table></figure>
 
-<p>这些函数只在出错时才返回到调用者。否则，控制将被传递给新程序的起始点，通常就是main函数。</p>
-<p>这6个函数间的关系如图4-12所示。一般来说，只有execve是内核中的系统调用，其他5个都是调用execve的库函数。<br><img src="https://pic2.zhimg.com/80/v2-14fd9241c4671aa8c057c7c3e33da765_720w.jpg"><br>(1) 上面那行的3个函数把新程序的每个参数字符串指定成exec的一个独立参数，并以一个空指针结束可变数量的这些参数。下面那行的3个函数都有一个作为exec参数的argv数组，其中含有指向新程序各个参数字符串的所有指针。既然没有指定参数字符串的数目，这个argv数组必须含有一个用于指定其末尾的空指针。</p>
-<p>(2) 左列2个函数指定一个filename参数。exec将使用当前的PATH环境变量把该文件名参数转换为一个路径名。然而一旦这2个函数的filename参数中含有一个斜杠（&#x2F;)，就不再使用PATH环境变量。右两列4个函数指定一个全限定的pathname参数。</p>
-<p>(3) 左两列4个函数不显式指定一个环境指针。相反，它们使用外部变量environ的当前值来构造一个传递给新程序的环境列表。右列2个函数显式指定一个环境列表，其envp指针数组必须以一个空指针结束。</p>
-<p>进程在调用exec之前打开着的描述符通常跨exec继续保持打开。我们使用限定词“通常”是因为本默认行为可以使用fcntl设置FD_CLOEXEc描述符标志禁止掉。inetd服务器就利用了这个特性。</p>
-<h1 id="fork和exec代码示例："><a href="#fork和exec代码示例：" class="headerlink" title="fork和exec代码示例："></a>fork和exec代码示例：</h1><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//C程序来说明fork（）的用法&amp;</span></span><br><span class="line"><span class="comment">//exec（）系统调用以创建进程</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line"><span class="type">pid_t</span> pid;</span><br><span class="line"><span class="type">int</span> ret = <span class="number">1</span>;</span><br><span class="line"><span class="type">int</span> status;</span><br><span class="line">pid = fork();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (pid == <span class="number">-1</span>)&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// pid == -1 表示发生了错误</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;can&#x27;t fork, error occured\n&quot;</span>);</span><br><span class="line">	<span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>)&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// pid == 0 表示创建了子进程</span></span><br><span class="line">	<span class="comment">// getpid() 返回调用进程的进程id</span></span><br><span class="line">	<span class="comment">// 返回子进程的进程id</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;child process, pid = %u\n&quot;</span>,getpid());</span><br><span class="line">	<span class="comment">// 返回子进程的父进程，即父进程本身</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;parent of child process, pid = %u\n&quot;</span>,getppid());</span><br><span class="line"></span><br><span class="line">	<span class="comment">// argv list第一个参数应该指向</span></span><br><span class="line">	<span class="comment">// 与正在执行的文件关联的文件名</span></span><br><span class="line">	<span class="comment">// 数组指针必须以NULL结尾</span></span><br><span class="line">	<span class="comment">// 指针</span></span><br><span class="line">	<span class="type">char</span> * argv_list[] = &#123;<span class="string">&quot;ls&quot;</span>,<span class="string">&quot;-lart&quot;</span>,<span class="string">&quot;/home&quot;</span>,<span class="literal">NULL</span>&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// execv（）仅在发生错误时返回。</span></span><br><span class="line">	<span class="comment">// 返回值为-1</span></span><br><span class="line">	execv(<span class="string">&quot;ls&quot;</span>,argv_list);</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">	<span class="comment">// 为pid返回一个正数</span></span><br><span class="line">	<span class="comment">// 父进程</span></span><br><span class="line">	<span class="comment">// getppid（）返回进程的父进程id</span></span><br><span class="line">	<span class="comment">// 调用进程</span></span><br><span class="line">        <span class="comment">// 返回父进程ID的父进程</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Parent Of parent process, pid = %u\n&quot;</span>,getppid());</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;parent process, pid = %u\n&quot;</span>,getpid());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">		<span class="comment">// 父进程对子进程调用waitpid（）</span></span><br><span class="line">		<span class="comment">// waitpid（）系统调用暂停</span></span><br><span class="line">		<span class="comment">// 调用进程直到pid指定的子进程</span></span><br><span class="line">		<span class="comment">// 状态改变</span></span><br><span class="line">		<span class="comment">// 有关所有标志或选项，请参见wait（）手册</span></span><br><span class="line">		<span class="keyword">if</span> (waitpid(pid, &amp;status, <span class="number">0</span>) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">if</span> (WIFEXITED(status) &amp;&amp; !WEXITSTATUS(status))</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;program execution successful\n&quot;</span>);</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (WIFEXITED(status) &amp;&amp; WEXITSTATUS(status)) &#123;</span><br><span class="line">				<span class="keyword">if</span> (WEXITSTATUS(status) == <span class="number">127</span>) &#123;</span><br><span class="line"></span><br><span class="line">					<span class="comment">// execv failed</span></span><br><span class="line">					<span class="built_in">printf</span>(<span class="string">&quot;execv failed\n&quot;</span>);</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">					<span class="built_in">printf</span>(<span class="string">&quot;program terminated normally,&quot;</span></span><br><span class="line">					<span class="string">&quot; but returned a non-zero status\n&quot;</span>);			</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;program didn&#x27;t terminate normally\n&quot;</span>);		</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// waitpid() failed</span></span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;waitpid() failed\n&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>本文部分内容参考自《UNIX网络编程卷1套接字联网API》。</p>
+<h1 id="参数说明："><a href="#参数说明：" class="headerlink" title="参数说明："></a>参数说明：</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-e &lt;script&gt;或--expression=&lt;script&gt; 以选项中指定的script来处理输入的文本文件。</span><br><span class="line">-f &lt;script文件&gt;或--file=&lt;script文件&gt; 以选项中指定的script文件来处理输入的文本文件。</span><br></pre></td></tr></table></figure>
+<p>-h或–help 显示帮助。<br>-n或–quiet或–silent 仅显示script处理后的结果。<br>-V或–version 显示版本信息。  </p>
+<h1 id="动作说明："><a href="#动作说明：" class="headerlink" title="动作说明："></a>动作说明：</h1><p>a ：新增， a 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行)～<br>c ：取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行！<br>d ：删除，d 后面通常不接任何字串；<br>i ：插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；<br>p ：打印，亦即将某个选择的数据印出。通常 p 会与参数 sed -n 一起运行<br>s ：取代，查找替换,支持使用其它分隔符，可以是其它形式：s@@@，s### 替换修饰符<br>g ：行内全局替换</p>
+<h1 id="sed实例"><a href="#sed实例" class="headerlink" title="sed实例"></a>sed实例</h1><p>这里我将使用Ubuntu18.04进行效果演示。</p>
+<p>为了更好的探究 sed 程序，让我们创建一个包含以下数据的名为distros.txt文本文件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Fedora         10       11/25/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">SUSE         10.3     10/04/2007</span><br><span class="line">Fedora         8        11/08/2007</span><br><span class="line">Ubuntu         6.10     10/26/2006</span><br><span class="line">Fedora         7        05/31/2007</span><br><span class="line">SUSE         11.0     06/19/2008</span><br><span class="line">Ubuntu         7.10     10/18/2007</span><br><span class="line">Ubuntu         7.04     04/19/2007</span><br><span class="line">Fedora         6        10/24/2006</span><br><span class="line">Fedora         9        05/13/2008</span><br><span class="line">Ubuntu         6.06     06/01/2006</span><br><span class="line">SUSE         10.2     12/07/2006</span><br><span class="line">Ubuntu         8.10     10/30/2008</span><br><span class="line">Fedora         5        03/20/2006</span><br><span class="line">SUSE         10.1     05/11/2006</span><br></pre></td></tr></table></figure>
+<h2 id="sed简单输出"><a href="#sed简单输出" class="headerlink" title="sed简单输出"></a>sed简单输出</h2><p>通过 distros.txt 文件，我们将演示sed的各种用法。</p>
+<p>首先，输出distros.txt文件的1-5行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;1,5p&#x27;</span> distros.txt</span><br><span class="line">SUSE           10.2     12/07/2006</span><br><span class="line">Fedora         10       11/25/2008</span><br><span class="line">SUSE           11.0     06/19/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">Fedora         8        11/08/2007</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic2.zhimg.com/80/v2-b5e76901ff2f6e31815901d9e811cba9_720w.jpg"><br>在这个例子中，我们打印出一系列的文本行，开始于第一行，直到第五行。为此，我们使用 p 命令， 其就是简单地把匹配的文本行打印出来。然而为了高效，我们必须包含选项 -n（不自动打印选项）， 让 sed 不要默认地打印每一行。</p>
+<p>sed默认显示所有内容，所以不加-n的话，如下图所示，会把目标行和所有内容都显示出来。<br><img src="https://pic3.zhimg.com/80/v2-37f017cd0aa45565ffe51f1ae7a764ae_720w.jpg"></p>
+<h2 id="sed查询"><a href="#sed查询" class="headerlink" title="sed查询"></a>sed查询</h2><p>下一步，我们将试用一下正则表达式：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;/SUSE/p&#x27;</span> distros.txt</span><br><span class="line">SUSE         10.2     12/07/2006</span><br><span class="line">SUSE         11.0     06/19/2008</span><br><span class="line">SUSE         10.3     10/04/2007</span><br><span class="line">SUSE         10.1     05/11/2006</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-ff03bd19c7c885739849e0e349965cf6_720w.jpg"><br>通过包含由斜杠界定的正则表达式 ‘&#x2F;SUSE&#x2F;’，我们能够孤立出包含它的文本行，和 grep 程序的功能是相同的。</p>
+<p>试着否定上面的操作，通过给这个地址添加一个感叹号：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;/SUSE/!p&#x27;</span> distros.txt</span><br><span class="line">Fedora         10       11/25/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">Fedora         8        11/08/2007</span><br><span class="line">Ubuntu         6.10     10/26/2006</span><br><span class="line">Fedora         7        05/31/2007</span><br><span class="line">Ubuntu         7.10     10/18/2007</span><br><span class="line">Ubuntu         7.04     04/19/2007</span><br><span class="line">Fedora         6        10/24/2006</span><br><span class="line">Fedora         9        05/13/2008</span><br><span class="line">Ubuntu         6.06     06/01/2006</span><br><span class="line">Ubuntu         8.10     10/30/2008</span><br><span class="line">Fedora         5        03/20/2006</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic1.zhimg.com/80/v2-657275ae8e21f36a956078f047e42f34_720w.jpg"><br>这里我们看到期望的结果：输出了文件中所有的文本行，除了那些匹配这个正则表达式的文本行。</p>
+<p>目前为止，我们已经知道了两个 sed 的编辑命令，s 和 p。</p>
+<h2 id="sed编辑修改"><a href="#sed编辑修改" class="headerlink" title="sed编辑修改"></a>sed编辑修改</h2><p>到目前为止，这个 s 命令是最常使用的编辑命令。我们将仅仅演示一些它的功能，通过编辑我们的 distros.txt 文件。我们以前讨论过 distros.txt 文件中的日期字段不是“友好地计算机”模式。 文件中的日期格式是 MM&#x2F;DD&#x2F;YYYY，但如果格式是 YYYY-MM-DD 会更好一些（利于排序）。手动修改 日期格式不仅浪费时间而且易出错，但是有了 sed，只需一步就能完成修改：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed <span class="string">&#x27;s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/&#x27;</span> distros.txt</span><br><span class="line"></span><br><span class="line">SUSE           10.2     2006-12-07</span><br><span class="line">Fedora         10       2008-11-25</span><br><span class="line">SUSE           11.0     2008-06-19</span><br><span class="line">Ubuntu         8.04     2008-04-24</span><br><span class="line">Fedora         8        2007-11-08</span><br><span class="line">SUSE           10.3     2007-10-04</span><br><span class="line">Ubuntu         6.10     2006-10-26</span><br><span class="line">Fedora         7        2007-05-31</span><br><span class="line">Ubuntu         7.10     2007-10-18</span><br><span class="line">Ubuntu         7.04     2007-04-19</span><br><span class="line">SUSE           10.1     2006-05-11</span><br><span class="line">Fedora         6        2006-10-24</span><br><span class="line">Fedora         9        2008-05-13</span><br><span class="line">Ubuntu         6.06     2006-06-01</span><br><span class="line">Ubuntu         8.10     2008-10-30</span><br><span class="line">Fedora         5        2006-03-20</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic3.zhimg.com/80/v2-06814637d7798a93654cfcec1b2feaee_720w.jpg"><br>这个命令看起来很丑陋。但是它起作用了。仅用一步，我们就更改了文件中的日期格式。 它也是一个关于为什么有时候会开玩笑地把正则表达式称为是“只写”媒介的完美的例子。我们 能写正则表达式，但是有时候我们不能读它们。在我们恐惧地忍不住要逃离此命令之前，让我们看一下 怎样来构建它。首先，我们知道此命令有这样一个基本的结构：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed <span class="string">&#x27;s/regexp/replacement/&#x27;</span> distros.txt</span><br></pre></td></tr></table></figure>
+<p>我们下一步是要弄明白一个正则表达式将要孤立出日期。因为日期是 MM&#x2F;DD&#x2F;YYYY 格式，并且 出现在文本行的末尾，我们可以使用这样的表达式：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[0-9]&#123;2&#125;/[0-9]&#123;2&#125;/[0-9]&#123;4&#125;$</span><br></pre></td></tr></table></figure>
+<p>此表达式匹配两位数字，一个斜杠，两位数字，一个斜杠，四位数字，以及行尾。如此关心regexp， 那么replacement又怎样呢？为了解决此问题，我们必须介绍一个正则表达式的新功能，它出现 在一些使用 BRE 的应用程序中。这个功能叫做逆参照，像这样工作：如果序列\n出现在replacement中 ，这里 n 是指从 1 到 9 的数字，则这个序列指的是在前面正则表达式中相对应的子表达式。为了 创建这个子表达式，我们简单地把它们用圆括号括起来，像这样：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">([0-9]&#123;2&#125;)/([0-9]&#123;2&#125;)/([0-9]&#123;4&#125;)$</span><br></pre></td></tr></table></figure>
+<p>现在我们有了三个子表达式。第一个表达式包含月份，第二个包含某月中的某天，以及第三个包含年份。 现在我们就可以构建replacement，如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">\3-\1-\2</span><br></pre></td></tr></table></figure>
+<p>此表达式给出了年份，一个短划线，月份，一个短划线，和某天。</p>
+<p>现在我们的命令看起来像下面这样：</p>
+<p>sed ‘s&#x2F;([0-9]{2})&#x2F;([0-9]{2})&#x2F;([0-9]{4})$&#x2F;\3-\1-\2&#x2F;‘ distros.txt<br>我们还有两个问题。第一个是当 sed 试图解释这个 s 命令的时候在我们表达式中额外的斜杠将会使 sed 迷惑。 第二个是由于sed默认情况下只接受基本的正则表达式，在表达式中的几个字符会 被当作文字字面值，而不是元字符。我们能够通过反斜杠的自由应用来转义令人不快的字符解决这两个问题。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed <span class="string">&#x27;s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/&#x27;</span> distros.txt</span><br></pre></td></tr></table></figure>
+
+<h2 id="sed替换"><a href="#sed替换" class="headerlink" title="sed替换"></a>sed替换</h2><p>s 命令的另一个功能是使用可选标志，其跟随替代字符串。一个最重要的可选标志是 g 标志，其 指示 sed 对某个文本行全范围地执行查找和替代操作，不仅仅是对第一个实例，这是默认行为。 这里有个例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">echo</span> <span class="string">&quot;aaabbbccc&quot;</span> | sed <span class="string">&#x27;s/b/B/&#x27;</span></span><br><span class="line">aaaBbbccc</span><br></pre></td></tr></table></figure>
+<p>我们看到虽然执行了替换操作，但是只针对第一个字母 “b” 实例，然而剩余的实例没有更改。通过添加 g 标志， 我们能够更改所有的实例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">echo</span> <span class="string">&quot;aaabbbccc&quot;</span> | sed <span class="string">&#x27;s/b/B/g&#x27;</span></span><br><span class="line">aaaBBBccc</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic4.zhimg.com/80/v2-943f6225d54eb4c480aef90c6b82200f_720w.jpg"></p>
+<h2 id="sed脚本"><a href="#sed脚本" class="headerlink" title="sed脚本"></a>sed脚本</h2><p>目前为止，通过命令行我们只让 sed 执行单个命令。使用-f 选项，也有可能在一个脚本文件中构建更加复杂的命令。 为了演示，我们将使用 sed 和 distros.txt 文件来生成一个报告。我们的报告以开头标题，修改过的日期，以及 大写的发行版名称为特征。为此，我们需要编写一个脚本，所以我们将打开文本编辑器，然后输入以下文字：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># sed script to produce Linux distributions report</span></span><br><span class="line"></span><br><span class="line">1 i\</span><br><span class="line">\</span><br><span class="line">Linux Distributions Report\</span><br><span class="line"></span><br><span class="line">s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/</span><br><span class="line">y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/</span><br></pre></td></tr></table></figure>
+<p>我们将把 sed 脚本保存为 distros.sed 文件，然后像这样运行它：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -f distros.sed distros.txt</span><br><span class="line">Linux Distributions Report</span><br><span class="line">SUSE	10.2	2006-12-07</span><br><span class="line">FEDORA	10	    2008-11-25</span><br><span class="line">SUSE	11.0	2008-06-19</span><br><span class="line">UBUNTU	8.04	2008-04-24</span><br><span class="line">FEDORA	8	    2007-11-08</span><br><span class="line">SUSE	10.3	2007-10-04</span><br><span class="line">UBUNTU	6.10	2006-10-26</span><br><span class="line">FEDORA	7	    2007-05-31</span><br><span class="line">UBUNTU	7.10	2007-10-18</span><br><span class="line">UBUNTU	7.04	2007-04-19</span><br><span class="line">SUSE	10.1	2006-05-11</span><br><span class="line">FEDORA	6	    2006-10-24</span><br><span class="line">FEDORA	9	    2008-05-13</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-607a1decdae2246716fd6c082c9146a7_720w.jpg"><br>正如我们所见，我们的脚本文件产生了期望的结果，但是它是如何做到的呢？让我们再看一下我们的脚本文件。 我们将使用 cat 来给每行文本编号：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">cat</span> -n distros.sed</span><br><span class="line">1 <span class="comment"># sed script to produce Linux distributions report</span></span><br><span class="line">2</span><br><span class="line">3 1 i\</span><br><span class="line">4 \</span><br><span class="line">5 Linux Distributions Report\</span><br><span class="line">6</span><br><span class="line">7 s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/</span><br><span class="line">8 y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic2.zhimg.com/80/v2-0415afdc86a25eb61b3489e56db4fe01_720w.jpg"></p>
+<h3 id="脚本文件详解："><a href="#脚本文件详解：" class="headerlink" title="脚本文件详解："></a>脚本文件详解：</h3><p>我们脚本文件的<strong>第一行</strong>是一条注释。如同 Linux 系统中的许多配置文件和编程语言一样，注释以#字符开始， 然后是文本注释。注释可以被放到脚本中的任意地方（虽然不在命令本身之中），且对任何可能需要理解和／或维护脚本的人们都很有帮助。</p>
+<p><strong>第二行</strong>是一个空行。正如注释一样，添加空白行是为了提高程序的可读性。</p>
+<p>许多 sed 命令支持行地址。这些行地址被用来指定对输入文本的哪一行执行操作。行地址可能被 表示为单独的行号，行号范围，以及特殊的行号“$”，它表示输入文本的最后一行。</p>
+<p><strong>从第三行到第六行</strong>所包含地文本要被插入到地址 1 处，也就是输入文本的第一行中。这个 i 命令之后是反斜杠回车符，来产生一个转义的回车符，或者就是所谓的连行符。这个序列能够 被用在许多环境下，包括 shell 脚本，从而允许把回车符嵌入到文本流中，而没有通知解释器（在这是指 sed 解释器）已经到达了文本行的末尾。这个 i 命令，同样地，命令 a（追加文本， 而不是插入文本）和 c（取代文本）命令都允许多个文本行，只要每个文本行，除了最后一行，以一个 连行符结束。实际上，脚本的第六行是插入文本的末尾，它以一个普通的回车符结尾，而不是一个连行符，通知解释器 i 命令结束了。</p>
+<p>注意：一个连行符由一个反斜杠字符其后紧跟一个回车符组成。它们之间不允许有空白字符。</p>
+<p><strong>第七行</strong>是我们的查找和替代命令。因为命令之前没有添加地址，所以输入流中的每一行文本 都得服从它的操作。</p>
+<p><strong>第八行</strong>执行小写字母到大写字母的字符替换操作。注意不同于 tr 命令，这个 sed 中的 y 命令不 支持字符区域（例如，[a-z]），也不支持 POSIX 字符集。再说一次，因为 y 命令之前不带地址， 所以它会操作输入流的每一行。</p>
+<p>本文部分内容参考自《TLCL》。</p>
 ]]></content>
+      <categories>
+        <category>Linux学习笔记</category>
+      </categories>
       <tags>
         <tag>Linux</tag>
-        <tag>进程</tag>
+        <tag>文本编辑器</tag>
+        <tag>sed</tag>
       </tags>
   </entry>
   <entry>
@@ -240,6 +271,53 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux下的fork和exec函数</title>
+    <url>/archives/90acc1af.html</url>
+    <content><![CDATA[<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>多线程程序设计的概念早在六十年代就被提出，但直到八十年代中期，Unix系统中才引入多线程机制，如今，由于自身的许多优点，多线程编程已经得到了广泛的应用。</p>
+<p>fork函数是Unix系统最杰出的成就之一，它是七十年代UNIX早期的开发者经过长期在理论和实践上的艰苦探索后取得的成果，一方面，它使操作系统在进程管理上付出了最小的代价，另一方面，又为程序员提供了一个简洁明了的多进程方法。</p>
+<h1 id="Linux下进程的结构"><a href="#Linux下进程的结构" class="headerlink" title="Linux下进程的结构"></a>Linux下进程的结构</h1><p>Linux下一个进程在内存里有三部分的数据，就是”代码段”、”堆栈段”和”数据段”。其实学过汇编语言的人一定知道，一般的CPU都有上述三种段寄存器，以方便操作系统的运行。这三个部分也是构成一个完整的执行序列的必要的部分。</p>
+<p>“代码段”，顾名思义，就是存放了程序代码的数据，假如机器中有数个进程运行相同的一个程序，那么它们就可以使用相同的代码段。”堆栈段”存放的就是子程序的返回地址、子程序的参数以及程序的局部变量。而数据段则存放程序的全局变量，常数以及动态数据分配的数据空间（比如用malloc之类的函数取得的空间）。这其中有许多细节问题，这里限于篇幅就不多介绍了。系统如果同时运行数个相同的程序，它们之间就不能使用同一个堆栈段和数据段。　　</p>
+<h1 id="Linux下的进程控制"><a href="#Linux下的进程控制" class="headerlink" title="Linux下的进程控制"></a>Linux下的进程控制</h1><p><img src="https://pic4.zhimg.com/80/v2-eacfccfbb95739f120d80f78582b332f_720w.jpg"><br>在传统的Unix环境下，有两个基本的操作用于创建和修改进程：</p>
+<p>函数fork( )用来创建一个新的进程，该进程几乎是当前进程的一个完全拷贝；</p>
+<p>函数族exec( )用来启动另外的进程以取代当前运行的进程。</p>
+<p>Linux的进程控制和传统的Unix进程控制基本一致，只在一些细节的地方有些区别，例如在Linux系统中调用vfork和fork完全相同，而在有些版本的Unix系统中，vfork调用有不同的功能。</p>
+<p>fork函数（包括有些系统可能提供的它的各种变体）是Unix中派生新进程的唯一方法。fork函数也是编写并发服务器程序的基础之一。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta"># fork函数</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line">include &lt;unistd.h&gt;</span><br><span class="line"><span class="type">pid_t</span> <span class="title function_">fork</span><span class="params">(<span class="type">void</span>)</span> ;<span class="comment">// 返回:在子进程中为o，在父进程中为子进程ID，若出错则为-1</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-1fe39319fb80fc6891b8ee5522614f6b_720w.jpg"><br>fork在英文中是”分叉”的意思。为什么取这个名字呢？因为一个进程在运行中，如果使用了fork，就产生了另一个进程，于是进程就”分叉”了，所以这个名字取得很形象。</p>
+<h2 id="fork的返回值"><a href="#fork的返回值" class="headerlink" title="fork的返回值"></a>fork的返回值</h2><p>如果你以前从未接触过该函数，那么理解fork最困难之处在于调用它一次，它却返回两次。它在调用进程（称为父进程）中返回一次，返回值是新派生进程（称为子进程）的进程ID号，在子进程又返回一次，返回值为0。</p>
+<p>因此，返回值本身告知当前进程是子进程还是父进程。</p>
+<p>fork在子进程返回0，而不是父进程的进程ID的原因在于：任何子进程只有一个父进程，而且子进程总是可以通过调用getpid取得父进程的进程ID。相反，父进程可以有许多子进程，而且无法获取各个子进程的进程ID。如果父进程想要跟踪所有子进程的进程ID，那么它必须记录每次调用fork的返回值。</p>
+<p>父进程中调用fork之前打开的所有描述符在fork返回之后由子进程分享。我们将看到网络服务器利用了这个特性:父进程调用accept之后调用fork。所接受的已连接套接字随后就在父进程与子进程之间共享。通常情况下，子进程接着读写这个己连接套接字，父进程则关闭这个已连接套接字。</p>
+<h2 id="fork的两个典型用法"><a href="#fork的两个典型用法" class="headerlink" title="fork的两个典型用法"></a>fork的两个典型用法</h2><p>(1) 一个进程创建一个自身的副本,这样每个副本都可以在另一个副本执行其他任务的同时处理各自的某个操作。这是网络服务器的典型用法。</p>
+<p>(2) 一个进程想要执行另一个程序。既然创建新进程的唯一办法是调用fork，该进程于是首先调用fork创建一个自身的副本，然后其中一个副本（通常为子进程）调用exec把自身替换成新的程序。这是诸如shell之类程序的典型用法。</p>
+<h2 id="用法例外"><a href="#用法例外" class="headerlink" title="用法例外"></a>用法例外</h2><p>fork() 通过复制调用进程来创建一个新进程，新进程称为子进程，是调用进程（称为父进程）的完全副本，但以下情况除外：</p>
+<p>1.子进程有自己唯一的进程 ID，并且这个 PID 不匹配任何现有进程组的 ID。</p>
+<p>2.子进程的父进程 ID 与父进程 ID 相同。</p>
+<p>3.子进程不会继承其父进程的内存锁和信号量调整。</p>
+<p>4.子代不会从其父代继承未完成的异步 I&#x2F;O 操作，也不会从其父代继承任何异步 I&#x2F;O 上下文。</p>
+<h1 id="exec-函数族"><a href="#exec-函数族" class="headerlink" title="exec( )函数族"></a>exec( )函数族</h1><p>下面我们来看看一个进程如何来启动另一个程序的执行。</p>
+<p>在Linux中要使用exec函数族。</p>
+<h2 id="exec-函数族的作用"><a href="#exec-函数族的作用" class="headerlink" title="exec( )函数族的作用"></a>exec( )函数族的作用</h2><p><img src="https://pic1.zhimg.com/80/v2-e31f805cf04b4d3973aa080f9e2bce68_720w.jpg"><br>exec把当前进程映像替换成新的程序文件，而且该新程序通常从main函数开始执行。进程ID并不改变。我们称调用exec的进程为调用进程(calling process)，称新执行的程序为新程序(new program)。</p>
+<h2 id="6个exec函数族"><a href="#6个exec函数族" class="headerlink" title="6个exec函数族"></a>6个exec函数族</h2><p>系统调用execve（）对当前进程进行替换，替换者为一个指定的程序，其参数包括文件名（filename）、参数列表（argv）以及环境变量（envp）。exec函数族当然不止一个，但它们大致相同，在 Linux中，它们分别是：execl，execlp，execle，execv，execve和execvp。</p>
+<h2 id="6个exec函数之间的区别"><a href="#6个exec函数之间的区别" class="headerlink" title="6个exec函数之间的区别:"></a>6个exec函数之间的区别:</h2><p>(a）待执行的程序文件是由文件名(filename）还是由路径名（pathname）指定;</p>
+<p>(b）新程序的参数是一一列出还是由一个指针数组来引用;</p>
+<p>(c）把调用进程的环境传递给新程序还是给新程序指定新的环境。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">execl</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">const</span> <span class="type">char</span> *arg0， ... <span class="comment">/* (char *) 0*/</span> )</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execv</span> <span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">char</span> *<span class="type">const</span> *argv[ ] )</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execle</span> <span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">const</span> <span class="type">char</span> *arg0, ...</span></span><br><span class="line"><span class="params"><span class="comment">/*( char * ) 0, char *const envp [ ] */</span>)</span> ;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execve</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">char</span> *<span class="type">const</span> argv[],<span class="type">char</span> *<span class="type">const</span> envp [])</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execlp</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *filename，<span class="type">const</span> <span class="type">char</span> *arg0，... <span class="comment">/* (char *) 0*/</span> )</span>;</span><br><span class="line"><span class="type">int</span>. execvp(<span class="type">const</span> <span class="type">char</span> *filename,<span class="type">char</span> *<span class="type">const</span> argv[] );</span><br><span class="line"><span class="comment">//均返回:若成功则不返回，若出错则为-1</span></span><br></pre></td></tr></table></figure>
+
+<p>这些函数只在出错时才返回到调用者。否则，控制将被传递给新程序的起始点，通常就是main函数。</p>
+<p>这6个函数间的关系如图4-12所示。一般来说，只有execve是内核中的系统调用，其他5个都是调用execve的库函数。<br><img src="https://pic2.zhimg.com/80/v2-14fd9241c4671aa8c057c7c3e33da765_720w.jpg"><br>(1) 上面那行的3个函数把新程序的每个参数字符串指定成exec的一个独立参数，并以一个空指针结束可变数量的这些参数。下面那行的3个函数都有一个作为exec参数的argv数组，其中含有指向新程序各个参数字符串的所有指针。既然没有指定参数字符串的数目，这个argv数组必须含有一个用于指定其末尾的空指针。</p>
+<p>(2) 左列2个函数指定一个filename参数。exec将使用当前的PATH环境变量把该文件名参数转换为一个路径名。然而一旦这2个函数的filename参数中含有一个斜杠（&#x2F;)，就不再使用PATH环境变量。右两列4个函数指定一个全限定的pathname参数。</p>
+<p>(3) 左两列4个函数不显式指定一个环境指针。相反，它们使用外部变量environ的当前值来构造一个传递给新程序的环境列表。右列2个函数显式指定一个环境列表，其envp指针数组必须以一个空指针结束。</p>
+<p>进程在调用exec之前打开着的描述符通常跨exec继续保持打开。我们使用限定词“通常”是因为本默认行为可以使用fcntl设置FD_CLOEXEc描述符标志禁止掉。inetd服务器就利用了这个特性。</p>
+<h1 id="fork和exec代码示例："><a href="#fork和exec代码示例：" class="headerlink" title="fork和exec代码示例："></a>fork和exec代码示例：</h1><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//C程序来说明fork（）的用法&amp;</span></span><br><span class="line"><span class="comment">//exec（）系统调用以创建进程</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line"><span class="type">pid_t</span> pid;</span><br><span class="line"><span class="type">int</span> ret = <span class="number">1</span>;</span><br><span class="line"><span class="type">int</span> status;</span><br><span class="line">pid = fork();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (pid == <span class="number">-1</span>)&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// pid == -1 表示发生了错误</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;can&#x27;t fork, error occured\n&quot;</span>);</span><br><span class="line">	<span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>)&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// pid == 0 表示创建了子进程</span></span><br><span class="line">	<span class="comment">// getpid() 返回调用进程的进程id</span></span><br><span class="line">	<span class="comment">// 返回子进程的进程id</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;child process, pid = %u\n&quot;</span>,getpid());</span><br><span class="line">	<span class="comment">// 返回子进程的父进程，即父进程本身</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;parent of child process, pid = %u\n&quot;</span>,getppid());</span><br><span class="line"></span><br><span class="line">	<span class="comment">// argv list第一个参数应该指向</span></span><br><span class="line">	<span class="comment">// 与正在执行的文件关联的文件名</span></span><br><span class="line">	<span class="comment">// 数组指针必须以NULL结尾</span></span><br><span class="line">	<span class="comment">// 指针</span></span><br><span class="line">	<span class="type">char</span> * argv_list[] = &#123;<span class="string">&quot;ls&quot;</span>,<span class="string">&quot;-lart&quot;</span>,<span class="string">&quot;/home&quot;</span>,<span class="literal">NULL</span>&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// execv（）仅在发生错误时返回。</span></span><br><span class="line">	<span class="comment">// 返回值为-1</span></span><br><span class="line">	execv(<span class="string">&quot;ls&quot;</span>,argv_list);</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">	<span class="comment">// 为pid返回一个正数</span></span><br><span class="line">	<span class="comment">// 父进程</span></span><br><span class="line">	<span class="comment">// getppid（）返回进程的父进程id</span></span><br><span class="line">	<span class="comment">// 调用进程</span></span><br><span class="line">        <span class="comment">// 返回父进程ID的父进程</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Parent Of parent process, pid = %u\n&quot;</span>,getppid());</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;parent process, pid = %u\n&quot;</span>,getpid());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">		<span class="comment">// 父进程对子进程调用waitpid（）</span></span><br><span class="line">		<span class="comment">// waitpid（）系统调用暂停</span></span><br><span class="line">		<span class="comment">// 调用进程直到pid指定的子进程</span></span><br><span class="line">		<span class="comment">// 状态改变</span></span><br><span class="line">		<span class="comment">// 有关所有标志或选项，请参见wait（）手册</span></span><br><span class="line">		<span class="keyword">if</span> (waitpid(pid, &amp;status, <span class="number">0</span>) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">if</span> (WIFEXITED(status) &amp;&amp; !WEXITSTATUS(status))</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;program execution successful\n&quot;</span>);</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (WIFEXITED(status) &amp;&amp; WEXITSTATUS(status)) &#123;</span><br><span class="line">				<span class="keyword">if</span> (WEXITSTATUS(status) == <span class="number">127</span>) &#123;</span><br><span class="line"></span><br><span class="line">					<span class="comment">// execv failed</span></span><br><span class="line">					<span class="built_in">printf</span>(<span class="string">&quot;execv failed\n&quot;</span>);</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">					<span class="built_in">printf</span>(<span class="string">&quot;program terminated normally,&quot;</span></span><br><span class="line">					<span class="string">&quot; but returned a non-zero status\n&quot;</span>);			</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;program didn&#x27;t terminate normally\n&quot;</span>);		</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// waitpid() failed</span></span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;waitpid() failed\n&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本文部分内容参考自《UNIX网络编程卷1套接字联网API》。</p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+        <tag>进程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hello World</title>
     <url>/archives/4a17b156.html</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
@@ -256,244 +334,6 @@
 
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>Linux 文本三剑客（2）sed命令的使用</title>
-    <url>/archives/ef07d954.html</url>
-    <content><![CDATA[<h1 id="sed引言"><a href="#sed引言" class="headerlink" title="sed引言"></a>sed引言</h1><p><strong>sed</strong>（意为流编辑器，源自英语“stream editor”的缩写）是一个使用简单紧凑的编程语言来解析和转换文本Unix实用程序。虽然在某些方面类似于允许脚本编辑的编辑器，但只需对输入进行一次传递即可工作，因此效率更高。但是，它能够过滤管道中的文本，这特别将其与其他类型的编辑器区分开来。</p>
-<p>sed由贝尔实验室的李·E·麦克马洪于1973年至1974年开发， 并且现在大多数操作系统都可以使用。 sed基于交互式编辑器ed（“editor”，1971）和早期qed（“quick editor”，1965-66）的脚本功能。sed是最早支持正则表达式的工具之一，至今仍然用于文本处理，特别是用于替换命令。用于纯文本字符串操作和“流编辑”的常用工具还有AWK和Perl 。</p>
-<h1 id="sed-工作原理"><a href="#sed-工作原理" class="headerlink" title="sed 工作原理"></a>sed 工作原理</h1><p><img src="https://pic4.zhimg.com/80/v2-ee5564a376f0655b18e9722b2e14baeb_720w.jpg"><br>sed 和 vi 不同，sed是行编辑器。</p>
-<p>sed是从文件或管道中读取一行，处理一行，输出一行；再读取一行，再处理一行，再输出一行，直到最后一行。每当处理一行时，把当前处理的行存储在临时缓冲区中，称为<strong>模式空间</strong>（Pattern Space），接着用sed命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送往屏幕。接着处理下一行，这样不断重复，直到文件末尾。一次处理一行的设计模式使得sed性能很高，sed在读取大文件时不会出现卡顿的现象。如果使用vi命令打开几十M上百M的文件，明显会出现有卡顿的现象，这是因为vi命令打开文件是一次性将文件加载到内存，然后再打开。Sed就避免了这种情况，一行一行的处理，打开速度非常快，执行速度也很快。</p>
-<h1 id="sed的作用"><a href="#sed的作用" class="headerlink" title="sed的作用"></a>sed的作用</h1><p>sed 是一款非常强大的程序，它能够针对文本流完成相当复杂的编辑任务。它最常用于简单的行任务，而不是长长的脚本。许多用户喜欢使用其它工具，来执行较大的工作。 在这些工具中最著名的是 awk 和 perl。</p>
-<p>sed 可依照脚本的指令来处理、编辑文本文件。</p>
-<p>sed 主要用来自动编辑一个或多个文件、简化对文件的反复操作、编写转换程序等。</p>
-<p>可以实现增删改查，取行、替换、查找等功能。</p>
-<h1 id="sed语法格式"><a href="#sed语法格式" class="headerlink" title="sed语法格式"></a>sed语法格式</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed [-hnV][-e&lt;script&gt;][-f&lt;script文件&gt;][文本文件]</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed OPTIONS... [SCRIPT] [INPUTFILE...]</span><br></pre></td></tr></table></figure>
-
-<h1 id="参数说明："><a href="#参数说明：" class="headerlink" title="参数说明："></a>参数说明：</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-e &lt;script&gt;或--expression=&lt;script&gt; 以选项中指定的script来处理输入的文本文件。</span><br><span class="line">-f &lt;script文件&gt;或--file=&lt;script文件&gt; 以选项中指定的script文件来处理输入的文本文件。</span><br></pre></td></tr></table></figure>
-<p>-h或–help 显示帮助。<br>-n或–quiet或–silent 仅显示script处理后的结果。<br>-V或–version 显示版本信息。  </p>
-<h1 id="动作说明："><a href="#动作说明：" class="headerlink" title="动作说明："></a>动作说明：</h1><p>a ：新增， a 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行)～<br>c ：取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行！<br>d ：删除，d 后面通常不接任何字串；<br>i ：插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；<br>p ：打印，亦即将某个选择的数据印出。通常 p 会与参数 sed -n 一起运行<br>s ：取代，查找替换,支持使用其它分隔符，可以是其它形式：s@@@，s### 替换修饰符<br>g ：行内全局替换</p>
-<h1 id="sed实例"><a href="#sed实例" class="headerlink" title="sed实例"></a>sed实例</h1><p>这里我将使用Ubuntu18.04进行效果演示。</p>
-<p>为了更好的探究 sed 程序，让我们创建一个包含以下数据的名为distros.txt文本文件：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Fedora         10       11/25/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">SUSE         10.3     10/04/2007</span><br><span class="line">Fedora         8        11/08/2007</span><br><span class="line">Ubuntu         6.10     10/26/2006</span><br><span class="line">Fedora         7        05/31/2007</span><br><span class="line">SUSE         11.0     06/19/2008</span><br><span class="line">Ubuntu         7.10     10/18/2007</span><br><span class="line">Ubuntu         7.04     04/19/2007</span><br><span class="line">Fedora         6        10/24/2006</span><br><span class="line">Fedora         9        05/13/2008</span><br><span class="line">Ubuntu         6.06     06/01/2006</span><br><span class="line">SUSE         10.2     12/07/2006</span><br><span class="line">Ubuntu         8.10     10/30/2008</span><br><span class="line">Fedora         5        03/20/2006</span><br><span class="line">SUSE         10.1     05/11/2006</span><br></pre></td></tr></table></figure>
-<h2 id="sed简单输出"><a href="#sed简单输出" class="headerlink" title="sed简单输出"></a>sed简单输出</h2><p>通过 distros.txt 文件，我们将演示sed的各种用法。</p>
-<p>首先，输出distros.txt文件的1-5行：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;1,5p&#x27;</span> distros.txt</span><br><span class="line">SUSE           10.2     12/07/2006</span><br><span class="line">Fedora         10       11/25/2008</span><br><span class="line">SUSE           11.0     06/19/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">Fedora         8        11/08/2007</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic2.zhimg.com/80/v2-b5e76901ff2f6e31815901d9e811cba9_720w.jpg"><br>在这个例子中，我们打印出一系列的文本行，开始于第一行，直到第五行。为此，我们使用 p 命令， 其就是简单地把匹配的文本行打印出来。然而为了高效，我们必须包含选项 -n（不自动打印选项）， 让 sed 不要默认地打印每一行。</p>
-<p>sed默认显示所有内容，所以不加-n的话，如下图所示，会把目标行和所有内容都显示出来。<br><img src="https://pic3.zhimg.com/80/v2-37f017cd0aa45565ffe51f1ae7a764ae_720w.jpg"></p>
-<h2 id="sed查询"><a href="#sed查询" class="headerlink" title="sed查询"></a>sed查询</h2><p>下一步，我们将试用一下正则表达式：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;/SUSE/p&#x27;</span> distros.txt</span><br><span class="line">SUSE         10.2     12/07/2006</span><br><span class="line">SUSE         11.0     06/19/2008</span><br><span class="line">SUSE         10.3     10/04/2007</span><br><span class="line">SUSE         10.1     05/11/2006</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic3.zhimg.com/80/v2-ff03bd19c7c885739849e0e349965cf6_720w.jpg"><br>通过包含由斜杠界定的正则表达式 ‘&#x2F;SUSE&#x2F;’，我们能够孤立出包含它的文本行，和 grep 程序的功能是相同的。</p>
-<p>试着否定上面的操作，通过给这个地址添加一个感叹号：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -n <span class="string">&#x27;/SUSE/!p&#x27;</span> distros.txt</span><br><span class="line">Fedora         10       11/25/2008</span><br><span class="line">Ubuntu         8.04     04/24/2008</span><br><span class="line">Fedora         8        11/08/2007</span><br><span class="line">Ubuntu         6.10     10/26/2006</span><br><span class="line">Fedora         7        05/31/2007</span><br><span class="line">Ubuntu         7.10     10/18/2007</span><br><span class="line">Ubuntu         7.04     04/19/2007</span><br><span class="line">Fedora         6        10/24/2006</span><br><span class="line">Fedora         9        05/13/2008</span><br><span class="line">Ubuntu         6.06     06/01/2006</span><br><span class="line">Ubuntu         8.10     10/30/2008</span><br><span class="line">Fedora         5        03/20/2006</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic1.zhimg.com/80/v2-657275ae8e21f36a956078f047e42f34_720w.jpg"><br>这里我们看到期望的结果：输出了文件中所有的文本行，除了那些匹配这个正则表达式的文本行。</p>
-<p>目前为止，我们已经知道了两个 sed 的编辑命令，s 和 p。</p>
-<h2 id="sed编辑修改"><a href="#sed编辑修改" class="headerlink" title="sed编辑修改"></a>sed编辑修改</h2><p>到目前为止，这个 s 命令是最常使用的编辑命令。我们将仅仅演示一些它的功能，通过编辑我们的 distros.txt 文件。我们以前讨论过 distros.txt 文件中的日期字段不是“友好地计算机”模式。 文件中的日期格式是 MM&#x2F;DD&#x2F;YYYY，但如果格式是 YYYY-MM-DD 会更好一些（利于排序）。手动修改 日期格式不仅浪费时间而且易出错，但是有了 sed，只需一步就能完成修改：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed <span class="string">&#x27;s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/&#x27;</span> distros.txt</span><br><span class="line"></span><br><span class="line">SUSE           10.2     2006-12-07</span><br><span class="line">Fedora         10       2008-11-25</span><br><span class="line">SUSE           11.0     2008-06-19</span><br><span class="line">Ubuntu         8.04     2008-04-24</span><br><span class="line">Fedora         8        2007-11-08</span><br><span class="line">SUSE           10.3     2007-10-04</span><br><span class="line">Ubuntu         6.10     2006-10-26</span><br><span class="line">Fedora         7        2007-05-31</span><br><span class="line">Ubuntu         7.10     2007-10-18</span><br><span class="line">Ubuntu         7.04     2007-04-19</span><br><span class="line">SUSE           10.1     2006-05-11</span><br><span class="line">Fedora         6        2006-10-24</span><br><span class="line">Fedora         9        2008-05-13</span><br><span class="line">Ubuntu         6.06     2006-06-01</span><br><span class="line">Ubuntu         8.10     2008-10-30</span><br><span class="line">Fedora         5        2006-03-20</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic3.zhimg.com/80/v2-06814637d7798a93654cfcec1b2feaee_720w.jpg"><br>这个命令看起来很丑陋。但是它起作用了。仅用一步，我们就更改了文件中的日期格式。 它也是一个关于为什么有时候会开玩笑地把正则表达式称为是“只写”媒介的完美的例子。我们 能写正则表达式，但是有时候我们不能读它们。在我们恐惧地忍不住要逃离此命令之前，让我们看一下 怎样来构建它。首先，我们知道此命令有这样一个基本的结构：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed <span class="string">&#x27;s/regexp/replacement/&#x27;</span> distros.txt</span><br></pre></td></tr></table></figure>
-<p>我们下一步是要弄明白一个正则表达式将要孤立出日期。因为日期是 MM&#x2F;DD&#x2F;YYYY 格式，并且 出现在文本行的末尾，我们可以使用这样的表达式：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[0-9]&#123;2&#125;/[0-9]&#123;2&#125;/[0-9]&#123;4&#125;$</span><br></pre></td></tr></table></figure>
-<p>此表达式匹配两位数字，一个斜杠，两位数字，一个斜杠，四位数字，以及行尾。如此关心regexp， 那么replacement又怎样呢？为了解决此问题，我们必须介绍一个正则表达式的新功能，它出现 在一些使用 BRE 的应用程序中。这个功能叫做逆参照，像这样工作：如果序列\n出现在replacement中 ，这里 n 是指从 1 到 9 的数字，则这个序列指的是在前面正则表达式中相对应的子表达式。为了 创建这个子表达式，我们简单地把它们用圆括号括起来，像这样：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">([0-9]&#123;2&#125;)/([0-9]&#123;2&#125;)/([0-9]&#123;4&#125;)$</span><br></pre></td></tr></table></figure>
-<p>现在我们有了三个子表达式。第一个表达式包含月份，第二个包含某月中的某天，以及第三个包含年份。 现在我们就可以构建replacement，如下所示：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">\3-\1-\2</span><br></pre></td></tr></table></figure>
-<p>此表达式给出了年份，一个短划线，月份，一个短划线，和某天。</p>
-<p>现在我们的命令看起来像下面这样：</p>
-<p>sed ‘s&#x2F;([0-9]{2})&#x2F;([0-9]{2})&#x2F;([0-9]{4})$&#x2F;\3-\1-\2&#x2F;‘ distros.txt<br>我们还有两个问题。第一个是当 sed 试图解释这个 s 命令的时候在我们表达式中额外的斜杠将会使 sed 迷惑。 第二个是由于sed默认情况下只接受基本的正则表达式，在表达式中的几个字符会 被当作文字字面值，而不是元字符。我们能够通过反斜杠的自由应用来转义令人不快的字符解决这两个问题。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed <span class="string">&#x27;s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/&#x27;</span> distros.txt</span><br></pre></td></tr></table></figure>
-
-<h2 id="sed替换"><a href="#sed替换" class="headerlink" title="sed替换"></a>sed替换</h2><p>s 命令的另一个功能是使用可选标志，其跟随替代字符串。一个最重要的可选标志是 g 标志，其 指示 sed 对某个文本行全范围地执行查找和替代操作，不仅仅是对第一个实例，这是默认行为。 这里有个例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">echo</span> <span class="string">&quot;aaabbbccc&quot;</span> | sed <span class="string">&#x27;s/b/B/&#x27;</span></span><br><span class="line">aaaBbbccc</span><br></pre></td></tr></table></figure>
-<p>我们看到虽然执行了替换操作，但是只针对第一个字母 “b” 实例，然而剩余的实例没有更改。通过添加 g 标志， 我们能够更改所有的实例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">echo</span> <span class="string">&quot;aaabbbccc&quot;</span> | sed <span class="string">&#x27;s/b/B/g&#x27;</span></span><br><span class="line">aaaBBBccc</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://pic4.zhimg.com/80/v2-943f6225d54eb4c480aef90c6b82200f_720w.jpg"></p>
-<h2 id="sed脚本"><a href="#sed脚本" class="headerlink" title="sed脚本"></a>sed脚本</h2><p>目前为止，通过命令行我们只让 sed 执行单个命令。使用-f 选项，也有可能在一个脚本文件中构建更加复杂的命令。 为了演示，我们将使用 sed 和 distros.txt 文件来生成一个报告。我们的报告以开头标题，修改过的日期，以及 大写的发行版名称为特征。为此，我们需要编写一个脚本，所以我们将打开文本编辑器，然后输入以下文字：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># sed script to produce Linux distributions report</span></span><br><span class="line"></span><br><span class="line">1 i\</span><br><span class="line">\</span><br><span class="line">Linux Distributions Report\</span><br><span class="line"></span><br><span class="line">s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/</span><br><span class="line">y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/</span><br></pre></td></tr></table></figure>
-<p>我们将把 sed 脚本保存为 distros.sed 文件，然后像这样运行它：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ sed -f distros.sed distros.txt</span><br><span class="line">Linux Distributions Report</span><br><span class="line">SUSE	10.2	2006-12-07</span><br><span class="line">FEDORA	10	    2008-11-25</span><br><span class="line">SUSE	11.0	2008-06-19</span><br><span class="line">UBUNTU	8.04	2008-04-24</span><br><span class="line">FEDORA	8	    2007-11-08</span><br><span class="line">SUSE	10.3	2007-10-04</span><br><span class="line">UBUNTU	6.10	2006-10-26</span><br><span class="line">FEDORA	7	    2007-05-31</span><br><span class="line">UBUNTU	7.10	2007-10-18</span><br><span class="line">UBUNTU	7.04	2007-04-19</span><br><span class="line">SUSE	10.1	2006-05-11</span><br><span class="line">FEDORA	6	    2006-10-24</span><br><span class="line">FEDORA	9	    2008-05-13</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic4.zhimg.com/80/v2-607a1decdae2246716fd6c082c9146a7_720w.jpg"><br>正如我们所见，我们的脚本文件产生了期望的结果，但是它是如何做到的呢？让我们再看一下我们的脚本文件。 我们将使用 cat 来给每行文本编号：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[me@linuxbox ~]$ <span class="built_in">cat</span> -n distros.sed</span><br><span class="line">1 <span class="comment"># sed script to produce Linux distributions report</span></span><br><span class="line">2</span><br><span class="line">3 1 i\</span><br><span class="line">4 \</span><br><span class="line">5 Linux Distributions Report\</span><br><span class="line">6</span><br><span class="line">7 s/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;2\&#125;\)\/\([0-9]\&#123;4\&#125;\)$/\3-\1-\2/</span><br><span class="line">8 y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic2.zhimg.com/80/v2-0415afdc86a25eb61b3489e56db4fe01_720w.jpg"></p>
-<h3 id="脚本文件详解："><a href="#脚本文件详解：" class="headerlink" title="脚本文件详解："></a>脚本文件详解：</h3><p>我们脚本文件的<strong>第一行</strong>是一条注释。如同 Linux 系统中的许多配置文件和编程语言一样，注释以#字符开始， 然后是文本注释。注释可以被放到脚本中的任意地方（虽然不在命令本身之中），且对任何可能需要理解和／或维护脚本的人们都很有帮助。</p>
-<p><strong>第二行</strong>是一个空行。正如注释一样，添加空白行是为了提高程序的可读性。</p>
-<p>许多 sed 命令支持行地址。这些行地址被用来指定对输入文本的哪一行执行操作。行地址可能被 表示为单独的行号，行号范围，以及特殊的行号“$”，它表示输入文本的最后一行。</p>
-<p><strong>从第三行到第六行</strong>所包含地文本要被插入到地址 1 处，也就是输入文本的第一行中。这个 i 命令之后是反斜杠回车符，来产生一个转义的回车符，或者就是所谓的连行符。这个序列能够 被用在许多环境下，包括 shell 脚本，从而允许把回车符嵌入到文本流中，而没有通知解释器（在这是指 sed 解释器）已经到达了文本行的末尾。这个 i 命令，同样地，命令 a（追加文本， 而不是插入文本）和 c（取代文本）命令都允许多个文本行，只要每个文本行，除了最后一行，以一个 连行符结束。实际上，脚本的第六行是插入文本的末尾，它以一个普通的回车符结尾，而不是一个连行符，通知解释器 i 命令结束了。</p>
-<p>注意：一个连行符由一个反斜杠字符其后紧跟一个回车符组成。它们之间不允许有空白字符。</p>
-<p><strong>第七行</strong>是我们的查找和替代命令。因为命令之前没有添加地址，所以输入流中的每一行文本 都得服从它的操作。</p>
-<p><strong>第八行</strong>执行小写字母到大写字母的字符替换操作。注意不同于 tr 命令，这个 sed 中的 y 命令不 支持字符区域（例如，[a-z]），也不支持 POSIX 字符集。再说一次，因为 y 命令之前不带地址， 所以它会操作输入流的每一行。</p>
-<p>本文部分内容参考自《TLCL》。</p>
-]]></content>
-      <categories>
-        <category>Linux学习笔记</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>文本编辑器</tag>
-        <tag>sed</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>单片机和嵌入式系统的区别</title>
-    <url>/archives/cc4d518f.html</url>
-    <content><![CDATA[<h1 id="单片机和嵌入式系统的区别"><a href="#单片机和嵌入式系统的区别" class="headerlink" title="单片机和嵌入式系统的区别"></a>单片机和嵌入式系统的区别</h1><p>嵌入式和单片机并不是一对相对的概念，嵌入式系统包括硬件和软件部分，而单片机是单片微型计算机(Single Chip Microcomputer )的简称，即微控制单元(Microcontroller Unit；MCU) 。单片机可以是嵌入式系统的组成部分。我们可以理解为嵌入式系统是一个大类，单片机是其中一个重要的子类。</p>
-<h1 id="什么是单片机？"><a href="#什么是单片机？" class="headerlink" title="什么是单片机？"></a>什么是单片机？</h1><p>单片机又称单片微控制器，它是将电子计算机的基本环节,如:中央处理器(又称中央处理器,主要由运算器,控制器组成),存储器,总线,输入输出接口等,采用集成电路技术集成在一片硅基片上.由于单片计算机体积很小(仅手指般大小),功能强(具有一个简单计算机的功能)。</p>
-<h1 id="什么是嵌入式系统？"><a href="#什么是嵌入式系统？" class="headerlink" title="什么是嵌入式系统？"></a>什么是嵌入式系统？</h1><p>嵌入式系统是基于微处理器的计算机硬件系统，其软件设计用于执行专用功能，既可以作为独立系统，也可以作为大型系统的一部分。其核心是一个集成电路，旨在为实时操作执行计算。其软件内容只包括软件运行环境及其操作系统。硬件内容包括信号处理器、存储器、通信模块等在内的多方面的内容。</p>
-<p>复杂性从单个微控制器到具有连接外围设备和网络的一套处理器；从无用户界面到复杂的图形用户界面。嵌入式系统的复杂性因设计任务而异。</p>
-<p>嵌入式系统应用范围从数字手表和微波到混合动力汽车和航空电子设备。多达 98% 的制造的微处理器用于嵌入式系统。</p>
-<p>嵌入式系统如何工作？</p>
-<p>嵌入式系统由微控制器或数字信号处理器 (DSP)、专用集成电路 (ASIC)、现场可编程门阵列 (FPGA)、GPU 技术和门阵列管理。这些处理系统与专用于处理电气和&#x2F;或机械接口的组件集成在一起。</p>
-<p>嵌入式系统编程指令，称为固件，存储在只读存储器或闪存芯片中，以有限的计算机硬件资源运行。嵌入式系统通过外围设备与外部世界连接，连接输入和输出设备。</p>
-<p>嵌入式系统的基本结构</p>
-<p><img src="https://pic3.zhimg.com/80/v2-510f561d07185b9ac8ce873cfa42d79e_720w.jpg" alt="嵌入式系统的基本结构"><br>嵌入式系统的基本结构包括以下组件：</p>
-<p>传感器：传感器测量物理量并将其转换为电信号，然后可以由嵌入式系统工程师或任何电子仪器读取。传感器将测量的量存储到存储器中。</p>
-<p>AD转换器：模数转换器将传感器发送的模拟信号转换为数字信号。<br>处理器和 ASIC：处理器评估数据以测量输出并将其存储到内存中。</p>
-<p>DA 转换器：数模转换器将处理器提供的数字数据转换为模拟数据</p>
-<p>执行器：执行器将 DA 转换器给出的输出与存储的实际输出进行比较，并存储批准的输出。</p>
-<p>以常见的几种嵌入式开发板和单片机为例子</p>
-<p>树莓派4B：<br><img src="https://pic3.zhimg.com/80/v2-e4113649f5c864c848977651efe67fde_720w.jpg" alt="树莓派4B"><br>Broadcom BCM2711, Quad core Cortex-A72 (ARM v8) 64-bit SoC @ 1.5GHz</p>
-<p>Raspberry Pi(中文名为“树莓派”,简写为RPi，(或者RasPi &#x2F; RPI) 是为学习计算机编程教育而设计)，只有信用卡大小的微型电脑，其系统基于Linux。</p>
-<p>可以将树莓派理解为一台微型电脑，它与我们平时使用的电脑近乎相同。</p>
-<p>Arduino：<br><img src="https://pic2.zhimg.com/80/v2-296df3f5f79f05cf00f9d1219ed160ed_720w.jpg" alt="Arduino"><br>AVR单片机、ARM芯片</p>
-<p>Arduino是一款便捷灵活、方便上手的开源电子原型平台。</p>
-<p>它构建于开放原始码simple I&#x2F;O介面版，并且具有使用类似Java、C语言的Processing&#x2F;Wiring开发环境。主要包含两个的部分：硬件部分是可以用来做电路连接的Arduino电路板；另外一个则是Arduino IDE，你的计算机中的程序开发环境。只要在IDE中编写程序代码，将程序上传到Arduino电路板后，程序会告诉Arduino电路板要做什么。</p>
-<p>简单来说，arduino是对单片机的二次封装。</p>
-<p>Stm32:<br><img src="https://pic1.zhimg.com/80/v2-66dc8e061c98669e0bf291326dbef7b4_720w.jpg" alt="stm32"><br>ARM Cortex-M内核单片机</p>
-<p>stm32全称是意法半导体32位系列微控制器芯片。STM32系列专为要求高性能、低成本、低功耗的嵌入式应用设计的ARM Cortex®-M0，M0+，M3, M4和M7内核。</p>
-<p>主流产品（STM32F0、STM32F1、STM32F3）、超低功耗产品（STM32L0、STM32L1、STM32L4、STM32L4+）、高性能产品（STM32F2、STM32F4、STM32F7、STM32H7）</p>
-<p>51单片机：<br><img src="https://pic1.zhimg.com/80/v2-5f93514b9dbe056edf726476e000a680_720w.jpg" alt="51单片机"><br>51单片机是对兼容英特尔8051指令系统的单片机的统称</p>
-<p>51单片机广泛应用于家用电器、汽车、工业测控、通信设备中。因为51单片机的指令系统、内部结构相对简单，所以国内许多高校用其进行单片机入门教学。</p>
-<p>51单片机是Intel在1981年推出的由8031微控制器芯片改造升级的、使用CISC指令集的、冯诺依曼架构的、8位的8051微控制器。后Intel将8051微控制器的内核授权给其他芯片厂商,使得市面上广泛出现类似于8051的芯片,这种采用8051内核的芯片被简称为51。</p>
-<p>从上述例子中我们能直观地看到这些开发板和单片机所使用处理器的不同，但是树莓派、Arduino、stm32和我们日常使用的手机均是使用arm架构的处理器，那么手机算单片机吗？</p>
-<p>要回答这个问题，首先要简单介绍一下ARM处理器产品线。</p>
-<p>ARM Cortex内核系列提供非常广泛的具有可扩展性的性能选项，设计人员有机会在多种选项中选择最适合自身应用的内核。Cortex系列组合大体上分为三种类别：</p>
-<p>● Cortex-A—面向性能密集型系统的应用处理器内核</p>
-<p>● Cortex-R—面向实时应用的高性能内核</p>
-<p>● Cortex-M—面向各类嵌入式应用的微控制器内核</p>
-<p><img src="https://pic2.zhimg.com/80/v2-f85640d3f7901185a13f066da1a9b191_720w.jpg" alt="处理器家族"><br>Cortex-A处理器为利用操作系统（例如Linux或者Android）的设备提供了一系列解决方案，这些设备被用于各类应用，从低成本手持设备到智能手机、平板电脑、机顶盒以及企业网络设备等。</p>
-<p>Cortex-R实时处理器为要求可靠性、高可用性、容错功能、可维护性和实时响应的嵌入式系统提供高性能计算解决方案。在数以亿计的产品中得到验证的成熟技术提供极快的上市速度，并利用广泛的 ARM 生态系统、全球和本地语言以及全天候的支持服务，保证快速、低风险的产品开发。</p>
-<p>Cortex-M系列基于ARMv7-M架构（用于Cortex-M3和Cortex-M4）构建，针对成本和功耗敏感的MCU和终端应用（如智能测量、人机接口设备、汽车和工业控制系统、大型家用电器、消费性产品和医疗器械）的混合信号设备进行过优化。</p>
-<p>总结： Cortex-M 系列是MCU，也就是单片机，Cortex-R 系列处理器提供的性能比 Cortex-M 系列提供的性能高得多，而 Cortex-A 系列专用于具有复杂软件操作系统（需使用虚拟内存管理）的面向用户的应用。</p>
-<p>综上所述，只有Cortex-A系列内核的芯片叫处理器。而上述的开发板和单片机只有Raspberry Pi以及我们日常使用的手机是Cortex-A系列内核的芯片。</p>
-<p>单片机和嵌入式系统的结构</p>
-<p>单片机： 软件 —— 硬件<br>嵌入式系统： 软件 ——操作系统——硬件</p>
-<p>有无操作系统的区别</p>
-<p>有操作系统可以实现多任务调度、文件系统、内存管理等复杂功能。</p>
-<p>当系统中存在操作系统的时候，设备驱动变成了连接硬件和内核的桥梁。开发者调用统一的系统调用接口来访问各种设备，方便开发。提供操作方便、简单、提供友好的图形GUI和图形界面，追求易学易用。并且可以使用大量开源的软件，工具，库。</p>
-<p>提供强大的网络功能，支持TCP&#x2F;IP协议及其他协议，提供TCP&#x2F;UDP&#x2F;IP&#x2F;PPP协议支持及统一的MAC访问层接口，为各种移动计算设备预留接口。可以实现远程控制。</p>
-<p>拥有良好的软件移植性，嵌入式系统和具体应用有机地结合在一起，升级换代也是和具体产品同步进行，具有较长的生命周期。</p>
-<p>而对于无操作系统的单片机而言，可以实现的功能相对单一。开发者必须要先了解这个硬件平台，才能进行软件编程，降低了开发效率且软件移植性差。</p>
-<p>单片机的优势</p>
-<p>从上文所述的种种优缺点来看，单片机对比嵌入式系统似乎一无是处，尽管嵌入式系统的性能强大且可实现功能众多，但嵌入式最大的劣势便是其高昂的价格。</p>
-<p>单片机价格低廉，结构简单，使用方便，实现模块化，单片机可靠性高，可工作到10^6 ~10^7小时无故障，处理功能强，速度快。低电压，低功耗，控制功能强，环境适应能力强。</p>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
-        <tag>嵌入式</tag>
-        <tag>单片机</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>日常使用Linux系统是什么体验？</title>
-    <url>/archives/a1e2b7b3.html</url>
-    <content><![CDATA[<p>趁着五一小假期，我尝试了去使用Linux作为日常使用的操作系统，这个过程中也是踩了不少的坑，所以想写一篇文章分享一下。</p>
-<p>我个人使用过Kail、CentOS7、Ubuntu16.04、Windows Subsystem for Linux（WSL）作为开发环境，我个人更喜欢Debian Style (.deb)包管理系统，所以最终选择了使用Ubuntu18.04 LTS，打算在开发之余日常使用，满足听音乐，写文档，看看视频等需求。</p>
-<h1 id="Ubuntu的优缺点："><a href="#Ubuntu的优缺点：" class="headerlink" title="Ubuntu的优缺点："></a>Ubuntu的优缺点：</h1><p><img src="https://pic3.zhimg.com/80/v2-c394ee5ef8e79d2c1ee12b659d08ec32_720w.jpg"></p>
-<h1 id="安装Flash插件"><a href="#安装Flash插件" class="headerlink" title="安装Flash插件"></a>安装Flash插件</h1><p>使用Firefox 浏览器时，B站无法播放视频，提示需要下载Flash插件；<br><img src="https://pic1.zhimg.com/80/v2-1b63342350894d7b71807cdb3e57a2fc_720w.jpg"><br>点击页面跳转后却提示现在Adobe官网已经不再提供flash下载；</p>
-<p>（由于 Adobe 在 2020 年 12 月 31 日之后不再支持 Flash Player，并且从 2021 年 1 月12 日开始阻止 Flash 内容在 Flash Player 中运行，因此 Adobe 强烈建议所有用户立即卸载 Flash Player 以帮助保护其系统。）<br><img src="https://pic1.zhimg.com/v2-a372fc674dc8c7eb9ef4e9318e474dc0_r.jpg"></p>
-<p>解决办法是通过终端安装flash插件：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install flashplugin-installer</span><br></pre></td></tr></table></figure>
-<p>或者</p>
-<h2 id="安装ubuntu-restricted-extras；"><a href="#安装ubuntu-restricted-extras；" class="headerlink" title="安装ubuntu-restricted-extras；"></a>安装ubuntu-restricted-extras；</h2><p>ubuntu-restricted-extras 是一个包含各种基本软件，如 Flash 插件、unrar、gstreamer、mp4、Ubuntu 中的 Chromium 浏览器的编解码器等的软件包。</p>
-<p>Ubuntu提供了一个软件包来安装所有基本的媒体编解码器：ubuntu-restricted-extras。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install ubuntu-restricted-extras</span><br></pre></td></tr></table></figure>
-
-<h1 id="安装Google-Chrome："><a href="#安装Google-Chrome：" class="headerlink" title="安装Google Chrome："></a>安装Google Chrome：</h1><p>直接使用Google浏览器也可以解决上述问题。</p>
-<h2 id="1-下载谷歌浏览器"><a href="#1-下载谷歌浏览器" class="headerlink" title="1.下载谷歌浏览器"></a>1.下载谷歌浏览器</h2><p>下载最新的谷歌浏览器。带wget的deb包：</p>
-<p>wget <a href="https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb">https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb</a></p>
-<h2 id="2-安装谷歌浏览器"><a href="#2-安装谷歌浏览器" class="headerlink" title="2.安装谷歌浏览器"></a>2.安装谷歌浏览器</h2><p>在Ubuntu上安装软件包需要sudo权限。确保以具有sudo权限的用户身份运行以下命令。</p>
-<p>安装谷歌浏览器。通过键入以下内容</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-
-<p>安装deb包：<br>下载好deb包后，输入</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./“安装包名”</span><br></pre></td></tr></table></figure>
-<p>如上文所示</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-
-<h1 id="输入法软件："><a href="#输入法软件：" class="headerlink" title="输入法软件："></a>输入法软件：</h1><h2 id="搜狗输入法："><a href="#搜狗输入法：" class="headerlink" title="搜狗输入法："></a>搜狗输入法：</h2><p>搜狗输入法Linux官网-首页</p>
-<h3 id="1、添加中文语言支持"><a href="#1、添加中文语言支持" class="headerlink" title="1、添加中文语言支持"></a>1、添加中文语言支持</h3><p>打开 系统设置——区域和语言——管理已安装的语言——在“语言”tab下——点击“添加或删除语言”<br><img src="https://pic1.zhimg.com/80/v2-b248e5b921fa3cde2c018dbb74a09a68_720w.jpg"><br>弹出“已安装语言”窗口，勾选中文（简体），点击应用<br><img src="https://pic2.zhimg.com/80/v2-9784e564cfb3f4d55a89b0a9b459e7b5_720w.jpg"><br>回到“语言支持”窗口，在键盘输入法系统中，选择“fcitx”<br><img src="https://pic3.zhimg.com/80/v2-6ac417d2e68d2a9ab99b17f034fd3742_720w.jpg"></p>
-<p>如果在键盘输入法系统中，没有“fcitx”选项时，建议先打开终端手动安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">fcitx：sudo apt-get install fcitx</span><br></pre></td></tr></table></figure>
-<p>等安装成功之后再执行上述步骤</p>
-<p>点击“应用到整个系统”，关闭窗口，重启电脑</p>
-<h3 id="2-通过命令行安装搜狗输入法"><a href="#2-通过命令行安装搜狗输入法" class="headerlink" title="2.通过命令行安装搜狗输入法"></a>2.通过命令行安装搜狗输入法</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i sogoupinyin_版本号_amd64.deb</span><br></pre></td></tr></table></figure>
-<p>如果安装过程中提示缺少相关依赖，则执行如下命令解决：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt -f install</span><br></pre></td></tr></table></figure>
-<h3 id="3-注销计算机即可正常使用搜狗输入法。"><a href="#3-注销计算机即可正常使用搜狗输入法。" class="headerlink" title="3.注销计算机即可正常使用搜狗输入法。"></a>3.注销计算机即可正常使用搜狗输入法。</h3><h1 id="文档软件："><a href="#文档软件：" class="headerlink" title="文档软件："></a>文档软件：</h1><h2 id="Wps："><a href="#Wps：" class="headerlink" title="Wps："></a>Wps：</h2><p>WPS Office因酷似微软 Office 而广受欢迎。它的界面与微软 Office 几乎一样并且号称与微软 Office 更加兼容。<br><a href="https://www.wps.cn/product/wpslinux">https://www.wps.cn/product/wpslinux</a></p>
-<h2 id="LibreOffice："><a href="#LibreOffice：" class="headerlink" title="LibreOffice："></a>LibreOffice：</h2><p>它是个组件完整的办公软件，包括文档编辑器、电子表格工具、演示软件、数学工具和作图工具。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libreoffice libreoffice-style-breeze</span><br></pre></td></tr></table></figure>
-<h1 id="音乐软件："><a href="#音乐软件：" class="headerlink" title="音乐软件："></a>音乐软件：</h1><h2 id="网易云："><a href="#网易云：" class="headerlink" title="网易云："></a>网易云：</h2><p><a href="https://music.163.com/#/download">https://music.163.com/#/download</a></p>
-<h1 id="聊天软件："><a href="#聊天软件：" class="headerlink" title="聊天软件："></a>聊天软件：</h1><h2 id="QQ："><a href="#QQ：" class="headerlink" title="QQ："></a>QQ：</h2><p><a href="https://im.qq.com/linuxqq/download.html">https://im.qq.com/linuxqq/download.html</a></p>
-<h1 id="其他一些常用软件安装与使用："><a href="#其他一些常用软件安装与使用：" class="headerlink" title="其他一些常用软件安装与使用："></a>其他一些常用软件安装与使用：</h1><h2 id="VNC的使用及常见问题："><a href="#VNC的使用及常见问题：" class="headerlink" title="VNC的使用及常见问题："></a>VNC的使用及常见问题：</h2><h3 id="启动VNC"><a href="#启动VNC" class="headerlink" title="启动VNC"></a>启动VNC</h3><p>设置里打开共享<br><img src="https://pic3.zhimg.com/80/v2-bdad4403c861b8070edf35e06abc3f0a_720w.jpg"><br>设置密码并打开选项<br><img src="https://pic2.zhimg.com/80/v2-fe2ab52e283125190f7d46422d01d1a9_720w.jpg"><br>如果没有屏幕共享选项</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install dconf-editor</span><br></pre></td></tr></table></figure>
-<p>或者，如果尚未安装 vino，请同时执行以下操作：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install vino dconf-editor</span><br></pre></td></tr></table></figure>
-<p>打开dconf-editor工具，终端输入 dconf-editor打开</p>
-<p>打开之后，依次展开org-&gt;gnome-&gt;desktop-&gt;remote-access<br><img src="https://pic2.zhimg.com/80/v2-863b0116f3f2f976dda4a8c19f281259_720w.jpg"><br>打开相关选项即可。</p>
-<h3 id="如果无法连接VNC服务端"><a href="#如果无法连接VNC服务端" class="headerlink" title="如果无法连接VNC服务端"></a>如果无法连接VNC服务端</h3><p>报错信息如下：</p>
-<p>Unable to connect to VNC Server using your chosen security setting. Either upgrade VNC Server to a more recent version from RealVNC, or select a weaker level of encryption</p>
-<p>解决办法</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gsettings <span class="built_in">set</span> org.gnome.Vino require-encryption <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-<h2 id="SSR："><a href="#SSR：" class="headerlink" title="SSR："></a>SSR：</h2><p>科学上网工具，下载地址：<br><a href="https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb">https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb</a></p>
-<h2 id="GDebi："><a href="#GDebi：" class="headerlink" title="GDebi："></a>GDebi：</h2><p>Gedbi 是一款小巧的软件包管理器，你可以用它来安装 DEB 文件。它比软件中心更快，而且还能处理依赖问题。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gdebi</span><br></pre></td></tr></table></figure>
-
-<h2 id="Visual-Studio-Code："><a href="#Visual-Studio-Code：" class="headerlink" title="Visual Studio Code："></a>Visual Studio Code：</h2><p><a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a></p>
-<h2 id="Steam："><a href="#Steam：" class="headerlink" title="Steam："></a>Steam：</h2><p><a href="https://store.steampowered.com/about/">https://store.steampowered.com/about/</a></p>
-<h2 id="误删一些安装包导致无法打开系统设置："><a href="#误删一些安装包导致无法打开系统设置：" class="headerlink" title="误删一些安装包导致无法打开系统设置："></a>误删一些安装包导致无法打开系统设置：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gnome-control-center</span><br></pre></td></tr></table></figure>
-
-<h1 id="个人的一些感想："><a href="#个人的一些感想：" class="headerlink" title="个人的一些感想："></a>个人的一些感想：</h1><p>经过几天的使用，我发现Ubuntu在配置好环境后，日常体验还是相当不错的。</p>
-<h2 id="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"><a href="#但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。" class="headerlink" title="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"></a>但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。</h2><p>（2022&#x2F;5&#x2F;12 补充回答）</p>
-<p>因为之前的回答写得过于笼统，我决定补充一下回答。</p>
-<p>首先讲讲为什么都2022年了，Ubuntu22.04都出了，为什么我还在使用Ubuntu18.04，原因也很简单，因为我使用Ubuntu的首要目标是搭建开发环境，而日常使用是其次的，使用18.04也只是因为环境搭建起来比较容易而已。这次没能用上Ubuntu22.04的新桌面GNOME 42，我觉得还是挺遗憾的。</p>
-<p>再来讲讲我自己Linux的使用经历吧，我的Linux使用经验比较浅薄，我在19年年底才开始接触Linux，当时使用的是树莓派4B开发板，系统是Raspberry Pi OS，而我电脑上则是使用WSL，Ubuntu16.04版本。刚开始学习的时候，我算是完完全全的小白，只是知道Linux这么一个东西的存在，很难理解一个黑色的框框（终端）是操作系统。经过一段时间的学习后才算是明白了各种基本命令行的用法。后来在学校的机房里接触到CentOS8和RedHat，自己也出于好奇在虚拟机上跑Kali，学习关于网络的一些东西，但是也没有想过日常去使用这些Linux发行版。其实树莓派系统是有桌面的，但我平时都是用vscode+ssh去开发，所以也没什么接触Linux桌面的机会。可以说在这个假期前，我对Linux桌面的接触接近于0。</p>
-<p>经过这次假期短暂的使用后，接下来再讲讲我的小结，Linux确实可以应付所有的“日常使用”场景的，但在我看来更适合于开发。Linux的使用是有门槛的，即使拥有了桌面，离开了命令行界面（CLI），Linux上的很多操作都寸步难行。虽然我觉得CLI用起来很帅，很高效，但对于以日常使用为目的而不是开发的小白用户来说，CLI便是使用Linux的难点之一。反观Windows出色的图形用户界面（GUI），操作方便直观且学习成本低，在日常使用中普通用户一般也不需要使用到cmd和powershell。我举个不太恰当的例子，Linux发行版就像毛坯房需要自己去动手装修，桌面也只是给了一个基本的框架，自由度高，可以各种自定义各种魔改，比较适合动手能力强爱折腾的用户，而Windows就像已经装修好的样本房，即买即住，适合图省心的用户。（那么如果有一个上手简便，不需要CLI即可操作并且桌面功能完善的发行版一定会受到用户的欢迎吧）</p>
-<p>在软件方面，适配Linux的软件也是远少于Windows，如经典的office全家桶，各类工程软件以及常用软件。Linux下的游戏还是比较匮乏的，数量上远少于Windows。显卡驱动也是Linux的使用难点之一，而最近英伟达已经开源 Linux GPU 内核驱动了，未来可期。希望软件和游戏厂商以后能给Linux做更多的适配吧。</p>
-<p>还有一个问题就是国内特殊的网络环境以及中文互联网资料比较贫瘠，我寻找到的很多资料都已经是过时无效的了，使用好相关论坛可以节省掉不少的时间。</p>
-<p>相比Windows下泛滥的各式流氓软件，Linux则不需要担心这个问题，并且更为干净安全可靠，也没有像微软那样三天两头就更新的各式补丁。</p>
-]]></content>
-      <categories>
-        <category>Linux学习笔记</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>树莓派系统烧录教程</title>
-    <url>/archives/6a0755b3.html</url>
-    <content><![CDATA[<p>树莓派的系统烧录大体上可分为使用</p>
-<p>官方的烧录工具Raspberry Pi Imager烧录和使用第三方烧录工具烧录。</p>
-<p>官方的烧录工具胜在操作简单，方便快捷，所以这里使用Raspberry Pi Imager进行演示。</p>
-<p>具体步骤如下：</p>
-<p>首先准备好tf卡和读卡器</p>
-<p>然后进入官网下载 <a href="https://link.zhihu.com/?target=https://www.raspberrypi.com/software/">Raspberry Pi Imager</a></p>
-<p><img src="https://pic4.zhimg.com/80/v2-8a14d7c95dec632584c034d0dc88b28b_720w.jpg" alt="选择download for windows"></p>
-<p>安装Raspberry Pi Imager<br><img src="https://pic1.zhimg.com/80/v2-c4e4c22348914ce68edf31226bb6f340_720w.jpg" alt="点击Install"><br><img src="https://pic2.zhimg.com/80/v2-84775579e1f5e109e7cfb486f4aab445_720w.jpg" alt="Finish"></p>
-<p>打开Raspberry Pi Imager<br><img src="https://pic4.zhimg.com/80/v2-4eae49e0a08f4a124f1a8a74ebc7970b_720w.jpg" alt="点击CHOOSE OS选项"></p>
-<p>这里我们可以看到有很多系统可供选择，可以自行选择适合的系统，</p>
-<p>这里我们选择带有树莓派桌面的第一个系统为例<br><img src="https://pic2.zhimg.com/80/v2-112d84b8ae1fa0b9dcd92a6325576ae9_720w.jpg" alt="点击Raspberry PI OS(32-bit)"></p>
-<p>选择对应的存储设备<br><img src="https://pic1.zhimg.com/80/v2-a5d82eae153723595f4c1944cf3f797c_720w.jpg" alt="点击CHOOSE STORAGE选项"><br><img src="https://pic3.zhimg.com/80/v2-f6cf4fe01e8b59da659a6e37c9db9aae_720w.jpg" alt="注意所选盘符是否为目标tf卡"></p>
-<p>烧录程序<br><img src="https://pic4.zhimg.com/80/v2-16125a207574f1440b2e52738d1a7c47_720w.jpg" alt="点击WRITE"><br><img src="https://pic1.zhimg.com/80/v2-71484bd203bca4874eeb82a93026a360_720w.jpg" alt="点击yes"></p>
-<p>接下来耐心等待即可<br><img src="https://pic4.zhimg.com/80/v2-7d813e812b9816d4339a448576daa9bf_720w.jpg" alt="等进度条达100％即完成树莓派系统的烧录"></p>
-<p>如果出现报错，可以尝试重新烧录系统。</p>
-]]></content>
-      <tags>
-        <tag>树莓派</tag>
-      </tags>
   </entry>
   <entry>
     <title>常用Linux命令整理</title>
@@ -635,6 +475,143 @@
       </tags>
   </entry>
   <entry>
+    <title>单片机和嵌入式系统的区别</title>
+    <url>/archives/cc4d518f.html</url>
+    <content><![CDATA[<h1 id="单片机和嵌入式系统的区别"><a href="#单片机和嵌入式系统的区别" class="headerlink" title="单片机和嵌入式系统的区别"></a>单片机和嵌入式系统的区别</h1><p>嵌入式和单片机并不是一对相对的概念，嵌入式系统包括硬件和软件部分，而单片机是单片微型计算机(Single Chip Microcomputer )的简称，即微控制单元(Microcontroller Unit；MCU) 。单片机可以是嵌入式系统的组成部分。我们可以理解为嵌入式系统是一个大类，单片机是其中一个重要的子类。</p>
+<h1 id="什么是单片机？"><a href="#什么是单片机？" class="headerlink" title="什么是单片机？"></a>什么是单片机？</h1><p>单片机又称单片微控制器，它是将电子计算机的基本环节,如:中央处理器(又称中央处理器,主要由运算器,控制器组成),存储器,总线,输入输出接口等,采用集成电路技术集成在一片硅基片上.由于单片计算机体积很小(仅手指般大小),功能强(具有一个简单计算机的功能)。</p>
+<h1 id="什么是嵌入式系统？"><a href="#什么是嵌入式系统？" class="headerlink" title="什么是嵌入式系统？"></a>什么是嵌入式系统？</h1><p>嵌入式系统是基于微处理器的计算机硬件系统，其软件设计用于执行专用功能，既可以作为独立系统，也可以作为大型系统的一部分。其核心是一个集成电路，旨在为实时操作执行计算。其软件内容只包括软件运行环境及其操作系统。硬件内容包括信号处理器、存储器、通信模块等在内的多方面的内容。</p>
+<p>复杂性从单个微控制器到具有连接外围设备和网络的一套处理器；从无用户界面到复杂的图形用户界面。嵌入式系统的复杂性因设计任务而异。</p>
+<p>嵌入式系统应用范围从数字手表和微波到混合动力汽车和航空电子设备。多达 98% 的制造的微处理器用于嵌入式系统。</p>
+<p>嵌入式系统如何工作？</p>
+<p>嵌入式系统由微控制器或数字信号处理器 (DSP)、专用集成电路 (ASIC)、现场可编程门阵列 (FPGA)、GPU 技术和门阵列管理。这些处理系统与专用于处理电气和&#x2F;或机械接口的组件集成在一起。</p>
+<p>嵌入式系统编程指令，称为固件，存储在只读存储器或闪存芯片中，以有限的计算机硬件资源运行。嵌入式系统通过外围设备与外部世界连接，连接输入和输出设备。</p>
+<p>嵌入式系统的基本结构</p>
+<p><img src="https://pic3.zhimg.com/80/v2-510f561d07185b9ac8ce873cfa42d79e_720w.jpg" alt="嵌入式系统的基本结构"><br>嵌入式系统的基本结构包括以下组件：</p>
+<p>传感器：传感器测量物理量并将其转换为电信号，然后可以由嵌入式系统工程师或任何电子仪器读取。传感器将测量的量存储到存储器中。</p>
+<p>AD转换器：模数转换器将传感器发送的模拟信号转换为数字信号。<br>处理器和 ASIC：处理器评估数据以测量输出并将其存储到内存中。</p>
+<p>DA 转换器：数模转换器将处理器提供的数字数据转换为模拟数据</p>
+<p>执行器：执行器将 DA 转换器给出的输出与存储的实际输出进行比较，并存储批准的输出。</p>
+<p>以常见的几种嵌入式开发板和单片机为例子</p>
+<p>树莓派4B：<br><img src="https://pic3.zhimg.com/80/v2-e4113649f5c864c848977651efe67fde_720w.jpg" alt="树莓派4B"><br>Broadcom BCM2711, Quad core Cortex-A72 (ARM v8) 64-bit SoC @ 1.5GHz</p>
+<p>Raspberry Pi(中文名为“树莓派”,简写为RPi，(或者RasPi &#x2F; RPI) 是为学习计算机编程教育而设计)，只有信用卡大小的微型电脑，其系统基于Linux。</p>
+<p>可以将树莓派理解为一台微型电脑，它与我们平时使用的电脑近乎相同。</p>
+<p>Arduino：<br><img src="https://pic2.zhimg.com/80/v2-296df3f5f79f05cf00f9d1219ed160ed_720w.jpg" alt="Arduino"><br>AVR单片机、ARM芯片</p>
+<p>Arduino是一款便捷灵活、方便上手的开源电子原型平台。</p>
+<p>它构建于开放原始码simple I&#x2F;O介面版，并且具有使用类似Java、C语言的Processing&#x2F;Wiring开发环境。主要包含两个的部分：硬件部分是可以用来做电路连接的Arduino电路板；另外一个则是Arduino IDE，你的计算机中的程序开发环境。只要在IDE中编写程序代码，将程序上传到Arduino电路板后，程序会告诉Arduino电路板要做什么。</p>
+<p>简单来说，arduino是对单片机的二次封装。</p>
+<p>Stm32:<br><img src="https://pic1.zhimg.com/80/v2-66dc8e061c98669e0bf291326dbef7b4_720w.jpg" alt="stm32"><br>ARM Cortex-M内核单片机</p>
+<p>stm32全称是意法半导体32位系列微控制器芯片。STM32系列专为要求高性能、低成本、低功耗的嵌入式应用设计的ARM Cortex®-M0，M0+，M3, M4和M7内核。</p>
+<p>主流产品（STM32F0、STM32F1、STM32F3）、超低功耗产品（STM32L0、STM32L1、STM32L4、STM32L4+）、高性能产品（STM32F2、STM32F4、STM32F7、STM32H7）</p>
+<p>51单片机：<br><img src="https://pic1.zhimg.com/80/v2-5f93514b9dbe056edf726476e000a680_720w.jpg" alt="51单片机"><br>51单片机是对兼容英特尔8051指令系统的单片机的统称</p>
+<p>51单片机广泛应用于家用电器、汽车、工业测控、通信设备中。因为51单片机的指令系统、内部结构相对简单，所以国内许多高校用其进行单片机入门教学。</p>
+<p>51单片机是Intel在1981年推出的由8031微控制器芯片改造升级的、使用CISC指令集的、冯诺依曼架构的、8位的8051微控制器。后Intel将8051微控制器的内核授权给其他芯片厂商,使得市面上广泛出现类似于8051的芯片,这种采用8051内核的芯片被简称为51。</p>
+<p>从上述例子中我们能直观地看到这些开发板和单片机所使用处理器的不同，但是树莓派、Arduino、stm32和我们日常使用的手机均是使用arm架构的处理器，那么手机算单片机吗？</p>
+<p>要回答这个问题，首先要简单介绍一下ARM处理器产品线。</p>
+<p>ARM Cortex内核系列提供非常广泛的具有可扩展性的性能选项，设计人员有机会在多种选项中选择最适合自身应用的内核。Cortex系列组合大体上分为三种类别：</p>
+<p>● Cortex-A—面向性能密集型系统的应用处理器内核</p>
+<p>● Cortex-R—面向实时应用的高性能内核</p>
+<p>● Cortex-M—面向各类嵌入式应用的微控制器内核</p>
+<p><img src="https://pic2.zhimg.com/80/v2-f85640d3f7901185a13f066da1a9b191_720w.jpg" alt="处理器家族"><br>Cortex-A处理器为利用操作系统（例如Linux或者Android）的设备提供了一系列解决方案，这些设备被用于各类应用，从低成本手持设备到智能手机、平板电脑、机顶盒以及企业网络设备等。</p>
+<p>Cortex-R实时处理器为要求可靠性、高可用性、容错功能、可维护性和实时响应的嵌入式系统提供高性能计算解决方案。在数以亿计的产品中得到验证的成熟技术提供极快的上市速度，并利用广泛的 ARM 生态系统、全球和本地语言以及全天候的支持服务，保证快速、低风险的产品开发。</p>
+<p>Cortex-M系列基于ARMv7-M架构（用于Cortex-M3和Cortex-M4）构建，针对成本和功耗敏感的MCU和终端应用（如智能测量、人机接口设备、汽车和工业控制系统、大型家用电器、消费性产品和医疗器械）的混合信号设备进行过优化。</p>
+<p>总结： Cortex-M 系列是MCU，也就是单片机，Cortex-R 系列处理器提供的性能比 Cortex-M 系列提供的性能高得多，而 Cortex-A 系列专用于具有复杂软件操作系统（需使用虚拟内存管理）的面向用户的应用。</p>
+<p>综上所述，只有Cortex-A系列内核的芯片叫处理器。而上述的开发板和单片机只有Raspberry Pi以及我们日常使用的手机是Cortex-A系列内核的芯片。</p>
+<p>单片机和嵌入式系统的结构</p>
+<p>单片机： 软件 —— 硬件<br>嵌入式系统： 软件 ——操作系统——硬件</p>
+<p>有无操作系统的区别</p>
+<p>有操作系统可以实现多任务调度、文件系统、内存管理等复杂功能。</p>
+<p>当系统中存在操作系统的时候，设备驱动变成了连接硬件和内核的桥梁。开发者调用统一的系统调用接口来访问各种设备，方便开发。提供操作方便、简单、提供友好的图形GUI和图形界面，追求易学易用。并且可以使用大量开源的软件，工具，库。</p>
+<p>提供强大的网络功能，支持TCP&#x2F;IP协议及其他协议，提供TCP&#x2F;UDP&#x2F;IP&#x2F;PPP协议支持及统一的MAC访问层接口，为各种移动计算设备预留接口。可以实现远程控制。</p>
+<p>拥有良好的软件移植性，嵌入式系统和具体应用有机地结合在一起，升级换代也是和具体产品同步进行，具有较长的生命周期。</p>
+<p>而对于无操作系统的单片机而言，可以实现的功能相对单一。开发者必须要先了解这个硬件平台，才能进行软件编程，降低了开发效率且软件移植性差。</p>
+<p>单片机的优势</p>
+<p>从上文所述的种种优缺点来看，单片机对比嵌入式系统似乎一无是处，尽管嵌入式系统的性能强大且可实现功能众多，但嵌入式最大的劣势便是其高昂的价格。</p>
+<p>单片机价格低廉，结构简单，使用方便，实现模块化，单片机可靠性高，可工作到10^6 ~10^7小时无故障，处理功能强，速度快。低电压，低功耗，控制功能强，环境适应能力强。</p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+        <tag>嵌入式</tag>
+        <tag>单片机</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>日常使用Linux系统是什么体验？</title>
+    <url>/archives/a1e2b7b3.html</url>
+    <content><![CDATA[<p>趁着五一小假期，我尝试了去使用Linux作为日常使用的操作系统，这个过程中也是踩了不少的坑，所以想写一篇文章分享一下。</p>
+<p>我个人使用过Kail、CentOS7、Ubuntu16.04、Windows Subsystem for Linux（WSL）作为开发环境，我个人更喜欢Debian Style (.deb)包管理系统，所以最终选择了使用Ubuntu18.04 LTS，打算在开发之余日常使用，满足听音乐，写文档，看看视频等需求。</p>
+<h1 id="Ubuntu的优缺点："><a href="#Ubuntu的优缺点：" class="headerlink" title="Ubuntu的优缺点："></a>Ubuntu的优缺点：</h1><p><img src="https://pic3.zhimg.com/80/v2-c394ee5ef8e79d2c1ee12b659d08ec32_720w.jpg"></p>
+<h1 id="安装Flash插件"><a href="#安装Flash插件" class="headerlink" title="安装Flash插件"></a>安装Flash插件</h1><p>使用Firefox 浏览器时，B站无法播放视频，提示需要下载Flash插件；<br><img src="https://pic1.zhimg.com/80/v2-1b63342350894d7b71807cdb3e57a2fc_720w.jpg"><br>点击页面跳转后却提示现在Adobe官网已经不再提供flash下载；</p>
+<p>（由于 Adobe 在 2020 年 12 月 31 日之后不再支持 Flash Player，并且从 2021 年 1 月12 日开始阻止 Flash 内容在 Flash Player 中运行，因此 Adobe 强烈建议所有用户立即卸载 Flash Player 以帮助保护其系统。）<br><img src="https://pic1.zhimg.com/v2-a372fc674dc8c7eb9ef4e9318e474dc0_r.jpg"></p>
+<p>解决办法是通过终端安装flash插件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install flashplugin-installer</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<h2 id="安装ubuntu-restricted-extras；"><a href="#安装ubuntu-restricted-extras；" class="headerlink" title="安装ubuntu-restricted-extras；"></a>安装ubuntu-restricted-extras；</h2><p>ubuntu-restricted-extras 是一个包含各种基本软件，如 Flash 插件、unrar、gstreamer、mp4、Ubuntu 中的 Chromium 浏览器的编解码器等的软件包。</p>
+<p>Ubuntu提供了一个软件包来安装所有基本的媒体编解码器：ubuntu-restricted-extras。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install ubuntu-restricted-extras</span><br></pre></td></tr></table></figure>
+
+<h1 id="安装Google-Chrome："><a href="#安装Google-Chrome：" class="headerlink" title="安装Google Chrome："></a>安装Google Chrome：</h1><p>直接使用Google浏览器也可以解决上述问题。</p>
+<h2 id="1-下载谷歌浏览器"><a href="#1-下载谷歌浏览器" class="headerlink" title="1.下载谷歌浏览器"></a>1.下载谷歌浏览器</h2><p>下载最新的谷歌浏览器。带wget的deb包：</p>
+<p>wget <a href="https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb">https://dl.google.com/linux/direct/google-chrome_stable_current_amd64.deb</a></p>
+<h2 id="2-安装谷歌浏览器"><a href="#2-安装谷歌浏览器" class="headerlink" title="2.安装谷歌浏览器"></a>2.安装谷歌浏览器</h2><p>在Ubuntu上安装软件包需要sudo权限。确保以具有sudo权限的用户身份运行以下命令。</p>
+<p>安装谷歌浏览器。通过键入以下内容</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+
+<p>安装deb包：<br>下载好deb包后，输入</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./“安装包名”</span><br></pre></td></tr></table></figure>
+<p>如上文所示</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br><span class="line">sudo apt install ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+
+<h1 id="输入法软件："><a href="#输入法软件：" class="headerlink" title="输入法软件："></a>输入法软件：</h1><h2 id="搜狗输入法："><a href="#搜狗输入法：" class="headerlink" title="搜狗输入法："></a>搜狗输入法：</h2><p>搜狗输入法Linux官网-首页</p>
+<h3 id="1、添加中文语言支持"><a href="#1、添加中文语言支持" class="headerlink" title="1、添加中文语言支持"></a>1、添加中文语言支持</h3><p>打开 系统设置——区域和语言——管理已安装的语言——在“语言”tab下——点击“添加或删除语言”<br><img src="https://pic1.zhimg.com/80/v2-b248e5b921fa3cde2c018dbb74a09a68_720w.jpg"><br>弹出“已安装语言”窗口，勾选中文（简体），点击应用<br><img src="https://pic2.zhimg.com/80/v2-9784e564cfb3f4d55a89b0a9b459e7b5_720w.jpg"><br>回到“语言支持”窗口，在键盘输入法系统中，选择“fcitx”<br><img src="https://pic3.zhimg.com/80/v2-6ac417d2e68d2a9ab99b17f034fd3742_720w.jpg"></p>
+<p>如果在键盘输入法系统中，没有“fcitx”选项时，建议先打开终端手动安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">fcitx：sudo apt-get install fcitx</span><br></pre></td></tr></table></figure>
+<p>等安装成功之后再执行上述步骤</p>
+<p>点击“应用到整个系统”，关闭窗口，重启电脑</p>
+<h3 id="2-通过命令行安装搜狗输入法"><a href="#2-通过命令行安装搜狗输入法" class="headerlink" title="2.通过命令行安装搜狗输入法"></a>2.通过命令行安装搜狗输入法</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i sogoupinyin_版本号_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>如果安装过程中提示缺少相关依赖，则执行如下命令解决：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt -f install</span><br></pre></td></tr></table></figure>
+<h3 id="3-注销计算机即可正常使用搜狗输入法。"><a href="#3-注销计算机即可正常使用搜狗输入法。" class="headerlink" title="3.注销计算机即可正常使用搜狗输入法。"></a>3.注销计算机即可正常使用搜狗输入法。</h3><h1 id="文档软件："><a href="#文档软件：" class="headerlink" title="文档软件："></a>文档软件：</h1><h2 id="Wps："><a href="#Wps：" class="headerlink" title="Wps："></a>Wps：</h2><p>WPS Office因酷似微软 Office 而广受欢迎。它的界面与微软 Office 几乎一样并且号称与微软 Office 更加兼容。<br><a href="https://www.wps.cn/product/wpslinux">https://www.wps.cn/product/wpslinux</a></p>
+<h2 id="LibreOffice："><a href="#LibreOffice：" class="headerlink" title="LibreOffice："></a>LibreOffice：</h2><p>它是个组件完整的办公软件，包括文档编辑器、电子表格工具、演示软件、数学工具和作图工具。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libreoffice libreoffice-style-breeze</span><br></pre></td></tr></table></figure>
+<h1 id="音乐软件："><a href="#音乐软件：" class="headerlink" title="音乐软件："></a>音乐软件：</h1><h2 id="网易云："><a href="#网易云：" class="headerlink" title="网易云："></a>网易云：</h2><p><a href="https://music.163.com/#/download">https://music.163.com/#/download</a></p>
+<h1 id="聊天软件："><a href="#聊天软件：" class="headerlink" title="聊天软件："></a>聊天软件：</h1><h2 id="QQ："><a href="#QQ：" class="headerlink" title="QQ："></a>QQ：</h2><p><a href="https://im.qq.com/linuxqq/download.html">https://im.qq.com/linuxqq/download.html</a></p>
+<h1 id="其他一些常用软件安装与使用："><a href="#其他一些常用软件安装与使用：" class="headerlink" title="其他一些常用软件安装与使用："></a>其他一些常用软件安装与使用：</h1><h2 id="VNC的使用及常见问题："><a href="#VNC的使用及常见问题：" class="headerlink" title="VNC的使用及常见问题："></a>VNC的使用及常见问题：</h2><h3 id="启动VNC"><a href="#启动VNC" class="headerlink" title="启动VNC"></a>启动VNC</h3><p>设置里打开共享<br><img src="https://pic3.zhimg.com/80/v2-bdad4403c861b8070edf35e06abc3f0a_720w.jpg"><br>设置密码并打开选项<br><img src="https://pic2.zhimg.com/80/v2-fe2ab52e283125190f7d46422d01d1a9_720w.jpg"><br>如果没有屏幕共享选项</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install dconf-editor</span><br></pre></td></tr></table></figure>
+<p>或者，如果尚未安装 vino，请同时执行以下操作：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install vino dconf-editor</span><br></pre></td></tr></table></figure>
+<p>打开dconf-editor工具，终端输入 dconf-editor打开</p>
+<p>打开之后，依次展开org-&gt;gnome-&gt;desktop-&gt;remote-access<br><img src="https://pic2.zhimg.com/80/v2-863b0116f3f2f976dda4a8c19f281259_720w.jpg"><br>打开相关选项即可。</p>
+<h3 id="如果无法连接VNC服务端"><a href="#如果无法连接VNC服务端" class="headerlink" title="如果无法连接VNC服务端"></a>如果无法连接VNC服务端</h3><p>报错信息如下：</p>
+<p>Unable to connect to VNC Server using your chosen security setting. Either upgrade VNC Server to a more recent version from RealVNC, or select a weaker level of encryption</p>
+<p>解决办法</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gsettings <span class="built_in">set</span> org.gnome.Vino require-encryption <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<h2 id="SSR："><a href="#SSR：" class="headerlink" title="SSR："></a>SSR：</h2><p>科学上网工具，下载地址：<br><a href="https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb">https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb</a></p>
+<h2 id="GDebi："><a href="#GDebi：" class="headerlink" title="GDebi："></a>GDebi：</h2><p>Gedbi 是一款小巧的软件包管理器，你可以用它来安装 DEB 文件。它比软件中心更快，而且还能处理依赖问题。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gdebi</span><br></pre></td></tr></table></figure>
+
+<h2 id="Visual-Studio-Code："><a href="#Visual-Studio-Code：" class="headerlink" title="Visual Studio Code："></a>Visual Studio Code：</h2><p><a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a></p>
+<h2 id="Steam："><a href="#Steam：" class="headerlink" title="Steam："></a>Steam：</h2><p><a href="https://store.steampowered.com/about/">https://store.steampowered.com/about/</a></p>
+<h2 id="误删一些安装包导致无法打开系统设置："><a href="#误删一些安装包导致无法打开系统设置：" class="headerlink" title="误删一些安装包导致无法打开系统设置："></a>误删一些安装包导致无法打开系统设置：</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install gnome-control-center</span><br></pre></td></tr></table></figure>
+
+<h1 id="个人的一些感想："><a href="#个人的一些感想：" class="headerlink" title="个人的一些感想："></a>个人的一些感想：</h1><p>经过几天的使用，我发现Ubuntu在配置好环境后，日常体验还是相当不错的。</p>
+<h2 id="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"><a href="#但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使-Linux-开发了相应的-Windows-软件替代品，使用体验还是不如Windows的。虽然-Linux-中网络是可靠的，但与-Windows-之间还是有差异的，不像-Windows-那样易于上手。并且Linux-的显卡支持也很麻烦，也缺乏-3A-游戏。尽管Steam-Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。" class="headerlink" title="但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。"></a>但相对繁琐的软件安装步骤（学习成本较高）以及传统软件的缺乏（比如office全家桶）还是会让人放弃把Ubuntu或者其他Linux发行版作为日常使用的系统，即使 Linux 开发了相应的 Windows 软件替代品，使用体验还是不如Windows的。虽然 Linux 中网络是可靠的，但与 Windows 之间还是有差异的，不像 Windows 那样易于上手。并且Linux 的显卡支持也很麻烦，也缺乏 3A 游戏。尽管Steam Deck的系统是基于Linux，但可以在Linux上流畅运行的游戏还是相对比较少的。</h2><p>（2022&#x2F;5&#x2F;12 补充回答）</p>
+<p>因为之前的回答写得过于笼统，我决定补充一下回答。</p>
+<p>首先讲讲为什么都2022年了，Ubuntu22.04都出了，为什么我还在使用Ubuntu18.04，原因也很简单，因为我使用Ubuntu的首要目标是搭建开发环境，而日常使用是其次的，使用18.04也只是因为环境搭建起来比较容易而已。这次没能用上Ubuntu22.04的新桌面GNOME 42，我觉得还是挺遗憾的。</p>
+<p>再来讲讲我自己Linux的使用经历吧，我的Linux使用经验比较浅薄，我在19年年底才开始接触Linux，当时使用的是树莓派4B开发板，系统是Raspberry Pi OS，而我电脑上则是使用WSL，Ubuntu16.04版本。刚开始学习的时候，我算是完完全全的小白，只是知道Linux这么一个东西的存在，很难理解一个黑色的框框（终端）是操作系统。经过一段时间的学习后才算是明白了各种基本命令行的用法。后来在学校的机房里接触到CentOS8和RedHat，自己也出于好奇在虚拟机上跑Kali，学习关于网络的一些东西，但是也没有想过日常去使用这些Linux发行版。其实树莓派系统是有桌面的，但我平时都是用vscode+ssh去开发，所以也没什么接触Linux桌面的机会。可以说在这个假期前，我对Linux桌面的接触接近于0。</p>
+<p>经过这次假期短暂的使用后，接下来再讲讲我的小结，Linux确实可以应付所有的“日常使用”场景的，但在我看来更适合于开发。Linux的使用是有门槛的，即使拥有了桌面，离开了命令行界面（CLI），Linux上的很多操作都寸步难行。虽然我觉得CLI用起来很帅，很高效，但对于以日常使用为目的而不是开发的小白用户来说，CLI便是使用Linux的难点之一。反观Windows出色的图形用户界面（GUI），操作方便直观且学习成本低，在日常使用中普通用户一般也不需要使用到cmd和powershell。我举个不太恰当的例子，Linux发行版就像毛坯房需要自己去动手装修，桌面也只是给了一个基本的框架，自由度高，可以各种自定义各种魔改，比较适合动手能力强爱折腾的用户，而Windows就像已经装修好的样本房，即买即住，适合图省心的用户。（那么如果有一个上手简便，不需要CLI即可操作并且桌面功能完善的发行版一定会受到用户的欢迎吧）</p>
+<p>在软件方面，适配Linux的软件也是远少于Windows，如经典的office全家桶，各类工程软件以及常用软件。Linux下的游戏还是比较匮乏的，数量上远少于Windows。显卡驱动也是Linux的使用难点之一，而最近英伟达已经开源 Linux GPU 内核驱动了，未来可期。希望软件和游戏厂商以后能给Linux做更多的适配吧。</p>
+<p>还有一个问题就是国内特殊的网络环境以及中文互联网资料比较贫瘠，我寻找到的很多资料都已经是过时无效的了，使用好相关论坛可以节省掉不少的时间。</p>
+<p>相比Windows下泛滥的各式流氓软件，Linux则不需要担心这个问题，并且更为干净安全可靠，也没有像微软那样三天两头就更新的各式补丁。</p>
+]]></content>
+      <categories>
+        <category>Linux学习笔记</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>计算机网络知识点总结（一）</title>
     <url>/archives/5dd58e55.html</url>
     <content><![CDATA[<h2 id="计算机网络的定义"><a href="#计算机网络的定义" class="headerlink" title="计算机网络的定义"></a>计算机网络的定义</h2><p>计算机网络是“以相互共享资源的方式互联起来的自治计算机系统的集合”。<br>计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。</p>
@@ -660,6 +637,29 @@
       </categories>
       <tags>
         <tag>计算机网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>树莓派系统烧录教程</title>
+    <url>/archives/6a0755b3.html</url>
+    <content><![CDATA[<p>树莓派的系统烧录大体上可分为使用</p>
+<p>官方的烧录工具Raspberry Pi Imager烧录和使用第三方烧录工具烧录。</p>
+<p>官方的烧录工具胜在操作简单，方便快捷，所以这里使用Raspberry Pi Imager进行演示。</p>
+<p>具体步骤如下：</p>
+<p>首先准备好tf卡和读卡器</p>
+<p>然后进入官网下载 <a href="https://link.zhihu.com/?target=https://www.raspberrypi.com/software/">Raspberry Pi Imager</a></p>
+<p><img src="https://pic4.zhimg.com/80/v2-8a14d7c95dec632584c034d0dc88b28b_720w.jpg" alt="选择download for windows"></p>
+<p>安装Raspberry Pi Imager<br><img src="https://pic1.zhimg.com/80/v2-c4e4c22348914ce68edf31226bb6f340_720w.jpg" alt="点击Install"><br><img src="https://pic2.zhimg.com/80/v2-84775579e1f5e109e7cfb486f4aab445_720w.jpg" alt="Finish"></p>
+<p>打开Raspberry Pi Imager<br><img src="https://pic4.zhimg.com/80/v2-4eae49e0a08f4a124f1a8a74ebc7970b_720w.jpg" alt="点击CHOOSE OS选项"></p>
+<p>这里我们可以看到有很多系统可供选择，可以自行选择适合的系统，</p>
+<p>这里我们选择带有树莓派桌面的第一个系统为例<br><img src="https://pic2.zhimg.com/80/v2-112d84b8ae1fa0b9dcd92a6325576ae9_720w.jpg" alt="点击Raspberry PI OS(32-bit)"></p>
+<p>选择对应的存储设备<br><img src="https://pic1.zhimg.com/80/v2-a5d82eae153723595f4c1944cf3f797c_720w.jpg" alt="点击CHOOSE STORAGE选项"><br><img src="https://pic3.zhimg.com/80/v2-f6cf4fe01e8b59da659a6e37c9db9aae_720w.jpg" alt="注意所选盘符是否为目标tf卡"></p>
+<p>烧录程序<br><img src="https://pic4.zhimg.com/80/v2-16125a207574f1440b2e52738d1a7c47_720w.jpg" alt="点击WRITE"><br><img src="https://pic1.zhimg.com/80/v2-71484bd203bca4874eeb82a93026a360_720w.jpg" alt="点击yes"></p>
+<p>接下来耐心等待即可<br><img src="https://pic4.zhimg.com/80/v2-7d813e812b9816d4339a448576daa9bf_720w.jpg" alt="等进度条达100％即完成树莓派系统的烧录"></p>
+<p>如果出现报错，可以尝试重新烧录系统。</p>
+]]></content>
+      <tags>
+        <tag>树莓派</tag>
       </tags>
   </entry>
   <entry>
@@ -740,33 +740,6 @@
         <tag>计算机网络</tag>
         <tag>网络安全</tag>
         <tag>抓包</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</title>
-    <url>/archives/8cdebc07.html</url>
-    <content><![CDATA[<h2 id="什么是Socket？"><a href="#什么是Socket？" class="headerlink" title="什么是Socket？"></a>什么是Socket？</h2><p>Socket允许在相同或不同机器上的两个不同进程之间进行通信。更准确地说，这是一种使用标准 Unix 文件描述符与其他计算机通信的方式。</p>
-<p>在 Unix 中，每个 I&#x2F;O 操作都是通过写入或读取文件描述符来完成的。文件描述符只是与打开的文件相关联的整数，它可以是网络连接、文本文件、终端或其他东西。</p>
-<p>对于程序员来说，套接字的外观和行为很像低级文件描述符。这是因为诸如 read() 和 write() 之类的命令对套接字的工作方式与它们对文件和管道的工作方式相同。</p>
-<p>套接字最初是在 2.1BSD 中引入的，随后在 4.2BSD 中被改进为当前的形式。现在，大多数最新的 UNIX 系统版本都提供了套接字功能。<br><img src="https://pic1.zhimg.com/80/v2-33d5adb9c5bdefa9977a7f64970834a0_720w.jpg" alt="Socket与各种网络协议的关系"><br>如图所示，Socket是为了给应用程序一个更加统一、简洁的API接口而将底层各种协议栈封装起来形成形成的一层接口函数。</p>
-<p>简单举例Socket如何实现客户端和服务端<br><img src="https://pic3.zhimg.com/80/v2-50a90c813007b71ef251e00f5cf7692e_720w.jpg" alt="客户端和服务端信息交互"><br>构建客户端和服务器的方式有所不同，但都涉及到Socket的基本构造。这两个进程都建立了自己的套接字。</p>
-<h2 id="如何构建客户端"><a href="#如何构建客户端" class="headerlink" title="如何构建客户端"></a>如何构建客户端</h2><p>在客户端建立Socket的步骤如下 ：</p>
-<p>1.使用socket()系统调用创建一个套接字。</p>
-<p>2.使用connect()系统调用将套接字连接到服务器的地址。</p>
-<p>3.发送和接收数据。有很多方式可以实现这一点，最简单的方法就是使用read()和write()系统调用。</p>
-<h2 id="如何构建服务端"><a href="#如何构建服务端" class="headerlink" title="如何构建服务端"></a>如何构建服务端</h2><p>在服务器端建立套接字的步骤如下 ：</p>
-<p>1.使用socket()系统调用创建一个套接字。</p>
-<p>2.使用bind()系统调用将套接字绑定到一个地址。对于 Internet 上的服务器套接字，地址由主机上的端口号组成。</p>
-<p>3.通过listen()系统调用监听连接。</p>
-<p>4.通过accept()系统调用接受连接。此调用通常会阻止连接，直到客户端与服务器连接。</p>
-<p>5.使用read()和write()系统调用发送和接收数据。</p>
-]]></content>
-      <categories>
-        <category>计算机网络</category>
-      </categories>
-      <tags>
-        <tag>计算机网络</tag>
-        <tag>Socket</tag>
       </tags>
   </entry>
   <entry>
@@ -857,25 +830,142 @@
       </tags>
   </entry>
   <entry>
-    <title>计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序</title>
-    <url>/archives/cf06f66d.html</url>
-    <content><![CDATA[<p>在上文中，讲述了Socket的一些基本函数以及如何简单使用Socket搭建一个单工聊天的聊天室程序。</p>
-<p>本文的目标便是对这个简单的程序加以改进，使其能实现服务端和客户端之间的相互通信。如果想更深入理解，推荐大家阅读《UNIX网络编程卷1套接字联网API》这本书。</p>
-<h2 id="首先需要补充一些我之前没有提到过的知识点。"><a href="#首先需要补充一些我之前没有提到过的知识点。" class="headerlink" title="首先需要补充一些我之前没有提到过的知识点。"></a>首先需要补充一些我之前没有提到过的知识点。</h2><h3 id="Socket处于网络协议的哪个层次？"><a href="#Socket处于网络协议的哪个层次？" class="headerlink" title="Socket处于网络协议的哪个层次？"></a>Socket处于网络协议的哪个层次？</h3><p><img src="https://pic4.zhimg.com/80/v2-728b741914df045b9cdfb918a30d1843_720w.jpg" alt="socket网络层次"><br>套接字编程接口是从顶上三层（网际协议的应用层）进入传输层的接口。</p>
-<h3 id="为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口"><a href="#为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口" class="headerlink" title="为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口?"></a>为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口?</h3><p>这样设计有两个理由，如图1-14右侧所注。理由之一是顶上三层处理具体网络应用（如FTP、Telnet或HTTPO的所有细节，却对通信细节了解很少;底下四层对具体网络应用了解不多，却处理所有的通信细节:发送数据，等待确认，给无序到达的数据排序，计算并验证校验和，等等。理由之二是顶上三层通常构成所谓的用户进程user process口,底下四层却通常作为操作系统内核的一部分提供。Unix与其他现代操作系统都提供分隔用户进程与内核的机制。由此可见，第4层和第5层之间的接口是构建API的自然位置。</p>
-<h2 id="TCP实现框架"><a href="#TCP实现框架" class="headerlink" title="TCP实现框架"></a>TCP实现框架</h2><p><img src="https://pic1.zhimg.com/80/v2-dfaeec3f74165f5a74c278a513d54ab8_720w.jpg" alt="TCP实现框架"></p>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>目前该代码尚不完善，仅供参考，只能实现一发送一接收的“伪”半双工通信。真正的半双工(Half Duplex)数据传输，数据可以随时发送，只是不能同时传输。</p>
-<h2 id="Sever-cpp"><a href="#Sever-cpp" class="headerlink" title="Sever.cpp"></a>Sever.cpp</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PORT 7000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024 <span class="comment">//缓冲区大小宏定义</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">const</span> <span class="type">char</span> *ip = argv[<span class="number">1</span>];</span><br><span class="line"> <span class="type">int</span> port = <span class="built_in">atoi</span>(argv[<span class="number">2</span>]); <span class="comment">//将输入的端口号由字符串转换为整数类型</span></span><br><span class="line">    <span class="comment">//结构体定义与初始化</span></span><br><span class="line"> <span class="type">int</span> sockSer = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>); <span class="comment">//若成功则返回一个sockfd（套接字描述符）</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> server_sockaddr;            <span class="comment">//一般是储存地址和端口的。用于信息的显示及存储使用</span></span><br><span class="line">                                                   <span class="comment">//设置 sockaddr_in 结构体中相关参数</span></span><br><span class="line"> server_sockaddr.sin_family = AF_INET;</span><br><span class="line"> server_sockaddr.sin_port = <span class="built_in">htons</span>(PORT); <span class="comment">//将一个无符号短整型数值转换为网络字节序，即大端模式(big-endian) </span></span><br><span class="line">                                            <span class="comment">// printf(&quot;%d\n&quot;,INADDR_ANY);</span></span><br><span class="line">    <span class="comment">// INADDR_ANY就是指定地址为0.0.0.0的地址，这个地址事实上表示不确定地址，或“所有地址”、“任意地址”。</span></span><br><span class="line">    <span class="comment">//一般来说，在各个系统中均定义成为0值。</span></span><br><span class="line">    <span class="comment">// server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY); //将主机的无符号长整形数转换成网络字节顺序。</span></span><br><span class="line"> <span class="built_in">inet_pton</span>(AF_INET, ip, &amp;server_sockaddr.sin_addr); <span class="comment">//将小端字节序转换为网络字节序</span></span><br><span class="line"> </span><br><span class="line"> <span class="built_in">assert</span>(sockSer &gt;= <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> ret = <span class="built_in">bind</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;server_sockaddr, <span class="built_in">sizeof</span>(server_sockaddr)); <span class="comment">//绑定IP地址、端口号等信息</span></span><br><span class="line"> <span class="built_in">assert</span>(ret != <span class="number">-1</span>);</span><br><span class="line"> ret = <span class="built_in">listen</span>(sockSer, <span class="number">5</span>); <span class="comment">//监听有无连接请求</span></span><br><span class="line"> <span class="built_in">assert</span>(ret != <span class="number">-1</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> client_addr;</span><br><span class="line"> <span class="type">socklen_t</span> client_addrlength = <span class="built_in">sizeof</span>(client_addr);</span><br><span class="line">    <span class="comment">///成功返回非负描述字，出错返回-1</span></span><br><span class="line"> <span class="type">int</span> connfd = <span class="built_in">accept</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;client_addr, &amp;client_addrlength); <span class="comment">//从监听队列中取出第一个已完成的连接</span></span><br><span class="line"> <span class="type">char</span> buffer_recv[BUFFER_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> <span class="type">char</span> buffer_send[BUFFER_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="keyword">if</span> (connfd &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;errno is : %d\n&quot;</span>, errno);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">memset</span>(buffer_recv, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> <span class="built_in">memset</span>(buffer_send, <span class="number">0</span>, BUFFER_SIZE); <span class="comment">//每次需要为缓冲区清空</span></span><br><span class="line"> </span><br><span class="line"> ret = <span class="built_in">recv</span>(connfd, buffer_recv, BUFFER_SIZE - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer_recv, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">// recv为quit表示客户端请求断开连接，退出循环</span></span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;client:%s&quot;</span>, buffer_recv);</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;server:&quot;</span>);</span><br><span class="line"> <span class="built_in">fgets</span>(buffer_send, BUFFER_SIZE, stdin);</span><br><span class="line"> <span class="built_in">send</span>(connfd, buffer_send, <span class="built_in">strlen</span>(buffer_send), <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer_send, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">// send为quit表示服务器请求断开连接，退出循环</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">close</span>(connfd);</span><br><span class="line"> <span class="built_in">close</span>(sockSer); <span class="comment">//关闭socket套接字描述符</span></span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Client-cpp"><a href="#Client-cpp" class="headerlink" title="Client.cpp"></a>Client.cpp</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">const</span> <span class="type">char</span> *ip = argv[<span class="number">1</span>];</span><br><span class="line"> <span class="type">int</span> port = <span class="built_in">atoi</span>(argv[<span class="number">2</span>]);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> sockCli = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//定义sockaddr_in</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> servaddr;</span><br><span class="line"> <span class="built_in">memset</span>(&amp;servaddr, <span class="number">0</span>, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> servaddr.sin_family = AF_INET;</span><br><span class="line"> servaddr.sin_port = <span class="built_in">htons</span>(port); <span class="comment">//服务器端口</span></span><br><span class="line">    <span class="comment">// servaddr.sin_addr.s_addr = htons(port);</span></span><br><span class="line"> <span class="built_in">inet_pton</span>(AF_INET, ip, &amp;servaddr.sin_addr); <span class="comment">//将点分文本的IP地址转换为二进制网络字节序的IP地址</span></span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> sockfd = <span class="built_in">socket</span>(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line"> <span class="built_in">assert</span>(sockfd &gt;= <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> connfd = <span class="built_in">connect</span>(sockfd, (<span class="keyword">struct</span> sockaddr *)&amp;servaddr, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> </span><br><span class="line"> <span class="type">char</span> sendbuf[BUFFER_SIZE];</span><br><span class="line"> <span class="type">char</span> recvbuf[BUFFER_SIZE];</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="keyword">if</span> (connfd &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;connection failed\n&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">memset</span>(sendbuf, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> <span class="built_in">memset</span>(recvbuf, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;client:&quot;</span>);</span><br><span class="line"> <span class="built_in">fgets</span>(sendbuf, BUFFER_SIZE, stdin);</span><br><span class="line"> <span class="built_in">send</span>(sockfd, sendbuf, <span class="built_in">strlen</span>(sendbuf), <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(sendbuf, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">//send为quit表示客户端请求断开连接，退出循环</span></span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> ret = <span class="built_in">recv</span>(sockfd, recvbuf, BUFFER_SIZE - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(recvbuf, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">//recv为quit表示服务器请求断开连接，退出循环</span></span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;server:%s&quot;</span>, recvbuf);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="built_in">close</span>(connfd);</span><br><span class="line"> <span class="built_in">close</span>(sockCli);</span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+    <title>计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</title>
+    <url>/archives/8cdebc07.html</url>
+    <content><![CDATA[<h2 id="什么是Socket？"><a href="#什么是Socket？" class="headerlink" title="什么是Socket？"></a>什么是Socket？</h2><p>Socket允许在相同或不同机器上的两个不同进程之间进行通信。更准确地说，这是一种使用标准 Unix 文件描述符与其他计算机通信的方式。</p>
+<p>在 Unix 中，每个 I&#x2F;O 操作都是通过写入或读取文件描述符来完成的。文件描述符只是与打开的文件相关联的整数，它可以是网络连接、文本文件、终端或其他东西。</p>
+<p>对于程序员来说，套接字的外观和行为很像低级文件描述符。这是因为诸如 read() 和 write() 之类的命令对套接字的工作方式与它们对文件和管道的工作方式相同。</p>
+<p>套接字最初是在 2.1BSD 中引入的，随后在 4.2BSD 中被改进为当前的形式。现在，大多数最新的 UNIX 系统版本都提供了套接字功能。<br><img src="https://pic1.zhimg.com/80/v2-33d5adb9c5bdefa9977a7f64970834a0_720w.jpg" alt="Socket与各种网络协议的关系"><br>如图所示，Socket是为了给应用程序一个更加统一、简洁的API接口而将底层各种协议栈封装起来形成形成的一层接口函数。</p>
+<p>简单举例Socket如何实现客户端和服务端<br><img src="https://pic3.zhimg.com/80/v2-50a90c813007b71ef251e00f5cf7692e_720w.jpg" alt="客户端和服务端信息交互"><br>构建客户端和服务器的方式有所不同，但都涉及到Socket的基本构造。这两个进程都建立了自己的套接字。</p>
+<h2 id="如何构建客户端"><a href="#如何构建客户端" class="headerlink" title="如何构建客户端"></a>如何构建客户端</h2><p>在客户端建立Socket的步骤如下 ：</p>
+<p>1.使用socket()系统调用创建一个套接字。</p>
+<p>2.使用connect()系统调用将套接字连接到服务器的地址。</p>
+<p>3.发送和接收数据。有很多方式可以实现这一点，最简单的方法就是使用read()和write()系统调用。</p>
+<h2 id="如何构建服务端"><a href="#如何构建服务端" class="headerlink" title="如何构建服务端"></a>如何构建服务端</h2><p>在服务器端建立套接字的步骤如下 ：</p>
+<p>1.使用socket()系统调用创建一个套接字。</p>
+<p>2.使用bind()系统调用将套接字绑定到一个地址。对于 Internet 上的服务器套接字，地址由主机上的端口号组成。</p>
+<p>3.通过listen()系统调用监听连接。</p>
+<p>4.通过accept()系统调用接受连接。此调用通常会阻止连接，直到客户端与服务器连接。</p>
+<p>5.使用read()和write()系统调用发送和接收数据。</p>
+]]></content>
       <categories>
         <category>计算机网络</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>计算机网络</tag>
         <tag>Socket</tag>
-        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机网络知识点总结（八）IPv4协议基本原理详解</title>
+    <url>/archives/ae61cc04.html</url>
+    <content><![CDATA[<p>IPv4协议是计算机网络中的重点，既是互联网的核心，也是使用最广泛的网际协议版本。而我们日常接触到最多的网络协议同样是IPv4。本文旨在较为全面地介绍IPv4协议的一些 基本概念以及 基本原理，帮助自己以及读者梳理IPv4协议的一些知识点。</p>
+<h1 id="IPv4引言"><a href="#IPv4引言" class="headerlink" title="IPv4引言"></a>IPv4引言</h1><p><strong>网际协议版本4</strong>（英语：Internet Protocol version 4，缩写：IPv4，又称互联网通信协议第四版）是网际协议开发过程中的第四个修订版本，也是此协议第一个被广泛部署和使用的版本。其后继版本为IPv6，直到2011年，IANA IPv4位址完全用尽时，IPv6仍处在部署的初期。</p>
+<p>IPv4在IETF于1981年9月发布的 RFC 791 中被描述，此RFC替换了于1980年1月发布的 RFC 760。</p>
+<p>IPv4是一种<strong>无连接</strong>的协议，操作在使用分组交换的链路层（如以太网）上。此协议会尽最大努力交付数据包，意即它不保证任何数据包均能送达目的地，也不保证所有数据包均按照正确的顺序无重复地到达。这些方面是由上层的传输协议（如传输控制协议）处理的。</p>
+<h1 id="IPv4协议发展和演变过程"><a href="#IPv4协议发展和演变过程" class="headerlink" title="IPv4协议发展和演变过程"></a>IPv4协议发展和演变过程</h1><p><img src="https://pic1.zhimg.com/80/v2-c30348bdecae5edcfb5b6818f19d79d4_720w.jpg"></p>
+<h1 id="IP协议的主要特点"><a href="#IP协议的主要特点" class="headerlink" title="IP协议的主要特点"></a>IP协议的主要特点</h1><p><strong>1.IP协议是一种无连接、不可靠的分组传送服务的协议</strong></p>
+<p><strong>2.IP协议是点-点的网络层通信协议</strong></p>
+<p><strong>3.IP协议屏蔽了互联的网络在数据链路层、物理层协议与实现技术上的差异</strong></p>
+<p><img src="https://pic2.zhimg.com/80/v2-c060953586d50a1758c3c77f8498e839_720w.jpg"></p>
+<h1 id="IPv4地址的特点"><a href="#IPv4地址的特点" class="headerlink" title="IPv4地址的特点"></a>IPv4地址的特点</h1><p>1.IP 地址是一种非等级的地址结构， IP 地址不能反映任何有关主机位置的地理信息，只能通过网络号码字段判断出主机属于哪个网络。</p>
+<p>2.当一台主机同时连接到两个网络上时，该主机就必须同时具有两个相应的 IP 地址，其网络号码 Net-id 是不同的，这种主机称为多地址主机（Multihomed Host）。主机上的每个接口都对应着一个 IP 地址，因此多接口主机会有多个 IP 地址。</p>
+<p>3.在 IP 地址中，所有分配到网络号码 Net-id 的网络都是平等的。</p>
+<p>4.IPv4地址空间少于<strong>40亿</strong>个，实际可以使用的更少。</p>
+<p>5.IPv4不区分网络终端主机和终端设备，每台电脑都可以作为主机和路由器。路由协议管理路由表记录，常用的路由协议有路由信息协议、开放最短路径协议、边界网关协议等。</p>
+<p>6.IPv4独立于特定的网络硬件，可以运行在局域网、广域网、互联网中。网络地址分配方案唯一，设备有唯一的地址。</p>
+<p>7.IPv4缺乏对安全性的支持，无法实现网络实名制。网络中节点配置很复杂，不能满足用户“即插即用”的需求口。</p>
+<h1 id="IPv4分组格式"><a href="#IPv4分组格式" class="headerlink" title="IPv4分组格式"></a>IPv4分组格式</h1><h2 id="IPv4数据报格式"><a href="#IPv4数据报格式" class="headerlink" title="IPv4数据报格式"></a>IPv4数据报格式</h2><p><img src="https://pic2.zhimg.com/80/v2-d4bd9b60633868608572e72818fbf255_720w.jpg"><br>网络层分组被称为数据报。我们以概述IPv4数据报的语法和语义开始对IP的学习。你也许认为没有什么比一个分组的比特的语法和语义更加枯燥无味的了。无论如何,数据报在因特网中起着重要作用,每个网络行业的学生和专业人员都需要理解它、吸收它并掌握它。IPv4数据报格式如图所示。</p>
+<p>IPv4分组由两个部分组成：分组头和数据。分组头也被称为“首部”，其长度是可变的。人们习惯使用4字节为基本单元表示分组头字段。图中分组头每行宽度是4字节，前5行是每个分组头中必须有的字段，第6行开始的是选项字段，因此IPv4分组头的基本长度是20字节。如果加上最长的40字节的选项，则IP分组头最大长度为60字节。</p>
+<h2 id="IPv4分组头格式"><a href="#IPv4分组头格式" class="headerlink" title="IPv4分组头格式"></a>IPv4分组头格式</h2><p>IPv4报文的首部包含14个字段，其中13个是必须的，第14个是可选的（红色标出），并命名为：“选项”字段。首部中的字段均以大端序包装，在以下的图表和讨论中，最高有效位（Most Significant bit）被标记为0。<br><img src="https://pic2.zhimg.com/80/v2-35cff58ddb93c07a71b05826b04a1791_720w.jpg"></p>
+<h3 id="（1）版本（Version）"><a href="#（1）版本（Version）" class="headerlink" title="（1）版本（Version）"></a>（1）版本（Version）</h3><p>版本字段占4bit，表示所使用的网络层IP协议的版本号。通信双方使用的版本必须一致。字段的值是4，表示IPv4，字段的值是6，表示IPv6。</p>
+<h3 id="（2）首部长度（Internet-Header-Length，-IHL）"><a href="#（2）首部长度（Internet-Header-Length，-IHL）" class="headerlink" title="（2）首部长度（Internet Header Length， IHL）"></a>（2）首部长度（Internet Header Length， IHL）</h3><p>首部长度占4bit，首部长度说明首部有多少32位字（4字节）。因为一个IPv4 数据报可包含一些可变数量的选项，这个字段也用来确定数据的偏移量。这个字段的最小值为5（二进制0101），相当于5*4&#x3D;20字节（RFC 791），最大十进制值是15。</p>
+<h3 id="（3）区分服务（Differentiated-Services，DS）"><a href="#（3）区分服务（Differentiated-Services，DS）" class="headerlink" title="（3）区分服务（Differentiated Services，DS）"></a>（3）区分服务（Differentiated Services，DS）</h3><p>在首部长度字段后，最早的RFV0791规定了一个长度为8bit的服务类型（ToS），ToS字段用了4位：D（延迟）、T（吞吐量）、R（可靠性）、C（成本）。但是ToS字段在路由器中并没有很好地利用起来。</p>
+<p>1998年RFC2474、RFC3168、RFC3260重新定义了这个长度为8bit的字段，前6bit定义为服务类型字段，后2bit为显式拥塞通告。只有在使用区分服务时，这个字段才起作用，在一般的情况下都不使用这个字段。例如需要实时数据流的技术会应用这个字段，一个例子是VoIP。</p>
+<h4 id="（3-1）服务类型-TOS）包含在IPv4首部中，以便使不同类型的IP数据报（例如，一些特别要求低时延、高吞吐量或可靠性的数据报）能相互区别开来。例如，将实时数据报（如用于IP电话应用-与非实时流量（如FTP-区分开也许是有用的。提供特定等级的服务是一个由网络管理员对路由器确定和配置的策略问题。"><a href="#（3-1）服务类型-TOS）包含在IPv4首部中，以便使不同类型的IP数据报（例如，一些特别要求低时延、高吞吐量或可靠性的数据报）能相互区别开来。例如，将实时数据报（如用于IP电话应用-与非实时流量（如FTP-区分开也许是有用的。提供特定等级的服务是一个由网络管理员对路由器确定和配置的策略问题。" class="headerlink" title="（3.1）服务类型(TOS）包含在IPv4首部中，以便使不同类型的IP数据报（例如，一些特别要求低时延、高吞吐量或可靠性的数据报）能相互区别开来。例如，将实时数据报（如用于IP电话应用)与非实时流量（如FTP)区分开也许是有用的。提供特定等级的服务是一个由网络管理员对路由器确定和配置的策略问题。"></a>（3.1）服务类型(TOS）包含在IPv4首部中，以便使不同类型的IP数据报（例如，一些特别要求低时延、高吞吐量或可靠性的数据报）能相互区别开来。例如，将实时数据报（如用于IP电话应用)与非实时流量（如FTP)区分开也许是有用的。提供特定等级的服务是一个由网络管理员对路由器确定和配置的策略问题。</h4><h4 id="（3-2-）显式拥塞通告（-Explicit-Congestion-Notification，ECN）在RFC-3168中定义，允许在不丢弃报文的同时通知对方网络拥塞的发生。ECN是一种可选的功能，仅当两端都支持并希望使用，且底层网络支持时才被使用。"><a href="#（3-2-）显式拥塞通告（-Explicit-Congestion-Notification，ECN）在RFC-3168中定义，允许在不丢弃报文的同时通知对方网络拥塞的发生。ECN是一种可选的功能，仅当两端都支持并希望使用，且底层网络支持时才被使用。" class="headerlink" title="（3.2 ）显式拥塞通告（ Explicit Congestion Notification，ECN）在RFC 3168中定义，允许在不丢弃报文的同时通知对方网络拥塞的发生。ECN是一种可选的功能，仅当两端都支持并希望使用，且底层网络支持时才被使用。"></a>（3.2 ）显式拥塞通告（ Explicit Congestion Notification，ECN）在RFC 3168中定义，允许在不丢弃报文的同时通知对方网络拥塞的发生。ECN是一种可选的功能，仅当两端都支持并希望使用，且底层网络支持时才被使用。</h4><h3 id="（4）全长（Total-Length）"><a href="#（4）全长（Total-Length）" class="headerlink" title="（4）全长（Total Length）"></a>（4）全长（Total Length）</h3><p>这是IP数据报的总长度（首部加上数据)，以字节计。因为该字段长为16比特，所以IP数据报的理论最大长度为65535字节。然而，数据报很少有超过1500字节的，该长度使得IP数据报能容纳最大长度以太网帧的载荷字段。当下层的数据链路协议的最大传输单元（MTU）字段的值小于IP报文长度时，报文就必须被分片。</p>
+<p>标识符（Identification）、标志（Flags）、片偏移（Fragment Offset）。这三个字段与所谓IP分片有关。有趣的是，新版本的IP(即 IPv6）不允许在路由器上对分组分片。</p>
+<h3 id="（5）存活时间（Time-To-Live，TTL）"><a href="#（5）存活时间（Time-To-Live，TTL）" class="headerlink" title="（5）存活时间（Time To Live，TTL）"></a>（5）存活时间（Time To Live，TTL）</h3><p>这个8位字段避免报文在互联网中永远存在（例如陷入路由环路）。存活时间以秒为单位，但小于一秒的时间均向上取整到一秒。在现实中，这实际上成了一个跳数计数器：报文经过的每个路由器都将此字段减1，当此字段等于0时，报文不再向下一跳传送并被丢弃，最大值是255。常规地，一份ICMP报文被发回报文发送端说明其发送的报文已被丢弃。这也是traceroute的核心原理。</p>
+<h3 id="（6）协议-（Protocol）"><a href="#（6）协议-（Protocol）" class="headerlink" title="（6）协议 （Protocol）"></a>（6）协议 （Protocol）</h3><p>占8bit，这个字段定义了该报文数据区使用的协议。IANA维护着一份协议列表（最初由RFC 790定义），详细参见IP协议号列表。</p>
+<h3 id="（7）首部检验和-（Header-Checksum）"><a href="#（7）首部检验和-（Header-Checksum）" class="headerlink" title="（7）首部检验和 （Header Checksum）"></a>（7）首部检验和 （Header Checksum）</h3><p>这个16位检验和字段只对首部查错，不包括数据部分。在每一跳，路由器都要重新计算出的首部检验和并与此字段进行比对，如果不一致，此报文将会被丢弃。重新计算的必要性是因为每一跳的一些首部字段（如TTL、Flag、Offset等）都有可能发生变化，不检查数据部分是为了减少工作量。数据区的错误留待上层协议处理——用户数据报协议（UDP）和传输控制协议（TCP）都有检验和字段。此处的检验计算方法不使用CRC。RFC 1071</p>
+<h3 id="（8）地址（Address）"><a href="#（8）地址（Address）" class="headerlink" title="（8）地址（Address）"></a>（8）地址（Address）</h3><p>地址字段包括源地址与目的地址。</p>
+<p>源地址（Source address）</p>
+<p>一个IPv4地址由四个字节共32位构成，此字段的值是将每个字节转为二进制并拼在一起所得到的32位值。例如，10.9.8.7是00001010000010010000100000000111。但请注意，因为NAT的存在，这个地址并不总是报文的真实发送端，因此发往此地址的报文会被送往NAT设备，并由它被翻译为真实的地址。</p>
+<p>目的地址（Destination address）</p>
+<p>与源地址格式相同，但指出报文的接收端。</p>
+<h3 id="（9）选项（Options）"><a href="#（9）选项（Options）" class="headerlink" title="（9）选项（Options）"></a>（9）选项（Options）</h3><p>选项字段允许IP首部被扩展。首部选项意味着很少使用，因此决定对每个数据报首部不包括选项字段中的信息，这样能够节约开销。然而，少量选项的存在的确使问题复杂了，因为数据报首部长度可变，故不能预先确定数据字段从何处开始。而且还因为有些数据报要求处理选项，而有些数据报则不要求，故导致一台路由器处理一个IP数据报所需的时间变化可能很大。这些考虑对于高性能路由器和主机上的IP处理来说特别重要。由于这样或那样的原因，在IPv6首部中已去掉了IP选项。</p>
+<h2 id="标准分类IP地址"><a href="#标准分类IP地址" class="headerlink" title="标准分类IP地址"></a>标准分类IP地址</h2><h1 id="网络地址的基本概念"><a href="#网络地址的基本概念" class="headerlink" title="网络地址的基本概念"></a>网络地址的基本概念</h1><p>理解网络地址需要注意以下问题</p>
+<h2 id="（1）名字、地址与路径"><a href="#（1）名字、地址与路径" class="headerlink" title="（1）名字、地址与路径"></a>（1）名字、地址与路径</h2><p>RFC791指出了<strong>名字（name）</strong>、<strong>地址（address）</strong>与<strong>路径（route）</strong>概念的区别。名字说明是谁，地址说明在哪，路径说明如何找到。</p>
+<h2 id="（2）MAC地址与IP地址"><a href="#（2）MAC地址与IP地址" class="headerlink" title="（2）MAC地址与IP地址"></a>（2）MAC地址与IP地址</h2><p><strong>MAC地址</strong>（英语：Media Access Control Address），直译为媒体访问控制地址，也称为局域网地址（LAN Address），以太网地址（Ethernet Address）或物理地址（Physical Address），它是一个用来确认网络设备位置的地址。在OSI模型中，第三层网络层负责IP地址，第二层数据链接层则负责MAC地址。MAC地址用于在网络中唯一标示一个网卡，一台设备若有一或多个网卡，则每个网卡都需要并会有一个唯一的MAC地址。</p>
+<p>互联网络是由多个网络互联而成的。连接到每个局域网的每台计算机都有一块网卡，也就是说每台计算机都有一个MAC地址。这个MAC地址被称为“物理地址”。IP地址是网络层的地址，主要用于路由器的寻址，因此IP地址采用层次结构。相对于数据链路层的固定和不变的物理地址，网络层是由网关人员分配和通过软件设置来设置的，因此人们也把它称为“逻辑地址”。</p>
+<h2 id="（3）IP地址和网络接口"><a href="#（3）IP地址和网络接口" class="headerlink" title="（3）IP地址和网络接口"></a>（3）IP地址和网络接口</h2><p>在讨论IP编址之前，我们需要简述一下主机与路由器连入网络的方法。一台主机通常只有一条链路连接到网络;当主机中的IP想发送一个数据报时，它就在该链路上发送。主机与物理链路之间的边界叫作接口（ interface)。现在考虑一台路由器及其接口。因为路由器的任务是从链路上接收数据报并从某些其他链路转发出去，路由器必须拥有两条或更多条链路与它连接。路由器与它的任意一条链路之间的边界也叫作接口。一台路由器因此有多个接口，每个接口有其链路。因为每台主机与路由器都能发送和接收IP数据报，IP要求每台主机和路由器接口拥有自己的IP地址。因此，从技术上讲，一个IP地址与一个接口相关联，而不是与包括该接口的主机或路由器相关联。</p>
+<h2 id="（4）IP地址的分配方法"><a href="#（4）IP地址的分配方法" class="headerlink" title="（4）IP地址的分配方法"></a>（4）IP地址的分配方法</h2><p>1.为每一个网络接口分配一个IP地址。</p>
+<p>2.为多归属主机的每一个网络接口分配相应的IP地址。</p>
+<p>3.可以为一个网络接口分配多个IP地址。</p>
+<h1 id="IPv4地址分类"><a href="#IPv4地址分类" class="headerlink" title="IPv4地址分类"></a>IPv4地址分类</h1><p>每个IP地址长度为32比特（等价为4字节)，因此总共有23个（或大约40亿个)可能的IP地址。这些地址通常按所谓点分十进制记法（ dotted-decimal notation）书写，即地址中的每个字节用它的十进制形式书写，各字节间以句点隔开。<br><img src="https://pic1.zhimg.com/80/v2-e369ec618faa638b1d7e97c153e51d24_720w.jpg"><br><strong>A级地址：</strong> 以0为首的8位网络地址 + 24位本地地址 ，常用于主机大于2^16个主机的大型网络中。</p>
+<p><strong>B级地址：</strong>以10为首的16为网络地址 +16位本地地址，常用于2^8-2^16个主机的中型网络中。</p>
+<p><strong>C级地址：</strong>以110为首的24位网络地址 + 8位本地地址，常用于2^8以下的小型网络中。</p>
+<p><strong>D 级地址：</strong>以1110为首的32位多播地址，即同时会向网络中多个工作站进行发送的一个地址。</p>
+<p><strong>E级地址：</strong>1 1 1 1 0 ，暂时保留，用于某些实验和将来使用。</p>
+<p><strong>说明：D类与E类IPv4地址不区分网络地址与主机地址。</strong></p>
+<p><img src="https://pic1.zhimg.com/80/v2-4b7359d86ab034dccf91554d22d5e93c_720w.jpg"><br>最初，一个IP地址被分成两部分：网络标识符在地址的高位字节中，主机标识符在剩下的部分中。</p>
+<p>为了克服这个限制，在随后出现的分类网络中，地址的高位字节被重定义为网络的类(Class)。这个系统定义了五个类别：A、B、C、D和E。A、B和C类有不同的网络类别长度，剩余的部分被用来识别网络内的主机，这就意味着每个网络类别有着不同的给主机编址的能力。D类被用于多播地址，E类被留作将来使用。</p>
+<p><img src="https://pic2.zhimg.com/80/v2-698d5faca4f523f0678334bf38790fcd_720w.jpg"></p>
+<h1 id="IPv4地址格式"><a href="#IPv4地址格式" class="headerlink" title="IPv4地址格式"></a>IPv4地址格式</h1><p>IPv4地址可被写作任何表示一个32位整数值的形式，但为了方便人类阅读和分析[1]，它通常被写作点分十进制的形式，即四个字节被分开用十进制写出，中间用点分隔。</p>
+<p>下表展示了几种不同的格式：<br><img src="https://pic2.zhimg.com/80/v2-1d43b2a0de83f825e00d5125ccf718c1_720w.jpg"></p>
+<p>此外，在点分格式中，每个字节都可用任意的进制表达。</p>
+<p>如，192.0x00.0002.235是一种合法（但不常用）的表示。点分格式也支持零省略的写法，例如127.1.1等同于127.1.0.1。</p>
+<h1 id="划分子网的三级地址结构"><a href="#划分子网的三级地址结构" class="headerlink" title="划分子网的三级地址结构"></a>划分子网的三级地址结构</h1><h2 id="1-子网的概念"><a href="#1-子网的概念" class="headerlink" title="1.子网的概念"></a>1.子网的概念</h2><p>标准分类的IP地址存在着两个主要问题：IP地址的有效利用率与路由器的工作效率。为了解决这个问题，人们提出子网(subnet)的概念。</p>
+<p>IP地址是以网络号和主机号来表示网络上的主机的，只有在一个网络号下的计算机之间才能“直接”互通，不同网络号的计算机要通过网关（Gateway）才能互通。但这样的划分在某些情况下显得并不十分灵活。为此IP网络还允许划分成更小的网络，称为子网（Subnet）。</p>
+<p>说得更具体一些就是为了确定子网，分开主机和路由器的每个接口，产生几个隔离的网络岛，使用接口端接这些隔离的网络的端点。这些隔离的网络中的每一个都叫作一个子网。</p>
+<p>如果我们将该过程用于图4-20中的互联系统上，会得到6个岛或子网。<br><img src="https://pic4.zhimg.com/80/v2-9d258201c500387e5f7467e97ffe5383_720w.jpg"></p>
+<h2 id="2-划分子网的地址结构"><a href="#2-划分子网的地址结构" class="headerlink" title="2.划分子网的地址结构"></a>2.划分子网的地址结构</h2><p>IP地址根据网络号和主机号的数量而分为A、B、C三类：IP地址用二进制来表示，每个IP地址长32bit，比特换算成字节，就是4个字节。例如一个采用二进制形式的IP地址是“00001010000000000000000000000001”，这么长的地址，人们处理起来也太费劲了。为了方便人们的使用，IP地址经常被写成十进制的形式，中间使用符号“.”分开不同的字节。于是，上面的IP地址可以表示为“10.0.0.1”。IP地址的这种表示法叫做“点分十进制表示法”，显然比1和0容易记忆得多。</p>
+<p>（1）三级层次的IP是：net ID-subnet ID host ID，增加了一级网号subnet ID。</p>
+<p>（2）同一个子网中所有的主机必须使用相同的网络号与子网号（net ID-subnet ID）。</p>
+<p>（3）子网的概念可以用于A、B、C三类IP地址。</p>
+<p>（4）子网之间的距离必须很近。分配子网是一个组织和单位内部的事，它既不要向ICANN申请，也不需要改变任何外部路由器的数据库。</p>
+<h2 id="3-子网掩码的概念"><a href="#3-子网掩码的概念" class="headerlink" title="3.子网掩码的概念"></a>3.子网掩码的概念</h2><p>当包括子网号的三层结构的IP地址出现后，一个很现实的问题是：如何从IP地址中提取出子网号。为了解决这个问题，人们提出子网掩码（subnet mask）或掩码（mask）的概念。子网掩码有时又称为子网屏蔽码。</p>
+<p>子网掩码：把基于每类的IP地址等级进一步分成更小的网络，每个子网由路由器界定并分配一个新的子网网络地址,子网地址是借用基于每类的网络地址的主机部分创建的。划分子网后，通过使用掩码，把子网隐藏起来，使得从外部看网络没有变化，这就是子网掩码。子网掩码用于辨别IP地址中哪部分为网络地址，哪部分为主机地址。</p>
+<p>即 IP地址 &amp; 子网掩码 &#x3D; 网络地址。</p>
+<p>掩码的概念同样适用于没有进行子网划分的A类、B类或C类地址。</p>
+<h2 id="4-可变长度子网掩码（Variable-Length-Subnet-Mask）技术"><a href="#4-可变长度子网掩码（Variable-Length-Subnet-Mask）技术" class="headerlink" title="4.可变长度子网掩码（Variable Length Subnet Mask）技术"></a>4.可变长度子网掩码（Variable Length Subnet Mask）技术</h2><p>在某种情况下，需要在子网划分时考虑不同的子网号长度。RFC1009文档对变长子网的划分做出了说明。</p>
+<p>**VLSM(可变长子网掩码) **是为了有效的使用无类别域间路由（CIDR）和路由汇聚(route summary)来控制路由表的大小，它是网络管理员常用的IP寻址技术，VLSM就是其中的常用方式，可以对子网进行层次化编址，以便最有效的利用现有的地址空间。</p>
+<h1 id="无类别域间路由"><a href="#无类别域间路由" class="headerlink" title="无类别域间路由"></a>无类别域间路由</h1><h2 id="1-无类别域间路由的基本概念"><a href="#1-无类别域间路由的基本概念" class="headerlink" title="1.无类别域间路由的基本概念"></a>1.无类别域间路由的基本概念</h2><p>在可变长度子网掩码基础上，人们提出了<strong>无类别域间路由（Classless Inter-Domain Routing、CIDR）</strong>的概念。CIDR是一个用于给用户分配IP地址以及在互联网上有效地路由IP数据包的对IP地址进行归类的方法。</p>
+<p>在RFC 950（1985）中有关于可变长子网掩码的说明。CIDR包括：</p>
+<p>指定任意长度的前缀的可变长子网掩码技术。遵从CIDR规则的地址有一个后缀说明前缀的位数，例如：192.168.0.0&#x2F;16。这使得对日益缺乏的IPv4地址的使用更加有效。<br>将多个连续的前缀聚合成超网，以及，在互联网中，只要有可能，就显示为一个聚合的网络，因此在总体上可以减少路由表的表项数目。聚合使得互联网的路由表不用分为多级，并通过VLSM逆转“划分子网”的过程。<br>根据机构的实际需要和短期预期需要而不是分类网络中所限定的过大或过小的地址块来管理IP地址的分配的过程。<br>因为在IPv6中也使用了IPv4的用后缀指示前缀长度的CIDR，所以IPv4中的分类在IPv6中已不再使用。</p>
+<p>因特网的地址分配策略被称为无类别域间路由选择。CIDR将子网寻址的概念一般化了。当使用子网寻址时，32比特的IP地址被划分为两部分，并且也具有点分十进制数形式a. b. c. d&#x2F; x，其中x指示了地址的第一部分中的比特数。</p>
+<p>形式为a. b.c. d&#x2F;x的地址的x最高比特构成了IP地址的网络部分，并且经常被称为该地址的前缀（ prefix)(或网络前缀)。一个组织通常被分配一块连续的地址，即具有相同前缀的一段地址。在这种情况下，该组织内部的设备的IP地址将共享共同的前缀。这就是说，当该组织外部的一台路由器转发一个数据报，且该数据报的目的地址位于该组织的内部时，仅需要考虑该地址的前面x比特。这相当大地减少了在这些路由器中转发表的长度，</p>
+<p>因为形式为a.b.c. d&#x2F;x的单一表项足以将数据报转发到该组织内的任何目的地。</p>
+<h2 id="2-层次编址与路由聚合"><a href="#2-层次编址与路由聚合" class="headerlink" title="2.层次编址与路由聚合"></a>2.层次编址与路由聚合</h2><p><img src="https://pic1.zhimg.com/80/v2-856fe2567f32bc9bb85025281109f5bc_720w.jpg"><br>这是一个ISP将8个组织连接到因特网的例子，它也很好地说明了仔细分配CIDR化的地址有利于路由选择的道理。如图4-21所示，假设该ISP（我们称之为Fly- By-Night-ISP)向外界通告，它应该发送所有地址的前20比特与200.23.16.0&#x2F;20相符的数据报。外界的其他部分不需要知道在地址块200.23.16.0&#x2F;20内实际上还存在8个其他组织，其中每个组织有自己的子网。这种使用单个网络前缀通告多个网络的能力通常称为地址聚合( address aggregation )，也称为路由聚合( route aggregation）或路由摘要( route summarization)。</p>
+<p>网络地址转换<br>NAT (Network Address Translation)又称为网络地址转换，用于实现私有网络和公有网络之间的互访。</p>
+<h3 id="1-网络地址转换技术的背景"><a href="#1-网络地址转换技术的背景" class="headerlink" title="1.网络地址转换技术的背景"></a>1.网络地址转换技术的背景</h3><p>研究<strong>网络地址转换（NAT）</strong>技术处于两个目的：一是由于IPv4过渡到IPv6的进程很缓慢，因此需要一种短时间内有效缓解IP地址短缺的办法，那就是网络地址转换（NAT）技术。二是出于网络安全的目的。例如，在某些企业内部、政府部门专网等对Internet访问需要严格控制的内部网络系统中，NAT与代理服务器、防火墙技术结合起来使用，采用一个内部专用IP地址与一个全局IP地址一对一对应的静态映射方式，达到隐藏内部网络地址的目的。</p>
+<h3 id="2-网络地址转换的工作原理"><a href="#2-网络地址转换的工作原理" class="headerlink" title="2.网络地址转换的工作原理"></a>2.网络地址转换的工作原理</h3><p>NAT用来将内网地址和端口号转换成合法的公网地址和端口号，建立一个会话，与公网主机进行通信。</p>
+<p>NTA外部的主机无法主动跟位于NAT内部的主机通信，NAT内部主机想要通信，必须主动和公网的一个IP通信，路由器负责建立一个映射关系，从而实现数据的转发。<br><img src="https://pic3.zhimg.com/80/v2-817864a931d3a33b8be5055f2bfc99fe_720w.jpg"></p>
+<p>数据包从内网到外网时，会转换源lP地址，由私网地址转换成公网地址。</p>
+<p>数据包从外网到内网时，会转换目的IP地址，由公网地址转换成私网地址。</p>
+<h3 id="3-网络地址转换方法的作用"><a href="#3-网络地址转换方法的作用" class="headerlink" title="3.网络地址转换方法的作用"></a>3.网络地址转换方法的作用</h3><p>讨论了有关因特网地址和IPv4数据报格式后，我们现在可清楚地认识到每个IP使能的设备都需要一个IP地址。随着所谓小型办公室、家庭办公室 (Small Office，HomeOffice，SOHO）子网的大量出现，看起来意味着每当一个SOHO想安装一个LAN以互联多台机器时，需要ISP分配一组地址以供该SOHO的所有IP设备（包括电话、平板电脑、游戏设备、IP TV、打印机等）使用。</p>
+<p>如果该子网变大了，则需要分配一块较大的地址。但如果 ISP已经为SOHO网络的当前地址范围分配过一块连续地址该怎么办呢?并且，家庭主人一般要（或应该需要）首先知道的管理IP地址的典型方法有哪些呢?幸运的是,有一种简单的方法越来越广泛地用在这些场合:网络地址转换(Network Address Transla-tion，NAT)[RFC 2663;RFC 3022;Huston 2004;Zhang 2007;Cisco NAT 2016]。</p>
+<h3 id="4-网络地址转换方法的例子"><a href="#4-网络地址转换方法的例子" class="headerlink" title="4.网络地址转换方法的例子"></a>4.网络地址转换方法的例子</h3><p>图4-25显示了一台NAT使能路由器的运行情况。位于家中的NAT使能的路由器有一个接口，该接口是图4-25中右侧所示家庭网络的一部分。在家庭网络内的编址就像我们在上面看到的完全一样，其中的所有4个接口都具有相同的网络地址10.0.0&#x2F;24。地址空间10.0.0.0&#x2F;8是在〔RFC 1918]中保留的三部分IP地址空间之一，这些地址用于如图4-25中的家庭网络等专用网络( private network）或具有专用地址的地域( realm with privateaddress)。具有专用地址的地域是指其地址仅对该网络中的设备有意义的网络。</p>
+<p>为了明白它为什么重要，考虑有数十万家庭网络这样的事实，许多使用了相同的地址空间10.0. 0.0&#x2F;24。在一个给定家庭网络中的设备能够使用10.0.0.0&#x2F;24编址彼此发送分组。然而，转发到家庭网络之外进入更大的全球因特网的分组显然不能使用这些地址（或作为源地址，或作为目的地址)，因为有数十万的网络使用着这块地址。这就是说，10.0.0.0&#x2F;24地址仅在给定的网络中才有意义。但是如果专用地址仅在给定的网络中才有意义的话，当向或从全球因特网发送或接收分组时如何处理编址问题呢，地址在何处才必须是唯一的呢?答案在于理解NAT。<br><img src="https://pic2.zhimg.com/80/v2-57912bc5b96477a791b9774e923847c9_720w.jpg"></p>
+<p>如果从广域网到达NAT路由器的所有数据报都有相同的目的IP地址（特别是对NAT路由器广域网一侧的接口)，那么该路由器怎样知道它应将某个分组转发给哪个内部主机呢?技巧就是使用NAT路由器上的一张 NAT转换表（NAT translation table)，并且在表项中包含了端口号及其IP地址。</p>
+<p>考虑图4-25中的例子。假设一个用户坐在家庭网络主机10.0.0.1后，请求IP地址为128.119.40.186的某台Web 服务器（端口80）上的一个Web页面。主机10.0.0.1为其指派了(任意）源端口号3345并将该数据报发送到LAN中。NAT路由器收到该数据报，为该数据报生成一个新的源端口号5001，将源IP替代为其广域网一侧接口的IP地址138.76.29.7，且将源端口3345更换为新端口5001。当生成一个新的源端口号时，NAT路由器可选择任意一个当前未在NAT转换表中的源端口号。(注意到因为端口号字段为16比特长，NAT协议可支持超过60000个并行使用路由器广域网一侧单个IP地址的连接!)路由器中的NAT也在它的NAT转换表中增加一表项。Web服务器并不知道刚到达的包含HTTP请求的数据报已被NAT路由器进行了改装，它会发回一个响应报文，其目的地址是NAT路由器的IP地址，其目的端口是5001。当该报文到达NAT路由器时，路由器使用目的IP地址与目的端口号从 NAT转换表中检索出家庭网络浏览器使用的适当IP地址(10.0.0. 1）和目的端口号(3345)。于是，路由器重写该数据报的目的IP地址与目的端口号，并向家庭网络转发该数据报。</p>
+<p>NAT使路由器对于外部世界来说甚至不像一台路由器。相反 NAT路由器对外界的行为就如同一个具有单一IP地址的单一设备。在图4-25中，所有离开家庭路由器流向更大因特网的报文都拥有一个源IP地址138.76.29.7，且所有进入家庭的报文都拥有同一个目的IP地址138.76.29.7。</p>
+<p>从本质上讲，NAT使能路由器对外界隐藏了家庭网络的细节。</p>
+<h3 id="5-对网络地址转换方法的评价"><a href="#5-对网络地址转换方法的评价" class="headerlink" title="5.对网络地址转换方法的评价"></a>5.对网络地址转换方法的评价</h3><p>尽管NAT对于IP地址短缺问题是一种很实用的方法也得到了广泛的应用。但是NAT并非没有批评者。</p>
+<p>这些意见主要可以总结为以下三点：</p>
+<p>（1）NAT违反了IP设计的初衷，使IP从无连接变成面向连接；在网络层IP地址转换的同时转换传输层端口号，违反了网络体系结构设计中确定的不同层次之间相互独立的原则。</p>
+<p>（2）有些应用将IP地址插入在正文内容中。如果NAT与这类协议一起工作，NAT协议需要根据不同协议做不同的调整。</p>
+<p>（3）由于P2P的文件共享与语音共享是建立在IP的基础上的，NAT的存在，使得P2P实现出现困难。</p>
+<p>NAT的反对者认为这种临时性的缓解IP地址短缺的方案只是推迟了IPv6迁移的过程，而没有解决深层次的问题。</p>
+<p>对IPv4协议的一些基本概念的整理到此结束。</p>
+<p>本文内容参考自维基百科、《计算机网络自顶向下方法第七版》、《计算机网络（吴功宜）第4版》。</p>
+]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>抓包</tag>
+        <tag>IP协议</tag>
+        <tag>IPv4</tag>
       </tags>
   </entry>
   <entry>
@@ -949,6 +1039,28 @@
       </categories>
       <tags>
         <tag>Linux</tag>
+        <tag>Socket</tag>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序</title>
+    <url>/archives/cf06f66d.html</url>
+    <content><![CDATA[<p>在上文中，讲述了Socket的一些基本函数以及如何简单使用Socket搭建一个单工聊天的聊天室程序。</p>
+<p>本文的目标便是对这个简单的程序加以改进，使其能实现服务端和客户端之间的相互通信。如果想更深入理解，推荐大家阅读《UNIX网络编程卷1套接字联网API》这本书。</p>
+<h2 id="首先需要补充一些我之前没有提到过的知识点。"><a href="#首先需要补充一些我之前没有提到过的知识点。" class="headerlink" title="首先需要补充一些我之前没有提到过的知识点。"></a>首先需要补充一些我之前没有提到过的知识点。</h2><h3 id="Socket处于网络协议的哪个层次？"><a href="#Socket处于网络协议的哪个层次？" class="headerlink" title="Socket处于网络协议的哪个层次？"></a>Socket处于网络协议的哪个层次？</h3><p><img src="https://pic4.zhimg.com/80/v2-728b741914df045b9cdfb918a30d1843_720w.jpg" alt="socket网络层次"><br>套接字编程接口是从顶上三层（网际协议的应用层）进入传输层的接口。</p>
+<h3 id="为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口"><a href="#为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口" class="headerlink" title="为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口?"></a>为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口?</h3><p>这样设计有两个理由，如图1-14右侧所注。理由之一是顶上三层处理具体网络应用（如FTP、Telnet或HTTPO的所有细节，却对通信细节了解很少;底下四层对具体网络应用了解不多，却处理所有的通信细节:发送数据，等待确认，给无序到达的数据排序，计算并验证校验和，等等。理由之二是顶上三层通常构成所谓的用户进程user process口,底下四层却通常作为操作系统内核的一部分提供。Unix与其他现代操作系统都提供分隔用户进程与内核的机制。由此可见，第4层和第5层之间的接口是构建API的自然位置。</p>
+<h2 id="TCP实现框架"><a href="#TCP实现框架" class="headerlink" title="TCP实现框架"></a>TCP实现框架</h2><p><img src="https://pic1.zhimg.com/80/v2-dfaeec3f74165f5a74c278a513d54ab8_720w.jpg" alt="TCP实现框架"></p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>目前该代码尚不完善，仅供参考，只能实现一发送一接收的“伪”半双工通信。真正的半双工(Half Duplex)数据传输，数据可以随时发送，只是不能同时传输。</p>
+<h2 id="Sever-cpp"><a href="#Sever-cpp" class="headerlink" title="Sever.cpp"></a>Sever.cpp</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PORT 7000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024 <span class="comment">//缓冲区大小宏定义</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">const</span> <span class="type">char</span> *ip = argv[<span class="number">1</span>];</span><br><span class="line"> <span class="type">int</span> port = <span class="built_in">atoi</span>(argv[<span class="number">2</span>]); <span class="comment">//将输入的端口号由字符串转换为整数类型</span></span><br><span class="line">    <span class="comment">//结构体定义与初始化</span></span><br><span class="line"> <span class="type">int</span> sockSer = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>); <span class="comment">//若成功则返回一个sockfd（套接字描述符）</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> server_sockaddr;            <span class="comment">//一般是储存地址和端口的。用于信息的显示及存储使用</span></span><br><span class="line">                                                   <span class="comment">//设置 sockaddr_in 结构体中相关参数</span></span><br><span class="line"> server_sockaddr.sin_family = AF_INET;</span><br><span class="line"> server_sockaddr.sin_port = <span class="built_in">htons</span>(PORT); <span class="comment">//将一个无符号短整型数值转换为网络字节序，即大端模式(big-endian) </span></span><br><span class="line">                                            <span class="comment">// printf(&quot;%d\n&quot;,INADDR_ANY);</span></span><br><span class="line">    <span class="comment">// INADDR_ANY就是指定地址为0.0.0.0的地址，这个地址事实上表示不确定地址，或“所有地址”、“任意地址”。</span></span><br><span class="line">    <span class="comment">//一般来说，在各个系统中均定义成为0值。</span></span><br><span class="line">    <span class="comment">// server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY); //将主机的无符号长整形数转换成网络字节顺序。</span></span><br><span class="line"> <span class="built_in">inet_pton</span>(AF_INET, ip, &amp;server_sockaddr.sin_addr); <span class="comment">//将小端字节序转换为网络字节序</span></span><br><span class="line"> </span><br><span class="line"> <span class="built_in">assert</span>(sockSer &gt;= <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> ret = <span class="built_in">bind</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;server_sockaddr, <span class="built_in">sizeof</span>(server_sockaddr)); <span class="comment">//绑定IP地址、端口号等信息</span></span><br><span class="line"> <span class="built_in">assert</span>(ret != <span class="number">-1</span>);</span><br><span class="line"> ret = <span class="built_in">listen</span>(sockSer, <span class="number">5</span>); <span class="comment">//监听有无连接请求</span></span><br><span class="line"> <span class="built_in">assert</span>(ret != <span class="number">-1</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> client_addr;</span><br><span class="line"> <span class="type">socklen_t</span> client_addrlength = <span class="built_in">sizeof</span>(client_addr);</span><br><span class="line">    <span class="comment">///成功返回非负描述字，出错返回-1</span></span><br><span class="line"> <span class="type">int</span> connfd = <span class="built_in">accept</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;client_addr, &amp;client_addrlength); <span class="comment">//从监听队列中取出第一个已完成的连接</span></span><br><span class="line"> <span class="type">char</span> buffer_recv[BUFFER_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> <span class="type">char</span> buffer_send[BUFFER_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="keyword">if</span> (connfd &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;errno is : %d\n&quot;</span>, errno);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">memset</span>(buffer_recv, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> <span class="built_in">memset</span>(buffer_send, <span class="number">0</span>, BUFFER_SIZE); <span class="comment">//每次需要为缓冲区清空</span></span><br><span class="line"> </span><br><span class="line"> ret = <span class="built_in">recv</span>(connfd, buffer_recv, BUFFER_SIZE - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer_recv, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">// recv为quit表示客户端请求断开连接，退出循环</span></span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;client:%s&quot;</span>, buffer_recv);</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;server:&quot;</span>);</span><br><span class="line"> <span class="built_in">fgets</span>(buffer_send, BUFFER_SIZE, stdin);</span><br><span class="line"> <span class="built_in">send</span>(connfd, buffer_send, <span class="built_in">strlen</span>(buffer_send), <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer_send, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">// send为quit表示服务器请求断开连接，退出循环</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">close</span>(connfd);</span><br><span class="line"> <span class="built_in">close</span>(sockSer); <span class="comment">//关闭socket套接字描述符</span></span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Client-cpp"><a href="#Client-cpp" class="headerlink" title="Client.cpp"></a>Client.cpp</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">const</span> <span class="type">char</span> *ip = argv[<span class="number">1</span>];</span><br><span class="line"> <span class="type">int</span> port = <span class="built_in">atoi</span>(argv[<span class="number">2</span>]);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> sockCli = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//定义sockaddr_in</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> servaddr;</span><br><span class="line"> <span class="built_in">memset</span>(&amp;servaddr, <span class="number">0</span>, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> servaddr.sin_family = AF_INET;</span><br><span class="line"> servaddr.sin_port = <span class="built_in">htons</span>(port); <span class="comment">//服务器端口</span></span><br><span class="line">    <span class="comment">// servaddr.sin_addr.s_addr = htons(port);</span></span><br><span class="line"> <span class="built_in">inet_pton</span>(AF_INET, ip, &amp;servaddr.sin_addr); <span class="comment">//将点分文本的IP地址转换为二进制网络字节序的IP地址</span></span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> sockfd = <span class="built_in">socket</span>(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line"> <span class="built_in">assert</span>(sockfd &gt;= <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> connfd = <span class="built_in">connect</span>(sockfd, (<span class="keyword">struct</span> sockaddr *)&amp;servaddr, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> </span><br><span class="line"> <span class="type">char</span> sendbuf[BUFFER_SIZE];</span><br><span class="line"> <span class="type">char</span> recvbuf[BUFFER_SIZE];</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="keyword">if</span> (connfd &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;connection failed\n&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">memset</span>(sendbuf, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> <span class="built_in">memset</span>(recvbuf, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;client:&quot;</span>);</span><br><span class="line"> <span class="built_in">fgets</span>(sendbuf, BUFFER_SIZE, stdin);</span><br><span class="line"> <span class="built_in">send</span>(sockfd, sendbuf, <span class="built_in">strlen</span>(sendbuf), <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(sendbuf, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">//send为quit表示客户端请求断开连接，退出循环</span></span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> ret = <span class="built_in">recv</span>(sockfd, recvbuf, BUFFER_SIZE - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(recvbuf, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">//recv为quit表示服务器请求断开连接，退出循环</span></span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;server:%s&quot;</span>, recvbuf);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="built_in">close</span>(connfd);</span><br><span class="line"> <span class="built_in">close</span>(sockCli);</span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>计算机网络</tag>
         <tag>Socket</tag>
         <tag>C++</tag>
       </tags>

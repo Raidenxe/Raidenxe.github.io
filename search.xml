@@ -1138,4 +1138,48 @@
         <tag>C++</tag>
       </tags>
   </entry>
+  <entry>
+    <title>apt-get 和 apt的区别是什么</title>
+    <url>/archives/7ff4090f.html</url>
+    <content><![CDATA[<p>这是个很有意思的问题，我刚接触到Ubuntu的时候便在各种教程中看到apt和apt-get的身影，apt和apt-get有什么区别这个问题也随之浮现在我脑海中，是我作为Linux初学者所遇到的第一个问题。</p>
+<p>所以我想写一个较为详细回答，算是现在的我给以前的我的一个解答。</p>
+<p>dkpg（底层工具）-&gt;apt-get（上层工具）-&gt;apt（apt-get的再封装）</p>
+<p>首先，需要理解包管理系统这个概念。</p>
+<p>Linux 发行版本质量最重要的决定因素是软件包管理系统和其支持社区的持久性。随着我们花费更多的时间在 Linux 上，我们会发现它的变化是非常快的。大多数一线 Linux 发行版每隔六个月发布一个新版本，并且有许多独立的程序每天都会更新。为了能和这些如暴风雪一般多的软件保持联系，我们需要一些好工具来进行软件包管理。</p>
+<h1 id="Linux包管理系统DPKG和RPM"><a href="#Linux包管理系统DPKG和RPM" class="headerlink" title="Linux包管理系统DPKG和RPM"></a>Linux包管理系统DPKG和RPM</h1><p>不同的 Linux 发行版使用不同的包管理系统，一般而言，大多数发行版分别属于两大包管理技术阵营： Debian 的”.deb”，和红帽的”.rpm”。<br><img src="https://pic2.zhimg.com/80/v2-3456e3a12cc3e9ac0f970a968b300c3f_720w.jpg?source=1940ef5c"></p>
+<p><strong>dpkg</strong> :这个机制最早是由Debian Linux社群所开发出来的﹐通过dpkg 的机制，</p>
+<p>Debian提供的软件就能够简单的安装起来，同时还能提供安装后的软件信息。只要是衍生于Debian 的其他Linux distributions 大多使用dpkg这个机制来管理软件的，包括B2D, Ubuntu等等。</p>
+<p><strong>RPM</strong>:这个机制最早是由Red Hat这家公司开发出来的﹐后来实在很好用﹐因此很多distributions 就使用这个机制来作为软件安装的管理方式。包括Fedora, CentOS, SuSE等等知名的开发商都是使用RPM。</p>
+<p><img src="https://pic3.zhimg.com/80/v2-5cffa65f39772f2ea215aea90cd0d7c5_720w.jpg?source=1940ef5c"><br>软件包管理系统通常由两种工具类型组成：<strong>底层工具</strong>用来处理这些任务，比方说安装和删除软件包文件， 和<strong>上层工具</strong>，完成元数据搜索和依赖解析。</p>
+<h1 id="apt-get"><a href="#apt-get" class="headerlink" title="apt-get"></a>apt-get</h1><p><strong>Advanced Package Tool</strong>，又名apt-get，是一款适用于Unix和Linux系统的应用程序管理器。最初于1998年发布，用于检索应用程序并将其加载到Debian Linux系统。Apt-get成名的原因之一在于其出色的解决软件依赖关系的能力。其通常使用.deb-formatted文件，但经过修改后可以使用apt-rpm处理红帽的Package Manager（RPM）文件。</p>
+<p><strong>apt-get</strong>主要用于自动从互联网的软件仓库中搜索、安装、升级、卸载软件或操作系统。如果你已阅读 apt-get 命令指南，可能已经遇到过许多类似的命令，如 apt-cache、apt-config 等。这些命令都比较低级又包含众多功能，普通的 Linux 用户也许永远都不会使用到。换种说法来说，最常用的 <strong>Linux 包管理命令都被分散在了 apt-get、apt-cache 和 apt-config 这三条命令当中</strong>。</p>
+<p><strong>apt 命令的引入就是为了解决命令过于分散的问题</strong>，它包括了 apt-get 命令出现以来使用最广泛的功能选项，以及 apt-cache 和 apt-config 命令中很少用到的功能。</p>
+<h1 id="apt"><a href="#apt" class="headerlink" title="apt"></a>apt</h1><p>apt是一个命令行实用程序，用于在Ubuntu、Debian和相关Linux发行版上安装、更新、删除和管理deb软件包。</p>
+<p>Apt，可以基本解决依赖问题并检索需要的软件包，可与dpkg一起工作。Apt很强大，主要在命令行(控制台&#x2F;terminal)下使用。但是，也有很多GUI&#x2F;图形化工具，让使用者不必接触命令行。</p>
+<p>简单来说就是：apt &#x3D; apt-get、apt-cache 和 apt-config 中最常用命令选项的集合。</p>
+<h1 id="dpkg和apt-get的区别"><a href="#dpkg和apt-get的区别" class="headerlink" title="dpkg和apt-get的区别"></a>dpkg和apt-get的区别</h1><p>dpkg:用来安装.deb文件时，不会解决模块的依赖关系，且不会关心ubuntu的软件仓库内的软件，可以用于安装本地的deb文件。</p>
+<p>apt-get:会解决和安装模块的依赖问题，并会咨询软件仓库，但不会安装本地的deb文件，apt-get是建立在dpkg之上的软件管理工具。</p>
+<h1 id="apt-与-apt-get-之间的区别"><a href="#apt-与-apt-get-之间的区别" class="headerlink" title="apt 与 apt-get 之间的区别"></a>apt 与 apt-get 之间的区别</h1><p>1.apt 命令是对之前的apt-get apt-cache 等的<strong>封装</strong>，提供更加统一，更加适合终端用户使用的接口。</p>
+<p>2.apt 具有更<strong>精减</strong>但足够的命令选项，而且参数选项的组织方式更为有效。</p>
+<p>3.apt是为<strong>交互</strong>使用而设计的。最好在shell脚本中使用apt-get和apt-cache，因为它们在不同版本之间向后兼容，并且有更多选项和功能。</p>
+<p><strong>对于基本命令，apt和apt-get两个工具的语法是相同的。</strong></p>
+<h1 id="apt-命令-取代的apt-get命令-命令的功能"><a href="#apt-命令-取代的apt-get命令-命令的功能" class="headerlink" title="apt 命令 取代的apt-get命令 命令的功能"></a>apt 命令 取代的apt-get命令 命令的功能</h1><p>apt install | apt-get install | 安装软件包</p>
+<p>apt remove | apt-get remove | 移除软件包</p>
+<p>apt purge | apt-get purge | 除软件包及配置文件</p>
+<p>apt update | apt-get update | 刷新存储库索引</p>
+<p>apt upgrade | apt-get upgrade | 升级所有可升级的软件包</p>
+<p>apt autoremove | apt-get autoremove | 自动删除不需要的包</p>
+<p>apt full-upgrade | apt-get dist-upgrade | 在升级软件包时自动处理依赖关系</p>
+<p>apt search | apt-cache search | 搜索应用程序</p>
+<p>apt show | apt-cache show | 显示安装细节</p>
+<h1 id="最后，apt-install和apt-get-install的区别是什么？"><a href="#最后，apt-install和apt-get-install的区别是什么？" class="headerlink" title="最后，apt install和apt-get install的区别是什么？"></a>最后，apt install和apt-get install的区别是什么？</h1><p>如果在非交互式脚本中运行apt install，就会提示没有稳定的CLI 接口。</p>
+<p>所以要在脚本中安装软件，用apt-get 保险一些，如果是自己在终端中使用命令行，显然是使用apt 更方便一些。</p>
+]]></content>
+      <categories>
+        <category>Linux学习笔记</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
 </search>

@@ -1,0 +1,300 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>apt-get 和 apt的区别是什么 | Raidenxe的博客</title><meta name="keywords" content="Linux"><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="这是个很有意思的问题，我刚接触到Ubuntu的时候便在各种教程中看到apt和apt-get的身影，apt和apt-get有什么区别这个问题也随之浮现在我脑海中，是我作为Linux初学者所遇到的第一个问题。 所以我想写一个较为详细回答，算是现在的我给以前的我的一个解答。 dkpg（底层工具）-&gt;apt-get（上层工具）-&gt;apt（apt-get的再封装） 首先，需要理解包管理系统这个概">
+<meta property="og:type" content="article">
+<meta property="og:title" content="apt-get 和 apt的区别是什么">
+<meta property="og:url" content="https://raidenxe.github.io/archives/7ff4090f.html">
+<meta property="og:site_name" content="Raidenxe的博客">
+<meta property="og:description" content="这是个很有意思的问题，我刚接触到Ubuntu的时候便在各种教程中看到apt和apt-get的身影，apt和apt-get有什么区别这个问题也随之浮现在我脑海中，是我作为Linux初学者所遇到的第一个问题。 所以我想写一个较为详细回答，算是现在的我给以前的我的一个解答。 dkpg（底层工具）-&gt;apt-get（上层工具）-&gt;apt（apt-get的再封装） 首先，需要理解包管理系统这个概">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pica.zhimg.com/v2-8906400806f6e81937a2a7a27e645362_1440w.jpg?source=172ae18b">
+<meta property="article:published_time" content="2022-06-13T13:04:52.000Z">
+<meta property="article:modified_time" content="2022-06-13T13:17:31.453Z">
+<meta property="article:author" content="Raidenxe">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pica.zhimg.com/v2-8906400806f6e81937a2a7a27e645362_1440w.jpg?source=172ae18b"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/7ff4090f"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'apt-get 和 apt的区别是什么',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-06-13 21:17:31'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">19</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">19</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://pica.zhimg.com/v2-8906400806f6e81937a2a7a27e645362_1440w.jpg?source=172ae18b')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Raidenxe的博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">apt-get 和 apt的区别是什么</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-06-13T13:04:52.000Z" title="发表于 2022-06-13 21:04:52">2022-06-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-06-13T13:17:31.453Z" title="更新于 2022-06-13 21:17:31">2022-06-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Linux学习笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>4分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>这是个很有意思的问题，我刚接触到Ubuntu的时候便在各种教程中看到apt和apt-get的身影，apt和apt-get有什么区别这个问题也随之浮现在我脑海中，是我作为Linux初学者所遇到的第一个问题。</p>
+<p>所以我想写一个较为详细回答，算是现在的我给以前的我的一个解答。</p>
+<p>dkpg（底层工具）-&gt;apt-get（上层工具）-&gt;apt（apt-get的再封装）</p>
+<p>首先，需要理解包管理系统这个概念。</p>
+<p>Linux 发行版本质量最重要的决定因素是软件包管理系统和其支持社区的持久性。随着我们花费更多的时间在 Linux 上，我们会发现它的变化是非常快的。大多数一线 Linux 发行版每隔六个月发布一个新版本，并且有许多独立的程序每天都会更新。为了能和这些如暴风雪一般多的软件保持联系，我们需要一些好工具来进行软件包管理。</p>
+<h1 id="Linux包管理系统DPKG和RPM"><a href="#Linux包管理系统DPKG和RPM" class="headerlink" title="Linux包管理系统DPKG和RPM"></a>Linux包管理系统DPKG和RPM</h1><p>不同的 Linux 发行版使用不同的包管理系统，一般而言，大多数发行版分别属于两大包管理技术阵营： Debian 的”.deb”，和红帽的”.rpm”。<br><img src="https://pic2.zhimg.com/80/v2-3456e3a12cc3e9ac0f970a968b300c3f_720w.jpg?source=1940ef5c"></p>
+<p><strong>dpkg</strong> :这个机制最早是由Debian Linux社群所开发出来的﹐通过dpkg 的机制，</p>
+<p>Debian提供的软件就能够简单的安装起来，同时还能提供安装后的软件信息。只要是衍生于Debian 的其他Linux distributions 大多使用dpkg这个机制来管理软件的，包括B2D, Ubuntu等等。</p>
+<p><strong>RPM</strong>:这个机制最早是由Red Hat这家公司开发出来的﹐后来实在很好用﹐因此很多distributions 就使用这个机制来作为软件安装的管理方式。包括Fedora, CentOS, SuSE等等知名的开发商都是使用RPM。</p>
+<p><img src="https://pic3.zhimg.com/80/v2-5cffa65f39772f2ea215aea90cd0d7c5_720w.jpg?source=1940ef5c"><br>软件包管理系统通常由两种工具类型组成：<strong>底层工具</strong>用来处理这些任务，比方说安装和删除软件包文件， 和<strong>上层工具</strong>，完成元数据搜索和依赖解析。</p>
+<h1 id="apt-get"><a href="#apt-get" class="headerlink" title="apt-get"></a>apt-get</h1><p><strong>Advanced Package Tool</strong>，又名apt-get，是一款适用于Unix和Linux系统的应用程序管理器。最初于1998年发布，用于检索应用程序并将其加载到Debian Linux系统。Apt-get成名的原因之一在于其出色的解决软件依赖关系的能力。其通常使用.deb-formatted文件，但经过修改后可以使用apt-rpm处理红帽的Package Manager（RPM）文件。</p>
+<p><strong>apt-get</strong>主要用于自动从互联网的软件仓库中搜索、安装、升级、卸载软件或操作系统。如果你已阅读 apt-get 命令指南，可能已经遇到过许多类似的命令，如 apt-cache、apt-config 等。这些命令都比较低级又包含众多功能，普通的 Linux 用户也许永远都不会使用到。换种说法来说，最常用的 <strong>Linux 包管理命令都被分散在了 apt-get、apt-cache 和 apt-config 这三条命令当中</strong>。</p>
+<p><strong>apt 命令的引入就是为了解决命令过于分散的问题</strong>，它包括了 apt-get 命令出现以来使用最广泛的功能选项，以及 apt-cache 和 apt-config 命令中很少用到的功能。</p>
+<h1 id="apt"><a href="#apt" class="headerlink" title="apt"></a>apt</h1><p>apt是一个命令行实用程序，用于在Ubuntu、Debian和相关Linux发行版上安装、更新、删除和管理deb软件包。</p>
+<p>Apt，可以基本解决依赖问题并检索需要的软件包，可与dpkg一起工作。Apt很强大，主要在命令行(控制台&#x2F;terminal)下使用。但是，也有很多GUI&#x2F;图形化工具，让使用者不必接触命令行。</p>
+<p>简单来说就是：apt &#x3D; apt-get、apt-cache 和 apt-config 中最常用命令选项的集合。</p>
+<h1 id="dpkg和apt-get的区别"><a href="#dpkg和apt-get的区别" class="headerlink" title="dpkg和apt-get的区别"></a>dpkg和apt-get的区别</h1><p>dpkg:用来安装.deb文件时，不会解决模块的依赖关系，且不会关心ubuntu的软件仓库内的软件，可以用于安装本地的deb文件。</p>
+<p>apt-get:会解决和安装模块的依赖问题，并会咨询软件仓库，但不会安装本地的deb文件，apt-get是建立在dpkg之上的软件管理工具。</p>
+<h1 id="apt-与-apt-get-之间的区别"><a href="#apt-与-apt-get-之间的区别" class="headerlink" title="apt 与 apt-get 之间的区别"></a>apt 与 apt-get 之间的区别</h1><p>1.apt 命令是对之前的apt-get apt-cache 等的<strong>封装</strong>，提供更加统一，更加适合终端用户使用的接口。</p>
+<p>2.apt 具有更<strong>精减</strong>但足够的命令选项，而且参数选项的组织方式更为有效。</p>
+<p>3.apt是为<strong>交互</strong>使用而设计的。最好在shell脚本中使用apt-get和apt-cache，因为它们在不同版本之间向后兼容，并且有更多选项和功能。</p>
+<p><strong>对于基本命令，apt和apt-get两个工具的语法是相同的。</strong></p>
+<h1 id="apt-命令-取代的apt-get命令-命令的功能"><a href="#apt-命令-取代的apt-get命令-命令的功能" class="headerlink" title="apt 命令 取代的apt-get命令 命令的功能"></a>apt 命令 取代的apt-get命令 命令的功能</h1><p>apt install | apt-get install | 安装软件包</p>
+<p>apt remove | apt-get remove | 移除软件包</p>
+<p>apt purge | apt-get purge | 除软件包及配置文件</p>
+<p>apt update | apt-get update | 刷新存储库索引</p>
+<p>apt upgrade | apt-get upgrade | 升级所有可升级的软件包</p>
+<p>apt autoremove | apt-get autoremove | 自动删除不需要的包</p>
+<p>apt full-upgrade | apt-get dist-upgrade | 在升级软件包时自动处理依赖关系</p>
+<p>apt search | apt-cache search | 搜索应用程序</p>
+<p>apt show | apt-cache show | 显示安装细节</p>
+<h1 id="最后，apt-install和apt-get-install的区别是什么？"><a href="#最后，apt-install和apt-get-install的区别是什么？" class="headerlink" title="最后，apt install和apt-get install的区别是什么？"></a>最后，apt install和apt-get install的区别是什么？</h1><p>如果在非交互式脚本中运行apt install，就会提示没有稳定的CLI 接口。</p>
+<p>所以要在脚本中安装软件，用apt-get 保险一些，如果是自己在终端中使用命令行，显然是使用apt 更方便一些。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/7ff4090f.html">https://raidenxe.github.io/archives/7ff4090f.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/">Linux</a></div><div class="post_share"><div class="social-share" data-image="https://pica.zhimg.com/v2-8906400806f6e81937a2a7a27e645362_1440w.jpg?source=172ae18b" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/archives/ae61cc04.html"><img class="next-cover" src="https://pic3.zhimg.com/v2-2eff3447688a8bf4db87c024d449d16d_1440w.jpg?source=172ae18b" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">计算机网络知识点总结（八）IPv4协议基本原理详解</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/archives/1894211f.html" title="Linux 文本三剑客（1）grep命令的使用"><img class="cover" src="https://pic1.zhimg.com/v2-bdf1968f78dcbe4de93f1b10c14dba8b_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-18</div><div class="title">Linux 文本三剑客（1）grep命令的使用</div></div></a></div><div><a href="/archives/ef07d954.html" title="Linux 文本三剑客（2）sed命令的使用"><img class="cover" src="https://pic3.zhimg.com/v2-a151d3592ecf5d6abb44b392f5d569e3_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-19</div><div class="title">Linux 文本三剑客（2）sed命令的使用</div></div></a></div><div><a href="/archives/9edfe48f.html" title="Linux 文本三剑客（3）awk命令的使用"><img class="cover" src="https://pic3.zhimg.com/v2-7163b1eaa31448312dd5490da75a73e9_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-23</div><div class="title">Linux 文本三剑客（3）awk命令的使用</div></div></a></div><div><a href="/archives/90acc1af.html" title="Linux下的fork和exec函数"><img class="cover" src="https://pic2.zhimg.com/v2-1a7eb58610755e46dbcc46e787517c08_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-09</div><div class="title">Linux下的fork和exec函数</div></div></a></div><div><a href="/archives/aba2a9fd.html" title="常用Linux命令整理"><img class="cover" src="https://pica.zhimg.com/v2-5fd2e93e3fd4c3824d463dd1a0acaba2_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-06</div><div class="title">常用Linux命令整理</div></div></a></div><div><a href="/archives/cc4d518f.html" title="单片机和嵌入式系统的区别"><img class="cover" src="https://pica.zhimg.com/v2-13d1a10aa719b8f5e03b94b824fccac2_1440w.jpg?source=172ae18b" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-06</div><div class="title">单片机和嵌入式系统的区别</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="lv-container" data-id="city" data-uid="MTAyMC81NjAxOC8zMjQ4MQ=="></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Raidenxe</div><div class="author-info__description">向着真理和自由，无名的献身。</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">19</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">19</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux%E5%8C%85%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9FDPKG%E5%92%8CRPM"><span class="toc-number">1.</span> <span class="toc-text">Linux包管理系统DPKG和RPM</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#apt-get"><span class="toc-number">2.</span> <span class="toc-text">apt-get</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#apt"><span class="toc-number">3.</span> <span class="toc-text">apt</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#dpkg%E5%92%8Capt-get%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">4.</span> <span class="toc-text">dpkg和apt-get的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#apt-%E4%B8%8E-apt-get-%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">5.</span> <span class="toc-text">apt 与 apt-get 之间的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#apt-%E5%91%BD%E4%BB%A4-%E5%8F%96%E4%BB%A3%E7%9A%84apt-get%E5%91%BD%E4%BB%A4-%E5%91%BD%E4%BB%A4%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="toc-number">6.</span> <span class="toc-text">apt 命令 取代的apt-get命令 命令的功能</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%EF%BC%8Capt-install%E5%92%8Capt-get-install%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">7.</span> <span class="toc-text">最后，apt install和apt-get install的区别是什么？</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/7ff4090f.html" title="apt-get 和 apt的区别是什么"><img src="https://pica.zhimg.com/v2-8906400806f6e81937a2a7a27e645362_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="apt-get 和 apt的区别是什么"/></a><div class="content"><a class="title" href="/archives/7ff4090f.html" title="apt-get 和 apt的区别是什么">apt-get 和 apt的区别是什么</a><time datetime="2022-06-13T13:04:52.000Z" title="发表于 2022-06-13 21:04:52">2022-06-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/ae61cc04.html" title="计算机网络知识点总结（八）IPv4协议基本原理详解"><img src="https://pic3.zhimg.com/v2-2eff3447688a8bf4db87c024d449d16d_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络知识点总结（八）IPv4协议基本原理详解"/></a><div class="content"><a class="title" href="/archives/ae61cc04.html" title="计算机网络知识点总结（八）IPv4协议基本原理详解">计算机网络知识点总结（八）IPv4协议基本原理详解</a><time datetime="2022-05-28T03:44:23.000Z" title="发表于 2022-05-28 11:44:23">2022-05-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/9edfe48f.html" title="Linux 文本三剑客（3）awk命令的使用"><img src="https://pic3.zhimg.com/v2-7163b1eaa31448312dd5490da75a73e9_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux 文本三剑客（3）awk命令的使用"/></a><div class="content"><a class="title" href="/archives/9edfe48f.html" title="Linux 文本三剑客（3）awk命令的使用">Linux 文本三剑客（3）awk命令的使用</a><time datetime="2022-05-23T02:50:16.000Z" title="发表于 2022-05-23 10:50:16">2022-05-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/ef07d954.html" title="Linux 文本三剑客（2）sed命令的使用"><img src="https://pic3.zhimg.com/v2-a151d3592ecf5d6abb44b392f5d569e3_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux 文本三剑客（2）sed命令的使用"/></a><div class="content"><a class="title" href="/archives/ef07d954.html" title="Linux 文本三剑客（2）sed命令的使用">Linux 文本三剑客（2）sed命令的使用</a><time datetime="2022-05-19T12:51:58.000Z" title="发表于 2022-05-19 20:51:58">2022-05-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/1894211f.html" title="Linux 文本三剑客（1）grep命令的使用"><img src="https://pic1.zhimg.com/v2-bdf1968f78dcbe4de93f1b10c14dba8b_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux 文本三剑客（1）grep命令的使用"/></a><div class="content"><a class="title" href="/archives/1894211f.html" title="Linux 文本三剑客（1）grep命令的使用">Linux 文本三剑客（1）grep命令的使用</a><time datetime="2022-05-18T13:59:14.000Z" title="发表于 2022-05-18 21:59:14">2022-05-18</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://pica.zhimg.com/v2-8906400806f6e81937a2a7a27e645362_1440w.jpg?source=172ae18b')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Raidenxe</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadLivere () {
+  if (typeof LivereTower === 'object') {
+    window.LivereTower.init()
+  }
+  else {
+    (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+    })(document, 'script');
+  }
+}
+
+if ('Livere' === 'Livere' || !false) {
+  if (false) btf.loadComment(document.getElementById('lv-container'), loadLivere)
+  else loadLivere()
+}
+else {
+  function loadOtherComment () {
+    loadLivere()
+  }
+}</script></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="true"> </div><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="false" data-text="自由,平等,公正,法治,爱国,敬业,诚信,友善,富强,民主,文明,和谐" data-fontsize="15px" data-random="true" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

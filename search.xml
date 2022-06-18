@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Linux top命令的使用及参数详解</title>
+      <link href="/archives/9269b129.html"/>
+      <url>/archives/9269b129.html</url>
+      
+        <content type="html"><![CDATA[<h1 id="什么是top"><a href="#什么是top" class="headerlink" title="什么是top"></a>什么是top</h1><p><strong>top</strong> （table of processes）是一个任务管理器程序，它可运行于许多类Unix操作系统上，它用于显示有关CPU和内存利用率的信息。</p><p>该程序将按用户指定的条件，选择正在运行的进程并生成一个有序列表，并定期对其进行更新。清单的默认顺序是按CPU使用率排序的，并且仅显示较高CPU使用方。顶部显示正在使用多少CPU处理能力和内存，以及有关正在运行的进程的其他信息。某些版本的top允许对显示进行广泛的自定义，例如选择列或排序方法。</p><h1 id="top的作用"><a href="#top的作用" class="headerlink" title="top的作用"></a>top的作用</h1><p>尝试找出你的机器正在运行什么程序，以及哪个进程耗尽了内存导致系统非常非常慢 —— 这是 top 命令所能胜任的工作。</p><p>top 是一个非常实用的程序，其作用类似于 Windows 任务管理器或 MacOS 的<strong>活动监视器</strong>。运行 top 将实时显示系统上运行的进程的情况。</p><p>top对系统管理员很有用，因为它显示了在任何给定时间哪些用户和进程正在消耗最多的系统资源。</p><h1 id="top命令格式"><a href="#top命令格式" class="headerlink" title="top命令格式"></a>top命令格式</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top [-] [d delay] [q] [c] [S] [s] [i] [n] [b]</span><br></pre></td></tr></table></figure><p>参数说明：<br>d : 改变显示的更新速度，或是在交谈式指令列( interactive command)按 s</p><p>q : 没有任何延迟的显示速度，如果使用者是有 superuser 的权限，则 top 将会以最高的优先序执行</p><p>c : 切换显示模式，共有两种模式，一是只显示执行档的名称，另一种是显示完整的路径与名称</p><p>S : 累积模式，会将己完成或消失的子进程 ( dead child process ) 的 CPU time 累积起来</p><p>s : 安全模式，将交谈式指令取消, 避免潜在的危机</p><p>i : 不显示任何闲置 (idle) 或无用 (zombie) 的进程</p><p>n : 更新的次数，完成后将会退出 top</p><p>b : 批次档模式，搭配 “n” 参数一起使用，可以用来将 top 的结果输出到档案内</p><h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><p>这里我将使用 Ubuntu18.04 进行效果演示。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure><p><img src="https://pic4.zhimg.com/80/v2-a2d447b6b34132d2d9823c8aed501e77_720w.jpg"></p><h2 id="相关参数详解"><a href="#相关参数详解" class="headerlink" title="相关参数详解"></a>相关参数详解</h2><p>运行命令后，我们可以清楚看到中间高亮的一行。最右边的 COMMAND 一列报告进程名（启动它们的命令）。在这个例子里，进程名是 bash（一个我们正在运行 top 的命令解释器）、flask（一个 Python 写的 web 框架）和 top 自身。</p><p>其它列提供了关于进程的有用信息：</p><p>PID：进程 ID，一个用来定位进程的唯一标识符</p><p>USER：运行进程的用户</p><p>PR：任务的优先级</p><p>NI：Nice 值，优先级的一个更好的表现形式</p><p>VIRT：虚拟内存的大小，单位是 KiB（kibibytes）</p><p>RES：常驻内存大小，单位是 KiB（物理内存和虚拟内存的一部分）</p><p>SHR：共享内存大小，单位是 KiB（共享内存和虚拟内存的一部分）</p><p>S：进程状态，一般 I 代表空闲，R 代表运行，S 代表休眠，Z 代表僵尸进程，T 或 t 代表停止（还有其它更少见的选项）</p><p>%CPU：自从上次屏幕更新后的 CPU 使用率</p><p>%MEM：自从上次屏幕更新后的 RES 常驻内存使用率</p><p>TIME+：自从程序启动后总的 CPU 使用时间</p><p>COMMAND：启动命令，如之前描述那样 </p><p>而在开头我们还能看到几行有用信息，<br><img src="https://pic1.zhimg.com/80/v2-61c054fe790c663c1e402cbf5a4aed18_720w.jpg"><br><strong>第一行</strong>包含系统的大致信息：</p><p>top：正在运行 top</p><p>XX:YY:XX：当前时间，每次屏幕更新的时候更新</p><p>up（接下去是 X day, YY:ZZ）：系统的 uptime，或者自从系统启动后已经过去了多长时间</p><p>load average（后跟三个数字）：分别是过去一分钟、五分钟、15 分钟的系统负载</p><p><strong>第二行</strong>（Task）显示了正在运行的任务的信息，不用解释。它显示了进程总数和正在运行的、休眠中的、停止的进程数和僵尸进程数。这实际上是上述 S（状态）列的总和。</p><p><strong>第三行</strong>（%Cpu(s)）显示了按类型划分的 CPU 使用情况。数据是屏幕刷新之间的值。这些值是：</p><p>us：表示用户空间程序的cpu使用率（没有通过nice调度）</p><p>sy：表示系统空间的cpu使用率，主要是内核程序</p><p>ni：表示用户空间且通过nice调度过的程序的cpu使用率</p><p>id：CPU 的空闲时间，这个值比较高时说明系统比较空闲</p><p>wa：等待时间，或者消耗在等待 I&#x2F;O 完成的时间</p><p>hi：消耗在硬件中断的时间，硬中断（Hardware IRQ）占用CPU的百分比</p><p>si：消耗在软件中断的时间，软中断（Software Interrupts）占用CPU的百分比</p><p>st：“虚拟机管理程序从该虚拟机窃取的时间”</p><p>可以通过点击 t（toggle）来展开或折叠 Task （任务）和 %Cpu(s) 行。</p><p><strong>第四行</strong>（Kib Mem）和<strong>第五行</strong>（KiB Swap）提供了内存和交换空间的信息。这些数值是：</p><p>总内存容量</p><p>已用内存</p><p>空闲内存</p><p>内存的缓冲值</p><p>交换空间的缓存值</p><p>默认它们是用 KiB 为单位展示的，但是按下E（扩展内存缩放 extend memory scaling）可以轮换不同的单位。</p><h2 id="其他的一些top命令"><a href="#其他的一些top命令" class="headerlink" title="其他的一些top命令"></a>其他的一些top命令</h2><p>显示完整命令</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top -c</span><br></pre></td></tr></table></figure><p>以批处理模式显示程序信息</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top -b</span><br></pre></td></tr></table></figure><p>表示更新两次后终止更新显示</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top -n 2</span><br></pre></td></tr></table></figure><p>表示更新周期为3秒</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top -d 3</span><br></pre></td></tr></table></figure><p>显示进程号为114的进程信息，CPU、内存占用率等</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top -p 114</span><br></pre></td></tr></table></figure><p>显示更新十次后退出</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top -n 10</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> Linux学习笔记 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Linux </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>apt-get 和 apt的区别是什么</title>
       <link href="/archives/7ff4090f.html"/>
       <url>/archives/7ff4090f.html</url>

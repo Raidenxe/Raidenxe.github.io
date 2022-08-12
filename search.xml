@@ -1,106 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>GitHub 443 Timed out的解决方法</title>
-    <url>/archives/4dcde7a2.html</url>
-    <content><![CDATA[<h1 id="GitHub-443-Timed-out解决办法"><a href="#GitHub-443-Timed-out解决办法" class="headerlink" title="GitHub 443 Timed out解决办法"></a>GitHub 443 Timed out解决办法</h1><h2 id="Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out"><a href="#Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out" class="headerlink" title="Failed to connect to github.com port 443 after 21090 ms: Timed out"></a>Failed to connect to github.com port 443 after 21090 ms: Timed out</h2><p>最近尝试过很多方法都无法解决GitHub的上传问题，包括取消全局代理也无效。</p>
-<p>取消全局代理：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global --<span class="built_in">unset</span> http.proxy</span><br><span class="line">git config --global --<span class="built_in">unset</span> https.proxy</span><br></pre></td></tr></table></figure>
-<p>无奈之下只能选择修改hosts文件。</p>
-<p>登录以下三个网站获取对应的ip地址，写入hosts文件即可。</p>
-<p><a href="https://ipaddress.com/website/github.com">GitHub IP地址</a></p>
-<p><img src="https://pic3.zhimg.com/80/v2-7a0b82ecaa96fdc3efda9e4295ab1eee_720w.jpg" alt="GitHub IP地址"></p>
-<p><a href="https://ipaddress.com/website/github.global.ssl.fastly.net#ipinfo">github.global.ssl.Fastly.net IP地址</a></p>
-<p><img src="https://pic2.zhimg.com/80/v2-aed12d6e1e2bedebba9e1444bbdc83dd_720w.jpg" alt="github.global.ssl.Fastly.net IP地址"></p>
-<p><a href="https://ipaddress.com/website/assets-cdn.github.com">assets-cdn.Github.com IP地址</a></p>
-<p><img src="https://pic1.zhimg.com/80/v2-05f981b555f81338eb2bb15b5ebb5338_720w.jpg" alt="assets-cdn.Github.com IP地址"></p>
-<p>如下图所示：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">140.82.112.4 http://GitHub.com</span><br><span class="line"></span><br><span class="line">199.232.69.194 http://github.global.ssl.Fastly.net</span><br><span class="line"></span><br><span class="line">185.199.108.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.109.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.110.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.111.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>实测有效</p>
-<p><img src="https://pic3.zhimg.com/80/v2-8ed6c75a78b8c4418f8b802d5ae38a26_720w.jpg"></p>
-]]></content>
-      <tags>
-        <tag>GitHub</tag>
-        <tag>Git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux top命令的使用及参数详解</title>
-    <url>/archives/9269b129.html</url>
-    <content><![CDATA[<h1 id="什么是top"><a href="#什么是top" class="headerlink" title="什么是top"></a>什么是top</h1><p><strong>top</strong> （table of processes）是一个任务管理器程序，它可运行于许多类Unix操作系统上，它用于显示有关CPU和内存利用率的信息。</p>
-<p>该程序将按用户指定的条件，选择正在运行的进程并生成一个有序列表，并定期对其进行更新。清单的默认顺序是按CPU使用率排序的，并且仅显示较高CPU使用方。顶部显示正在使用多少CPU处理能力和内存，以及有关正在运行的进程的其他信息。某些版本的top允许对显示进行广泛的自定义，例如选择列或排序方法。</p>
-<h1 id="top的作用"><a href="#top的作用" class="headerlink" title="top的作用"></a>top的作用</h1><p>尝试找出你的机器正在运行什么程序，以及哪个进程耗尽了内存导致系统非常非常慢 —— 这是 top 命令所能胜任的工作。</p>
-<p>top 是一个非常实用的程序，其作用类似于 Windows 任务管理器或 MacOS 的<strong>活动监视器</strong>。运行 top 将实时显示系统上运行的进程的情况。</p>
-<p>top对系统管理员很有用，因为它显示了在任何给定时间哪些用户和进程正在消耗最多的系统资源。</p>
-<h1 id="top命令格式"><a href="#top命令格式" class="headerlink" title="top命令格式"></a>top命令格式</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top [-] [d delay] [q] [c] [S] [s] [i] [n] [b]</span><br></pre></td></tr></table></figure>
-<p>参数说明：<br>d : 改变显示的更新速度，或是在交谈式指令列( interactive command)按 s</p>
-<p>q : 没有任何延迟的显示速度，如果使用者是有 superuser 的权限，则 top 将会以最高的优先序执行</p>
-<p>c : 切换显示模式，共有两种模式，一是只显示执行档的名称，另一种是显示完整的路径与名称</p>
-<p>S : 累积模式，会将己完成或消失的子进程 ( dead child process ) 的 CPU time 累积起来</p>
-<p>s : 安全模式，将交谈式指令取消, 避免潜在的危机</p>
-<p>i : 不显示任何闲置 (idle) 或无用 (zombie) 的进程</p>
-<p>n : 更新的次数，完成后将会退出 top</p>
-<p>b : 批次档模式，搭配 “n” 参数一起使用，可以用来将 top 的结果输出到档案内</p>
-<h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><p>这里我将使用 Ubuntu18.04 进行效果演示。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic4.zhimg.com/80/v2-a2d447b6b34132d2d9823c8aed501e77_720w.jpg"></p>
-<h2 id="相关参数详解"><a href="#相关参数详解" class="headerlink" title="相关参数详解"></a>相关参数详解</h2><p>运行命令后，我们可以清楚看到中间高亮的一行。最右边的 COMMAND 一列报告进程名（启动它们的命令）。在这个例子里，进程名是 bash（一个我们正在运行 top 的命令解释器）、flask（一个 Python 写的 web 框架）和 top 自身。</p>
-<p>其它列提供了关于进程的有用信息：</p>
-<p>PID：进程 ID，一个用来定位进程的唯一标识符</p>
-<p>USER：运行进程的用户</p>
-<p>PR：任务的优先级</p>
-<p>NI：Nice 值，优先级的一个更好的表现形式</p>
-<p>VIRT：虚拟内存的大小，单位是 KiB（kibibytes）</p>
-<p>RES：常驻内存大小，单位是 KiB（物理内存和虚拟内存的一部分）</p>
-<p>SHR：共享内存大小，单位是 KiB（共享内存和虚拟内存的一部分）</p>
-<p>S：进程状态，一般 I 代表空闲，R 代表运行，S 代表休眠，Z 代表僵尸进程，T 或 t 代表停止（还有其它更少见的选项）</p>
-<p>%CPU：自从上次屏幕更新后的 CPU 使用率</p>
-<p>%MEM：自从上次屏幕更新后的 RES 常驻内存使用率</p>
-<p>TIME+：自从程序启动后总的 CPU 使用时间</p>
-<p>COMMAND：启动命令，如之前描述那样 </p>
-<p>而在开头我们还能看到几行有用信息，<br><img src="https://pic1.zhimg.com/80/v2-61c054fe790c663c1e402cbf5a4aed18_720w.jpg"><br><strong>第一行</strong>包含系统的大致信息：</p>
-<p>top：正在运行 top</p>
-<p>XX:YY:XX：当前时间，每次屏幕更新的时候更新</p>
-<p>up（接下去是 X day, YY:ZZ）：系统的 uptime，或者自从系统启动后已经过去了多长时间</p>
-<p>load average（后跟三个数字）：分别是过去一分钟、五分钟、15 分钟的系统负载</p>
-<p><strong>第二行</strong>（Task）显示了正在运行的任务的信息，不用解释。它显示了进程总数和正在运行的、休眠中的、停止的进程数和僵尸进程数。这实际上是上述 S（状态）列的总和。</p>
-<p><strong>第三行</strong>（%Cpu(s)）显示了按类型划分的 CPU 使用情况。数据是屏幕刷新之间的值。这些值是：</p>
-<p>us：表示用户空间程序的cpu使用率（没有通过nice调度）</p>
-<p>sy：表示系统空间的cpu使用率，主要是内核程序</p>
-<p>ni：表示用户空间且通过nice调度过的程序的cpu使用率</p>
-<p>id：CPU 的空闲时间，这个值比较高时说明系统比较空闲</p>
-<p>wa：等待时间，或者消耗在等待 I&#x2F;O 完成的时间</p>
-<p>hi：消耗在硬件中断的时间，硬中断（Hardware IRQ）占用CPU的百分比</p>
-<p>si：消耗在软件中断的时间，软中断（Software Interrupts）占用CPU的百分比</p>
-<p>st：“虚拟机管理程序从该虚拟机窃取的时间”</p>
-<p>可以通过点击 t（toggle）来展开或折叠 Task （任务）和 %Cpu(s) 行。</p>
-<p><strong>第四行</strong>（Kib Mem）和<strong>第五行</strong>（KiB Swap）提供了内存和交换空间的信息。这些数值是：</p>
-<p>总内存容量</p>
-<p>已用内存</p>
-<p>空闲内存</p>
-<p>内存的缓冲值</p>
-<p>交换空间的缓存值</p>
-<p>默认它们是用 KiB 为单位展示的，但是按下E（扩展内存缩放 extend memory scaling）可以轮换不同的单位。</p>
-<h2 id="其他的一些top命令"><a href="#其他的一些top命令" class="headerlink" title="其他的一些top命令"></a>其他的一些top命令</h2><p>显示完整命令</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -c</span><br></pre></td></tr></table></figure>
-<p>以批处理模式显示程序信息</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -b</span><br></pre></td></tr></table></figure>
-<p>表示更新两次后终止更新显示</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -n 2</span><br></pre></td></tr></table></figure>
-<p>表示更新周期为3秒</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -d 3</span><br></pre></td></tr></table></figure>
-<p>显示进程号为114的进程信息，CPU、内存占用率等</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -p 114</span><br></pre></td></tr></table></figure>
-<p>显示更新十次后退出</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -n 10</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux学习笔记</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux 文本三剑客（1）grep命令的使用</title>
     <url>/archives/1894211f.html</url>
     <content><![CDATA[<h1 id="三剑客特点及应用场景"><a href="#三剑客特点及应用场景" class="headerlink" title="三剑客特点及应用场景"></a>三剑客特点及应用场景</h1><p>awk、grep、sed是Linux操作文本的三大利器，合称文本三剑客，也是必须掌握的Linux命令之一。三者的功能都是处理文本，但侧重点各不相同，其中属awk功能最强大，但也最复杂。</p>
@@ -192,6 +92,106 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux top命令的使用及参数详解</title>
+    <url>/archives/9269b129.html</url>
+    <content><![CDATA[<h1 id="什么是top"><a href="#什么是top" class="headerlink" title="什么是top"></a>什么是top</h1><p><strong>top</strong> （table of processes）是一个任务管理器程序，它可运行于许多类Unix操作系统上，它用于显示有关CPU和内存利用率的信息。</p>
+<p>该程序将按用户指定的条件，选择正在运行的进程并生成一个有序列表，并定期对其进行更新。清单的默认顺序是按CPU使用率排序的，并且仅显示较高CPU使用方。顶部显示正在使用多少CPU处理能力和内存，以及有关正在运行的进程的其他信息。某些版本的top允许对显示进行广泛的自定义，例如选择列或排序方法。</p>
+<h1 id="top的作用"><a href="#top的作用" class="headerlink" title="top的作用"></a>top的作用</h1><p>尝试找出你的机器正在运行什么程序，以及哪个进程耗尽了内存导致系统非常非常慢 —— 这是 top 命令所能胜任的工作。</p>
+<p>top 是一个非常实用的程序，其作用类似于 Windows 任务管理器或 MacOS 的<strong>活动监视器</strong>。运行 top 将实时显示系统上运行的进程的情况。</p>
+<p>top对系统管理员很有用，因为它显示了在任何给定时间哪些用户和进程正在消耗最多的系统资源。</p>
+<h1 id="top命令格式"><a href="#top命令格式" class="headerlink" title="top命令格式"></a>top命令格式</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top [-] [d delay] [q] [c] [S] [s] [i] [n] [b]</span><br></pre></td></tr></table></figure>
+<p>参数说明：<br>d : 改变显示的更新速度，或是在交谈式指令列( interactive command)按 s</p>
+<p>q : 没有任何延迟的显示速度，如果使用者是有 superuser 的权限，则 top 将会以最高的优先序执行</p>
+<p>c : 切换显示模式，共有两种模式，一是只显示执行档的名称，另一种是显示完整的路径与名称</p>
+<p>S : 累积模式，会将己完成或消失的子进程 ( dead child process ) 的 CPU time 累积起来</p>
+<p>s : 安全模式，将交谈式指令取消, 避免潜在的危机</p>
+<p>i : 不显示任何闲置 (idle) 或无用 (zombie) 的进程</p>
+<p>n : 更新的次数，完成后将会退出 top</p>
+<p>b : 批次档模式，搭配 “n” 参数一起使用，可以用来将 top 的结果输出到档案内</p>
+<h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><p>这里我将使用 Ubuntu18.04 进行效果演示。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-a2d447b6b34132d2d9823c8aed501e77_720w.jpg"></p>
+<h2 id="相关参数详解"><a href="#相关参数详解" class="headerlink" title="相关参数详解"></a>相关参数详解</h2><p>运行命令后，我们可以清楚看到中间高亮的一行。最右边的 COMMAND 一列报告进程名（启动它们的命令）。在这个例子里，进程名是 bash（一个我们正在运行 top 的命令解释器）、flask（一个 Python 写的 web 框架）和 top 自身。</p>
+<p>其它列提供了关于进程的有用信息：</p>
+<p>PID：进程 ID，一个用来定位进程的唯一标识符</p>
+<p>USER：运行进程的用户</p>
+<p>PR：任务的优先级</p>
+<p>NI：Nice 值，优先级的一个更好的表现形式</p>
+<p>VIRT：虚拟内存的大小，单位是 KiB（kibibytes）</p>
+<p>RES：常驻内存大小，单位是 KiB（物理内存和虚拟内存的一部分）</p>
+<p>SHR：共享内存大小，单位是 KiB（共享内存和虚拟内存的一部分）</p>
+<p>S：进程状态，一般 I 代表空闲，R 代表运行，S 代表休眠，Z 代表僵尸进程，T 或 t 代表停止（还有其它更少见的选项）</p>
+<p>%CPU：自从上次屏幕更新后的 CPU 使用率</p>
+<p>%MEM：自从上次屏幕更新后的 RES 常驻内存使用率</p>
+<p>TIME+：自从程序启动后总的 CPU 使用时间</p>
+<p>COMMAND：启动命令，如之前描述那样 </p>
+<p>而在开头我们还能看到几行有用信息，<br><img src="https://pic1.zhimg.com/80/v2-61c054fe790c663c1e402cbf5a4aed18_720w.jpg"><br><strong>第一行</strong>包含系统的大致信息：</p>
+<p>top：正在运行 top</p>
+<p>XX:YY:XX：当前时间，每次屏幕更新的时候更新</p>
+<p>up（接下去是 X day, YY:ZZ）：系统的 uptime，或者自从系统启动后已经过去了多长时间</p>
+<p>load average（后跟三个数字）：分别是过去一分钟、五分钟、15 分钟的系统负载</p>
+<p><strong>第二行</strong>（Task）显示了正在运行的任务的信息，不用解释。它显示了进程总数和正在运行的、休眠中的、停止的进程数和僵尸进程数。这实际上是上述 S（状态）列的总和。</p>
+<p><strong>第三行</strong>（%Cpu(s)）显示了按类型划分的 CPU 使用情况。数据是屏幕刷新之间的值。这些值是：</p>
+<p>us：表示用户空间程序的cpu使用率（没有通过nice调度）</p>
+<p>sy：表示系统空间的cpu使用率，主要是内核程序</p>
+<p>ni：表示用户空间且通过nice调度过的程序的cpu使用率</p>
+<p>id：CPU 的空闲时间，这个值比较高时说明系统比较空闲</p>
+<p>wa：等待时间，或者消耗在等待 I&#x2F;O 完成的时间</p>
+<p>hi：消耗在硬件中断的时间，硬中断（Hardware IRQ）占用CPU的百分比</p>
+<p>si：消耗在软件中断的时间，软中断（Software Interrupts）占用CPU的百分比</p>
+<p>st：“虚拟机管理程序从该虚拟机窃取的时间”</p>
+<p>可以通过点击 t（toggle）来展开或折叠 Task （任务）和 %Cpu(s) 行。</p>
+<p><strong>第四行</strong>（Kib Mem）和<strong>第五行</strong>（KiB Swap）提供了内存和交换空间的信息。这些数值是：</p>
+<p>总内存容量</p>
+<p>已用内存</p>
+<p>空闲内存</p>
+<p>内存的缓冲值</p>
+<p>交换空间的缓存值</p>
+<p>默认它们是用 KiB 为单位展示的，但是按下E（扩展内存缩放 extend memory scaling）可以轮换不同的单位。</p>
+<h2 id="其他的一些top命令"><a href="#其他的一些top命令" class="headerlink" title="其他的一些top命令"></a>其他的一些top命令</h2><p>显示完整命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -c</span><br></pre></td></tr></table></figure>
+<p>以批处理模式显示程序信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -b</span><br></pre></td></tr></table></figure>
+<p>表示更新两次后终止更新显示</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -n 2</span><br></pre></td></tr></table></figure>
+<p>表示更新周期为3秒</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -d 3</span><br></pre></td></tr></table></figure>
+<p>显示进程号为114的进程信息，CPU、内存占用率等</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -p 114</span><br></pre></td></tr></table></figure>
+<p>显示更新十次后退出</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -n 10</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux学习笔记</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>GitHub 443 Timed out的解决方法</title>
+    <url>/archives/4dcde7a2.html</url>
+    <content><![CDATA[<h1 id="GitHub-443-Timed-out解决办法"><a href="#GitHub-443-Timed-out解决办法" class="headerlink" title="GitHub 443 Timed out解决办法"></a>GitHub 443 Timed out解决办法</h1><h2 id="Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out"><a href="#Failed-to-connect-to-github-com-port-443-after-21090-ms-Timed-out" class="headerlink" title="Failed to connect to github.com port 443 after 21090 ms: Timed out"></a>Failed to connect to github.com port 443 after 21090 ms: Timed out</h2><p>最近尝试过很多方法都无法解决GitHub的上传问题，包括取消全局代理也无效。</p>
+<p>取消全局代理：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global --<span class="built_in">unset</span> http.proxy</span><br><span class="line">git config --global --<span class="built_in">unset</span> https.proxy</span><br></pre></td></tr></table></figure>
+<p>无奈之下只能选择修改hosts文件。</p>
+<p>登录以下三个网站获取对应的ip地址，写入hosts文件即可。</p>
+<p><a href="https://ipaddress.com/website/github.com">GitHub IP地址</a></p>
+<p><img src="https://pic3.zhimg.com/80/v2-7a0b82ecaa96fdc3efda9e4295ab1eee_720w.jpg" alt="GitHub IP地址"></p>
+<p><a href="https://ipaddress.com/website/github.global.ssl.fastly.net#ipinfo">github.global.ssl.Fastly.net IP地址</a></p>
+<p><img src="https://pic2.zhimg.com/80/v2-aed12d6e1e2bedebba9e1444bbdc83dd_720w.jpg" alt="github.global.ssl.Fastly.net IP地址"></p>
+<p><a href="https://ipaddress.com/website/assets-cdn.github.com">assets-cdn.Github.com IP地址</a></p>
+<p><img src="https://pic1.zhimg.com/80/v2-05f981b555f81338eb2bb15b5ebb5338_720w.jpg" alt="assets-cdn.Github.com IP地址"></p>
+<p>如下图所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">140.82.112.4 http://GitHub.com</span><br><span class="line"></span><br><span class="line">199.232.69.194 http://github.global.ssl.Fastly.net</span><br><span class="line"></span><br><span class="line">185.199.108.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.109.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.110.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br><span class="line">185.199.111.153 http://assets-cdn.Github.com</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>实测有效</p>
+<p><img src="https://pic3.zhimg.com/80/v2-8ed6c75a78b8c4418f8b802d5ae38a26_720w.jpg"></p>
+]]></content>
+      <tags>
+        <tag>GitHub</tag>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux 文本三剑客（2）sed命令的使用</title>
     <url>/archives/ef07d954.html</url>
     <content><![CDATA[<h1 id="sed引言"><a href="#sed引言" class="headerlink" title="sed引言"></a>sed引言</h1><p><strong>sed</strong>（意为流编辑器，源自英语“stream editor”的缩写）是一个使用简单紧凑的编程语言来解析和转换文本Unix实用程序。虽然在某些方面类似于允许脚本编辑的编辑器，但只需对输入进行一次传递即可工作，因此效率更高。但是，它能够过滤管道中的文本，这特别将其与其他类型的编辑器区分开来。</p>
@@ -267,6 +267,50 @@
         <tag>Linux</tag>
         <tag>文本编辑器</tag>
         <tag>sed</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>apt-get 和 apt的区别是什么</title>
+    <url>/archives/7ff4090f.html</url>
+    <content><![CDATA[<p>这是个很有意思的问题，我刚接触到Ubuntu的时候便在各种教程中看到apt和apt-get的身影，apt和apt-get有什么区别这个问题也随之浮现在我脑海中，是我作为Linux初学者所遇到的第一个问题。</p>
+<p>所以我想写一个较为详细回答，算是现在的我给以前的我的一个解答。</p>
+<p>dkpg（底层工具）-&gt;apt-get（上层工具）-&gt;apt（apt-get的再封装）</p>
+<p>首先，需要理解包管理系统这个概念。</p>
+<p>Linux 发行版本质量最重要的决定因素是软件包管理系统和其支持社区的持久性。随着我们花费更多的时间在 Linux 上，我们会发现它的变化是非常快的。大多数一线 Linux 发行版每隔六个月发布一个新版本，并且有许多独立的程序每天都会更新。为了能和这些如暴风雪一般多的软件保持联系，我们需要一些好工具来进行软件包管理。</p>
+<h1 id="Linux包管理系统DPKG和RPM"><a href="#Linux包管理系统DPKG和RPM" class="headerlink" title="Linux包管理系统DPKG和RPM"></a>Linux包管理系统DPKG和RPM</h1><p>不同的 Linux 发行版使用不同的包管理系统，一般而言，大多数发行版分别属于两大包管理技术阵营： Debian 的”.deb”，和红帽的”.rpm”。<br><img src="https://pic2.zhimg.com/80/v2-3456e3a12cc3e9ac0f970a968b300c3f_720w.jpg?source=1940ef5c"></p>
+<p><strong>dpkg</strong> :这个机制最早是由Debian Linux社群所开发出来的﹐通过dpkg 的机制，</p>
+<p>Debian提供的软件就能够简单的安装起来，同时还能提供安装后的软件信息。只要是衍生于Debian 的其他Linux distributions 大多使用dpkg这个机制来管理软件的，包括B2D, Ubuntu等等。</p>
+<p><strong>RPM</strong>:这个机制最早是由Red Hat这家公司开发出来的﹐后来实在很好用﹐因此很多distributions 就使用这个机制来作为软件安装的管理方式。包括Fedora, CentOS, SuSE等等知名的开发商都是使用RPM。</p>
+<p><img src="https://pic3.zhimg.com/80/v2-5cffa65f39772f2ea215aea90cd0d7c5_720w.jpg?source=1940ef5c"><br>软件包管理系统通常由两种工具类型组成：<strong>底层工具</strong>用来处理这些任务，比方说安装和删除软件包文件， 和<strong>上层工具</strong>，完成元数据搜索和依赖解析。</p>
+<h1 id="apt-get"><a href="#apt-get" class="headerlink" title="apt-get"></a>apt-get</h1><p><strong>Advanced Package Tool</strong>，又名apt-get，是一款适用于Unix和Linux系统的应用程序管理器。最初于1998年发布，用于检索应用程序并将其加载到Debian Linux系统。Apt-get成名的原因之一在于其出色的解决软件依赖关系的能力。其通常使用.deb-formatted文件，但经过修改后可以使用apt-rpm处理红帽的Package Manager（RPM）文件。</p>
+<p><strong>apt-get</strong>主要用于自动从互联网的软件仓库中搜索、安装、升级、卸载软件或操作系统。如果你已阅读 apt-get 命令指南，可能已经遇到过许多类似的命令，如 apt-cache、apt-config 等。这些命令都比较低级又包含众多功能，普通的 Linux 用户也许永远都不会使用到。换种说法来说，最常用的 <strong>Linux 包管理命令都被分散在了 apt-get、apt-cache 和 apt-config 这三条命令当中</strong>。</p>
+<p><strong>apt 命令的引入就是为了解决命令过于分散的问题</strong>，它包括了 apt-get 命令出现以来使用最广泛的功能选项，以及 apt-cache 和 apt-config 命令中很少用到的功能。</p>
+<h1 id="apt"><a href="#apt" class="headerlink" title="apt"></a>apt</h1><p>apt是一个命令行实用程序，用于在Ubuntu、Debian和相关Linux发行版上安装、更新、删除和管理deb软件包。</p>
+<p>Apt，可以基本解决依赖问题并检索需要的软件包，可与dpkg一起工作。Apt很强大，主要在命令行(控制台&#x2F;terminal)下使用。但是，也有很多GUI&#x2F;图形化工具，让使用者不必接触命令行。</p>
+<p>简单来说就是：apt &#x3D; apt-get、apt-cache 和 apt-config 中最常用命令选项的集合。</p>
+<h1 id="dpkg和apt-get的区别"><a href="#dpkg和apt-get的区别" class="headerlink" title="dpkg和apt-get的区别"></a>dpkg和apt-get的区别</h1><p>dpkg:用来安装.deb文件时，不会解决模块的依赖关系，且不会关心ubuntu的软件仓库内的软件，可以用于安装本地的deb文件。</p>
+<p>apt-get:会解决和安装模块的依赖问题，并会咨询软件仓库，但不会安装本地的deb文件，apt-get是建立在dpkg之上的软件管理工具。</p>
+<h1 id="apt-与-apt-get-之间的区别"><a href="#apt-与-apt-get-之间的区别" class="headerlink" title="apt 与 apt-get 之间的区别"></a>apt 与 apt-get 之间的区别</h1><p>1.apt 命令是对之前的apt-get apt-cache 等的<strong>封装</strong>，提供更加统一，更加适合终端用户使用的接口。</p>
+<p>2.apt 具有更<strong>精减</strong>但足够的命令选项，而且参数选项的组织方式更为有效。</p>
+<p>3.apt是为<strong>交互</strong>使用而设计的。最好在shell脚本中使用apt-get和apt-cache，因为它们在不同版本之间向后兼容，并且有更多选项和功能。</p>
+<p><strong>对于基本命令，apt和apt-get两个工具的语法是相同的。</strong></p>
+<h1 id="apt-命令-取代的apt-get命令-命令的功能"><a href="#apt-命令-取代的apt-get命令-命令的功能" class="headerlink" title="apt 命令 取代的apt-get命令 命令的功能"></a>apt 命令 取代的apt-get命令 命令的功能</h1><p>apt install | apt-get install | 安装软件包</p>
+<p>apt remove | apt-get remove | 移除软件包</p>
+<p>apt purge | apt-get purge | 除软件包及配置文件</p>
+<p>apt update | apt-get update | 刷新存储库索引</p>
+<p>apt upgrade | apt-get upgrade | 升级所有可升级的软件包</p>
+<p>apt autoremove | apt-get autoremove | 自动删除不需要的包</p>
+<p>apt full-upgrade | apt-get dist-upgrade | 在升级软件包时自动处理依赖关系</p>
+<p>apt search | apt-cache search | 搜索应用程序</p>
+<p>apt show | apt-cache show | 显示安装细节</p>
+<h1 id="最后，apt-install和apt-get-install的区别是什么？"><a href="#最后，apt-install和apt-get-install的区别是什么？" class="headerlink" title="最后，apt install和apt-get install的区别是什么？"></a>最后，apt install和apt-get install的区别是什么？</h1><p>如果在非交互式脚本中运行apt install，就会提示没有稳定的CLI 接口。</p>
+<p>所以要在脚本中安装软件，用apt-get 保险一些，如果是自己在终端中使用命令行，显然是使用apt 更方便一些。</p>
+]]></content>
+      <categories>
+        <category>Linux学习笔记</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -347,45 +391,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu（WSL2）安装MySQL数据库</title>
-    <url>/archives/b013fd12.html</url>
-    <content><![CDATA[<p>本文将简单介绍Ubuntu安装MySQL数据库的方法以及我在安装过程遇到的一些问题，WSL环境下同样适用。</p>
-<h1 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h1><p>MySQL 是最流行的关系型数据库管理系统，在 WEB 应用方面 MySQL 是最好的 RDBMS(Relational Database Management System：关系数据库管理系统)应用软件之一。</p>
-<h1 id="命令行安装MySQL"><a href="#命令行安装MySQL" class="headerlink" title="命令行安装MySQL"></a>命令行安装MySQL</h1><p>在Ubuntu中使用命令行安装MySQL是比较简单快捷的，执行以下命令即可：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install mysql-server -y</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic2.zhimg.com/80/v2-8fe2602a2f83e3f850525ec7459ba721_1440w.jpg"><br>而使用官方仓库进行安装MySQL是比较麻烦的，可以自行查阅官方文档。<br><a href="https://link.zhihu.com/?target=https://dev.mysql.com/doc/refman/8.0/en/linux-installation.html">mysql文档</a></p>
-<h1 id="常见问题1"><a href="#常见问题1" class="headerlink" title="常见问题1"></a>常见问题1</h1><p>如果安装失败或者速度太慢，推荐换源并更新apt软件包</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
-<p>换源的方法一搜一大堆，这里就不作赘述了。</p>
-<p>而在一些arm-Linux开发板上使用apt包管理器是无法安装mysql-server的，比如说树莓派，可以选择安装</p>
-<p>MariaDB（由MySQL的创始人创建的一个开源分支版本，使用XtraDB引擎），或者是编译安装MySQL。</p>
-<h1 id="常见问题2"><a href="#常见问题2" class="headerlink" title="常见问题2"></a>常见问题2</h1><p>而在WSL下，安装完MySQL，在终端运行mysql时，往往会报错</p>
-<p>报错信息如下：</p>
-<p>ERROR 2002 (HY000): Can’t connect to local MySQL server through socket ‘&#x2F;var&#x2F;run&#x2F;mysqld&#x2F;mysqld.sock’</p>
-<p>数据库连接的过程需要先经过 TCP 三次握手，因为 MySQL 是基于 TCP 协议进行传输的，如果 MySQL 服务并没有启动的话，容易出现上述报错。</p>
-<p>这个时候启动MySQL即可。</p>
-<p>启动MySQL服务：</p>
-<p>方式一：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo /etc/init.d/mysql start</span><br></pre></td></tr></table></figure>
-<p>方式二：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo start mysql</span><br></pre></td></tr></table></figure>
-<p>方式三：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service mysql start</span><br></pre></td></tr></table></figure>
-<p>如果尝试上述命令后依然无法正常启动MySQL，</p>
-<p>可以尝试执行以下命令</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> -p /var/run/mysqld</span><br><span class="line">sudo <span class="built_in">chown</span> mysql /var/run/mysqld/</span><br><span class="line">sudo service mysql restart</span><br></pre></td></tr></table></figure>
-<p>再执行下面命令即可</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
-<p><img src="https://pic4.zhimg.com/80/v2-d477155930f311cee8c37f27c59e213f_1440w.jpg"></p>
-]]></content>
-      <categories>
-        <category>Linux学习笔记</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用命令行查看Linux基本信息</title>
     <url>/archives/6f8bf535.html</url>
     <content><![CDATA[<p>命令行(CLI)是用来和计算机进行交流沟通的非常有效的方式，正像人类社会使用文字互通信息一样。</p>
@@ -448,6 +453,53 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux下的fork和exec函数</title>
+    <url>/archives/90acc1af.html</url>
+    <content><![CDATA[<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>多线程程序设计的概念早在六十年代就被提出，但直到八十年代中期，Unix系统中才引入多线程机制，如今，由于自身的许多优点，多线程编程已经得到了广泛的应用。</p>
+<p>fork函数是Unix系统最杰出的成就之一，它是七十年代UNIX早期的开发者经过长期在理论和实践上的艰苦探索后取得的成果，一方面，它使操作系统在进程管理上付出了最小的代价，另一方面，又为程序员提供了一个简洁明了的多进程方法。</p>
+<h1 id="Linux下进程的结构"><a href="#Linux下进程的结构" class="headerlink" title="Linux下进程的结构"></a>Linux下进程的结构</h1><p>Linux下一个进程在内存里有三部分的数据，就是”代码段”、”堆栈段”和”数据段”。其实学过汇编语言的人一定知道，一般的CPU都有上述三种段寄存器，以方便操作系统的运行。这三个部分也是构成一个完整的执行序列的必要的部分。</p>
+<p>“代码段”，顾名思义，就是存放了程序代码的数据，假如机器中有数个进程运行相同的一个程序，那么它们就可以使用相同的代码段。”堆栈段”存放的就是子程序的返回地址、子程序的参数以及程序的局部变量。而数据段则存放程序的全局变量，常数以及动态数据分配的数据空间（比如用malloc之类的函数取得的空间）。这其中有许多细节问题，这里限于篇幅就不多介绍了。系统如果同时运行数个相同的程序，它们之间就不能使用同一个堆栈段和数据段。　　</p>
+<h1 id="Linux下的进程控制"><a href="#Linux下的进程控制" class="headerlink" title="Linux下的进程控制"></a>Linux下的进程控制</h1><p><img src="https://pic4.zhimg.com/80/v2-eacfccfbb95739f120d80f78582b332f_720w.jpg"><br>在传统的Unix环境下，有两个基本的操作用于创建和修改进程：</p>
+<p>函数fork( )用来创建一个新的进程，该进程几乎是当前进程的一个完全拷贝；</p>
+<p>函数族exec( )用来启动另外的进程以取代当前运行的进程。</p>
+<p>Linux的进程控制和传统的Unix进程控制基本一致，只在一些细节的地方有些区别，例如在Linux系统中调用vfork和fork完全相同，而在有些版本的Unix系统中，vfork调用有不同的功能。</p>
+<p>fork函数（包括有些系统可能提供的它的各种变体）是Unix中派生新进程的唯一方法。fork函数也是编写并发服务器程序的基础之一。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta"># fork函数</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line">include &lt;unistd.h&gt;</span><br><span class="line"><span class="type">pid_t</span> <span class="title function_">fork</span><span class="params">(<span class="type">void</span>)</span> ;<span class="comment">// 返回:在子进程中为o，在父进程中为子进程ID，若出错则为-1</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-1fe39319fb80fc6891b8ee5522614f6b_720w.jpg"><br>fork在英文中是”分叉”的意思。为什么取这个名字呢？因为一个进程在运行中，如果使用了fork，就产生了另一个进程，于是进程就”分叉”了，所以这个名字取得很形象。</p>
+<h2 id="fork的返回值"><a href="#fork的返回值" class="headerlink" title="fork的返回值"></a>fork的返回值</h2><p>如果你以前从未接触过该函数，那么理解fork最困难之处在于调用它一次，它却返回两次。它在调用进程（称为父进程）中返回一次，返回值是新派生进程（称为子进程）的进程ID号，在子进程又返回一次，返回值为0。</p>
+<p>因此，返回值本身告知当前进程是子进程还是父进程。</p>
+<p>fork在子进程返回0，而不是父进程的进程ID的原因在于：任何子进程只有一个父进程，而且子进程总是可以通过调用getpid取得父进程的进程ID。相反，父进程可以有许多子进程，而且无法获取各个子进程的进程ID。如果父进程想要跟踪所有子进程的进程ID，那么它必须记录每次调用fork的返回值。</p>
+<p>父进程中调用fork之前打开的所有描述符在fork返回之后由子进程分享。我们将看到网络服务器利用了这个特性:父进程调用accept之后调用fork。所接受的已连接套接字随后就在父进程与子进程之间共享。通常情况下，子进程接着读写这个己连接套接字，父进程则关闭这个已连接套接字。</p>
+<h2 id="fork的两个典型用法"><a href="#fork的两个典型用法" class="headerlink" title="fork的两个典型用法"></a>fork的两个典型用法</h2><p>(1) 一个进程创建一个自身的副本,这样每个副本都可以在另一个副本执行其他任务的同时处理各自的某个操作。这是网络服务器的典型用法。</p>
+<p>(2) 一个进程想要执行另一个程序。既然创建新进程的唯一办法是调用fork，该进程于是首先调用fork创建一个自身的副本，然后其中一个副本（通常为子进程）调用exec把自身替换成新的程序。这是诸如shell之类程序的典型用法。</p>
+<h2 id="用法例外"><a href="#用法例外" class="headerlink" title="用法例外"></a>用法例外</h2><p>fork() 通过复制调用进程来创建一个新进程，新进程称为子进程，是调用进程（称为父进程）的完全副本，但以下情况除外：</p>
+<p>1.子进程有自己唯一的进程 ID，并且这个 PID 不匹配任何现有进程组的 ID。</p>
+<p>2.子进程的父进程 ID 与父进程 ID 相同。</p>
+<p>3.子进程不会继承其父进程的内存锁和信号量调整。</p>
+<p>4.子代不会从其父代继承未完成的异步 I&#x2F;O 操作，也不会从其父代继承任何异步 I&#x2F;O 上下文。</p>
+<h1 id="exec-函数族"><a href="#exec-函数族" class="headerlink" title="exec( )函数族"></a>exec( )函数族</h1><p>下面我们来看看一个进程如何来启动另一个程序的执行。</p>
+<p>在Linux中要使用exec函数族。</p>
+<h2 id="exec-函数族的作用"><a href="#exec-函数族的作用" class="headerlink" title="exec( )函数族的作用"></a>exec( )函数族的作用</h2><p><img src="https://pic1.zhimg.com/80/v2-e31f805cf04b4d3973aa080f9e2bce68_720w.jpg"><br>exec把当前进程映像替换成新的程序文件，而且该新程序通常从main函数开始执行。进程ID并不改变。我们称调用exec的进程为调用进程(calling process)，称新执行的程序为新程序(new program)。</p>
+<h2 id="6个exec函数族"><a href="#6个exec函数族" class="headerlink" title="6个exec函数族"></a>6个exec函数族</h2><p>系统调用execve（）对当前进程进行替换，替换者为一个指定的程序，其参数包括文件名（filename）、参数列表（argv）以及环境变量（envp）。exec函数族当然不止一个，但它们大致相同，在 Linux中，它们分别是：execl，execlp，execle，execv，execve和execvp。</p>
+<h2 id="6个exec函数之间的区别"><a href="#6个exec函数之间的区别" class="headerlink" title="6个exec函数之间的区别:"></a>6个exec函数之间的区别:</h2><p>(a）待执行的程序文件是由文件名(filename）还是由路径名（pathname）指定;</p>
+<p>(b）新程序的参数是一一列出还是由一个指针数组来引用;</p>
+<p>(c）把调用进程的环境传递给新程序还是给新程序指定新的环境。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">execl</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">const</span> <span class="type">char</span> *arg0， ... <span class="comment">/* (char *) 0*/</span> )</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execv</span> <span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">char</span> *<span class="type">const</span> *argv[ ] )</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execle</span> <span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">const</span> <span class="type">char</span> *arg0, ...</span></span><br><span class="line"><span class="params"><span class="comment">/*( char * ) 0, char *const envp [ ] */</span>)</span> ;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execve</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">char</span> *<span class="type">const</span> argv[],<span class="type">char</span> *<span class="type">const</span> envp [])</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execlp</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *filename，<span class="type">const</span> <span class="type">char</span> *arg0，... <span class="comment">/* (char *) 0*/</span> )</span>;</span><br><span class="line"><span class="type">int</span>. execvp(<span class="type">const</span> <span class="type">char</span> *filename,<span class="type">char</span> *<span class="type">const</span> argv[] );</span><br><span class="line"><span class="comment">//均返回:若成功则不返回，若出错则为-1</span></span><br></pre></td></tr></table></figure>
+
+<p>这些函数只在出错时才返回到调用者。否则，控制将被传递给新程序的起始点，通常就是main函数。</p>
+<p>这6个函数间的关系如图4-12所示。一般来说，只有execve是内核中的系统调用，其他5个都是调用execve的库函数。<br><img src="https://pic2.zhimg.com/80/v2-14fd9241c4671aa8c057c7c3e33da765_720w.jpg"><br>(1) 上面那行的3个函数把新程序的每个参数字符串指定成exec的一个独立参数，并以一个空指针结束可变数量的这些参数。下面那行的3个函数都有一个作为exec参数的argv数组，其中含有指向新程序各个参数字符串的所有指针。既然没有指定参数字符串的数目，这个argv数组必须含有一个用于指定其末尾的空指针。</p>
+<p>(2) 左列2个函数指定一个filename参数。exec将使用当前的PATH环境变量把该文件名参数转换为一个路径名。然而一旦这2个函数的filename参数中含有一个斜杠（&#x2F;)，就不再使用PATH环境变量。右两列4个函数指定一个全限定的pathname参数。</p>
+<p>(3) 左两列4个函数不显式指定一个环境指针。相反，它们使用外部变量environ的当前值来构造一个传递给新程序的环境列表。右列2个函数显式指定一个环境列表，其envp指针数组必须以一个空指针结束。</p>
+<p>进程在调用exec之前打开着的描述符通常跨exec继续保持打开。我们使用限定词“通常”是因为本默认行为可以使用fcntl设置FD_CLOEXEc描述符标志禁止掉。inetd服务器就利用了这个特性。</p>
+<h1 id="fork和exec代码示例："><a href="#fork和exec代码示例：" class="headerlink" title="fork和exec代码示例："></a>fork和exec代码示例：</h1><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//C程序来说明fork（）的用法&amp;</span></span><br><span class="line"><span class="comment">//exec（）系统调用以创建进程</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line"><span class="type">pid_t</span> pid;</span><br><span class="line"><span class="type">int</span> ret = <span class="number">1</span>;</span><br><span class="line"><span class="type">int</span> status;</span><br><span class="line">pid = fork();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (pid == <span class="number">-1</span>)&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// pid == -1 表示发生了错误</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;can&#x27;t fork, error occured\n&quot;</span>);</span><br><span class="line">	<span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>)&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// pid == 0 表示创建了子进程</span></span><br><span class="line">	<span class="comment">// getpid() 返回调用进程的进程id</span></span><br><span class="line">	<span class="comment">// 返回子进程的进程id</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;child process, pid = %u\n&quot;</span>,getpid());</span><br><span class="line">	<span class="comment">// 返回子进程的父进程，即父进程本身</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;parent of child process, pid = %u\n&quot;</span>,getppid());</span><br><span class="line"></span><br><span class="line">	<span class="comment">// argv list第一个参数应该指向</span></span><br><span class="line">	<span class="comment">// 与正在执行的文件关联的文件名</span></span><br><span class="line">	<span class="comment">// 数组指针必须以NULL结尾</span></span><br><span class="line">	<span class="comment">// 指针</span></span><br><span class="line">	<span class="type">char</span> * argv_list[] = &#123;<span class="string">&quot;ls&quot;</span>,<span class="string">&quot;-lart&quot;</span>,<span class="string">&quot;/home&quot;</span>,<span class="literal">NULL</span>&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// execv（）仅在发生错误时返回。</span></span><br><span class="line">	<span class="comment">// 返回值为-1</span></span><br><span class="line">	execv(<span class="string">&quot;ls&quot;</span>,argv_list);</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">	<span class="comment">// 为pid返回一个正数</span></span><br><span class="line">	<span class="comment">// 父进程</span></span><br><span class="line">	<span class="comment">// getppid（）返回进程的父进程id</span></span><br><span class="line">	<span class="comment">// 调用进程</span></span><br><span class="line">        <span class="comment">// 返回父进程ID的父进程</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Parent Of parent process, pid = %u\n&quot;</span>,getppid());</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;parent process, pid = %u\n&quot;</span>,getpid());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">		<span class="comment">// 父进程对子进程调用waitpid（）</span></span><br><span class="line">		<span class="comment">// waitpid（）系统调用暂停</span></span><br><span class="line">		<span class="comment">// 调用进程直到pid指定的子进程</span></span><br><span class="line">		<span class="comment">// 状态改变</span></span><br><span class="line">		<span class="comment">// 有关所有标志或选项，请参见wait（）手册</span></span><br><span class="line">		<span class="keyword">if</span> (waitpid(pid, &amp;status, <span class="number">0</span>) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">if</span> (WIFEXITED(status) &amp;&amp; !WEXITSTATUS(status))</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;program execution successful\n&quot;</span>);</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (WIFEXITED(status) &amp;&amp; WEXITSTATUS(status)) &#123;</span><br><span class="line">				<span class="keyword">if</span> (WEXITSTATUS(status) == <span class="number">127</span>) &#123;</span><br><span class="line"></span><br><span class="line">					<span class="comment">// execv failed</span></span><br><span class="line">					<span class="built_in">printf</span>(<span class="string">&quot;execv failed\n&quot;</span>);</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">					<span class="built_in">printf</span>(<span class="string">&quot;program terminated normally,&quot;</span></span><br><span class="line">					<span class="string">&quot; but returned a non-zero status\n&quot;</span>);			</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;program didn&#x27;t terminate normally\n&quot;</span>);		</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// waitpid() failed</span></span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;waitpid() failed\n&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本文部分内容参考自《UNIX网络编程卷1套接字联网API》。</p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+        <tag>进程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>单片机和嵌入式系统的区别</title>
     <url>/archives/cc4d518f.html</url>
     <content><![CDATA[<h1 id="单片机和嵌入式系统的区别"><a href="#单片机和嵌入式系统的区别" class="headerlink" title="单片机和嵌入式系统的区别"></a>单片机和嵌入式系统的区别</h1><p>嵌入式和单片机并不是一对相对的概念，嵌入式系统包括硬件和软件部分，而单片机是单片微型计算机(Single Chip Microcomputer )的简称，即微控制单元(Microcontroller Unit；MCU) 。单片机可以是嵌入式系统的组成部分。我们可以理解为嵌入式系统是一个大类，单片机是其中一个重要的子类。</p>
@@ -505,6 +557,29 @@
         <tag>Linux</tag>
         <tag>嵌入式</tag>
         <tag>单片机</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>树莓派系统烧录教程</title>
+    <url>/archives/6a0755b3.html</url>
+    <content><![CDATA[<p>树莓派的系统烧录大体上可分为使用</p>
+<p>官方的烧录工具Raspberry Pi Imager烧录和使用第三方烧录工具烧录。</p>
+<p>官方的烧录工具胜在操作简单，方便快捷，所以这里使用Raspberry Pi Imager进行演示。</p>
+<p>具体步骤如下：</p>
+<p>首先准备好tf卡和读卡器</p>
+<p>然后进入官网下载 <a href="https://link.zhihu.com/?target=https://www.raspberrypi.com/software/">Raspberry Pi Imager</a></p>
+<p><img src="https://pic4.zhimg.com/80/v2-8a14d7c95dec632584c034d0dc88b28b_720w.jpg" alt="选择download for windows"></p>
+<p>安装Raspberry Pi Imager<br><img src="https://pic1.zhimg.com/80/v2-c4e4c22348914ce68edf31226bb6f340_720w.jpg" alt="点击Install"><br><img src="https://pic2.zhimg.com/80/v2-84775579e1f5e109e7cfb486f4aab445_720w.jpg" alt="Finish"></p>
+<p>打开Raspberry Pi Imager<br><img src="https://pic4.zhimg.com/80/v2-4eae49e0a08f4a124f1a8a74ebc7970b_720w.jpg" alt="点击CHOOSE OS选项"></p>
+<p>这里我们可以看到有很多系统可供选择，可以自行选择适合的系统，</p>
+<p>这里我们选择带有树莓派桌面的第一个系统为例<br><img src="https://pic2.zhimg.com/80/v2-112d84b8ae1fa0b9dcd92a6325576ae9_720w.jpg" alt="点击Raspberry PI OS(32-bit)"></p>
+<p>选择对应的存储设备<br><img src="https://pic1.zhimg.com/80/v2-a5d82eae153723595f4c1944cf3f797c_720w.jpg" alt="点击CHOOSE STORAGE选项"><br><img src="https://pic3.zhimg.com/80/v2-f6cf4fe01e8b59da659a6e37c9db9aae_720w.jpg" alt="注意所选盘符是否为目标tf卡"></p>
+<p>烧录程序<br><img src="https://pic4.zhimg.com/80/v2-16125a207574f1440b2e52738d1a7c47_720w.jpg" alt="点击WRITE"><br><img src="https://pic1.zhimg.com/80/v2-71484bd203bca4874eeb82a93026a360_720w.jpg" alt="点击yes"></p>
+<p>接下来耐心等待即可<br><img src="https://pic4.zhimg.com/80/v2-7d813e812b9816d4339a448576daa9bf_720w.jpg" alt="等进度条达100％即完成树莓派系统的烧录"></p>
+<p>如果出现报错，可以尝试重新烧录系统。</p>
+]]></content>
+      <tags>
+        <tag>树莓派</tag>
       </tags>
   </entry>
   <entry>
@@ -647,6 +722,73 @@
       </tags>
   </entry>
   <entry>
+    <title>Ubuntu（WSL2）安装MySQL数据库</title>
+    <url>/archives/b013fd12.html</url>
+    <content><![CDATA[<p>本文将简单介绍Ubuntu安装MySQL数据库的方法以及我在安装过程遇到的一些问题，WSL环境下同样适用。</p>
+<h1 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h1><p>MySQL 是最流行的关系型数据库管理系统，在 WEB 应用方面 MySQL 是最好的 RDBMS(Relational Database Management System：关系数据库管理系统)应用软件之一。</p>
+<h1 id="命令行安装MySQL"><a href="#命令行安装MySQL" class="headerlink" title="命令行安装MySQL"></a>命令行安装MySQL</h1><p>在Ubuntu中使用命令行安装MySQL是比较简单快捷的，执行以下命令即可：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install mysql-server -y</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic2.zhimg.com/80/v2-8fe2602a2f83e3f850525ec7459ba721_1440w.jpg"><br>而使用官方仓库进行安装MySQL是比较麻烦的，可以自行查阅官方文档。<br><a href="https://link.zhihu.com/?target=https://dev.mysql.com/doc/refman/8.0/en/linux-installation.html">mysql文档</a></p>
+<h1 id="常见问题1"><a href="#常见问题1" class="headerlink" title="常见问题1"></a>常见问题1</h1><p>如果安装失败或者速度太慢，推荐换源并更新apt软件包</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
+<p>换源的方法一搜一大堆，这里就不作赘述了。</p>
+<p>而在一些arm-Linux开发板上使用apt包管理器是无法安装mysql-server的，比如说树莓派，可以选择安装</p>
+<p>MariaDB（由MySQL的创始人创建的一个开源分支版本，使用XtraDB引擎），或者是编译安装MySQL。</p>
+<h1 id="常见问题2"><a href="#常见问题2" class="headerlink" title="常见问题2"></a>常见问题2</h1><p>而在WSL下，安装完MySQL，在终端运行mysql时，往往会报错</p>
+<p>报错信息如下：</p>
+<p>ERROR 2002 (HY000): Can’t connect to local MySQL server through socket ‘&#x2F;var&#x2F;run&#x2F;mysqld&#x2F;mysqld.sock’</p>
+<p>数据库连接的过程需要先经过 TCP 三次握手，因为 MySQL 是基于 TCP 协议进行传输的，如果 MySQL 服务并没有启动的话，容易出现上述报错。</p>
+<p>这个时候启动MySQL即可。</p>
+<p>启动MySQL服务：</p>
+<p>方式一：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo /etc/init.d/mysql start</span><br></pre></td></tr></table></figure>
+<p>方式二：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo start mysql</span><br></pre></td></tr></table></figure>
+<p>方式三：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service mysql start</span><br></pre></td></tr></table></figure>
+<p>如果尝试上述命令后依然无法正常启动MySQL，</p>
+<p>可以尝试执行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> -p /var/run/mysqld</span><br><span class="line">sudo <span class="built_in">chown</span> mysql /var/run/mysqld/</span><br><span class="line">sudo service mysql restart</span><br></pre></td></tr></table></figure>
+<p>再执行下面命令即可</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic4.zhimg.com/80/v2-d477155930f311cee8c37f27c59e213f_1440w.jpg"></p>
+]]></content>
+      <categories>
+        <category>Linux学习笔记</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机网络知识点总结（一）</title>
+    <url>/archives/5dd58e55.html</url>
+    <content><![CDATA[<h2 id="计算机网络的定义"><a href="#计算机网络的定义" class="headerlink" title="计算机网络的定义"></a>计算机网络的定义</h2><p>计算机网络是“以相互共享资源的方式互联起来的自治计算机系统的集合”。<br>计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。</p>
+<h2 id="计算机网络的分类"><a href="#计算机网络的分类" class="headerlink" title="计算机网络的分类"></a>计算机网络的分类</h2><p>计算机网络按照其覆盖的地理范围进行分类，可以很好地反映不同类型网络的技术特征。按照覆盖的地理范围划分，计算机网络可以分为以下5类。</p>
+<h3 id="广域网（Wide-Area-Network，WAN）"><a href="#广域网（Wide-Area-Network，WAN）" class="headerlink" title="广域网（Wide Area Network，WAN）"></a>广域网（Wide Area Network，WAN）</h3><h3 id="城域网-Metropolitan-Area-Network，MAN"><a href="#城域网-Metropolitan-Area-Network，MAN" class="headerlink" title="城域网(Metropolitan Area Network，MAN)"></a>城域网(Metropolitan Area Network，MAN)</h3><h3 id="局域网（Local-Area-Network-，LAN）"><a href="#局域网（Local-Area-Network-，LAN）" class="headerlink" title="局域网（Local Area Network ，LAN）"></a>局域网（Local Area Network ，LAN）</h3><h3 id="个人区域网（Personal-Area-Network，PAN）"><a href="#个人区域网（Personal-Area-Network，PAN）" class="headerlink" title="个人区域网（Personal Area Network，PAN）"></a>个人区域网（Personal Area Network，PAN）</h3><h3 id="人体区域网（Body-Area-Network，BAN）"><a href="#人体区域网（Body-Area-Network，BAN）" class="headerlink" title="人体区域网（Body Area Network，BAN）"></a>人体区域网（Body Area Network，BAN）</h3><h3 id="网络体系结构和网络协议"><a href="#网络体系结构和网络协议" class="headerlink" title="网络体系结构和网络协议"></a>网络体系结构和网络协议</h3><h2 id="网络协议"><a href="#网络协议" class="headerlink" title="网络协议"></a>网络协议</h2><p>网络协议类似于人类协议，除了交换报文和采取动作的实体是某些设备（可以是计算机、智能手机、平板电脑、路由器或其他具有网络能力的设备）的硬件或软件组件。在因 特网中，涉及两个或多个远程通信实体的所有活动都受协议的制约。例如，在两台物理上 连接的计算机中，硬件实现的协议控制了在两块网络接口卡间的“线上”的比特流；在端 系统中，拥塞控制协议控制了在发送方和接收方之间传输的分组发送的速率；路由器中的协议决定了分组从源到目的地的路径。<br>协议（protocol）定义了在两个或多个通信实体之间交换的报文的格式和顺序，以及报文发送和&#x2F;或接收一条报文或其他事件所采取的动作。<br>因特网（更一般地说是计算机网络）广泛地使用了协议。不同的协议用于完成不同的通信任务。<br>    层次（layer）结构事处理计算机网络问题最基本的方法。对于一些难以处理的复杂问题，通常是采用若干个容易处理的、小一些的问题，“化整为零，分而治之”的方法去解决。<br>接口是同一主机内相邻层之间交换信息的连接点。<br>对于结构复杂的网络协议体系来说，最好的组织方是层次结构模型。计算机网络引入了一个重要的概念——网络体系结构（network architecture）。</p>
+<h2 id="OSI-参考模型"><a href="#OSI-参考模型" class="headerlink" title="OSI 参考模型"></a>OSI 参考模型</h2><p>1974年，IBM公司提出世界第一个网络体系结构——系统网络体系结构（SNA）。1974年，国际标准化组织（ISO）发布了著名的ISO&#x2F;IEC7498标准，定义了网络互联的7层框架，即开放系统互连（Open System Interconnect，OSI）参考模型。<br>开放系统互连 (OSI) 模型描述了计算机系统用于通过网络进行通信的七个层次。OSI参考模型包括以下七层：物理层、数据链路层、网络层、传输层、会话层、表示层和应用层。<br><img src="https://pic3.zhimg.com/80/v2-82a2e89aa4a4218d23a8aedba5b77ad2_720w.jpg" alt="OSI七层模型"></p>
+<p>现代互联网不是基于 OSI，而是基于更简单的 TCP&#x2F;IP 模型。然而，OSI 7 层模型仍然被广泛使用，因为它有助于可视化和传达网络的运行方式，并有助于隔离和解决网络问题。<br>我们将“自上而下”地描述 OSI 层，从直接为最终用户服务的应用程序层，一直到物理层。<br><img src="https://pic1.zhimg.com/80/v2-112f5d6be901f464ec832561b4f98f48_720w.jpg" alt="主机、路由器和链路层交换机，每个包含了不同的层，反映了它们的功能差异"></p>
+<h3 id="7-应用层"><a href="#7-应用层" class="headerlink" title="7.应用层"></a>7.应用层</h3><p>应用层由最终用户软件使用，例如 Web 浏览器和电子邮件客户端。它提供允许软件发送和接收信息并向用户呈现有意义的数据的协议。应用层协议的一些示例是超文本传输协议(HTTP)、文件传输协议 (FTP)、邮局协议 (POP)、简单邮件传输协议 (SMTP) 和域名系统 (DNS)。</p>
+<h3 id="6-表示层"><a href="#6-表示层" class="headerlink" title="6.表示层"></a>6.表示层</h3><p>表示层为应用层准备数据。它定义了两个设备应如何编码、加密和压缩数据，以便在另一端正确接收数据。表示层获取应用层传输的任何数据，并准备好通过会话层传输。</p>
+<h3 id="5-会话层"><a href="#5-会话层" class="headerlink" title="5.会话层"></a>5.会话层</h3><p>会话层在设备之间创建通信通道，称为会话。它负责打开会话，确保它们在传输数据时保持打开和功能，并在通信结束时关闭它们。会话层还可以在数据传输期间设置检查点——如果会话中断，设备可以从上一个检查点恢复数据传输。</p>
+<h3 id="4-传输层"><a href="#4-传输层" class="headerlink" title="4.传输层"></a>4.传输层</h3><p>传输层获取会话层中传输的数据，并在发送端将其分解为“段”。它负责在接收端重新组装段，将其转换回会话层可以使用的数据。传输层进行流量控制，以与接收设备的连接速度相匹配的速率发送数据，以及错误控制，检查数据是否接收错误，如果没有，则重新请求。</p>
+<h3 id="3-网络层"><a href="#3-网络层" class="headerlink" title="3.网络层"></a>3.网络层</h3><p>网络层有两个主要功能。一种是将分段分解为网络数据包，然后在接收端重新组装数据包。另一种是通过发现跨物理网络的最佳路径来路由数据包。网络层使用网络地址（通常是 Internet 协议地址）将数据包路由到目标节点。</p>
+<h3 id="2-数据链路层"><a href="#2-数据链路层" class="headerlink" title="2.数据链路层"></a>2.数据链路层</h3><p>数据链路层在网络上两个物理连接的节点之间建立和终止连接。它将数据包分解成帧并将它们从源发送到目标。该层由两部分组成——逻辑链路控制 (LLC)，它识别网络协议、执行错误检查和同步帧，以及媒体访问控制 (MAC)，它使用 MAC 地址连接设备并定义传输和接收数据的权限。</p>
+<h3 id="1-物理层"><a href="#1-物理层" class="headerlink" title="1.物理层"></a>1.物理层</h3><p>物理层负责网络节点之间的物理有线或无线连接。它定义了连接器、连接设备的电缆或无线技术，并负责传输原始数据，这只是一系列 0 和 1，同时负责比特率控制。<br>OSI模型的优点<br>OSI 模型帮助计算机网络的用户和运营商：<br>•	确定构建网络所需的硬件和软件。<br>•	了解并传达组件通过网络进行通信的过程。<br>•	通过确定导致问题的网络层并将工作重点放在该层来执行故障排除。<br>OSI 模型帮助网络设备制造商和网络软件供应商：<br>•	创建可以与任何其他供应商的产品进行通信的设备和软件，从而实现开放的互操作性<br>•	定义他们的产品应该使用的网络部分。<br>•	与用户沟通他们的产品在哪些网络层运行——例如，仅在应用层，或跨堆栈。</p>
+<h2 id="OSI-与-TCP-x2F-IP-模型"><a href="#OSI-与-TCP-x2F-IP-模型" class="headerlink" title="OSI 与 TCP&#x2F;IP 模型"></a>OSI 与 TCP&#x2F;IP 模型</h2><p><img src="https://pic3.zhimg.com/80/v2-c39270e61b82808e07c29a4f143199d2_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
+<p>传输控制协议&#x2F;互联网协议(TCP&#x2F;IP) 比 OSI 模型更早，由美国国防部 (DoD) 创建。模型之间的一个关键区别是 TCP&#x2F;IP 更简单，将几个 OSI 层合并为一个：</p>
+<p><img src="https://pic4.zhimg.com/80/v2-1127aaa36d2eff825865f1020568d18f_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
+<p>OSI 第 5、6、7 层在 TCP&#x2F;IP 中合并为一个应用层<br>OSI 第 1 层、第 2 层在 TCP&#x2F;IP 中合并为一个网络访问层 - 但是 TCP&#x2F;IP 不负责排序和确认功能，将这些留给底层传输层。<br>其他重要区别：<br>TCP&#x2F;IP 是一种功能模型，旨在解决特定的通信问题，它基于特定的标准协议。OSI 是一个通用的、独立于协议的模型，旨在描述所有形式的网络通信。<br>在 TCP&#x2F;IP 中，大多数应用程序使用所有层，而在 OSI 中简单应用程序不使用所有七层。只有第 1、2 和 3 层是必需的才能启用任何数据通信。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/PicWarehouse/img/%E9%A3%8E%E6%99%AF008.png" alt="TCP/IP与OSI对应关系"></p>
+]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>计算机网络</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>日常使用Linux系统是什么体验？</title>
     <url>/archives/a1e2b7b3.html</url>
     <content><![CDATA[<p>趁着五一小假期，我尝试了去使用Linux作为日常使用的操作系统，这个过程中也是踩了不少的坑，所以想写一篇文章分享一下。</p>
@@ -721,148 +863,6 @@
       <tags>
         <tag>Linux</tag>
         <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>树莓派系统烧录教程</title>
-    <url>/archives/6a0755b3.html</url>
-    <content><![CDATA[<p>树莓派的系统烧录大体上可分为使用</p>
-<p>官方的烧录工具Raspberry Pi Imager烧录和使用第三方烧录工具烧录。</p>
-<p>官方的烧录工具胜在操作简单，方便快捷，所以这里使用Raspberry Pi Imager进行演示。</p>
-<p>具体步骤如下：</p>
-<p>首先准备好tf卡和读卡器</p>
-<p>然后进入官网下载 <a href="https://link.zhihu.com/?target=https://www.raspberrypi.com/software/">Raspberry Pi Imager</a></p>
-<p><img src="https://pic4.zhimg.com/80/v2-8a14d7c95dec632584c034d0dc88b28b_720w.jpg" alt="选择download for windows"></p>
-<p>安装Raspberry Pi Imager<br><img src="https://pic1.zhimg.com/80/v2-c4e4c22348914ce68edf31226bb6f340_720w.jpg" alt="点击Install"><br><img src="https://pic2.zhimg.com/80/v2-84775579e1f5e109e7cfb486f4aab445_720w.jpg" alt="Finish"></p>
-<p>打开Raspberry Pi Imager<br><img src="https://pic4.zhimg.com/80/v2-4eae49e0a08f4a124f1a8a74ebc7970b_720w.jpg" alt="点击CHOOSE OS选项"></p>
-<p>这里我们可以看到有很多系统可供选择，可以自行选择适合的系统，</p>
-<p>这里我们选择带有树莓派桌面的第一个系统为例<br><img src="https://pic2.zhimg.com/80/v2-112d84b8ae1fa0b9dcd92a6325576ae9_720w.jpg" alt="点击Raspberry PI OS(32-bit)"></p>
-<p>选择对应的存储设备<br><img src="https://pic1.zhimg.com/80/v2-a5d82eae153723595f4c1944cf3f797c_720w.jpg" alt="点击CHOOSE STORAGE选项"><br><img src="https://pic3.zhimg.com/80/v2-f6cf4fe01e8b59da659a6e37c9db9aae_720w.jpg" alt="注意所选盘符是否为目标tf卡"></p>
-<p>烧录程序<br><img src="https://pic4.zhimg.com/80/v2-16125a207574f1440b2e52738d1a7c47_720w.jpg" alt="点击WRITE"><br><img src="https://pic1.zhimg.com/80/v2-71484bd203bca4874eeb82a93026a360_720w.jpg" alt="点击yes"></p>
-<p>接下来耐心等待即可<br><img src="https://pic4.zhimg.com/80/v2-7d813e812b9816d4339a448576daa9bf_720w.jpg" alt="等进度条达100％即完成树莓派系统的烧录"></p>
-<p>如果出现报错，可以尝试重新烧录系统。</p>
-]]></content>
-      <tags>
-        <tag>树莓派</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux下的fork和exec函数</title>
-    <url>/archives/90acc1af.html</url>
-    <content><![CDATA[<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>多线程程序设计的概念早在六十年代就被提出，但直到八十年代中期，Unix系统中才引入多线程机制，如今，由于自身的许多优点，多线程编程已经得到了广泛的应用。</p>
-<p>fork函数是Unix系统最杰出的成就之一，它是七十年代UNIX早期的开发者经过长期在理论和实践上的艰苦探索后取得的成果，一方面，它使操作系统在进程管理上付出了最小的代价，另一方面，又为程序员提供了一个简洁明了的多进程方法。</p>
-<h1 id="Linux下进程的结构"><a href="#Linux下进程的结构" class="headerlink" title="Linux下进程的结构"></a>Linux下进程的结构</h1><p>Linux下一个进程在内存里有三部分的数据，就是”代码段”、”堆栈段”和”数据段”。其实学过汇编语言的人一定知道，一般的CPU都有上述三种段寄存器，以方便操作系统的运行。这三个部分也是构成一个完整的执行序列的必要的部分。</p>
-<p>“代码段”，顾名思义，就是存放了程序代码的数据，假如机器中有数个进程运行相同的一个程序，那么它们就可以使用相同的代码段。”堆栈段”存放的就是子程序的返回地址、子程序的参数以及程序的局部变量。而数据段则存放程序的全局变量，常数以及动态数据分配的数据空间（比如用malloc之类的函数取得的空间）。这其中有许多细节问题，这里限于篇幅就不多介绍了。系统如果同时运行数个相同的程序，它们之间就不能使用同一个堆栈段和数据段。　　</p>
-<h1 id="Linux下的进程控制"><a href="#Linux下的进程控制" class="headerlink" title="Linux下的进程控制"></a>Linux下的进程控制</h1><p><img src="https://pic4.zhimg.com/80/v2-eacfccfbb95739f120d80f78582b332f_720w.jpg"><br>在传统的Unix环境下，有两个基本的操作用于创建和修改进程：</p>
-<p>函数fork( )用来创建一个新的进程，该进程几乎是当前进程的一个完全拷贝；</p>
-<p>函数族exec( )用来启动另外的进程以取代当前运行的进程。</p>
-<p>Linux的进程控制和传统的Unix进程控制基本一致，只在一些细节的地方有些区别，例如在Linux系统中调用vfork和fork完全相同，而在有些版本的Unix系统中，vfork调用有不同的功能。</p>
-<p>fork函数（包括有些系统可能提供的它的各种变体）是Unix中派生新进程的唯一方法。fork函数也是编写并发服务器程序的基础之一。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta"># fork函数</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line">include &lt;unistd.h&gt;</span><br><span class="line"><span class="type">pid_t</span> <span class="title function_">fork</span><span class="params">(<span class="type">void</span>)</span> ;<span class="comment">// 返回:在子进程中为o，在父进程中为子进程ID，若出错则为-1</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://pic4.zhimg.com/80/v2-1fe39319fb80fc6891b8ee5522614f6b_720w.jpg"><br>fork在英文中是”分叉”的意思。为什么取这个名字呢？因为一个进程在运行中，如果使用了fork，就产生了另一个进程，于是进程就”分叉”了，所以这个名字取得很形象。</p>
-<h2 id="fork的返回值"><a href="#fork的返回值" class="headerlink" title="fork的返回值"></a>fork的返回值</h2><p>如果你以前从未接触过该函数，那么理解fork最困难之处在于调用它一次，它却返回两次。它在调用进程（称为父进程）中返回一次，返回值是新派生进程（称为子进程）的进程ID号，在子进程又返回一次，返回值为0。</p>
-<p>因此，返回值本身告知当前进程是子进程还是父进程。</p>
-<p>fork在子进程返回0，而不是父进程的进程ID的原因在于：任何子进程只有一个父进程，而且子进程总是可以通过调用getpid取得父进程的进程ID。相反，父进程可以有许多子进程，而且无法获取各个子进程的进程ID。如果父进程想要跟踪所有子进程的进程ID，那么它必须记录每次调用fork的返回值。</p>
-<p>父进程中调用fork之前打开的所有描述符在fork返回之后由子进程分享。我们将看到网络服务器利用了这个特性:父进程调用accept之后调用fork。所接受的已连接套接字随后就在父进程与子进程之间共享。通常情况下，子进程接着读写这个己连接套接字，父进程则关闭这个已连接套接字。</p>
-<h2 id="fork的两个典型用法"><a href="#fork的两个典型用法" class="headerlink" title="fork的两个典型用法"></a>fork的两个典型用法</h2><p>(1) 一个进程创建一个自身的副本,这样每个副本都可以在另一个副本执行其他任务的同时处理各自的某个操作。这是网络服务器的典型用法。</p>
-<p>(2) 一个进程想要执行另一个程序。既然创建新进程的唯一办法是调用fork，该进程于是首先调用fork创建一个自身的副本，然后其中一个副本（通常为子进程）调用exec把自身替换成新的程序。这是诸如shell之类程序的典型用法。</p>
-<h2 id="用法例外"><a href="#用法例外" class="headerlink" title="用法例外"></a>用法例外</h2><p>fork() 通过复制调用进程来创建一个新进程，新进程称为子进程，是调用进程（称为父进程）的完全副本，但以下情况除外：</p>
-<p>1.子进程有自己唯一的进程 ID，并且这个 PID 不匹配任何现有进程组的 ID。</p>
-<p>2.子进程的父进程 ID 与父进程 ID 相同。</p>
-<p>3.子进程不会继承其父进程的内存锁和信号量调整。</p>
-<p>4.子代不会从其父代继承未完成的异步 I&#x2F;O 操作，也不会从其父代继承任何异步 I&#x2F;O 上下文。</p>
-<h1 id="exec-函数族"><a href="#exec-函数族" class="headerlink" title="exec( )函数族"></a>exec( )函数族</h1><p>下面我们来看看一个进程如何来启动另一个程序的执行。</p>
-<p>在Linux中要使用exec函数族。</p>
-<h2 id="exec-函数族的作用"><a href="#exec-函数族的作用" class="headerlink" title="exec( )函数族的作用"></a>exec( )函数族的作用</h2><p><img src="https://pic1.zhimg.com/80/v2-e31f805cf04b4d3973aa080f9e2bce68_720w.jpg"><br>exec把当前进程映像替换成新的程序文件，而且该新程序通常从main函数开始执行。进程ID并不改变。我们称调用exec的进程为调用进程(calling process)，称新执行的程序为新程序(new program)。</p>
-<h2 id="6个exec函数族"><a href="#6个exec函数族" class="headerlink" title="6个exec函数族"></a>6个exec函数族</h2><p>系统调用execve（）对当前进程进行替换，替换者为一个指定的程序，其参数包括文件名（filename）、参数列表（argv）以及环境变量（envp）。exec函数族当然不止一个，但它们大致相同，在 Linux中，它们分别是：execl，execlp，execle，execv，execve和execvp。</p>
-<h2 id="6个exec函数之间的区别"><a href="#6个exec函数之间的区别" class="headerlink" title="6个exec函数之间的区别:"></a>6个exec函数之间的区别:</h2><p>(a）待执行的程序文件是由文件名(filename）还是由路径名（pathname）指定;</p>
-<p>(b）新程序的参数是一一列出还是由一个指针数组来引用;</p>
-<p>(c）把调用进程的环境传递给新程序还是给新程序指定新的环境。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">execl</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">const</span> <span class="type">char</span> *arg0， ... <span class="comment">/* (char *) 0*/</span> )</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execv</span> <span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">char</span> *<span class="type">const</span> *argv[ ] )</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execle</span> <span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">const</span> <span class="type">char</span> *arg0, ...</span></span><br><span class="line"><span class="params"><span class="comment">/*( char * ) 0, char *const envp [ ] */</span>)</span> ;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execve</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname，<span class="type">char</span> *<span class="type">const</span> argv[],<span class="type">char</span> *<span class="type">const</span> envp [])</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execlp</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *filename，<span class="type">const</span> <span class="type">char</span> *arg0，... <span class="comment">/* (char *) 0*/</span> )</span>;</span><br><span class="line"><span class="type">int</span>. execvp(<span class="type">const</span> <span class="type">char</span> *filename,<span class="type">char</span> *<span class="type">const</span> argv[] );</span><br><span class="line"><span class="comment">//均返回:若成功则不返回，若出错则为-1</span></span><br></pre></td></tr></table></figure>
-
-<p>这些函数只在出错时才返回到调用者。否则，控制将被传递给新程序的起始点，通常就是main函数。</p>
-<p>这6个函数间的关系如图4-12所示。一般来说，只有execve是内核中的系统调用，其他5个都是调用execve的库函数。<br><img src="https://pic2.zhimg.com/80/v2-14fd9241c4671aa8c057c7c3e33da765_720w.jpg"><br>(1) 上面那行的3个函数把新程序的每个参数字符串指定成exec的一个独立参数，并以一个空指针结束可变数量的这些参数。下面那行的3个函数都有一个作为exec参数的argv数组，其中含有指向新程序各个参数字符串的所有指针。既然没有指定参数字符串的数目，这个argv数组必须含有一个用于指定其末尾的空指针。</p>
-<p>(2) 左列2个函数指定一个filename参数。exec将使用当前的PATH环境变量把该文件名参数转换为一个路径名。然而一旦这2个函数的filename参数中含有一个斜杠（&#x2F;)，就不再使用PATH环境变量。右两列4个函数指定一个全限定的pathname参数。</p>
-<p>(3) 左两列4个函数不显式指定一个环境指针。相反，它们使用外部变量environ的当前值来构造一个传递给新程序的环境列表。右列2个函数显式指定一个环境列表，其envp指针数组必须以一个空指针结束。</p>
-<p>进程在调用exec之前打开着的描述符通常跨exec继续保持打开。我们使用限定词“通常”是因为本默认行为可以使用fcntl设置FD_CLOEXEc描述符标志禁止掉。inetd服务器就利用了这个特性。</p>
-<h1 id="fork和exec代码示例："><a href="#fork和exec代码示例：" class="headerlink" title="fork和exec代码示例："></a>fork和exec代码示例：</h1><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//C程序来说明fork（）的用法&amp;</span></span><br><span class="line"><span class="comment">//exec（）系统调用以创建进程</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line"><span class="type">pid_t</span> pid;</span><br><span class="line"><span class="type">int</span> ret = <span class="number">1</span>;</span><br><span class="line"><span class="type">int</span> status;</span><br><span class="line">pid = fork();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (pid == <span class="number">-1</span>)&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// pid == -1 表示发生了错误</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;can&#x27;t fork, error occured\n&quot;</span>);</span><br><span class="line">	<span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>)&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// pid == 0 表示创建了子进程</span></span><br><span class="line">	<span class="comment">// getpid() 返回调用进程的进程id</span></span><br><span class="line">	<span class="comment">// 返回子进程的进程id</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;child process, pid = %u\n&quot;</span>,getpid());</span><br><span class="line">	<span class="comment">// 返回子进程的父进程，即父进程本身</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;parent of child process, pid = %u\n&quot;</span>,getppid());</span><br><span class="line"></span><br><span class="line">	<span class="comment">// argv list第一个参数应该指向</span></span><br><span class="line">	<span class="comment">// 与正在执行的文件关联的文件名</span></span><br><span class="line">	<span class="comment">// 数组指针必须以NULL结尾</span></span><br><span class="line">	<span class="comment">// 指针</span></span><br><span class="line">	<span class="type">char</span> * argv_list[] = &#123;<span class="string">&quot;ls&quot;</span>,<span class="string">&quot;-lart&quot;</span>,<span class="string">&quot;/home&quot;</span>,<span class="literal">NULL</span>&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// execv（）仅在发生错误时返回。</span></span><br><span class="line">	<span class="comment">// 返回值为-1</span></span><br><span class="line">	execv(<span class="string">&quot;ls&quot;</span>,argv_list);</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">	<span class="comment">// 为pid返回一个正数</span></span><br><span class="line">	<span class="comment">// 父进程</span></span><br><span class="line">	<span class="comment">// getppid（）返回进程的父进程id</span></span><br><span class="line">	<span class="comment">// 调用进程</span></span><br><span class="line">        <span class="comment">// 返回父进程ID的父进程</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Parent Of parent process, pid = %u\n&quot;</span>,getppid());</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;parent process, pid = %u\n&quot;</span>,getpid());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">		<span class="comment">// 父进程对子进程调用waitpid（）</span></span><br><span class="line">		<span class="comment">// waitpid（）系统调用暂停</span></span><br><span class="line">		<span class="comment">// 调用进程直到pid指定的子进程</span></span><br><span class="line">		<span class="comment">// 状态改变</span></span><br><span class="line">		<span class="comment">// 有关所有标志或选项，请参见wait（）手册</span></span><br><span class="line">		<span class="keyword">if</span> (waitpid(pid, &amp;status, <span class="number">0</span>) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">if</span> (WIFEXITED(status) &amp;&amp; !WEXITSTATUS(status))</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;program execution successful\n&quot;</span>);</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (WIFEXITED(status) &amp;&amp; WEXITSTATUS(status)) &#123;</span><br><span class="line">				<span class="keyword">if</span> (WEXITSTATUS(status) == <span class="number">127</span>) &#123;</span><br><span class="line"></span><br><span class="line">					<span class="comment">// execv failed</span></span><br><span class="line">					<span class="built_in">printf</span>(<span class="string">&quot;execv failed\n&quot;</span>);</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">					<span class="built_in">printf</span>(<span class="string">&quot;program terminated normally,&quot;</span></span><br><span class="line">					<span class="string">&quot; but returned a non-zero status\n&quot;</span>);			</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;program didn&#x27;t terminate normally\n&quot;</span>);		</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// waitpid() failed</span></span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;waitpid() failed\n&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>本文部分内容参考自《UNIX网络编程卷1套接字联网API》。</p>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
-        <tag>进程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>apt-get 和 apt的区别是什么</title>
-    <url>/archives/7ff4090f.html</url>
-    <content><![CDATA[<p>这是个很有意思的问题，我刚接触到Ubuntu的时候便在各种教程中看到apt和apt-get的身影，apt和apt-get有什么区别这个问题也随之浮现在我脑海中，是我作为Linux初学者所遇到的第一个问题。</p>
-<p>所以我想写一个较为详细回答，算是现在的我给以前的我的一个解答。</p>
-<p>dkpg（底层工具）-&gt;apt-get（上层工具）-&gt;apt（apt-get的再封装）</p>
-<p>首先，需要理解包管理系统这个概念。</p>
-<p>Linux 发行版本质量最重要的决定因素是软件包管理系统和其支持社区的持久性。随着我们花费更多的时间在 Linux 上，我们会发现它的变化是非常快的。大多数一线 Linux 发行版每隔六个月发布一个新版本，并且有许多独立的程序每天都会更新。为了能和这些如暴风雪一般多的软件保持联系，我们需要一些好工具来进行软件包管理。</p>
-<h1 id="Linux包管理系统DPKG和RPM"><a href="#Linux包管理系统DPKG和RPM" class="headerlink" title="Linux包管理系统DPKG和RPM"></a>Linux包管理系统DPKG和RPM</h1><p>不同的 Linux 发行版使用不同的包管理系统，一般而言，大多数发行版分别属于两大包管理技术阵营： Debian 的”.deb”，和红帽的”.rpm”。<br><img src="https://pic2.zhimg.com/80/v2-3456e3a12cc3e9ac0f970a968b300c3f_720w.jpg?source=1940ef5c"></p>
-<p><strong>dpkg</strong> :这个机制最早是由Debian Linux社群所开发出来的﹐通过dpkg 的机制，</p>
-<p>Debian提供的软件就能够简单的安装起来，同时还能提供安装后的软件信息。只要是衍生于Debian 的其他Linux distributions 大多使用dpkg这个机制来管理软件的，包括B2D, Ubuntu等等。</p>
-<p><strong>RPM</strong>:这个机制最早是由Red Hat这家公司开发出来的﹐后来实在很好用﹐因此很多distributions 就使用这个机制来作为软件安装的管理方式。包括Fedora, CentOS, SuSE等等知名的开发商都是使用RPM。</p>
-<p><img src="https://pic3.zhimg.com/80/v2-5cffa65f39772f2ea215aea90cd0d7c5_720w.jpg?source=1940ef5c"><br>软件包管理系统通常由两种工具类型组成：<strong>底层工具</strong>用来处理这些任务，比方说安装和删除软件包文件， 和<strong>上层工具</strong>，完成元数据搜索和依赖解析。</p>
-<h1 id="apt-get"><a href="#apt-get" class="headerlink" title="apt-get"></a>apt-get</h1><p><strong>Advanced Package Tool</strong>，又名apt-get，是一款适用于Unix和Linux系统的应用程序管理器。最初于1998年发布，用于检索应用程序并将其加载到Debian Linux系统。Apt-get成名的原因之一在于其出色的解决软件依赖关系的能力。其通常使用.deb-formatted文件，但经过修改后可以使用apt-rpm处理红帽的Package Manager（RPM）文件。</p>
-<p><strong>apt-get</strong>主要用于自动从互联网的软件仓库中搜索、安装、升级、卸载软件或操作系统。如果你已阅读 apt-get 命令指南，可能已经遇到过许多类似的命令，如 apt-cache、apt-config 等。这些命令都比较低级又包含众多功能，普通的 Linux 用户也许永远都不会使用到。换种说法来说，最常用的 <strong>Linux 包管理命令都被分散在了 apt-get、apt-cache 和 apt-config 这三条命令当中</strong>。</p>
-<p><strong>apt 命令的引入就是为了解决命令过于分散的问题</strong>，它包括了 apt-get 命令出现以来使用最广泛的功能选项，以及 apt-cache 和 apt-config 命令中很少用到的功能。</p>
-<h1 id="apt"><a href="#apt" class="headerlink" title="apt"></a>apt</h1><p>apt是一个命令行实用程序，用于在Ubuntu、Debian和相关Linux发行版上安装、更新、删除和管理deb软件包。</p>
-<p>Apt，可以基本解决依赖问题并检索需要的软件包，可与dpkg一起工作。Apt很强大，主要在命令行(控制台&#x2F;terminal)下使用。但是，也有很多GUI&#x2F;图形化工具，让使用者不必接触命令行。</p>
-<p>简单来说就是：apt &#x3D; apt-get、apt-cache 和 apt-config 中最常用命令选项的集合。</p>
-<h1 id="dpkg和apt-get的区别"><a href="#dpkg和apt-get的区别" class="headerlink" title="dpkg和apt-get的区别"></a>dpkg和apt-get的区别</h1><p>dpkg:用来安装.deb文件时，不会解决模块的依赖关系，且不会关心ubuntu的软件仓库内的软件，可以用于安装本地的deb文件。</p>
-<p>apt-get:会解决和安装模块的依赖问题，并会咨询软件仓库，但不会安装本地的deb文件，apt-get是建立在dpkg之上的软件管理工具。</p>
-<h1 id="apt-与-apt-get-之间的区别"><a href="#apt-与-apt-get-之间的区别" class="headerlink" title="apt 与 apt-get 之间的区别"></a>apt 与 apt-get 之间的区别</h1><p>1.apt 命令是对之前的apt-get apt-cache 等的<strong>封装</strong>，提供更加统一，更加适合终端用户使用的接口。</p>
-<p>2.apt 具有更<strong>精减</strong>但足够的命令选项，而且参数选项的组织方式更为有效。</p>
-<p>3.apt是为<strong>交互</strong>使用而设计的。最好在shell脚本中使用apt-get和apt-cache，因为它们在不同版本之间向后兼容，并且有更多选项和功能。</p>
-<p><strong>对于基本命令，apt和apt-get两个工具的语法是相同的。</strong></p>
-<h1 id="apt-命令-取代的apt-get命令-命令的功能"><a href="#apt-命令-取代的apt-get命令-命令的功能" class="headerlink" title="apt 命令 取代的apt-get命令 命令的功能"></a>apt 命令 取代的apt-get命令 命令的功能</h1><p>apt install | apt-get install | 安装软件包</p>
-<p>apt remove | apt-get remove | 移除软件包</p>
-<p>apt purge | apt-get purge | 除软件包及配置文件</p>
-<p>apt update | apt-get update | 刷新存储库索引</p>
-<p>apt upgrade | apt-get upgrade | 升级所有可升级的软件包</p>
-<p>apt autoremove | apt-get autoremove | 自动删除不需要的包</p>
-<p>apt full-upgrade | apt-get dist-upgrade | 在升级软件包时自动处理依赖关系</p>
-<p>apt search | apt-cache search | 搜索应用程序</p>
-<p>apt show | apt-cache show | 显示安装细节</p>
-<h1 id="最后，apt-install和apt-get-install的区别是什么？"><a href="#最后，apt-install和apt-get-install的区别是什么？" class="headerlink" title="最后，apt install和apt-get install的区别是什么？"></a>最后，apt install和apt-get install的区别是什么？</h1><p>如果在非交互式脚本中运行apt install，就会提示没有稳定的CLI 接口。</p>
-<p>所以要在脚本中安装软件，用apt-get 保险一些，如果是自己在终端中使用命令行，显然是使用apt 更方便一些。</p>
-]]></content>
-      <categories>
-        <category>Linux学习笔记</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>计算机网络知识点总结（一）</title>
-    <url>/archives/5dd58e55.html</url>
-    <content><![CDATA[<h2 id="计算机网络的定义"><a href="#计算机网络的定义" class="headerlink" title="计算机网络的定义"></a>计算机网络的定义</h2><p>计算机网络是“以相互共享资源的方式互联起来的自治计算机系统的集合”。<br>计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。</p>
-<h2 id="计算机网络的分类"><a href="#计算机网络的分类" class="headerlink" title="计算机网络的分类"></a>计算机网络的分类</h2><p>计算机网络按照其覆盖的地理范围进行分类，可以很好地反映不同类型网络的技术特征。按照覆盖的地理范围划分，计算机网络可以分为以下5类。</p>
-<h3 id="广域网（Wide-Area-Network，WAN）"><a href="#广域网（Wide-Area-Network，WAN）" class="headerlink" title="广域网（Wide Area Network，WAN）"></a>广域网（Wide Area Network，WAN）</h3><h3 id="城域网-Metropolitan-Area-Network，MAN"><a href="#城域网-Metropolitan-Area-Network，MAN" class="headerlink" title="城域网(Metropolitan Area Network，MAN)"></a>城域网(Metropolitan Area Network，MAN)</h3><h3 id="局域网（Local-Area-Network-，LAN）"><a href="#局域网（Local-Area-Network-，LAN）" class="headerlink" title="局域网（Local Area Network ，LAN）"></a>局域网（Local Area Network ，LAN）</h3><h3 id="个人区域网（Personal-Area-Network，PAN）"><a href="#个人区域网（Personal-Area-Network，PAN）" class="headerlink" title="个人区域网（Personal Area Network，PAN）"></a>个人区域网（Personal Area Network，PAN）</h3><h3 id="人体区域网（Body-Area-Network，BAN）"><a href="#人体区域网（Body-Area-Network，BAN）" class="headerlink" title="人体区域网（Body Area Network，BAN）"></a>人体区域网（Body Area Network，BAN）</h3><h3 id="网络体系结构和网络协议"><a href="#网络体系结构和网络协议" class="headerlink" title="网络体系结构和网络协议"></a>网络体系结构和网络协议</h3><h2 id="网络协议"><a href="#网络协议" class="headerlink" title="网络协议"></a>网络协议</h2><p>网络协议类似于人类协议，除了交换报文和采取动作的实体是某些设备（可以是计算机、智能手机、平板电脑、路由器或其他具有网络能力的设备）的硬件或软件组件。在因 特网中，涉及两个或多个远程通信实体的所有活动都受协议的制约。例如，在两台物理上 连接的计算机中，硬件实现的协议控制了在两块网络接口卡间的“线上”的比特流；在端 系统中，拥塞控制协议控制了在发送方和接收方之间传输的分组发送的速率；路由器中的协议决定了分组从源到目的地的路径。<br>协议（protocol）定义了在两个或多个通信实体之间交换的报文的格式和顺序，以及报文发送和&#x2F;或接收一条报文或其他事件所采取的动作。<br>因特网（更一般地说是计算机网络）广泛地使用了协议。不同的协议用于完成不同的通信任务。<br>    层次（layer）结构事处理计算机网络问题最基本的方法。对于一些难以处理的复杂问题，通常是采用若干个容易处理的、小一些的问题，“化整为零，分而治之”的方法去解决。<br>接口是同一主机内相邻层之间交换信息的连接点。<br>对于结构复杂的网络协议体系来说，最好的组织方是层次结构模型。计算机网络引入了一个重要的概念——网络体系结构（network architecture）。</p>
-<h2 id="OSI-参考模型"><a href="#OSI-参考模型" class="headerlink" title="OSI 参考模型"></a>OSI 参考模型</h2><p>1974年，IBM公司提出世界第一个网络体系结构——系统网络体系结构（SNA）。1974年，国际标准化组织（ISO）发布了著名的ISO&#x2F;IEC7498标准，定义了网络互联的7层框架，即开放系统互连（Open System Interconnect，OSI）参考模型。<br>开放系统互连 (OSI) 模型描述了计算机系统用于通过网络进行通信的七个层次。OSI参考模型包括以下七层：物理层、数据链路层、网络层、传输层、会话层、表示层和应用层。<br><img src="https://pic3.zhimg.com/80/v2-82a2e89aa4a4218d23a8aedba5b77ad2_720w.jpg" alt="OSI七层模型"></p>
-<p>现代互联网不是基于 OSI，而是基于更简单的 TCP&#x2F;IP 模型。然而，OSI 7 层模型仍然被广泛使用，因为它有助于可视化和传达网络的运行方式，并有助于隔离和解决网络问题。<br>我们将“自上而下”地描述 OSI 层，从直接为最终用户服务的应用程序层，一直到物理层。<br><img src="https://pic1.zhimg.com/80/v2-112f5d6be901f464ec832561b4f98f48_720w.jpg" alt="主机、路由器和链路层交换机，每个包含了不同的层，反映了它们的功能差异"></p>
-<h3 id="7-应用层"><a href="#7-应用层" class="headerlink" title="7.应用层"></a>7.应用层</h3><p>应用层由最终用户软件使用，例如 Web 浏览器和电子邮件客户端。它提供允许软件发送和接收信息并向用户呈现有意义的数据的协议。应用层协议的一些示例是超文本传输协议(HTTP)、文件传输协议 (FTP)、邮局协议 (POP)、简单邮件传输协议 (SMTP) 和域名系统 (DNS)。</p>
-<h3 id="6-表示层"><a href="#6-表示层" class="headerlink" title="6.表示层"></a>6.表示层</h3><p>表示层为应用层准备数据。它定义了两个设备应如何编码、加密和压缩数据，以便在另一端正确接收数据。表示层获取应用层传输的任何数据，并准备好通过会话层传输。</p>
-<h3 id="5-会话层"><a href="#5-会话层" class="headerlink" title="5.会话层"></a>5.会话层</h3><p>会话层在设备之间创建通信通道，称为会话。它负责打开会话，确保它们在传输数据时保持打开和功能，并在通信结束时关闭它们。会话层还可以在数据传输期间设置检查点——如果会话中断，设备可以从上一个检查点恢复数据传输。</p>
-<h3 id="4-传输层"><a href="#4-传输层" class="headerlink" title="4.传输层"></a>4.传输层</h3><p>传输层获取会话层中传输的数据，并在发送端将其分解为“段”。它负责在接收端重新组装段，将其转换回会话层可以使用的数据。传输层进行流量控制，以与接收设备的连接速度相匹配的速率发送数据，以及错误控制，检查数据是否接收错误，如果没有，则重新请求。</p>
-<h3 id="3-网络层"><a href="#3-网络层" class="headerlink" title="3.网络层"></a>3.网络层</h3><p>网络层有两个主要功能。一种是将分段分解为网络数据包，然后在接收端重新组装数据包。另一种是通过发现跨物理网络的最佳路径来路由数据包。网络层使用网络地址（通常是 Internet 协议地址）将数据包路由到目标节点。</p>
-<h3 id="2-数据链路层"><a href="#2-数据链路层" class="headerlink" title="2.数据链路层"></a>2.数据链路层</h3><p>数据链路层在网络上两个物理连接的节点之间建立和终止连接。它将数据包分解成帧并将它们从源发送到目标。该层由两部分组成——逻辑链路控制 (LLC)，它识别网络协议、执行错误检查和同步帧，以及媒体访问控制 (MAC)，它使用 MAC 地址连接设备并定义传输和接收数据的权限。</p>
-<h3 id="1-物理层"><a href="#1-物理层" class="headerlink" title="1.物理层"></a>1.物理层</h3><p>物理层负责网络节点之间的物理有线或无线连接。它定义了连接器、连接设备的电缆或无线技术，并负责传输原始数据，这只是一系列 0 和 1，同时负责比特率控制。<br>OSI模型的优点<br>OSI 模型帮助计算机网络的用户和运营商：<br>•	确定构建网络所需的硬件和软件。<br>•	了解并传达组件通过网络进行通信的过程。<br>•	通过确定导致问题的网络层并将工作重点放在该层来执行故障排除。<br>OSI 模型帮助网络设备制造商和网络软件供应商：<br>•	创建可以与任何其他供应商的产品进行通信的设备和软件，从而实现开放的互操作性<br>•	定义他们的产品应该使用的网络部分。<br>•	与用户沟通他们的产品在哪些网络层运行——例如，仅在应用层，或跨堆栈。</p>
-<h2 id="OSI-与-TCP-x2F-IP-模型"><a href="#OSI-与-TCP-x2F-IP-模型" class="headerlink" title="OSI 与 TCP&#x2F;IP 模型"></a>OSI 与 TCP&#x2F;IP 模型</h2><p><img src="https://pic3.zhimg.com/80/v2-c39270e61b82808e07c29a4f143199d2_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
-<p>传输控制协议&#x2F;互联网协议(TCP&#x2F;IP) 比 OSI 模型更早，由美国国防部 (DoD) 创建。模型之间的一个关键区别是 TCP&#x2F;IP 更简单，将几个 OSI 层合并为一个：</p>
-<p><img src="https://pic4.zhimg.com/80/v2-1127aaa36d2eff825865f1020568d18f_720w.jpg" alt="TCP/IP与OSI对应关系"></p>
-<p>OSI 第 5、6、7 层在 TCP&#x2F;IP 中合并为一个应用层<br>OSI 第 1 层、第 2 层在 TCP&#x2F;IP 中合并为一个网络访问层 - 但是 TCP&#x2F;IP 不负责排序和确认功能，将这些留给底层传输层。<br>其他重要区别：<br>TCP&#x2F;IP 是一种功能模型，旨在解决特定的通信问题，它基于特定的标准协议。OSI 是一个通用的、独立于协议的模型，旨在描述所有形式的网络通信。<br>在 TCP&#x2F;IP 中，大多数应用程序使用所有层，而在 OSI 中简单应用程序不使用所有七层。只有第 1、2 和 3 层是必需的才能启用任何数据通信。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/PicWarehouse/img/%E9%A3%8E%E6%99%AF008.png" alt="TCP/IP与OSI对应关系"></p>
-]]></content>
-      <categories>
-        <category>计算机网络</category>
-      </categories>
-      <tags>
-        <tag>计算机网络</tag>
       </tags>
   </entry>
   <entry>
@@ -943,126 +943,6 @@
         <tag>计算机网络</tag>
         <tag>网络安全</tag>
         <tag>抓包</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</title>
-    <url>/archives/8cdebc07.html</url>
-    <content><![CDATA[<h2 id="什么是Socket？"><a href="#什么是Socket？" class="headerlink" title="什么是Socket？"></a>什么是Socket？</h2><p>Socket允许在相同或不同机器上的两个不同进程之间进行通信。更准确地说，这是一种使用标准 Unix 文件描述符与其他计算机通信的方式。</p>
-<p>在 Unix 中，每个 I&#x2F;O 操作都是通过写入或读取文件描述符来完成的。文件描述符只是与打开的文件相关联的整数，它可以是网络连接、文本文件、终端或其他东西。</p>
-<p>对于程序员来说，套接字的外观和行为很像低级文件描述符。这是因为诸如 read() 和 write() 之类的命令对套接字的工作方式与它们对文件和管道的工作方式相同。</p>
-<p>套接字最初是在 2.1BSD 中引入的，随后在 4.2BSD 中被改进为当前的形式。现在，大多数最新的 UNIX 系统版本都提供了套接字功能。<br><img src="https://pic1.zhimg.com/80/v2-33d5adb9c5bdefa9977a7f64970834a0_720w.jpg" alt="Socket与各种网络协议的关系"><br>如图所示，Socket是为了给应用程序一个更加统一、简洁的API接口而将底层各种协议栈封装起来形成形成的一层接口函数。</p>
-<p>简单举例Socket如何实现客户端和服务端<br><img src="https://pic3.zhimg.com/80/v2-50a90c813007b71ef251e00f5cf7692e_720w.jpg" alt="客户端和服务端信息交互"><br>构建客户端和服务器的方式有所不同，但都涉及到Socket的基本构造。这两个进程都建立了自己的套接字。</p>
-<h2 id="如何构建客户端"><a href="#如何构建客户端" class="headerlink" title="如何构建客户端"></a>如何构建客户端</h2><p>在客户端建立Socket的步骤如下 ：</p>
-<p>1.使用socket()系统调用创建一个套接字。</p>
-<p>2.使用connect()系统调用将套接字连接到服务器的地址。</p>
-<p>3.发送和接收数据。有很多方式可以实现这一点，最简单的方法就是使用read()和write()系统调用。</p>
-<h2 id="如何构建服务端"><a href="#如何构建服务端" class="headerlink" title="如何构建服务端"></a>如何构建服务端</h2><p>在服务器端建立套接字的步骤如下 ：</p>
-<p>1.使用socket()系统调用创建一个套接字。</p>
-<p>2.使用bind()系统调用将套接字绑定到一个地址。对于 Internet 上的服务器套接字，地址由主机上的端口号组成。</p>
-<p>3.通过listen()系统调用监听连接。</p>
-<p>4.通过accept()系统调用接受连接。此调用通常会阻止连接，直到客户端与服务器连接。</p>
-<p>5.使用read()和write()系统调用发送和接收数据。</p>
-]]></content>
-      <categories>
-        <category>计算机网络</category>
-      </categories>
-      <tags>
-        <tag>计算机网络</tag>
-        <tag>Socket</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序</title>
-    <url>/archives/cf06f66d.html</url>
-    <content><![CDATA[<p>在上文中，讲述了Socket的一些基本函数以及如何简单使用Socket搭建一个单工聊天的聊天室程序。</p>
-<p>本文的目标便是对这个简单的程序加以改进，使其能实现服务端和客户端之间的相互通信。如果想更深入理解，推荐大家阅读《UNIX网络编程卷1套接字联网API》这本书。</p>
-<h2 id="首先需要补充一些我之前没有提到过的知识点。"><a href="#首先需要补充一些我之前没有提到过的知识点。" class="headerlink" title="首先需要补充一些我之前没有提到过的知识点。"></a>首先需要补充一些我之前没有提到过的知识点。</h2><h3 id="Socket处于网络协议的哪个层次？"><a href="#Socket处于网络协议的哪个层次？" class="headerlink" title="Socket处于网络协议的哪个层次？"></a>Socket处于网络协议的哪个层次？</h3><p><img src="https://pic4.zhimg.com/80/v2-728b741914df045b9cdfb918a30d1843_720w.jpg" alt="socket网络层次"><br>套接字编程接口是从顶上三层（网际协议的应用层）进入传输层的接口。</p>
-<h3 id="为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口"><a href="#为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口" class="headerlink" title="为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口?"></a>为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口?</h3><p>这样设计有两个理由，如图1-14右侧所注。理由之一是顶上三层处理具体网络应用（如FTP、Telnet或HTTPO的所有细节，却对通信细节了解很少;底下四层对具体网络应用了解不多，却处理所有的通信细节:发送数据，等待确认，给无序到达的数据排序，计算并验证校验和，等等。理由之二是顶上三层通常构成所谓的用户进程user process口,底下四层却通常作为操作系统内核的一部分提供。Unix与其他现代操作系统都提供分隔用户进程与内核的机制。由此可见，第4层和第5层之间的接口是构建API的自然位置。</p>
-<h2 id="TCP实现框架"><a href="#TCP实现框架" class="headerlink" title="TCP实现框架"></a>TCP实现框架</h2><p><img src="https://pic1.zhimg.com/80/v2-dfaeec3f74165f5a74c278a513d54ab8_720w.jpg" alt="TCP实现框架"></p>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>目前该代码尚不完善，仅供参考，只能实现一发送一接收的“伪”半双工通信。真正的半双工(Half Duplex)数据传输，数据可以随时发送，只是不能同时传输。</p>
-<h2 id="Sever-cpp"><a href="#Sever-cpp" class="headerlink" title="Sever.cpp"></a>Sever.cpp</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PORT 7000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024 <span class="comment">//缓冲区大小宏定义</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">const</span> <span class="type">char</span> *ip = argv[<span class="number">1</span>];</span><br><span class="line"> <span class="type">int</span> port = <span class="built_in">atoi</span>(argv[<span class="number">2</span>]); <span class="comment">//将输入的端口号由字符串转换为整数类型</span></span><br><span class="line">    <span class="comment">//结构体定义与初始化</span></span><br><span class="line"> <span class="type">int</span> sockSer = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>); <span class="comment">//若成功则返回一个sockfd（套接字描述符）</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> server_sockaddr;            <span class="comment">//一般是储存地址和端口的。用于信息的显示及存储使用</span></span><br><span class="line">                                                   <span class="comment">//设置 sockaddr_in 结构体中相关参数</span></span><br><span class="line"> server_sockaddr.sin_family = AF_INET;</span><br><span class="line"> server_sockaddr.sin_port = <span class="built_in">htons</span>(PORT); <span class="comment">//将一个无符号短整型数值转换为网络字节序，即大端模式(big-endian) </span></span><br><span class="line">                                            <span class="comment">// printf(&quot;%d\n&quot;,INADDR_ANY);</span></span><br><span class="line">    <span class="comment">// INADDR_ANY就是指定地址为0.0.0.0的地址，这个地址事实上表示不确定地址，或“所有地址”、“任意地址”。</span></span><br><span class="line">    <span class="comment">//一般来说，在各个系统中均定义成为0值。</span></span><br><span class="line">    <span class="comment">// server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY); //将主机的无符号长整形数转换成网络字节顺序。</span></span><br><span class="line"> <span class="built_in">inet_pton</span>(AF_INET, ip, &amp;server_sockaddr.sin_addr); <span class="comment">//将小端字节序转换为网络字节序</span></span><br><span class="line"> </span><br><span class="line"> <span class="built_in">assert</span>(sockSer &gt;= <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> ret = <span class="built_in">bind</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;server_sockaddr, <span class="built_in">sizeof</span>(server_sockaddr)); <span class="comment">//绑定IP地址、端口号等信息</span></span><br><span class="line"> <span class="built_in">assert</span>(ret != <span class="number">-1</span>);</span><br><span class="line"> ret = <span class="built_in">listen</span>(sockSer, <span class="number">5</span>); <span class="comment">//监听有无连接请求</span></span><br><span class="line"> <span class="built_in">assert</span>(ret != <span class="number">-1</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> client_addr;</span><br><span class="line"> <span class="type">socklen_t</span> client_addrlength = <span class="built_in">sizeof</span>(client_addr);</span><br><span class="line">    <span class="comment">///成功返回非负描述字，出错返回-1</span></span><br><span class="line"> <span class="type">int</span> connfd = <span class="built_in">accept</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;client_addr, &amp;client_addrlength); <span class="comment">//从监听队列中取出第一个已完成的连接</span></span><br><span class="line"> <span class="type">char</span> buffer_recv[BUFFER_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> <span class="type">char</span> buffer_send[BUFFER_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="keyword">if</span> (connfd &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;errno is : %d\n&quot;</span>, errno);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">memset</span>(buffer_recv, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> <span class="built_in">memset</span>(buffer_send, <span class="number">0</span>, BUFFER_SIZE); <span class="comment">//每次需要为缓冲区清空</span></span><br><span class="line"> </span><br><span class="line"> ret = <span class="built_in">recv</span>(connfd, buffer_recv, BUFFER_SIZE - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer_recv, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">// recv为quit表示客户端请求断开连接，退出循环</span></span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;client:%s&quot;</span>, buffer_recv);</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;server:&quot;</span>);</span><br><span class="line"> <span class="built_in">fgets</span>(buffer_send, BUFFER_SIZE, stdin);</span><br><span class="line"> <span class="built_in">send</span>(connfd, buffer_send, <span class="built_in">strlen</span>(buffer_send), <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer_send, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">// send为quit表示服务器请求断开连接，退出循环</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">close</span>(connfd);</span><br><span class="line"> <span class="built_in">close</span>(sockSer); <span class="comment">//关闭socket套接字描述符</span></span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Client-cpp"><a href="#Client-cpp" class="headerlink" title="Client.cpp"></a>Client.cpp</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">const</span> <span class="type">char</span> *ip = argv[<span class="number">1</span>];</span><br><span class="line"> <span class="type">int</span> port = <span class="built_in">atoi</span>(argv[<span class="number">2</span>]);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> sockCli = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//定义sockaddr_in</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> servaddr;</span><br><span class="line"> <span class="built_in">memset</span>(&amp;servaddr, <span class="number">0</span>, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> servaddr.sin_family = AF_INET;</span><br><span class="line"> servaddr.sin_port = <span class="built_in">htons</span>(port); <span class="comment">//服务器端口</span></span><br><span class="line">    <span class="comment">// servaddr.sin_addr.s_addr = htons(port);</span></span><br><span class="line"> <span class="built_in">inet_pton</span>(AF_INET, ip, &amp;servaddr.sin_addr); <span class="comment">//将点分文本的IP地址转换为二进制网络字节序的IP地址</span></span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> sockfd = <span class="built_in">socket</span>(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line"> <span class="built_in">assert</span>(sockfd &gt;= <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> connfd = <span class="built_in">connect</span>(sockfd, (<span class="keyword">struct</span> sockaddr *)&amp;servaddr, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> </span><br><span class="line"> <span class="type">char</span> sendbuf[BUFFER_SIZE];</span><br><span class="line"> <span class="type">char</span> recvbuf[BUFFER_SIZE];</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="keyword">if</span> (connfd &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;connection failed\n&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">memset</span>(sendbuf, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> <span class="built_in">memset</span>(recvbuf, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;client:&quot;</span>);</span><br><span class="line"> <span class="built_in">fgets</span>(sendbuf, BUFFER_SIZE, stdin);</span><br><span class="line"> <span class="built_in">send</span>(sockfd, sendbuf, <span class="built_in">strlen</span>(sendbuf), <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(sendbuf, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">//send为quit表示客户端请求断开连接，退出循环</span></span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> ret = <span class="built_in">recv</span>(sockfd, recvbuf, BUFFER_SIZE - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(recvbuf, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">//recv为quit表示服务器请求断开连接，退出循环</span></span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;server:%s&quot;</span>, recvbuf);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="built_in">close</span>(connfd);</span><br><span class="line"> <span class="built_in">close</span>(sockCli);</span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>计算机网络</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>计算机网络</tag>
-        <tag>Socket</tag>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll</title>
-    <url>/archives/884564f6.html</url>
-    <content><![CDATA[<h1 id="什么是IO多路复用？"><a href="#什么是IO多路复用？" class="headerlink" title="什么是IO多路复用？"></a>什么是IO多路复用？</h1><p>IO即为网络I&#x2F;O，多路即为多个TCP连接，复用即为共用一个线程或者进程，模型最大的优势是系统开销小，不必创建也不必维护过多的线程或进程。</p>
-<p>IO复用(IOmultiplexing)使得内核一旦发现进程指定的一个或多个IO条件就绪（也就是说输入已准备好被读取，或者描述符已能承接更多的输出)，它就通知进程。</p>
-<h1 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h1><p>I&#x2F;O 多路复用通常用于以下场景的网络应用：</p>
-<p>当客户端处理多个描述符时（通常是交互式输入和网络套接字）</p>
-<p>当客户端同时处理多个套接字时（这是可能的，但很少见）</p>
-<p>如果 TCP 服务器同时处理侦听套接字及其连接的套接字</p>
-<p>如果服务器同时处理 TCP 和 UDP</p>
-<p>如果服务器处理多个服务，可能还有多个协议</p>
-<p>I&#x2F;O 多路复用不限于网络编程。许多重要的应用程序发现需要这些技术。</p>
-<h1 id="输入-x2F-输出模型"><a href="#输入-x2F-输出模型" class="headerlink" title="输入&#x2F;输出模型"></a>输入&#x2F;输出模型</h1><p>我们首先检查 Unix 下可用的五种 I&#x2F;O 模型的基本区别：</p>
-<p><strong>[1]blockingIO - 阻塞I&#x2F;O</strong></p>
-<p><strong>[2]nonblockingIO - 非阻塞I&#x2F;O</strong></p>
-<p><strong>[3]IOmultiplexing – I&#x2F;O多路复用（select和poll）</strong></p>
-<p><strong>[4]signaldrivenIO - 信号驱动I&#x2F;O</strong></p>
-<p><strong>[5]asynchronousIO - 异步I&#x2F;O（POSIX aio函数）</strong></p>
-<h2 id="输入操作通常有两个不同的阶段："><a href="#输入操作通常有两个不同的阶段：" class="headerlink" title="输入操作通常有两个不同的阶段："></a>输入操作通常有两个不同的阶段：</h2><p>1等待数据准备好。这涉及等待数据到达网络。当数据包到达时，它被复制到内核中的缓冲区中。</p>
-<p>2将数据从内核复制到进程。这意味着将（准备好的）数据从内核缓冲区复制到我们的应用程序缓冲区</p>
-<h1 id="阻塞-I-x2F-O-模型"><a href="#阻塞-I-x2F-O-模型" class="headerlink" title="阻塞 I&#x2F;O 模型"></a>阻塞 I&#x2F;O 模型</h1><p>最流行的 I&#x2F;O 模型是阻塞 I&#x2F;O 模型（我们在前面部分的所有示例中都使用了该模型）。默认情况下，所有套接字都是阻塞的。场景如下图所示：<br><img src="https://pic4.zhimg.com/80/v2-728b741914df045b9cdfb918a30d1843_720w.jpg" alt="阻塞I/O模型"></p>
-<p>使用UDP而不是TCP作为例子的原因在于就UDP而言，数据准备好读取的概念比较简单:要么整个数据报已经收到，要么还没有。然而对于TCP来说，诸如套接字低水位标记( low-water mark）等额外变量开始起作用，导致这个概念变得复杂。</p>
-<p>在这个例子中,我们把recvfrom函数视为系统调用,因为我们正在区分应用进程和内核。不论它如何实现(在源自Berkeley的内核上是作为系统调用，在System V内核上是作为调用系统调用getmsg的函数)，一般都会从在应用进程空间中运行切换到在内核空间中运行，一段时间之后再切换回来。</p>
-<h1 id="非阻塞-I-x2F-O-模型"><a href="#非阻塞-I-x2F-O-模型" class="headerlink" title="非阻塞 I&#x2F;O 模型"></a>非阻塞 I&#x2F;O 模型</h1><p>当套接字设置为非阻塞时，我们是在告诉内核“当我请求的 I&#x2F;O 操作在不让进程进入睡眠状态的情况下无法完成时，不要让进程进入睡眠状态，而是返回一个错误”。</p>
-<p><img src="https://pic3.zhimg.com/80/v2-fb59340a9864676a60e9bdcfbd523dca_720w.jpg" alt="非阻塞I/O模型"><br>对于前三个recvfrom，没有要返回的数据，内核立即返回一个错误EWOULDBLOCK。<br>我们第四次调用recvfrom，数据报准备好了，它被复制到我们的应用程序缓冲区，并recvfrom成功返回。然后我们处理数据。<br>当应用程序处于循环调用recvfrom这样的非阻塞描述符时，它被称为轮询。应用程序不断地轮询内核以查看某些操作是否已准备好。这通常会浪费 CPU 时间，但偶尔会遇到这种模型，通常在专用于一个功能的系统上。</p>
-<h1 id="I-x2F-O-复用模型"><a href="#I-x2F-O-复用模型" class="headerlink" title="I&#x2F;O 复用模型"></a>I&#x2F;O 复用模型</h1><p>有了IO复用(IO multiplexing)，我们就可以调用select或poll，阻塞在这两个系统调用中的某一个之上，而不是阻塞在真正的IO系统调用上。</p>
-<p><img src="https://pic2.zhimg.com/80/v2-824e9b31fc2e72d02956b72dc622c751_720w.jpg" alt="IO复用"></p>
-<p>我们阻塞于select调用，等待数据报套接字变为可读。当select返回套接字可读这一条件时，我们调用recvfrom把所读数据报复制到应用进程缓冲区。</p>
-<p>与阻塞型IO比较，IO复用并不显得有什么优势，事实上由于使用select需要两个而不是单个系统调用，IO复用还稍有劣势。，使用select的优势在于我们可以等待多个描述符就绪。</p>
-<h1 id="异步-I-x2F-O-模型"><a href="#异步-I-x2F-O-模型" class="headerlink" title="异步 I&#x2F;O 模型"></a>异步 I&#x2F;O 模型</h1><p>异步 I&#x2F;O由 POSIX 规范定义，各种标准中出现的实时功能的各种差异共同形成了当前的 POSIX 规范。</p>
-<p>我们也可以用信号，让内核在描述符就绪时发送SIGIO信号通知我们。我们称这种模型为信号驱动式IO ( signal-driven I&#x2F;O)。</p>
-<p><img src="https://pic1.zhimg.com/80/v2-dc3e4fbed4a71e550f0b422e268b70a8_720w.jpg" alt="异步IO"></p>
-<p>我们首先开启套接字的信号驱动式I&#x2F;O功能，并通过sigaction系统调用安装一个信号处理函数。该系统调用将立即返回，我们的进程继续工作，也就是说它没有被阻塞。当数据报准备好读取时，内核就为该进程产生一个sIGIo信号。我们随后既可以在信号处理函数中调用recvfrom读取数据报，并通知主循环数据已准备好待处理，也可以立即通知主循环，让它读取数据报。</p>
-<p>无论如何处理SIGIO信号，这种模型的优势在于等待数据报到达期间进程不被阻塞。主循环可以继续执行，只要等待来自信号处理函数的通知:既可以是数据已准备好被处理，也可以是数据报已准备好被读取。</p>
-<h1 id="各种I-x2F-O模型的比较"><a href="#各种I-x2F-O模型的比较" class="headerlink" title="各种I&#x2F;O模型的比较"></a>各种I&#x2F;O模型的比较</h1><p>对比上述5种不同的IO模型。可以看出，前4种模型的主要区别在于第一阶段，因为它们的第二阶段是一样的:在数据从内核复制到调用者的缓冲区期间，进程阻塞于recvfrom调用。相反，异步I&#x2F;O模型在这两个阶段都要处理，从而不同于其他4种模型。</p>
-<p><img src="https://pic4.zhimg.com/80/v2-e393476a5386a92c319e5e163166fc53_720w.jpg" alt="IO模型比较"></p>
-<h1 id="同步IO和异步IO对比"><a href="#同步IO和异步IO对比" class="headerlink" title="同步IO和异步IO对比"></a>同步IO和异步IO对比</h1><p>POSIX把这两个术语定义如下:</p>
-<p>同步IO操作(synchronous IO opetation）导致请求进程阻塞，直到IO操作完成;</p>
-<p>异步IO操作（ asynchronous I&#x2F;O opetation）不导致请求进程阻塞。<br><img src="https://pic4.zhimg.com/80/v2-2c642bd2b7ef29542c3145e221cd2f97_720w.jpg"></p>
-<h1 id="select"><a href="#select" class="headerlink" title="select"></a>select</h1><p>select 是操作系统提供的系统调用函数，select()用来等待文件描述词（普通文件、终端、伪终端、管道、FIFO、套接字及其他类型的字符型）状态的改变。是一个轮循函数，循环询问文件节点，可设置超时时间，超时时间到了就跳过代码继续往下执行。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">​<span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/select.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FD_SETSIZE 1024</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NFDBITS (8 * sizeof(unsigned long))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __FDSET_LONGS (FD_SETSIZE/NFDBITS)</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// 数据结构 (bitmap)</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line"> <span class="type">unsigned</span> <span class="type">long</span> fds_bits[__FDSET_LONGS];</span><br><span class="line">&#125; fd_set;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// API</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">select</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function"> <span class="type">int</span> max_fd, </span></span></span><br><span class="line"><span class="params"><span class="function"> fd_set *readset, </span></span></span><br><span class="line"><span class="params"><span class="function"> fd_set *writeset, </span></span></span><br><span class="line"><span class="params"><span class="function"> fd_set *exceptset, </span></span></span><br><span class="line"><span class="params"><span class="function"> <span class="keyword">struct</span> timeval *timeout</span></span></span><br><span class="line"><span class="params"><span class="function">)</span> <span class="comment">// 返回值就绪描述符的数目</span></span></span><br><span class="line"><span class="function"> </span></span><br><span class="line"><span class="function"><span class="title">FD_ZERO</span><span class="params">(<span class="type">int</span> fd, fd_set* fds)</span> <span class="comment">// 清空集合</span></span></span><br><span class="line"><span class="function"><span class="title">FD_SET</span><span class="params">(<span class="type">int</span> fd, fd_set* fds)</span> <span class="comment">// 将给定的描述符加入集合</span></span></span><br><span class="line"><span class="function"><span class="title">FD_ISSET</span><span class="params">(<span class="type">int</span> fd, fd_set* fds)</span> <span class="comment">// 判断指定描述符是否在集合中 </span></span></span><br><span class="line"><span class="function"><span class="title">FD_CLR</span><span class="params">(<span class="type">int</span> fd, fd_set* fds)</span> <span class="comment">// 将给定的描述符从文件中删除 </span></span></span><br></pre></td></tr></table></figure>
-<p>select本质上是通过设置或者检查存放fd标志位的数据结构来进行下一步处理。这样所带来的缺点是：</p>
-<p>1、 单个进程可监视的fd数量被限制，即能监听端口的大小有限。</p>
-<p>一般来说这个数目和系统内存关系很大，具体数目可以cat &#x2F;proc&#x2F;sys&#x2F;fs&#x2F;file-max察看。32位机默认是1024个。64位机默认是2048。</p>
-<p>2、 对socket进行扫描时是线性扫描，即采用轮询的方法，效率较低：</p>
-<p>当套接字比较多的时候，每次select()都要通过遍历FD_SETSIZE个Socket来完成调度,不管哪个Socket是活跃的,都遍历一遍。这会浪费很多CPU时间。</p>
-<p>3、需要维护一个用来存放大量fd的数据结构，这样会使得用户空间和内核空间在传递该结构时复制开销大。</p>
-<h1 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h1><p>相关函数定义</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;poll.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"> <span class="function"><span class="type">int</span> <span class="title">poll</span><span class="params">(<span class="keyword">struct</span> pollfd *fds, <span class="type">nfds_t</span> nfds, <span class="type">int</span> timeout)</span></span>;</span><br><span class="line"> </span><br><span class="line"> <span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"> <span class="meta">#<span class="keyword">include</span> <span class="string">&lt;poll.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"> <span class="function"><span class="type">int</span> <span class="title">ppoll</span><span class="params">(<span class="keyword">struct</span> pollfd *fds, <span class="type">nfds_t</span> nfds,</span></span></span><br><span class="line"><span class="params"><span class="function"> <span class="type">const</span> <span class="keyword">struct</span> timespec *tmo_p, <span class="type">const</span> <span class="type">sigset_t</span> *sigmask)</span></span>;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">pollfd</span> &#123;</span><br><span class="line"> <span class="type">int</span> fd; <span class="comment">/* file descriptor */</span></span><br><span class="line"> <span class="type">short</span> events; <span class="comment">/* requested events to watch */</span></span><br><span class="line"> <span class="type">short</span> revents; <span class="comment">/* returned events witnessed */</span></span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
-
-<p>和select用三组文件描述符不同的是，poll只有一个pollfd数组，数组中的每个元素都表示一个需要监听IO操作事件的文件描述符。events参数是我们需要关心的事件，revents是所有内核监测到的事件。</p>
-<p>poll本质上和select没有区别，它将用户传入的数组拷贝到内核空间，然后查询每个fd对应的设备状态，如果设备就绪则在设备等待队列中加入一项并继续遍历，如果遍历完所有fd后没有发现就绪设备，则挂起当前进程，直到设备就绪或者主动超时，被唤醒后它又要再次遍历fd。这个过程经历了多次无谓的遍历。</p>
-<p><strong>它没有最大连接数的限制</strong>，原因是它是基于链表来存储的，但是同样有一个缺点：</p>
-<p>1、大量的fd的数组被整体复制于用户态和内核地址空间之间，而不管这样的复制是不是有意义。</p>
-<p>2、poll还有一个特点是“水平触发”，如果报告了fd后，没有被处理，那么下次poll时会再次报告该fd。</p>
-<h1 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h1><p>相关函数定义如下</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/epoll.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_create</span><span class="params">(<span class="type">int</span> size)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_create1</span><span class="params">(<span class="type">int</span> flags)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_ctl</span><span class="params">(<span class="type">int</span> epfd, <span class="type">int</span> op, <span class="type">int</span> fd, <span class="keyword">struct</span> epoll_event *event)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="type">int</span> epfd, <span class="keyword">struct</span> epoll_event *events,</span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">int</span> maxevents, <span class="type">int</span> timeout)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_pwait</span><span class="params">(<span class="type">int</span> epfd, <span class="keyword">struct</span> epoll_event *events,</span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">int</span> maxevents, <span class="type">int</span> timeout,</span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">const</span> <span class="type">sigset_t</span> *sigmask)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>epoll有EPOLLLT和EPOLLET两种触发模式，LT是默认的模式，ET是“高速”模式。<br>LT模式下，只要这个fd还有数据可读，每次 epoll_wait都会返回它的事件，提醒用户程序去操作<br>ET模式下，它只会提示一次，直到下次再有数据流入之前都不会再提示了，无论fd中是否还有数据可读。所以在ET模式下，read一个fd的时候一定要把它的buffer读完，或者遇到EAGAIN错误。</p>
-<h2 id="epoll的优点："><a href="#epoll的优点：" class="headerlink" title="epoll的优点："></a>epoll的优点：</h2><p><strong>1、没有最大并发连接的限制，能打开的FD的上限远大于1024（1G的内存上能监听约10万个端口）；</strong><br><strong>2、效率提升，不是轮询的方式，不会随着FD数目的增加效率下降。只有活跃可用的FD才会调用callback函数；</strong><br><strong>即Epoll最大的优点就在于它只管你“活跃”的连接，而跟连接总数无关，因此在实际的网络环境中，Epoll的效率就会远远高于select和poll。</strong></p>
-<p><strong>3、 内存拷贝，利用mmap()文件映射内存加速与内核空间的消息传递；即epoll使用mmap减少复制开销。</strong></p>
-<h2 id="epoll缺点："><a href="#epoll缺点：" class="headerlink" title="epoll缺点："></a>epoll缺点：</h2><p><strong>epoll只能工作在linux下。</strong></p>
-]]></content>
-      <categories>
-        <category>计算机网络</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>计算机网络</tag>
-        <tag>C++</tag>
       </tags>
   </entry>
   <entry>
@@ -1150,6 +1030,33 @@
         <tag>计算机网络</tag>
         <tag>Socket</tag>
         <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机网络知识点总结（二）什么是Socket？它跟TCP/IP的关系是什么？</title>
+    <url>/archives/8cdebc07.html</url>
+    <content><![CDATA[<h2 id="什么是Socket？"><a href="#什么是Socket？" class="headerlink" title="什么是Socket？"></a>什么是Socket？</h2><p>Socket允许在相同或不同机器上的两个不同进程之间进行通信。更准确地说，这是一种使用标准 Unix 文件描述符与其他计算机通信的方式。</p>
+<p>在 Unix 中，每个 I&#x2F;O 操作都是通过写入或读取文件描述符来完成的。文件描述符只是与打开的文件相关联的整数，它可以是网络连接、文本文件、终端或其他东西。</p>
+<p>对于程序员来说，套接字的外观和行为很像低级文件描述符。这是因为诸如 read() 和 write() 之类的命令对套接字的工作方式与它们对文件和管道的工作方式相同。</p>
+<p>套接字最初是在 2.1BSD 中引入的，随后在 4.2BSD 中被改进为当前的形式。现在，大多数最新的 UNIX 系统版本都提供了套接字功能。<br><img src="https://pic1.zhimg.com/80/v2-33d5adb9c5bdefa9977a7f64970834a0_720w.jpg" alt="Socket与各种网络协议的关系"><br>如图所示，Socket是为了给应用程序一个更加统一、简洁的API接口而将底层各种协议栈封装起来形成形成的一层接口函数。</p>
+<p>简单举例Socket如何实现客户端和服务端<br><img src="https://pic3.zhimg.com/80/v2-50a90c813007b71ef251e00f5cf7692e_720w.jpg" alt="客户端和服务端信息交互"><br>构建客户端和服务器的方式有所不同，但都涉及到Socket的基本构造。这两个进程都建立了自己的套接字。</p>
+<h2 id="如何构建客户端"><a href="#如何构建客户端" class="headerlink" title="如何构建客户端"></a>如何构建客户端</h2><p>在客户端建立Socket的步骤如下 ：</p>
+<p>1.使用socket()系统调用创建一个套接字。</p>
+<p>2.使用connect()系统调用将套接字连接到服务器的地址。</p>
+<p>3.发送和接收数据。有很多方式可以实现这一点，最简单的方法就是使用read()和write()系统调用。</p>
+<h2 id="如何构建服务端"><a href="#如何构建服务端" class="headerlink" title="如何构建服务端"></a>如何构建服务端</h2><p>在服务器端建立套接字的步骤如下 ：</p>
+<p>1.使用socket()系统调用创建一个套接字。</p>
+<p>2.使用bind()系统调用将套接字绑定到一个地址。对于 Internet 上的服务器套接字，地址由主机上的端口号组成。</p>
+<p>3.通过listen()系统调用监听连接。</p>
+<p>4.通过accept()系统调用接受连接。此调用通常会阻止连接，直到客户端与服务器连接。</p>
+<p>5.使用read()和write()系统调用发送和接收数据。</p>
+]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>计算机网络</tag>
+        <tag>Socket</tag>
       </tags>
   </entry>
   <entry>
@@ -1267,6 +1174,28 @@
       </tags>
   </entry>
   <entry>
+    <title>计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序</title>
+    <url>/archives/cf06f66d.html</url>
+    <content><![CDATA[<p>在上文中，讲述了Socket的一些基本函数以及如何简单使用Socket搭建一个单工聊天的聊天室程序。</p>
+<p>本文的目标便是对这个简单的程序加以改进，使其能实现服务端和客户端之间的相互通信。如果想更深入理解，推荐大家阅读《UNIX网络编程卷1套接字联网API》这本书。</p>
+<h2 id="首先需要补充一些我之前没有提到过的知识点。"><a href="#首先需要补充一些我之前没有提到过的知识点。" class="headerlink" title="首先需要补充一些我之前没有提到过的知识点。"></a>首先需要补充一些我之前没有提到过的知识点。</h2><h3 id="Socket处于网络协议的哪个层次？"><a href="#Socket处于网络协议的哪个层次？" class="headerlink" title="Socket处于网络协议的哪个层次？"></a>Socket处于网络协议的哪个层次？</h3><p><img src="https://pic4.zhimg.com/80/v2-728b741914df045b9cdfb918a30d1843_720w.jpg" alt="socket网络层次"><br>套接字编程接口是从顶上三层（网际协议的应用层）进入传输层的接口。</p>
+<h3 id="为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口"><a href="#为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口" class="headerlink" title="为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口?"></a>为什么套接字提供的是从OSI模型的顶上三层进入传输层的接口?</h3><p>这样设计有两个理由，如图1-14右侧所注。理由之一是顶上三层处理具体网络应用（如FTP、Telnet或HTTPO的所有细节，却对通信细节了解很少;底下四层对具体网络应用了解不多，却处理所有的通信细节:发送数据，等待确认，给无序到达的数据排序，计算并验证校验和，等等。理由之二是顶上三层通常构成所谓的用户进程user process口,底下四层却通常作为操作系统内核的一部分提供。Unix与其他现代操作系统都提供分隔用户进程与内核的机制。由此可见，第4层和第5层之间的接口是构建API的自然位置。</p>
+<h2 id="TCP实现框架"><a href="#TCP实现框架" class="headerlink" title="TCP实现框架"></a>TCP实现框架</h2><p><img src="https://pic1.zhimg.com/80/v2-dfaeec3f74165f5a74c278a513d54ab8_720w.jpg" alt="TCP实现框架"></p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>目前该代码尚不完善，仅供参考，只能实现一发送一接收的“伪”半双工通信。真正的半双工(Half Duplex)数据传输，数据可以随时发送，只是不能同时传输。</p>
+<h2 id="Sever-cpp"><a href="#Sever-cpp" class="headerlink" title="Sever.cpp"></a>Sever.cpp</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PORT 7000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024 <span class="comment">//缓冲区大小宏定义</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">const</span> <span class="type">char</span> *ip = argv[<span class="number">1</span>];</span><br><span class="line"> <span class="type">int</span> port = <span class="built_in">atoi</span>(argv[<span class="number">2</span>]); <span class="comment">//将输入的端口号由字符串转换为整数类型</span></span><br><span class="line">    <span class="comment">//结构体定义与初始化</span></span><br><span class="line"> <span class="type">int</span> sockSer = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>); <span class="comment">//若成功则返回一个sockfd（套接字描述符）</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> server_sockaddr;            <span class="comment">//一般是储存地址和端口的。用于信息的显示及存储使用</span></span><br><span class="line">                                                   <span class="comment">//设置 sockaddr_in 结构体中相关参数</span></span><br><span class="line"> server_sockaddr.sin_family = AF_INET;</span><br><span class="line"> server_sockaddr.sin_port = <span class="built_in">htons</span>(PORT); <span class="comment">//将一个无符号短整型数值转换为网络字节序，即大端模式(big-endian) </span></span><br><span class="line">                                            <span class="comment">// printf(&quot;%d\n&quot;,INADDR_ANY);</span></span><br><span class="line">    <span class="comment">// INADDR_ANY就是指定地址为0.0.0.0的地址，这个地址事实上表示不确定地址，或“所有地址”、“任意地址”。</span></span><br><span class="line">    <span class="comment">//一般来说，在各个系统中均定义成为0值。</span></span><br><span class="line">    <span class="comment">// server_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY); //将主机的无符号长整形数转换成网络字节顺序。</span></span><br><span class="line"> <span class="built_in">inet_pton</span>(AF_INET, ip, &amp;server_sockaddr.sin_addr); <span class="comment">//将小端字节序转换为网络字节序</span></span><br><span class="line"> </span><br><span class="line"> <span class="built_in">assert</span>(sockSer &gt;= <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> ret = <span class="built_in">bind</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;server_sockaddr, <span class="built_in">sizeof</span>(server_sockaddr)); <span class="comment">//绑定IP地址、端口号等信息</span></span><br><span class="line"> <span class="built_in">assert</span>(ret != <span class="number">-1</span>);</span><br><span class="line"> ret = <span class="built_in">listen</span>(sockSer, <span class="number">5</span>); <span class="comment">//监听有无连接请求</span></span><br><span class="line"> <span class="built_in">assert</span>(ret != <span class="number">-1</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> client_addr;</span><br><span class="line"> <span class="type">socklen_t</span> client_addrlength = <span class="built_in">sizeof</span>(client_addr);</span><br><span class="line">    <span class="comment">///成功返回非负描述字，出错返回-1</span></span><br><span class="line"> <span class="type">int</span> connfd = <span class="built_in">accept</span>(sockSer, (<span class="keyword">struct</span> sockaddr *)&amp;client_addr, &amp;client_addrlength); <span class="comment">//从监听队列中取出第一个已完成的连接</span></span><br><span class="line"> <span class="type">char</span> buffer_recv[BUFFER_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> <span class="type">char</span> buffer_send[BUFFER_SIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="keyword">if</span> (connfd &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;errno is : %d\n&quot;</span>, errno);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">memset</span>(buffer_recv, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> <span class="built_in">memset</span>(buffer_send, <span class="number">0</span>, BUFFER_SIZE); <span class="comment">//每次需要为缓冲区清空</span></span><br><span class="line"> </span><br><span class="line"> ret = <span class="built_in">recv</span>(connfd, buffer_recv, BUFFER_SIZE - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer_recv, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">// recv为quit表示客户端请求断开连接，退出循环</span></span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;client:%s&quot;</span>, buffer_recv);</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;server:&quot;</span>);</span><br><span class="line"> <span class="built_in">fgets</span>(buffer_send, BUFFER_SIZE, stdin);</span><br><span class="line"> <span class="built_in">send</span>(connfd, buffer_send, <span class="built_in">strlen</span>(buffer_send), <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(buffer_send, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">// send为quit表示服务器请求断开连接，退出循环</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">close</span>(connfd);</span><br><span class="line"> <span class="built_in">close</span>(sockSer); <span class="comment">//关闭socket套接字描述符</span></span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Client-cpp"><a href="#Client-cpp" class="headerlink" title="Client.cpp"></a>Client.cpp</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;assert.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFFER_SIZE 1024</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="type">const</span> <span class="type">char</span> *ip = argv[<span class="number">1</span>];</span><br><span class="line"> <span class="type">int</span> port = <span class="built_in">atoi</span>(argv[<span class="number">2</span>]);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> sockCli = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//定义sockaddr_in</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> servaddr;</span><br><span class="line"> <span class="built_in">memset</span>(&amp;servaddr, <span class="number">0</span>, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> servaddr.sin_family = AF_INET;</span><br><span class="line"> servaddr.sin_port = <span class="built_in">htons</span>(port); <span class="comment">//服务器端口</span></span><br><span class="line">    <span class="comment">// servaddr.sin_addr.s_addr = htons(port);</span></span><br><span class="line"> <span class="built_in">inet_pton</span>(AF_INET, ip, &amp;servaddr.sin_addr); <span class="comment">//将点分文本的IP地址转换为二进制网络字节序的IP地址</span></span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> sockfd = <span class="built_in">socket</span>(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line"> <span class="built_in">assert</span>(sockfd &gt;= <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> connfd = <span class="built_in">connect</span>(sockfd, (<span class="keyword">struct</span> sockaddr *)&amp;servaddr, <span class="built_in">sizeof</span>(servaddr));</span><br><span class="line"> </span><br><span class="line"> <span class="type">char</span> sendbuf[BUFFER_SIZE];</span><br><span class="line"> <span class="type">char</span> recvbuf[BUFFER_SIZE];</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line"> <span class="keyword">if</span> (connfd &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;connection failed\n&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line"> <span class="built_in">memset</span>(sendbuf, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> <span class="built_in">memset</span>(recvbuf, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line"> </span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;client:&quot;</span>);</span><br><span class="line"> <span class="built_in">fgets</span>(sendbuf, BUFFER_SIZE, stdin);</span><br><span class="line"> <span class="built_in">send</span>(sockfd, sendbuf, <span class="built_in">strlen</span>(sendbuf), <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(sendbuf, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">//send为quit表示客户端请求断开连接，退出循环</span></span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> ret = <span class="built_in">recv</span>(sockfd, recvbuf, BUFFER_SIZE - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line"> <span class="keyword">if</span> (<span class="built_in">strcmp</span>(recvbuf, <span class="string">&quot;quit\n&quot;</span>) == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;Communications is over!\n&quot;</span>);</span><br><span class="line"> <span class="keyword">break</span>;</span><br><span class="line">            &#125; <span class="comment">//recv为quit表示服务器请求断开连接，退出循环</span></span><br><span class="line"> <span class="built_in">printf</span>(<span class="string">&quot;server:%s&quot;</span>, recvbuf);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> <span class="built_in">close</span>(connfd);</span><br><span class="line"> <span class="built_in">close</span>(sockCli);</span><br><span class="line"> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>计算机网络</tag>
+        <tag>Socket</tag>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）</title>
     <url>/archives/1815c365.html</url>
     <content><![CDATA[<p>本文使用fork函数实现并发TCP服务器，关于fork函数的用法可以参考我的文章：<br><a href="https://raidenxe.github.io/archives/90acc1af.html">Linux 下的 fork 和 exec 函数</a></p>
@@ -1338,6 +1267,77 @@
       <tags>
         <tag>Linux</tag>
         <tag>Socket</tag>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机网络知识点（五） I/O 多路复用：函数select、poll和epoll</title>
+    <url>/archives/884564f6.html</url>
+    <content><![CDATA[<h1 id="什么是IO多路复用？"><a href="#什么是IO多路复用？" class="headerlink" title="什么是IO多路复用？"></a>什么是IO多路复用？</h1><p>IO即为网络I&#x2F;O，多路即为多个TCP连接，复用即为共用一个线程或者进程，模型最大的优势是系统开销小，不必创建也不必维护过多的线程或进程。</p>
+<p>IO复用(IOmultiplexing)使得内核一旦发现进程指定的一个或多个IO条件就绪（也就是说输入已准备好被读取，或者描述符已能承接更多的输出)，它就通知进程。</p>
+<h1 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h1><p>I&#x2F;O 多路复用通常用于以下场景的网络应用：</p>
+<p>当客户端处理多个描述符时（通常是交互式输入和网络套接字）</p>
+<p>当客户端同时处理多个套接字时（这是可能的，但很少见）</p>
+<p>如果 TCP 服务器同时处理侦听套接字及其连接的套接字</p>
+<p>如果服务器同时处理 TCP 和 UDP</p>
+<p>如果服务器处理多个服务，可能还有多个协议</p>
+<p>I&#x2F;O 多路复用不限于网络编程。许多重要的应用程序发现需要这些技术。</p>
+<h1 id="输入-x2F-输出模型"><a href="#输入-x2F-输出模型" class="headerlink" title="输入&#x2F;输出模型"></a>输入&#x2F;输出模型</h1><p>我们首先检查 Unix 下可用的五种 I&#x2F;O 模型的基本区别：</p>
+<p><strong>[1]blockingIO - 阻塞I&#x2F;O</strong></p>
+<p><strong>[2]nonblockingIO - 非阻塞I&#x2F;O</strong></p>
+<p><strong>[3]IOmultiplexing – I&#x2F;O多路复用（select和poll）</strong></p>
+<p><strong>[4]signaldrivenIO - 信号驱动I&#x2F;O</strong></p>
+<p><strong>[5]asynchronousIO - 异步I&#x2F;O（POSIX aio函数）</strong></p>
+<h2 id="输入操作通常有两个不同的阶段："><a href="#输入操作通常有两个不同的阶段：" class="headerlink" title="输入操作通常有两个不同的阶段："></a>输入操作通常有两个不同的阶段：</h2><p>1等待数据准备好。这涉及等待数据到达网络。当数据包到达时，它被复制到内核中的缓冲区中。</p>
+<p>2将数据从内核复制到进程。这意味着将（准备好的）数据从内核缓冲区复制到我们的应用程序缓冲区</p>
+<h1 id="阻塞-I-x2F-O-模型"><a href="#阻塞-I-x2F-O-模型" class="headerlink" title="阻塞 I&#x2F;O 模型"></a>阻塞 I&#x2F;O 模型</h1><p>最流行的 I&#x2F;O 模型是阻塞 I&#x2F;O 模型（我们在前面部分的所有示例中都使用了该模型）。默认情况下，所有套接字都是阻塞的。场景如下图所示：<br><img src="https://pic4.zhimg.com/80/v2-728b741914df045b9cdfb918a30d1843_720w.jpg" alt="阻塞I/O模型"></p>
+<p>使用UDP而不是TCP作为例子的原因在于就UDP而言，数据准备好读取的概念比较简单:要么整个数据报已经收到，要么还没有。然而对于TCP来说，诸如套接字低水位标记( low-water mark）等额外变量开始起作用，导致这个概念变得复杂。</p>
+<p>在这个例子中,我们把recvfrom函数视为系统调用,因为我们正在区分应用进程和内核。不论它如何实现(在源自Berkeley的内核上是作为系统调用，在System V内核上是作为调用系统调用getmsg的函数)，一般都会从在应用进程空间中运行切换到在内核空间中运行，一段时间之后再切换回来。</p>
+<h1 id="非阻塞-I-x2F-O-模型"><a href="#非阻塞-I-x2F-O-模型" class="headerlink" title="非阻塞 I&#x2F;O 模型"></a>非阻塞 I&#x2F;O 模型</h1><p>当套接字设置为非阻塞时，我们是在告诉内核“当我请求的 I&#x2F;O 操作在不让进程进入睡眠状态的情况下无法完成时，不要让进程进入睡眠状态，而是返回一个错误”。</p>
+<p><img src="https://pic3.zhimg.com/80/v2-fb59340a9864676a60e9bdcfbd523dca_720w.jpg" alt="非阻塞I/O模型"><br>对于前三个recvfrom，没有要返回的数据，内核立即返回一个错误EWOULDBLOCK。<br>我们第四次调用recvfrom，数据报准备好了，它被复制到我们的应用程序缓冲区，并recvfrom成功返回。然后我们处理数据。<br>当应用程序处于循环调用recvfrom这样的非阻塞描述符时，它被称为轮询。应用程序不断地轮询内核以查看某些操作是否已准备好。这通常会浪费 CPU 时间，但偶尔会遇到这种模型，通常在专用于一个功能的系统上。</p>
+<h1 id="I-x2F-O-复用模型"><a href="#I-x2F-O-复用模型" class="headerlink" title="I&#x2F;O 复用模型"></a>I&#x2F;O 复用模型</h1><p>有了IO复用(IO multiplexing)，我们就可以调用select或poll，阻塞在这两个系统调用中的某一个之上，而不是阻塞在真正的IO系统调用上。</p>
+<p><img src="https://pic2.zhimg.com/80/v2-824e9b31fc2e72d02956b72dc622c751_720w.jpg" alt="IO复用"></p>
+<p>我们阻塞于select调用，等待数据报套接字变为可读。当select返回套接字可读这一条件时，我们调用recvfrom把所读数据报复制到应用进程缓冲区。</p>
+<p>与阻塞型IO比较，IO复用并不显得有什么优势，事实上由于使用select需要两个而不是单个系统调用，IO复用还稍有劣势。，使用select的优势在于我们可以等待多个描述符就绪。</p>
+<h1 id="异步-I-x2F-O-模型"><a href="#异步-I-x2F-O-模型" class="headerlink" title="异步 I&#x2F;O 模型"></a>异步 I&#x2F;O 模型</h1><p>异步 I&#x2F;O由 POSIX 规范定义，各种标准中出现的实时功能的各种差异共同形成了当前的 POSIX 规范。</p>
+<p>我们也可以用信号，让内核在描述符就绪时发送SIGIO信号通知我们。我们称这种模型为信号驱动式IO ( signal-driven I&#x2F;O)。</p>
+<p><img src="https://pic1.zhimg.com/80/v2-dc3e4fbed4a71e550f0b422e268b70a8_720w.jpg" alt="异步IO"></p>
+<p>我们首先开启套接字的信号驱动式I&#x2F;O功能，并通过sigaction系统调用安装一个信号处理函数。该系统调用将立即返回，我们的进程继续工作，也就是说它没有被阻塞。当数据报准备好读取时，内核就为该进程产生一个sIGIo信号。我们随后既可以在信号处理函数中调用recvfrom读取数据报，并通知主循环数据已准备好待处理，也可以立即通知主循环，让它读取数据报。</p>
+<p>无论如何处理SIGIO信号，这种模型的优势在于等待数据报到达期间进程不被阻塞。主循环可以继续执行，只要等待来自信号处理函数的通知:既可以是数据已准备好被处理，也可以是数据报已准备好被读取。</p>
+<h1 id="各种I-x2F-O模型的比较"><a href="#各种I-x2F-O模型的比较" class="headerlink" title="各种I&#x2F;O模型的比较"></a>各种I&#x2F;O模型的比较</h1><p>对比上述5种不同的IO模型。可以看出，前4种模型的主要区别在于第一阶段，因为它们的第二阶段是一样的:在数据从内核复制到调用者的缓冲区期间，进程阻塞于recvfrom调用。相反，异步I&#x2F;O模型在这两个阶段都要处理，从而不同于其他4种模型。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-e393476a5386a92c319e5e163166fc53_720w.jpg" alt="IO模型比较"></p>
+<h1 id="同步IO和异步IO对比"><a href="#同步IO和异步IO对比" class="headerlink" title="同步IO和异步IO对比"></a>同步IO和异步IO对比</h1><p>POSIX把这两个术语定义如下:</p>
+<p>同步IO操作(synchronous IO opetation）导致请求进程阻塞，直到IO操作完成;</p>
+<p>异步IO操作（ asynchronous I&#x2F;O opetation）不导致请求进程阻塞。<br><img src="https://pic4.zhimg.com/80/v2-2c642bd2b7ef29542c3145e221cd2f97_720w.jpg"></p>
+<h1 id="select"><a href="#select" class="headerlink" title="select"></a>select</h1><p>select 是操作系统提供的系统调用函数，select()用来等待文件描述词（普通文件、终端、伪终端、管道、FIFO、套接字及其他类型的字符型）状态的改变。是一个轮循函数，循环询问文件节点，可设置超时时间，超时时间到了就跳过代码继续往下执行。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">​<span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/select.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FD_SETSIZE 1024</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NFDBITS (8 * sizeof(unsigned long))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __FDSET_LONGS (FD_SETSIZE/NFDBITS)</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// 数据结构 (bitmap)</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line"> <span class="type">unsigned</span> <span class="type">long</span> fds_bits[__FDSET_LONGS];</span><br><span class="line">&#125; fd_set;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// API</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">select</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function"> <span class="type">int</span> max_fd, </span></span></span><br><span class="line"><span class="params"><span class="function"> fd_set *readset, </span></span></span><br><span class="line"><span class="params"><span class="function"> fd_set *writeset, </span></span></span><br><span class="line"><span class="params"><span class="function"> fd_set *exceptset, </span></span></span><br><span class="line"><span class="params"><span class="function"> <span class="keyword">struct</span> timeval *timeout</span></span></span><br><span class="line"><span class="params"><span class="function">)</span> <span class="comment">// 返回值就绪描述符的数目</span></span></span><br><span class="line"><span class="function"> </span></span><br><span class="line"><span class="function"><span class="title">FD_ZERO</span><span class="params">(<span class="type">int</span> fd, fd_set* fds)</span> <span class="comment">// 清空集合</span></span></span><br><span class="line"><span class="function"><span class="title">FD_SET</span><span class="params">(<span class="type">int</span> fd, fd_set* fds)</span> <span class="comment">// 将给定的描述符加入集合</span></span></span><br><span class="line"><span class="function"><span class="title">FD_ISSET</span><span class="params">(<span class="type">int</span> fd, fd_set* fds)</span> <span class="comment">// 判断指定描述符是否在集合中 </span></span></span><br><span class="line"><span class="function"><span class="title">FD_CLR</span><span class="params">(<span class="type">int</span> fd, fd_set* fds)</span> <span class="comment">// 将给定的描述符从文件中删除 </span></span></span><br></pre></td></tr></table></figure>
+<p>select本质上是通过设置或者检查存放fd标志位的数据结构来进行下一步处理。这样所带来的缺点是：</p>
+<p>1、 单个进程可监视的fd数量被限制，即能监听端口的大小有限。</p>
+<p>一般来说这个数目和系统内存关系很大，具体数目可以cat &#x2F;proc&#x2F;sys&#x2F;fs&#x2F;file-max察看。32位机默认是1024个。64位机默认是2048。</p>
+<p>2、 对socket进行扫描时是线性扫描，即采用轮询的方法，效率较低：</p>
+<p>当套接字比较多的时候，每次select()都要通过遍历FD_SETSIZE个Socket来完成调度,不管哪个Socket是活跃的,都遍历一遍。这会浪费很多CPU时间。</p>
+<p>3、需要维护一个用来存放大量fd的数据结构，这样会使得用户空间和内核空间在传递该结构时复制开销大。</p>
+<h1 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h1><p>相关函数定义</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;poll.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"> <span class="function"><span class="type">int</span> <span class="title">poll</span><span class="params">(<span class="keyword">struct</span> pollfd *fds, <span class="type">nfds_t</span> nfds, <span class="type">int</span> timeout)</span></span>;</span><br><span class="line"> </span><br><span class="line"> <span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"> <span class="meta">#<span class="keyword">include</span> <span class="string">&lt;poll.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"> <span class="function"><span class="type">int</span> <span class="title">ppoll</span><span class="params">(<span class="keyword">struct</span> pollfd *fds, <span class="type">nfds_t</span> nfds,</span></span></span><br><span class="line"><span class="params"><span class="function"> <span class="type">const</span> <span class="keyword">struct</span> timespec *tmo_p, <span class="type">const</span> <span class="type">sigset_t</span> *sigmask)</span></span>;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">pollfd</span> &#123;</span><br><span class="line"> <span class="type">int</span> fd; <span class="comment">/* file descriptor */</span></span><br><span class="line"> <span class="type">short</span> events; <span class="comment">/* requested events to watch */</span></span><br><span class="line"> <span class="type">short</span> revents; <span class="comment">/* returned events witnessed */</span></span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>和select用三组文件描述符不同的是，poll只有一个pollfd数组，数组中的每个元素都表示一个需要监听IO操作事件的文件描述符。events参数是我们需要关心的事件，revents是所有内核监测到的事件。</p>
+<p>poll本质上和select没有区别，它将用户传入的数组拷贝到内核空间，然后查询每个fd对应的设备状态，如果设备就绪则在设备等待队列中加入一项并继续遍历，如果遍历完所有fd后没有发现就绪设备，则挂起当前进程，直到设备就绪或者主动超时，被唤醒后它又要再次遍历fd。这个过程经历了多次无谓的遍历。</p>
+<p><strong>它没有最大连接数的限制</strong>，原因是它是基于链表来存储的，但是同样有一个缺点：</p>
+<p>1、大量的fd的数组被整体复制于用户态和内核地址空间之间，而不管这样的复制是不是有意义。</p>
+<p>2、poll还有一个特点是“水平触发”，如果报告了fd后，没有被处理，那么下次poll时会再次报告该fd。</p>
+<h1 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h1><p>相关函数定义如下</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/epoll.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_create</span><span class="params">(<span class="type">int</span> size)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_create1</span><span class="params">(<span class="type">int</span> flags)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_ctl</span><span class="params">(<span class="type">int</span> epfd, <span class="type">int</span> op, <span class="type">int</span> fd, <span class="keyword">struct</span> epoll_event *event)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="type">int</span> epfd, <span class="keyword">struct</span> epoll_event *events,</span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">int</span> maxevents, <span class="type">int</span> timeout)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_pwait</span><span class="params">(<span class="type">int</span> epfd, <span class="keyword">struct</span> epoll_event *events,</span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">int</span> maxevents, <span class="type">int</span> timeout,</span></span></span><br><span class="line"><span class="params"><span class="function"><span class="type">const</span> <span class="type">sigset_t</span> *sigmask)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>epoll有EPOLLLT和EPOLLET两种触发模式，LT是默认的模式，ET是“高速”模式。<br>LT模式下，只要这个fd还有数据可读，每次 epoll_wait都会返回它的事件，提醒用户程序去操作<br>ET模式下，它只会提示一次，直到下次再有数据流入之前都不会再提示了，无论fd中是否还有数据可读。所以在ET模式下，read一个fd的时候一定要把它的buffer读完，或者遇到EAGAIN错误。</p>
+<h2 id="epoll的优点："><a href="#epoll的优点：" class="headerlink" title="epoll的优点："></a>epoll的优点：</h2><p><strong>1、没有最大并发连接的限制，能打开的FD的上限远大于1024（1G的内存上能监听约10万个端口）；</strong><br><strong>2、效率提升，不是轮询的方式，不会随着FD数目的增加效率下降。只有活跃可用的FD才会调用callback函数；</strong><br><strong>即Epoll最大的优点就在于它只管你“活跃”的连接，而跟连接总数无关，因此在实际的网络环境中，Epoll的效率就会远远高于select和poll。</strong></p>
+<p><strong>3、 内存拷贝，利用mmap()文件映射内存加速与内核空间的消息传递；即epoll使用mmap减少复制开销。</strong></p>
+<h2 id="epoll缺点："><a href="#epoll缺点：" class="headerlink" title="epoll缺点："></a>epoll缺点：</h2><p><strong>epoll只能工作在linux下。</strong></p>
+]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>计算机网络</tag>
         <tag>C++</tag>
       </tags>
   </entry>

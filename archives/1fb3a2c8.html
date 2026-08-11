@@ -1,0 +1,836 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>ACP大模型C2笔记 | Raidenxe的博客</title><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="阿里云大模型ACP认证 · C2 构造问答系统 知识点总结 目录 项目背景与课程体系 大模型API调用与多轮对话 大模型工作原理与生成参数 RAG检索增强生成 提示词工程 自动化评测体系 RAG优化策略 考试重点与权重分布   1. 项目背景与课程体系1.1 项目场景课程以一个教育内容开发公司..."><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ACP大模型C2笔记",
+  "url": "https://raidenxe.github.io/archives/1fb3a2c8.html",
+  "image": "https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png",
+  "datePublished": "2026-07-24T13:26:19.000Z",
+  "dateModified": "2026-07-24T13:35:52.333Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Raidenxe",
+      "url": "https://Raidenxe.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/1fb3a2c8.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css?v=5.5.5"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'ACP大模型C2笔记',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/macblack.css"><style>
+  #web_bg{background-image:url(/img/风景006.png)}
+  #footer{background-image:url(/img/风景008.png);background-size:cover;background-position:center}
+  .aplayer-lrc{display:none !important}
+</style>
+<meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/%E9%A3%8E%E6%99%AF006.png));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Raidenxe的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">ACP大模型C2笔记</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">ACP大模型C2笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-24T13:26:19.000Z" title="发表于 2026-07-24 21:26:19">2026-07-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-07-24T13:35:52.333Z" title="更新于 2026-07-24 21:35:52">2026-07-24</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>13分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="阿里云大模型ACP认证-·-C2-构造问答系统-知识点总结"><a href="#阿里云大模型ACP认证-·-C2-构造问答系统-知识点总结" class="headerlink" title="阿里云大模型ACP认证 · C2 构造问答系统 知识点总结"></a>阿里云大模型ACP认证 · C2 构造问答系统 知识点总结</h1><hr>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ol>
+<li><a href="#1-%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF%E4%B8%8E%E8%AF%BE%E7%A8%8B%E4%BD%93%E7%B3%BB">项目背景与课程体系</a></li>
+<li><a href="#2-%E5%A4%A7%E6%A8%A1%E5%9E%8Bapi%E8%B0%83%E7%94%A8%E4%B8%8E%E5%A4%9A%E8%BD%AE%E5%AF%B9%E8%AF%9D">大模型API调用与多轮对话</a></li>
+<li><a href="#3-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E4%B8%8E%E7%94%9F%E6%88%90%E5%8F%82%E6%95%B0">大模型工作原理与生成参数</a></li>
+<li><a href="#4-rag%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90">RAG检索增强生成</a></li>
+<li><a href="#5-%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B">提示词工程</a></li>
+<li><a href="#6-%E8%87%AA%E5%8A%A8%E5%8C%96%E8%AF%84%E6%B5%8B%E4%BD%93%E7%B3%BB">自动化评测体系</a></li>
+<li><a href="#7-rag%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5">RAG优化策略</a></li>
+<li><a href="#8-%E8%80%83%E8%AF%95%E9%87%8D%E7%82%B9%E4%B8%8E%E6%9D%83%E9%87%8D%E5%88%86%E5%B8%83">考试重点与权重分布</a></li>
+</ol>
+<hr>
+<h2 id="1-项目背景与课程体系"><a href="#1-项目背景与课程体系" class="headerlink" title="1. 项目背景与课程体系"></a>1. 项目背景与课程体系</h2><h3 id="1-1-项目场景"><a href="#1-1-项目场景" class="headerlink" title="1.1 项目场景"></a>1.1 项目场景</h3><p>课程以一个教育内容开发公司为背景，新员工频繁提问导致答疑成本高。公司虽整理了文档库，但员工仍难以消化，导致工作出错。传统问答系统依赖固定规则和相似度匹配，存在以下问题：</p>
+<ul>
+<li>员工使用不同问法时，系统可能无法回答</li>
+<li>人工配置问答对，投入产出比低</li>
+<li>无法理解自然语言的多样性</li>
+</ul>
+<h3 id="1-2-解决方案"><a href="#1-2-解决方案" class="headerlink" title="1.2 解决方案"></a>1.2 解决方案</h3><p>利用大模型构建智能问答系统，无需配置问答对，基于公司内部知识库准确回答问题。</p>
+<h3 id="1-3-课程结构"><a href="#1-3-课程结构" class="headerlink" title="1.3 课程结构"></a>1.3 课程结构</h3><table>
+<thead>
+<tr>
+<th>章节</th>
+<th>内容</th>
+<th>核心知识点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2.1</td>
+<td>用大模型构建新人答疑机器人</td>
+<td>API调用、大模型原理、生成参数</td>
+</tr>
+<tr>
+<td>2.2</td>
+<td>扩展答疑机器人的知识范围</td>
+<td>RAG工作流程、LlamaIndex</td>
+</tr>
+<tr>
+<td>2.3</td>
+<td>优化提示词改善回答质量</td>
+<td>提示词框架、模板、技巧</td>
+</tr>
+<tr>
+<td>2.4</td>
+<td>自动化评测答疑机器人表现</td>
+<td>Ragas、TruLens、DeepEval</td>
+</tr>
+<tr>
+<td>2.5</td>
+<td>优化RAG应用提升问答准确度</td>
+<td>检索优化、结构化文档、改进策略</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="2-大模型API调用与多轮对话"><a href="#2-大模型API调用与多轮对话" class="headerlink" title="2. 大模型API调用与多轮对话"></a>2. 大模型API调用与多轮对话</h2><h3 id="2-1-API配置"><a href="#2-1-API配置" class="headerlink" title="2.1 API配置"></a>2.1 API配置</h3><p><strong>使用百炼平台调用千问大模型：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> openai <span class="keyword">import</span> OpenAI</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">client = OpenAI(</span><br><span class="line">    api_key=os.getenv(<span class="string">&quot;DASHSCOPE_API_KEY&quot;</span>),</span><br><span class="line">    base_url=<span class="string">&quot;https://dashscope.aliyuncs.com/compatible-mode/v1&quot;</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><strong>API Key安全管理：</strong></p>
+<ul>
+<li>禁止在代码中明文写入API Key</li>
+<li>应存储在环境变量或配置文件中</li>
+<li>分享代码时避免泄露密钥</li>
+</ul>
+<h3 id="2-2-基础对话调用"><a href="#2-2-基础对话调用" class="headerlink" title="2.2 基础对话调用"></a>2.2 基础对话调用</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_qwen_response</span>(<span class="params">prompt</span>):</span><br><span class="line">    response = client.chat.completions.create(</span><br><span class="line">        model=<span class="string">&quot;qwen-max&quot;</span>,</span><br><span class="line">        messages=[</span><br><span class="line">            &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;system&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;你负责教育内容开发公司的答疑，你的名字叫公司小蜜，你要回答同事们的问题。&quot;</span>&#125;,</span><br><span class="line">            &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: prompt&#125;</span><br><span class="line">        ]</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> response.choices[<span class="number">0</span>].message.content</span><br></pre></td></tr></table></figure>
+
+<p><strong>messages参数说明：</strong></p>
+<ul>
+<li><code>role: system</code> — 系统指令，设定角色和任务</li>
+<li><code>role: user</code> — 用户输入的问题</li>
+<li><code>role: assistant</code> — 模型的回复</li>
+</ul>
+<h3 id="2-3-多轮对话"><a href="#2-3-多轮对话" class="headerlink" title="2.3 多轮对话"></a>2.3 多轮对话</h3><p><strong>核心原理：</strong> 将对话历史（包含system、user、assistant消息）全部传入messages列表，模型根据完整上下文生成回复。</p>
+<p><strong>实现要点：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">conversation_history = [</span><br><span class="line">    &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;system&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;你负责公司答疑...&quot;</span>&#125;</span><br><span class="line">]</span><br><span class="line"><span class="comment"># 每轮对话：追加user消息 → 调用模型 → 追加assistant消息</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意事项：</strong></p>
+<ul>
+<li>对话历史占用上下文窗口空间，轮次过多需截断或摘要</li>
+<li>生产环境需将对话历史持久化存储（如数据库）</li>
+</ul>
+<h3 id="2-4-流式输出"><a href="#2-4-流式输出" class="headerlink" title="2.4 流式输出"></a>2.4 流式输出</h3><p>流式输出让模型一边生成一边输出，提升用户体验。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_qwen_stream_response</span>(<span class="params">user_prompt, system_prompt</span>):</span><br><span class="line">    response = client.chat.completions.create(</span><br><span class="line">        model=<span class="string">&quot;qwen-max&quot;</span>,</span><br><span class="line">        messages=[...],</span><br><span class="line">        stream=<span class="literal">True</span>  <span class="comment"># 关键参数</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">for</span> chunk <span class="keyword">in</span> response:</span><br><span class="line">        <span class="keyword">yield</span> chunk.choices[<span class="number">0</span>].delta.content</span><br></pre></td></tr></table></figure>
+
+<p><strong>对比：</strong> 非流式输出等待全部生成后返回（约20秒），流式输出即时展示。</p>
+<hr>
+<h2 id="3-大模型工作原理与生成参数"><a href="#3-大模型工作原理与生成参数" class="headerlink" title="3. 大模型工作原理与生成参数"></a>3. 大模型工作原理与生成参数</h2><h3 id="3-1-文本生成五阶段"><a href="#3-1-文本生成五阶段" class="headerlink" title="3.1 文本生成五阶段"></a>3.1 文本生成五阶段</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">输入文本 → 分词 → Token向量化 → 大模型推理 → 解码输出 → 输出文本</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>文本分词</strong></td>
+<td>Tokenizer将文本分割为Token（子词&#x2F;字符片段），每个Token对应词表中的整数ID</td>
+</tr>
+<tr>
+<td><strong>Token向量化</strong></td>
+<td>通过Embedding矩阵将Token ID转换为稠密向量，包含语义信息</td>
+</tr>
+<tr>
+<td><strong>大模型推理</strong></td>
+<td>Transformer模型根据输入向量，逐Token预测下一个Token的概率分布</td>
+</tr>
+<tr>
+<td><strong>解码与自回归</strong></td>
+<td>从概率分布中选择Token，将新Token加入输入继续预测，循环生成</td>
+</tr>
+<tr>
+<td><strong>输出文本</strong></td>
+<td>将生成的Token序列解码回人类可读的文本</td>
+</tr>
+</tbody></table>
+<h3 id="3-2-Token概念"><a href="#3-2-Token概念" class="headerlink" title="3.2 Token概念"></a>3.2 Token概念</h3><ul>
+<li>Token是分词器编码后的基本单元，通常是子词或字符片段</li>
+<li>不一定等于完整词语，也不一定具有独立语义</li>
+<li>英文可能拆成词根和后缀，中文按字或常见词组切分</li>
+</ul>
+<h3 id="3-3-生成参数（必考）"><a href="#3-3-生成参数（必考）" class="headerlink" title="3.3 生成参数（必考）"></a>3.3 生成参数（必考）</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>取值范围</th>
+<th>默认值</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>temperature</strong></td>
+<td>[0, 2)</td>
+<td>0.7</td>
+<td>调整候选Token概率分布的平滑度。值越大，生成越多样；值越小，越确定</td>
+</tr>
+<tr>
+<td><strong>top_p</strong></td>
+<td>(0, 1]</td>
+<td>0.8</td>
+<td>累积概率采样，控制候选Token集合范围。top_p越小，生成越确定</td>
+</tr>
+<tr>
+<td><strong>top_k</strong></td>
+<td>正整数</td>
+<td>—</td>
+<td>从概率排名前k个Token中随机选择。越大越多样，越小越固定</td>
+</tr>
+<tr>
+<td><strong>seed</strong></td>
+<td>整数</td>
+<td>—</td>
+<td>控制生成确定性，相同seed尽可能返回相同结果（不保证完全一致）</td>
+</tr>
+</tbody></table>
+<p><strong>重要规则：</strong> 多个参数不建议同时调整，优先调整其中一种参数观察效果后再微调。</p>
+<h3 id="3-4-大模型的局限性"><a href="#3-4-大模型的局限性" class="headerlink" title="3.4 大模型的局限性"></a>3.4 大模型的局限性</h3><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>表现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>缺乏私域知识</strong></td>
+<td>不知道公司内部制度、人员信息等</td>
+</tr>
+<tr>
+<td><strong>回答不一致</strong></td>
+<td>相同问题每次回答略有不同</td>
+</tr>
+<tr>
+<td><strong>幻觉</strong></td>
+<td>可能生成看似合理但实际错误的内容</td>
+</tr>
+</tbody></table>
+<p><strong>解决方案：</strong> 上下文工程（Context Engineering），通过RAG等技术为模型填充必要的上下文信息。</p>
+<hr>
+<h2 id="4-RAG检索增强生成"><a href="#4-RAG检索增强生成" class="headerlink" title="4. RAG检索增强生成"></a>4. RAG检索增强生成</h2><h3 id="4-1-核心概念"><a href="#4-1-核心概念" class="headerlink" title="4.1 核心概念"></a>4.1 核心概念</h3><p><strong>RAG（Retrieval Augmented Generation）</strong> 是上下文工程中最重要、最有效的技术之一，专门解决大模型”知识不足”的问题。</p>
+<p><strong>类比：</strong> 开卷考试 —— 在回答问题时，先查找相关资料，再结合资料作答。</p>
+<h3 id="4-2-RAG工作流程"><a href="#4-2-RAG工作流程" class="headerlink" title="4.2 RAG工作流程"></a>4.2 RAG工作流程</h3><h4 id="建立索引阶段"><a href="#建立索引阶段" class="headerlink" title="建立索引阶段"></a>建立索引阶段</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">文档解析 → 文本分段 → 文本向量化 → 存储索引</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>文档解析</strong></td>
+<td>将知识库文档加载并解析为文字形式</td>
+</tr>
+<tr>
+<td><strong>文本分段</strong></td>
+<td>将文档切分为适当大小的片段，便于检索</td>
+</tr>
+<tr>
+<td><strong>文本向量化</strong></td>
+<td>使用Embedding模型将文本段转换为向量</td>
+</tr>
+<tr>
+<td><strong>存储索引</strong></td>
+<td>将向量存储到向量数据库，加速后续检索</td>
+</tr>
+</tbody></table>
+<h4 id="检索生成阶段"><a href="#检索生成阶段" class="headerlink" title="检索生成阶段"></a>检索生成阶段</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用户提问 → 问题向量化 → 相似度检索 → 生成回答</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>检索</strong></td>
+<td>将问题向量化，与向量数据库中的文本段进行语义相似度比较，找出最相关段落</td>
+</tr>
+<tr>
+<td><strong>生成</strong></td>
+<td>将问题与检索到的文本段通过提示词模板组合，由大模型生成回复</td>
+</tr>
+</tbody></table>
+<p><strong>典型提示词模板：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">请根据以下信息回答用户的问题：&#123;召回文本段&#125;。</span><br><span class="line">用户的问题是：&#123;question&#125;。</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-使用LlamaIndex构建RAG"><a href="#4-3-使用LlamaIndex构建RAG" class="headerlink" title="4.3 使用LlamaIndex构建RAG"></a>4.3 使用LlamaIndex构建RAG</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> llama_index.embeddings.dashscope <span class="keyword">import</span> DashScopeEmbedding</span><br><span class="line"><span class="keyword">from</span> llama_index.core <span class="keyword">import</span> SimpleDirectoryReader, VectorStoreIndex</span><br><span class="line"><span class="keyword">from</span> llama_index.llms.openai_like <span class="keyword">import</span> OpenAILike</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载文档</span></span><br><span class="line">documents = SimpleDirectoryReader(<span class="string">&#x27;./docs&#x27;</span>, required_exts=[<span class="string">&#x27;.pdf&#x27;</span>, <span class="string">&#x27;.docx&#x27;</span>, <span class="string">&#x27;.md&#x27;</span>]).load_data()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建索引（包含切片与向量化）</span></span><br><span class="line">index = VectorStoreIndex.from_documents(</span><br><span class="line">    documents,</span><br><span class="line">    embed_model=DashScopeEmbedding(</span><br><span class="line">        model_name=DashScopeTextEmbeddingModels.TEXT_EMBEDDING_V2</span><br><span class="line">    ))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建查询引擎</span></span><br><span class="line">query_engine = index.as_query_engine(</span><br><span class="line">    streaming=<span class="literal">True</span>,</span><br><span class="line">    llm=OpenAILike(</span><br><span class="line">        model=<span class="string">&quot;qwen-plus&quot;</span>,</span><br><span class="line">        api_base=<span class="string">&quot;https://dashscope.aliyuncs.com/compatible-mode/v1&quot;</span>,</span><br><span class="line">        api_key=os.getenv(<span class="string">&quot;DASHSCOPE_API_KEY&quot;</span>),</span><br><span class="line">        is_chat_model=<span class="literal">True</span></span><br><span class="line">    ))</span><br></pre></td></tr></table></figure>
+
+<p><strong>保存与加载索引：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 保存索引</span></span><br><span class="line">index.storage_context.persist(<span class="string">&quot;knowledge_base/test&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载索引</span></span><br><span class="line"><span class="keyword">from</span> llama_index.core <span class="keyword">import</span> StorageContext, load_index_from_storage</span><br><span class="line">storage_context = StorageContext.from_defaults(persist_dir=<span class="string">&quot;knowledge_base/test&quot;</span>)</span><br><span class="line">index = load_index_from_storage(storage_context, embed_model=...)</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-4-RAG多轮对话的挑战"><a href="#4-4-RAG多轮对话的挑战" class="headerlink" title="4.4 RAG多轮对话的挑战"></a>4.4 RAG多轮对话的挑战</h3><p><strong>问题：</strong> 用户第二轮提问”他的主管是谁？”，检索系统不知道”他”指的是谁。</p>
+<p><strong>解决方案：</strong> 问题改写（Query Rewriting）—— 将完整对话历史和问题先输入大模型，改写为独立的完整问题，再用改写后的问题进行检索。</p>
+<h3 id="4-5-上下文工程（Context-Engineering）"><a href="#4-5-上下文工程（Context-Engineering）" class="headerlink" title="4.5 上下文工程（Context Engineering）"></a>4.5 上下文工程（Context Engineering）</h3><p>核心理念：为大模型的”上下文窗口”填充恰到好处的信息，以引导其完成特定任务。</p>
+<ul>
+<li><strong>信息太少</strong>：模型”不知道”</li>
+<li><strong>信息太多或无关</strong>：模型性能下降、成本增加</li>
+</ul>
+<hr>
+<h2 id="5-提示词工程"><a href="#5-提示词工程" class="headerlink" title="5. 提示词工程"></a>5. 提示词工程</h2><h3 id="5-1-提示词框架要素"><a href="#5-1-提示词框架要素" class="headerlink" title="5.1 提示词框架要素"></a>5.1 提示词框架要素</h3><table>
+<thead>
+<tr>
+<th>要素</th>
+<th>含义</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>任务目标</strong></td>
+<td>明确要求大模型完成什么任务</td>
+<td>“总结以下文档要点”</td>
+</tr>
+<tr>
+<td><strong>上下文</strong></td>
+<td>任务背景信息</td>
+<td>公司制度、操作流程等</td>
+</tr>
+<tr>
+<td><strong>角色</strong></td>
+<td>大模型扮演的身份</td>
+<td>“你是资深HR助手”</td>
+</tr>
+<tr>
+<td><strong>受众</strong></td>
+<td>目标用户群体</td>
+<td>“面向新员工”</td>
+</tr>
+<tr>
+<td><strong>样例</strong></td>
+<td>参考案例（Few-shot）</td>
+<td>提供问答对示例</td>
+</tr>
+<tr>
+<td><strong>输出格式</strong></td>
+<td>指定输出格式和风格</td>
+<td>“请用Markdown格式输出”</td>
+</tr>
+</tbody></table>
+<h3 id="5-2-提示词模板"><a href="#5-2-提示词模板" class="headerlink" title="5.2 提示词模板"></a>5.2 提示词模板</h3><p>LlamaIndex默认模板：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Context information is below.</span><br><span class="line">---------------------</span><br><span class="line">&#123;context_str&#125;</span><br><span class="line">---------------------</span><br><span class="line">Given the context information and not prior knowledge, answer the query.</span><br><span class="line">Query: &#123;query_str&#125;</span><br><span class="line">Answer:</span><br></pre></td></tr></table></figure>
+
+<p><strong>自定义模板示例：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">prompt_template_string = (</span><br><span class="line">    <span class="string">&quot;你是公司的客服小蜜，你需要简明扼要的回答用户的问题&quot;</span></span><br><span class="line">    <span class="string">&quot;【注意事项】：\n&quot;</span></span><br><span class="line">    <span class="string">&quot;1. 依据上下文信息来回答用户问题。\n&quot;</span></span><br><span class="line">    <span class="string">&quot;2. 你只需要回答用户的问题，不要输出其他信息\n&quot;</span></span><br><span class="line">    <span class="string">&quot;以下是参考信息。&quot;</span></span><br><span class="line">    <span class="string">&quot;---------------------\n&quot;</span></span><br><span class="line">    <span class="string">&quot;&#123;context_str&#125;\n&quot;</span></span><br><span class="line">    <span class="string">&quot;---------------------\n&quot;</span></span><br><span class="line">    <span class="string">&quot;问题：&#123;query_str&#125;\n。&quot;</span></span><br><span class="line">    <span class="string">&quot;回答：&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-提示词技巧"><a href="#5-3-提示词技巧" class="headerlink" title="5.3 提示词技巧"></a>5.3 提示词技巧</h3><table>
+<thead>
+<tr>
+<th>技巧</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>清晰表达需求</strong></td>
+<td>明确任务目标、背景及上下文，使用分隔符（【】、&lt;&lt; &gt;&gt;、###、<code>&lt;tag&gt;</code> 等）标识关键要素</td>
+</tr>
+<tr>
+<td><strong>限定角色和受众</strong></td>
+<td>不同角色（算法工程师 vs 小学老师）输出风格不同，受众决定内容深度</td>
+</tr>
+<tr>
+<td><strong>少样本学习（Few-shot）</strong></td>
+<td>提供输入输出示例，模型从中抽象出模式</td>
+</tr>
+<tr>
+<td><strong>思维链（Chain-of-Thought）</strong></td>
+<td>引导模型逐步推理，适合复杂问题</td>
+</tr>
+<tr>
+<td><strong>指定输出格式</strong></td>
+<td>明确输出类型、格式、枚举值范围，可结合样例进一步明确</td>
+</tr>
+</tbody></table>
+<h3 id="5-4-阿里云百炼提示词优化工具"><a href="#5-4-阿里云百炼提示词优化工具" class="headerlink" title="5.4 阿里云百炼提示词优化工具"></a>5.4 阿里云百炼提示词优化工具</h3><p>百炼平台提供了<a target="_blank" rel="noopener external nofollow noreferrer" href="https://bailian.console.aliyun.com/?tab=app#/component-manage/prompt/optimize">提示词自动优化工具</a>，可帮助完善提示词。</p>
+<hr>
+<h2 id="6-自动化评测体系"><a href="#6-自动化评测体系" class="headerlink" title="6. 自动化评测体系"></a>6. 自动化评测体系</h2><h3 id="6-1-评测的重要性"><a href="#6-1-评测的重要性" class="headerlink" title="6.1 评测的重要性"></a>6.1 评测的重要性</h3><p>和常规软件开发需要测试一样，RAG应用也需要建立评测体系：</p>
+<ul>
+<li>快速定位问题原因</li>
+<li>每次优化后对一批问题进行测试</li>
+<li>确保优化效果是正向的</li>
+</ul>
+<h3 id="6-2-Ragas框架"><a href="#6-2-Ragas框架" class="headerlink" title="6.2 Ragas框架"></a>6.2 Ragas框架</h3><p>Ragas（RAG Assessment）是领域内最著名的评测框架，核心思想是**”让大模型来评估RAG系统”**。</p>
+<h4 id="评估指标"><a href="#评估指标" class="headerlink" title="评估指标"></a>评估指标</h4><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>评估维度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Answer Correctness</strong></td>
+<td>整体回答质量</td>
+<td>评估生成答案的准确度，需与ground truth对比</td>
+</tr>
+<tr>
+<td><strong>Answer Relevancy</strong></td>
+<td>生成环节</td>
+<td>评估答案是否与问题相关</td>
+</tr>
+<tr>
+<td><strong>Faithfulness</strong></td>
+<td>生成环节</td>
+<td>评估答案与检索参考资料的事实一致性（有无幻觉）</td>
+</tr>
+<tr>
+<td><strong>Context Precision</strong></td>
+<td>召回阶段</td>
+<td>评估参考信息中相关条目的排名和占比（信噪比）</td>
+</tr>
+<tr>
+<td><strong>Context Recall</strong></td>
+<td>召回阶段</td>
+<td>评估有多少相关参考资料被检索到（遗漏情况）</td>
+</tr>
+</tbody></table>
+<h4 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datasets <span class="keyword">import</span> Dataset</span><br><span class="line"><span class="keyword">from</span> ragas <span class="keyword">import</span> evaluate</span><br><span class="line"><span class="keyword">from</span> ragas.metrics <span class="keyword">import</span> context_recall, context_precision, answer_correctness</span><br><span class="line"></span><br><span class="line">data_samples = &#123;</span><br><span class="line">    <span class="string">&#x27;question&#x27;</span>: [question],</span><br><span class="line">    <span class="string">&#x27;answer&#x27;</span>: [answer],</span><br><span class="line">    <span class="string">&#x27;ground_truth&#x27;</span>: [ground_truth],</span><br><span class="line">    <span class="string">&#x27;contexts&#x27;</span>: [context],</span><br><span class="line">&#125;</span><br><span class="line">dataset = Dataset.from_dict(data_samples)</span><br><span class="line"></span><br><span class="line">score = evaluate(</span><br><span class="line">    dataset=dataset,</span><br><span class="line">    metrics=[answer_correctness, context_recall, context_precision],</span><br><span class="line">    llm=Tongyi(model_name=<span class="string">&quot;qwen-plus&quot;</span>),</span><br><span class="line">    embeddings=DashScopeEmbeddings(model=<span class="string">&quot;text-embedding-v3&quot;</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-TruLens框架"><a href="#6-3-TruLens框架" class="headerlink" title="6.3 TruLens框架"></a>6.3 TruLens框架</h3><p>专注于<strong>可观测性</strong>，可追溯RAG的完整运行过程。</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Groundedness</strong></td>
+<td>答案是否来源于检索召回的知识</td>
+</tr>
+<tr>
+<td><strong>Answer Relevance</strong></td>
+<td>答案是否与问题相关</td>
+</tr>
+<tr>
+<td><strong>Context Relevance</strong></td>
+<td>召回的知识是否与问题相关</td>
+</tr>
+</tbody></table>
+<h3 id="6-4-DeepEval框架"><a href="#6-4-DeepEval框架" class="headerlink" title="6.4 DeepEval框架"></a>6.4 DeepEval框架</h3><p>将传统软件开发的<strong>单元测试</strong>理念引入RAG应用，支持：</p>
+<ul>
+<li>为每个测试用例设置明确的通过&#x2F;失败阈值</li>
+<li>集成到CI&#x2F;CD流程中，实现自动化回归测试</li>
+</ul>
+<h3 id="6-5-自定义评测框架"><a href="#6-5-自定义评测框架" class="headerlink" title="6.5 自定义评测框架"></a>6.5 自定义评测框架</h3><p><strong>核心原则：</strong> 领域专家深度参与是评测成功的关键。</p>
+<p>可能的自定义指标：</p>
+<ul>
+<li>流程可操作性</li>
+<li>政策合规性</li>
+<li>情绪安抚度</li>
+<li>问题解决完备性</li>
+</ul>
+<p><strong>注意：</strong> 自动化评测是提效工具，不能完全取代人工判断。专家负责构建评测集和审定Ground Truth，自动化框架负责大规模、可重复的日常评测。</p>
+<hr>
+<h2 id="7-RAG优化策略"><a href="#7-RAG优化策略" class="headerlink" title="7. RAG优化策略"></a>7. RAG优化策略</h2><h3 id="7-1-增加召回数量"><a href="#7-1-增加召回数量" class="headerlink" title="7.1 增加召回数量"></a>7.1 增加召回数量</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">query_engine = index.as_query_engine(</span><br><span class="line">    streaming=<span class="literal">True</span>,</span><br><span class="line">    similarity_top_k=<span class="number">5</span>  <span class="comment"># 默认2，增加到5</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><strong>权衡：</strong> 增加召回数量可以提升找到相关信息的概率，但过多的无关信息会降低回答效率和准确性。</p>
+<h3 id="7-2-文档内容结构化"><a href="#7-2-文档内容结构化" class="headerlink" title="7.2 文档内容结构化"></a>7.2 文档内容结构化</h3><p><strong>Markdown格式的优势：</strong></p>
+<ul>
+<li>结构清晰，层次分明</li>
+<li>语法简单，易于维护</li>
+<li>特别适合RAG场景下的文档组织</li>
+</ul>
+<p><strong>做法：</strong> 将表格、列表等非结构化信息转换为结构化的Markdown格式，重新建立索引。</p>
+<h3 id="7-3-RAG全链路优化"><a href="#7-3-RAG全链路优化" class="headerlink" title="7.3 RAG全链路优化"></a>7.3 RAG全链路优化</h3><h4 id="文档准备阶段"><a href="#文档准备阶段" class="headerlink" title="文档准备阶段"></a>文档准备阶段</h4><p><strong>意图空间 vs 知识空间：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">意图空间（用户问题）    知识空间（文档内容）</span><br><span class="line">      ┌───┐                ┌───┐</span><br><span class="line">      │   │  ────重叠────  │   │</span><br><span class="line">      │   │    优化策略1    │   │</span><br><span class="line">      └───┘                └───┘</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>区域</th>
+<th>策略</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>重叠区域</strong></td>
+<td>优化检索策略，确保准确召回</td>
+</tr>
+<tr>
+<td><strong>意图空间独有</strong></td>
+<td>补充知识库文档</td>
+</tr>
+<tr>
+<td><strong>知识空间独有</strong></td>
+<td>优化提示词，让模型更好地利用知识</td>
+</tr>
+</tbody></table>
+<h4 id="检索优化策略"><a href="#检索优化策略" class="headerlink" title="检索优化策略"></a>检索优化策略</h4><table>
+<thead>
+<tr>
+<th>策略</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>重排（Rerank）</strong></td>
+<td>对初次检索结果进行二次排序，提升相关性</td>
+</tr>
+<tr>
+<td><strong>句子窗口检索</strong></td>
+<td>检索句子级别片段，返回包含上下文的窗口</td>
+</tr>
+<tr>
+<td><strong>混合检索</strong></td>
+<td>结合关键词检索和语义向量检索</td>
+</tr>
+<tr>
+<td><strong>HyDE</strong></td>
+<td>先用问题生成假设答案，再用假设答案检索</td>
+</tr>
+</tbody></table>
+<h4 id="切片优化策略"><a href="#切片优化策略" class="headerlink" title="切片优化策略"></a>切片优化策略</h4><table>
+<thead>
+<tr>
+<th>策略</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>语义切分</strong></td>
+<td>按语义边界（段落、句子）切分，而非固定长度</td>
+</tr>
+<tr>
+<td><strong>重叠窗口</strong></td>
+<td>切片之间保留重叠部分，避免信息断裂</td>
+</tr>
+<tr>
+<td><strong>Markdown节点解析</strong></td>
+<td>按Markdown标题层级结构切分</td>
+</tr>
+</tbody></table>
+<h3 id="7-4-RAG-vs-微调"><a href="#7-4-RAG-vs-微调" class="headerlink" title="7.4 RAG vs 微调"></a>7.4 RAG vs 微调</h3><table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>RAG</th>
+<th>微调（Fine-tuning）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>知识更新</strong></td>
+<td>只需更新知识库文档</td>
+<td>需要重新训练模型</td>
+</tr>
+<tr>
+<td><strong>成本</strong></td>
+<td>低（无需训练）</td>
+<td>高（需要GPU资源）</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>知识密集型问答、实时更新场景</td>
+<td>改变模型行为、风格、推理能力</td>
+</tr>
+<tr>
+<td><strong>幻觉控制</strong></td>
+<td>较好（有参考信息）</td>
+<td>可能仍存在幻觉</td>
+</tr>
+<tr>
+<td><strong>实现复杂度</strong></td>
+<td>中等</td>
+<td>较高</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="8-考试重点与权重分布"><a href="#8-考试重点与权重分布" class="headerlink" title="8. 考试重点与权重分布"></a>8. 考试重点与权重分布</h2><h3 id="8-1-各章节考点权重"><a href="#8-1-各章节考点权重" class="headerlink" title="8.1 各章节考点权重"></a>8.1 各章节考点权重</h3><table>
+<thead>
+<tr>
+<th>章节</th>
+<th>权重</th>
+<th>核心考点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>RAG检索增强生成</strong></td>
+<td>20%</td>
+<td>工作流程、切片策略、Embedding、Ragas指标、全链路优化</td>
+</tr>
+<tr>
+<td><strong>大模型微调LoRA</strong></td>
+<td>18%</td>
+<td>微调分类、LoRA优势、适用场景、数据集规范</td>
+</tr>
+<tr>
+<td><strong>Agent智能体+Function Calling</strong></td>
+<td>16%</td>
+<td>函数调用、ReAct架构、安全边界</td>
+</tr>
+<tr>
+<td><strong>生产环境部署</strong></td>
+<td>16%</td>
+<td>高可用、监控指标、成本优化</td>
+</tr>
+<tr>
+<td><strong>提示词工程</strong></td>
+<td>12%</td>
+<td>框架要素、模板、技巧（Few-shot、CoT）</td>
+</tr>
+<tr>
+<td><strong>阿里云产品体系</strong></td>
+<td>10%</td>
+<td>百炼平台、模型服务、向量数据库</td>
+</tr>
+<tr>
+<td><strong>安全合规与数据隐私</strong></td>
+<td>大题核心</td>
+<td>合规原则、数据安全、权限管控、内容安全</td>
+</tr>
+</tbody></table>
+<h3 id="8-2-考试规则"><a href="#8-2-考试规则" class="headerlink" title="8.2 考试规则"></a>8.2 考试规则</h3><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>题型</strong></td>
+<td>单选50题×1分 + 多选25题×2分</td>
+</tr>
+<tr>
+<td><strong>总分</strong></td>
+<td>100分</td>
+</tr>
+<tr>
+<td><strong>及格线</strong></td>
+<td>60分</td>
+</tr>
+<tr>
+<td><strong>时长</strong></td>
+<td>90分钟</td>
+</tr>
+<tr>
+<td><strong>形式</strong></td>
+<td>线上闭卷，双机位监考</td>
+</tr>
+<tr>
+<td><strong>多选评分</strong></td>
+<td>少选得部分分，错选不得分</td>
+</tr>
+</tbody></table>
+<h3 id="8-3-C2章节核心考点速记"><a href="#8-3-C2章节核心考点速记" class="headerlink" title="8.3 C2章节核心考点速记"></a>8.3 C2章节核心考点速记</h3><p><strong>RAG必考流程：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">文档 → 解析 → 切片 → 向量化 → 存储索引 → 检索 → 生成</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键参数速记：</strong></p>
+<ul>
+<li><code>temperature=0.7</code>（默认），越高越多样</li>
+<li><code>top_p=0.8</code>（默认），累积概率采样</li>
+<li><code>similarity_top_k</code> 默认2，可调大（如5）</li>
+</ul>
+<p><strong>Ragas指标速记：</strong></p>
+<ul>
+<li>Answer Correctness（准确度）</li>
+<li>Faithfulness（忠实度，防幻觉）</li>
+<li>Context Precision（信噪比）</li>
+<li>Context Recall（召回率）</li>
+</ul>
+<p><strong>三大评测框架：</strong></p>
+<ul>
+<li>Ragas — 大模型当评委</li>
+<li>TruLens — 可观测性</li>
+<li>DeepEval — 单元测试理念</li>
+</ul>
+<p><strong>提示词六要素：</strong></p>
+<ul>
+<li>任务目标、上下文、角色、受众、样例、输出格式</li>
+</ul>
+<hr>
+<blockquote>
+<p><strong>考试技巧：</strong> 多选不确定的不要选，拿部分分即可。RAG和微调的对比是高频考点，务必理解各自适用场景。Ragas四大指标的名词定义必须背诵，容易出选择题。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/1fb3a2c8.html">https://raidenxe.github.io/archives/1fb3a2c8.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/ACP/">ACP</a><a class="post-meta__tags" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a><a class="post-meta__tags" href="/tags/%E9%98%BF%E9%87%8C%E4%BA%91/">阿里云</a><a class="post-meta__tags" href="/tags/%E8%80%83%E8%AF%95%E7%AC%94%E8%AE%B0/">考试笔记</a></div><div class="post-share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/archives/1fb3a2c9.html" title="ACP大模型C3笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">ACP大模型C3笔记</div></div><div class="info-2"><div class="info-item-1">阿里云大模型ACP认证 · C3 构建Agent系统 知识点总结 目录 Agent概述与课程体系 Agent基础与工具调用 Agent规划与执行 多Agent团队协作 Agent记忆系统 Skill技能封装 Agent评测驱动开发 Qwen Code实践 Harness Engineering与Loop Engineering 考试重点与权重分布   1. Agent概述与课程体系1.1 从LLM到Agent的跃迁LLM的四大天花板：    局限 说明    只会说不会做 能告诉你”可以去天气App查”，但自己不会查   没有记忆 上下文窗口一满就”失忆”，跨会话什么都没留下   知识截止 训练数据有截止日期，实时信息不知道   不会规划 让做”竞品分析”，只会线性回答，不会自己拆解步骤   Agent的定义： Agent &#x3D; LLM + 工具 + 记忆 + 规划，在循环中自主完成目标。 LLM vs Agent 的本质区别：  LLM：告诉你怎么做（建议） Agent：直接帮你做完（执行）  1.2 Agent的完整四模块   模块 角色 职责    LLM（大脑） ...</div></div></div></a><a class="pagination-related" href="/archives/ab2a157c.html" title="bocker笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg3.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">bocker笔记</div></div><div class="info-2"><div class="info-item-1">Bocker 源码深度解析 —— 100 行 Bash 实现的容器运行时 目录 什么是 Bocker 架构概览：四层核心技术 源码逐层深度解析 核心技术原理深度探讨 Bocker 与 Docker 的对比 设计缺陷与改进方向   1. 什么是 BockerBocker 是一个用 约 100 行 Bash 脚本 实现的极简容器运行时，由英国系统工程师 Peter Wilmott 创建。它并非用于生产环境，而是通过最精简的代码，揭示 Docker 等容器技术的核心本质——利用 Linux 内核的命名空间（Namespaces）、控制组（Cgroups）、Btrfs 文件系统、veth pair 等特性，组合出一个隔离的执行环境。  项目地址：p8952&#x2F;bocker（已归档）  1.1 整体架构123456789101112131415┌─────────────────────────────────────────────────────────────────┐│                        Bocker 脚本                    ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/archives/1fb3a2d0.html" title="ACP大模型C4笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg3.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-24</div><div class="info-item-2">ACP大模型C4笔记</div></div><div class="info-2"><div class="info-item-1">阿里云大模型ACP认证 · C4 交付上线 知识点总结 目录 生产环境概述 模型蒸馏 模型部署 大模型应用生产实践 大模型应用安全合规 考试重点与权重分布   1. 生产环境概述1.1 从开发到生产的三大挑战系统从开发环境走向生产环境要解决三个核心问题：    挑战 说明 对应课时    成本 每次调用大模型API都要花钱，100人同时使用月Token费用是多少 4.1 蒸馏   部署 怎么部署到服务器、保证高可用、监控运行状态 4.2 部署模型   安全合规 用户输入泄露敏感信息、模型输出不当内容、合规要求 4.4 安全合规   1.2 课程结构   课时 标题 核心知识点    4.1 用蒸馏让小模型掌握专业能力 数据合成蒸馏、推理过程蒸馏、蒸馏 vs 微调   4.2 部署模型 API调用、PAI部署、私有化部署、推理优化   4.3 大模型应用生产实践 需求分析、性能&#x2F;成本优化、稳定性、可观测性   4.4 大模型应用安全合规 提示词注入、内容安全、数据隐私、安全护栏    2. 模型蒸馏2.1 蒸馏的背景与动机生产中的实际问题： 每条请求都先过一遍大模型，只为...</div></div></div></a><a class="pagination-related" href="/archives/1fb3a2c9.html" title="ACP大模型C3笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-24</div><div class="info-item-2">ACP大模型C3笔记</div></div><div class="info-2"><div class="info-item-1">阿里云大模型ACP认证 · C3 构建Agent系统 知识点总结 目录 Agent概述与课程体系 Agent基础与工具调用 Agent规划与执行 多Agent团队协作 Agent记忆系统 Skill技能封装 Agent评测驱动开发 Qwen Code实践 Harness Engineering与Loop Engineering 考试重点与权重分布   1. Agent概述与课程体系1.1 从LLM到Agent的跃迁LLM的四大天花板：    局限 说明    只会说不会做 能告诉你”可以去天气App查”，但自己不会查   没有记忆 上下文窗口一满就”失忆”，跨会话什么都没留下   知识截止 训练数据有截止日期，实时信息不知道   不会规划 让做”竞品分析”，只会线性回答，不会自己拆解步骤   Agent的定义： Agent &#x3D; LLM + 工具 + 记忆 + 规划，在循环中自主完成目标。 LLM vs Agent 的本质区别：  LLM：告诉你怎么做（建议） Agent：直接帮你做完（执行）  1.2 Agent的完整四模块   模块 角色 职责    LLM（大脑） ...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Raidenxe</div><div class="author-info-description">向着真理和自由，无名的献身。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%98%BF%E9%87%8C%E4%BA%91%E5%A4%A7%E6%A8%A1%E5%9E%8BACP%E8%AE%A4%E8%AF%81-%C2%B7-C2-%E6%9E%84%E9%80%A0%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F-%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93"><span class="toc-number">1.</span> <span class="toc-text">阿里云大模型ACP认证 · C2 构造问答系统 知识点总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF%E4%B8%8E%E8%AF%BE%E7%A8%8B%E4%BD%93%E7%B3%BB"><span class="toc-number">1.2.</span> <span class="toc-text">1. 项目背景与课程体系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E9%A1%B9%E7%9B%AE%E5%9C%BA%E6%99%AF"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.1 项目场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">1.2.2.</span> <span class="toc-text">1.2 解决方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E8%AF%BE%E7%A8%8B%E7%BB%93%E6%9E%84"><span class="toc-number">1.2.3.</span> <span class="toc-text">1.3 课程结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%A4%A7%E6%A8%A1%E5%9E%8BAPI%E8%B0%83%E7%94%A8%E4%B8%8E%E5%A4%9A%E8%BD%AE%E5%AF%B9%E8%AF%9D"><span class="toc-number">1.3.</span> <span class="toc-text">2. 大模型API调用与多轮对话</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-API%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1 API配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9F%BA%E7%A1%80%E5%AF%B9%E8%AF%9D%E8%B0%83%E7%94%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.2 基础对话调用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%A4%9A%E8%BD%AE%E5%AF%B9%E8%AF%9D"><span class="toc-number">1.3.3.</span> <span class="toc-text">2.3 多轮对话</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E6%B5%81%E5%BC%8F%E8%BE%93%E5%87%BA"><span class="toc-number">1.3.4.</span> <span class="toc-text">2.4 流式输出</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E4%B8%8E%E7%94%9F%E6%88%90%E5%8F%82%E6%95%B0"><span class="toc-number">1.4.</span> <span class="toc-text">3. 大模型工作原理与生成参数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E6%96%87%E6%9C%AC%E7%94%9F%E6%88%90%E4%BA%94%E9%98%B6%E6%AE%B5"><span class="toc-number">1.4.1.</span> <span class="toc-text">3.1 文本生成五阶段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-Token%E6%A6%82%E5%BF%B5"><span class="toc-number">1.4.2.</span> <span class="toc-text">3.2 Token概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E7%94%9F%E6%88%90%E5%8F%82%E6%95%B0%EF%BC%88%E5%BF%85%E8%80%83%EF%BC%89"><span class="toc-number">1.4.3.</span> <span class="toc-text">3.3 生成参数（必考）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">1.4.4.</span> <span class="toc-text">3.4 大模型的局限性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-RAG%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90"><span class="toc-number">1.5.</span> <span class="toc-text">4. RAG检索增强生成</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="toc-number">1.5.1.</span> <span class="toc-text">4.1 核心概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-RAG%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">1.5.2.</span> <span class="toc-text">4.2 RAG工作流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BB%BA%E7%AB%8B%E7%B4%A2%E5%BC%95%E9%98%B6%E6%AE%B5"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">建立索引阶段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A3%80%E7%B4%A2%E7%94%9F%E6%88%90%E9%98%B6%E6%AE%B5"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">检索生成阶段</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E4%BD%BF%E7%94%A8LlamaIndex%E6%9E%84%E5%BB%BARAG"><span class="toc-number">1.5.3.</span> <span class="toc-text">4.3 使用LlamaIndex构建RAG</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-RAG%E5%A4%9A%E8%BD%AE%E5%AF%B9%E8%AF%9D%E7%9A%84%E6%8C%91%E6%88%98"><span class="toc-number">1.5.4.</span> <span class="toc-text">4.4 RAG多轮对话的挑战</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-%E4%B8%8A%E4%B8%8B%E6%96%87%E5%B7%A5%E7%A8%8B%EF%BC%88Context-Engineering%EF%BC%89"><span class="toc-number">1.5.5.</span> <span class="toc-text">4.5 上下文工程（Context Engineering）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B"><span class="toc-number">1.6.</span> <span class="toc-text">5. 提示词工程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E6%8F%90%E7%A4%BA%E8%AF%8D%E6%A1%86%E6%9E%B6%E8%A6%81%E7%B4%A0"><span class="toc-number">1.6.1.</span> <span class="toc-text">5.1 提示词框架要素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E6%8F%90%E7%A4%BA%E8%AF%8D%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.6.2.</span> <span class="toc-text">5.2 提示词模板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E6%8F%90%E7%A4%BA%E8%AF%8D%E6%8A%80%E5%B7%A7"><span class="toc-number">1.6.3.</span> <span class="toc-text">5.3 提示词技巧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E9%98%BF%E9%87%8C%E4%BA%91%E7%99%BE%E7%82%BC%E6%8F%90%E7%A4%BA%E8%AF%8D%E4%BC%98%E5%8C%96%E5%B7%A5%E5%85%B7"><span class="toc-number">1.6.4.</span> <span class="toc-text">5.4 阿里云百炼提示词优化工具</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%87%AA%E5%8A%A8%E5%8C%96%E8%AF%84%E6%B5%8B%E4%BD%93%E7%B3%BB"><span class="toc-number">1.7.</span> <span class="toc-text">6. 自动化评测体系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E8%AF%84%E6%B5%8B%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7"><span class="toc-number">1.7.1.</span> <span class="toc-text">6.1 评测的重要性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-Ragas%E6%A1%86%E6%9E%B6"><span class="toc-number">1.7.2.</span> <span class="toc-text">6.2 Ragas框架</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%84%E4%BC%B0%E6%8C%87%E6%A0%87"><span class="toc-number">1.7.2.1.</span> <span class="toc-text">评估指标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.7.2.2.</span> <span class="toc-text">使用示例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-TruLens%E6%A1%86%E6%9E%B6"><span class="toc-number">1.7.3.</span> <span class="toc-text">6.3 TruLens框架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-DeepEval%E6%A1%86%E6%9E%B6"><span class="toc-number">1.7.4.</span> <span class="toc-text">6.4 DeepEval框架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-5-%E8%87%AA%E5%AE%9A%E4%B9%89%E8%AF%84%E6%B5%8B%E6%A1%86%E6%9E%B6"><span class="toc-number">1.7.5.</span> <span class="toc-text">6.5 自定义评测框架</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-RAG%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5"><span class="toc-number">1.8.</span> <span class="toc-text">7. RAG优化策略</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E5%A2%9E%E5%8A%A0%E5%8F%AC%E5%9B%9E%E6%95%B0%E9%87%8F"><span class="toc-number">1.8.1.</span> <span class="toc-text">7.1 增加召回数量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E6%96%87%E6%A1%A3%E5%86%85%E5%AE%B9%E7%BB%93%E6%9E%84%E5%8C%96"><span class="toc-number">1.8.2.</span> <span class="toc-text">7.2 文档内容结构化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-RAG%E5%85%A8%E9%93%BE%E8%B7%AF%E4%BC%98%E5%8C%96"><span class="toc-number">1.8.3.</span> <span class="toc-text">7.3 RAG全链路优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E6%A1%A3%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5"><span class="toc-number">1.8.3.1.</span> <span class="toc-text">文档准备阶段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A3%80%E7%B4%A2%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5"><span class="toc-number">1.8.3.2.</span> <span class="toc-text">检索优化策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%87%E7%89%87%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5"><span class="toc-number">1.8.3.3.</span> <span class="toc-text">切片优化策略</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-4-RAG-vs-%E5%BE%AE%E8%B0%83"><span class="toc-number">1.8.4.</span> <span class="toc-text">7.4 RAG vs 微调</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E8%80%83%E8%AF%95%E9%87%8D%E7%82%B9%E4%B8%8E%E6%9D%83%E9%87%8D%E5%88%86%E5%B8%83"><span class="toc-number">1.9.</span> <span class="toc-text">8. 考试重点与权重分布</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E5%90%84%E7%AB%A0%E8%8A%82%E8%80%83%E7%82%B9%E6%9D%83%E9%87%8D"><span class="toc-number">1.9.1.</span> <span class="toc-text">8.1 各章节考点权重</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-%E8%80%83%E8%AF%95%E8%A7%84%E5%88%99"><span class="toc-number">1.9.2.</span> <span class="toc-text">8.2 考试规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-3-C2%E7%AB%A0%E8%8A%82%E6%A0%B8%E5%BF%83%E8%80%83%E7%82%B9%E9%80%9F%E8%AE%B0"><span class="toc-number">1.9.3.</span> <span class="toc-text">8.3 C2章节核心考点速记</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/61196baf.html" title="Jenkins-CICD实战"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins-CICD实战"/></a><div class="content"><a class="title" href="/archives/61196baf.html" title="Jenkins-CICD实战">Jenkins-CICD实战</a><time datetime="2026-08-11T17:09:47.000Z" title="发表于 2026-08-12 01:09:47">2026-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a3e16fea.html" title="面试题1"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试题1"/></a><div class="content"><a class="title" href="/archives/a3e16fea.html" title="面试题1">面试题1</a><time datetime="2026-08-11T14:53:55.000Z" title="发表于 2026-08-11 22:53:55">2026-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/35864571.html" title="docker部署jenkins"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署jenkins"/></a><div class="content"><a class="title" href="/archives/35864571.html" title="docker部署jenkins">docker部署jenkins</a><time datetime="2026-08-10T05:55:00.000Z" title="发表于 2026-08-10 13:55:00">2026-08-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/be6d62ff.html" title="docker部署gitlab"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署gitlab"/></a><div class="content"><a class="title" href="/archives/be6d62ff.html" title="docker部署gitlab">docker部署gitlab</a><time datetime="2026-08-08T07:16:03.000Z" title="发表于 2026-08-08 15:16:03">2026-08-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260807160530247.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s+Helm部署kube-prometheus-stack"/></a><div class="content"><a class="title" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack">K8s+Helm部署kube-prometheus-stack</a><time datetime="2026-08-07T07:12:03.000Z" title="发表于 2026-08-07 15:12:03">2026-08-07</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2020 - 2026 By Raidenxe</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5"></script><script src="/js/main.js?v=5.5.5"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="false"> </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5"></script></div></div></body></html>

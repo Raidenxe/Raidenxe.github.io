@@ -1,0 +1,1030 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Kubernetes CoreDNS 与 Ingress Nginx 实验笔记 | Raidenxe的博客</title><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Kubernetes CoreDNS 与 Ingress Nginx 实验笔记 实验环境  Kubernetes v1.35.1 (minikube) 容器运行时: containerd 2.2.1 节点: minikube (control-plane), 单节点 节点IP: 192.168..."><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Kubernetes CoreDNS 与 Ingress Nginx 实验笔记",
+  "url": "https://raidenxe.github.io/archives/f73e93c1.html",
+  "image": "https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260802095209559.png",
+  "datePublished": "2026-08-04T07:00:55.000Z",
+  "dateModified": "2026-08-04T07:09:38.975Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Raidenxe",
+      "url": "https://Raidenxe.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/f73e93c1.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css?v=5.5.5"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Kubernetes CoreDNS 与 Ingress Nginx 实验笔记',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/macblack.css"><style>
+  #web_bg{background-image:url(/img/风景006.png)}
+  #footer{background-image:url(/img/风景008.png);background-size:cover;background-position:center}
+  .aplayer-lrc{display:none !important}
+</style>
+<meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/%E9%A3%8E%E6%99%AF006.png));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260802095209559.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Raidenxe的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Kubernetes CoreDNS 与 Ingress Nginx 实验笔记</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Kubernetes CoreDNS 与 Ingress Nginx 实验笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-04T07:00:55.000Z" title="发表于 2026-08-04 15:00:55">2026-08-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-08-04T07:09:38.975Z" title="更新于 2026-08-04 15:09:38">2026-08-04</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>32分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Kubernetes-CoreDNS-与-Ingress-Nginx-实验笔记"><a href="#Kubernetes-CoreDNS-与-Ingress-Nginx-实验笔记" class="headerlink" title="Kubernetes CoreDNS 与 Ingress Nginx 实验笔记"></a>Kubernetes CoreDNS 与 Ingress Nginx 实验笔记</h1><blockquote>
+<p><strong>实验环境</strong></p>
+<ul>
+<li>Kubernetes v1.35.1 (minikube)</li>
+<li>容器运行时: containerd 2.2.1</li>
+<li>节点: minikube (control-plane), 单节点</li>
+<li>节点IP: 192.168.39.112</li>
+<li>操作系统: Buildroot 2025.02</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ol>
+<li><a href="#%E5%AE%9E%E9%AA%8C%E4%B8%80coredns-%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%86%85%E9%83%A8%E6%9C%8D%E5%8A%A1%E8%A7%A3%E6%9E%90">实验一：CoreDNS 部署与内部服务解析</a></li>
+<li><a href="#%E5%AE%9E%E9%AA%8C%E4%BA%8Cingress-nginx-%E6%8E%A7%E5%88%B6%E5%99%A8%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%AB%98%E7%BA%A7%E8%B7%AF%E7%94%B1">实验二：Ingress Nginx 控制器部署与高级路由</a></li>
+<li><a href="#%E5%AE%9E%E9%AA%8C%E4%B8%89%E7%81%B0%E5%BA%A6%E5%8F%91%E5%B8%83%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83%E5%AE%9E%E9%AA%8C">实验三：灰度发布（金丝雀发布）实验</a></li>
+<li><a href="#%E5%AE%9E%E9%AA%8C%E6%80%BB%E7%BB%93">实验总结</a></li>
+</ol>
+<hr>
+<h2 id="实验一：CoreDNS-部署与内部服务解析"><a href="#实验一：CoreDNS-部署与内部服务解析" class="headerlink" title="实验一：CoreDNS 部署与内部服务解析"></a>实验一：CoreDNS 部署与内部服务解析</h2><h3 id="1-1-CoreDNS-组件概述"><a href="#1-1-CoreDNS-组件概述" class="headerlink" title="1.1 CoreDNS 组件概述"></a>1.1 CoreDNS 组件概述</h3><p>CoreDNS 是 Kubernetes 的默认 DNS 组件，负责集群内部的服务发现和域名解析。它通过监听 Kubernetes API Server 的 Service 和 Pod 变化，动态生成 DNS 记录。</p>
+<p><strong>CoreDNS 的核心功能：</strong></p>
+<ul>
+<li><strong>服务发现</strong>：将 Service 名称解析为 ClusterIP 或 Pod IP</li>
+<li><strong>Pod 解析</strong>：支持将 Pod IP 反向解析为 DNS 名称</li>
+<li><strong>外部 DNS 转发</strong>：将集群外部的域名请求转发到上游 DNS 服务器</li>
+</ul>
+<h3 id="1-2-CoreDNS-部署架构"><a href="#1-2-CoreDNS-部署架构" class="headerlink" title="1.2 CoreDNS 部署架构"></a>1.2 CoreDNS 部署架构</h3><h4 id="1-2-1-查看-CoreDNS-部署状态"><a href="#1-2-1-查看-CoreDNS-部署状态" class="headerlink" title="1.2.1 查看 CoreDNS 部署状态"></a>1.2.1 查看 CoreDNS 部署状态</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看 CoreDNS Pod</span></span><br><span class="line">kubectl get pods -n kube-system -l k8s-app=kube-dns -o wide</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出:</span></span><br><span class="line">NAME                      READY   STATUS    RESTARTS   AGE   IP            NODE</span><br><span class="line">coredns-764897d7b-xsqdv   1/1     Running   2          47h   10.244.0.20   minikube</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-2-查看-CoreDNS-服务"><a href="#1-2-2-查看-CoreDNS-服务" class="headerlink" title="1.2.2 查看 CoreDNS 服务"></a>1.2.2 查看 CoreDNS 服务</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc -n kube-system kube-dns -o yaml</span><br></pre></td></tr></table></figure>
+
+<p><strong>kube-dns Service 配置：</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ClusterIP</td>
+<td>10.96.0.10</td>
+</tr>
+<tr>
+<td>端口</td>
+<td>53&#x2F;UDP (DNS), 53&#x2F;TCP (DNS), 9153&#x2F;TCP (metrics)</td>
+</tr>
+<tr>
+<td>选择器</td>
+<td>k8s-app: kube-dns</td>
+</tr>
+<tr>
+<td>类型</td>
+<td>ClusterIP</td>
+</tr>
+</tbody></table>
+<h4 id="1-2-3-CoreDNS-配置文件-Corefile"><a href="#1-2-3-CoreDNS-配置文件-Corefile" class="headerlink" title="1.2.3 CoreDNS 配置文件 (Corefile)"></a>1.2.3 CoreDNS 配置文件 (Corefile)</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get configmap -n kube-system coredns -o yaml</span><br></pre></td></tr></table></figure>
+
+<p><strong>Corefile 核心配置：</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">.:53</span> &#123;</span><br><span class="line">    <span class="string">log</span>                          <span class="comment"># 启用DNS查询日志</span></span><br><span class="line">    <span class="string">errors</span>                       <span class="comment"># 错误日志</span></span><br><span class="line">    <span class="string">health</span> &#123;</span><br><span class="line">       <span class="string">lameduck</span> <span class="string">5s</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="string">ready</span>                        <span class="comment"># 就绪检查</span></span><br><span class="line">    <span class="string">kubernetes</span> <span class="string">cluster.local</span> <span class="string">in-addr.arpa</span> <span class="string">ip6.arpa</span> &#123;</span><br><span class="line">       <span class="string">pods</span> <span class="string">insecure</span>             <span class="comment"># 启用Pod DNS记录</span></span><br><span class="line">       <span class="string">fallthrough</span> <span class="string">in-addr.arpa</span> <span class="string">ip6.arpa</span></span><br><span class="line">       <span class="string">ttl</span> <span class="number">30</span>                    <span class="comment"># DNS记录TTL=30秒</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="string">prometheus</span> <span class="string">:9153</span>             <span class="comment"># 监控指标</span></span><br><span class="line">    <span class="string">hosts</span> &#123;</span><br><span class="line">       <span class="number">192.168</span><span class="number">.39</span><span class="number">.1</span> <span class="string">host.minikube.internal</span>  <span class="comment"># 宿主机映射</span></span><br><span class="line">       <span class="string">fallthrough</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="string">forward</span> <span class="string">.</span> <span class="string">/etc/resolv.conf</span> &#123;  <span class="comment"># 外部DNS转发</span></span><br><span class="line">       <span class="string">max_concurrent</span> <span class="number">1000</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="string">cache</span> <span class="number">30</span> &#123;</span><br><span class="line">       <span class="string">disable</span> <span class="string">success</span> <span class="string">cluster.local</span>   <span class="comment"># 不对cluster.local启用缓存</span></span><br><span class="line">       <span class="string">disable</span> <span class="string">denial</span> <span class="string">cluster.local</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="string">loop</span>                          <span class="comment"># 环路检测</span></span><br><span class="line">    <span class="string">reload</span>                        <span class="comment"># 自动重载</span></span><br><span class="line">    <span class="string">loadbalance</span>                   <span class="comment"># DNS负载均衡</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-CoreDNS-工作原理分析"><a href="#1-3-CoreDNS-工作原理分析" class="headerlink" title="1.3 CoreDNS 工作原理分析"></a>1.3 CoreDNS 工作原理分析</h3><h4 id="1-3-1-DNS-记录生成规则"><a href="#1-3-1-DNS-记录生成规则" class="headerlink" title="1.3.1 DNS 记录生成规则"></a>1.3.1 DNS 记录生成规则</h4><p>CoreDNS 通过 <code>kubernetes</code> 插件监听 Kubernetes API Server，自动为 Service 和 Pod 生成 DNS 记录。</p>
+<p><strong>Service DNS 记录格式：</strong></p>
+<table>
+<thead>
+<tr>
+<th>记录类型</th>
+<th>格式</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ClusterIP Service</td>
+<td><code>&lt;service&gt;.&lt;namespace&gt;.svc.cluster.local</code></td>
+<td><code>mysql.m68.svc.cluster.local</code> → <code>10.105.163.57</code></td>
+</tr>
+<tr>
+<td>Headless Service</td>
+<td><code>&lt;service&gt;.&lt;namespace&gt;.svc.cluster.local</code></td>
+<td><code>mysql-headless.m68.svc.cluster.local</code> → <code>10.244.0.21</code> (Pod IP)</td>
+</tr>
+<tr>
+<td>ExternalName Service</td>
+<td><code>&lt;service&gt;.&lt;namespace&gt;.svc.cluster.local</code></td>
+<td>返回 CNAME 记录</td>
+</tr>
+<tr>
+<td>Pod</td>
+<td><code>&lt;pod-ip&gt;.&lt;namespace&gt;.pod.cluster.local</code></td>
+<td><code>10-244-0-21.m68.pod.cluster.local</code></td>
+</tr>
+</tbody></table>
+<p><strong>域名规范说明：</strong></p>
+<ul>
+<li><code>svc</code>：Service 记录子域</li>
+<li><code>cluster.local</code>：集群域名（可通过 <code>--cluster-domain</code> 配置）</li>
+<li>短名称解析：Pod 可通过 <code>&lt;service&gt;</code> 直接访问同一 Namespace 下的 Service</li>
+</ul>
+<h4 id="1-3-2-解析流程"><a href="#1-3-2-解析流程" class="headerlink" title="1.3.2 解析流程"></a>1.3.2 解析流程</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">用户请求: mysql.m68.svc.cluster.local</span><br><span class="line">                    ↓</span><br><span class="line">            Pod /etc/resolv.conf</span><br><span class="line">    search m68.svc.cluster.local svc.cluster.local cluster.local</span><br><span class="line">    nameserver 10.96.0.10</span><br><span class="line">                    ↓</span><br><span class="line">          CoreDNS (10.96.0.10:53)</span><br><span class="line">                    ↓</span><br><span class="line">    ┌──── kubernetes 插件 ────┐</span><br><span class="line">    │ 查询API Server获取Service │</span><br><span class="line">    │ 返回 A/AAAA 记录         │</span><br><span class="line">    └─────────────────────────┘</span><br><span class="line">                    ↓</span><br><span class="line">            返回 DNS 响应</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-4-DNS-解析测试验证"><a href="#1-4-DNS-解析测试验证" class="headerlink" title="1.4 DNS 解析测试验证"></a>1.4 DNS 解析测试验证</h3><h4 id="1-4-1-查看-Pod-DNS-配置"><a href="#1-4-1-查看-Pod-DNS-配置" class="headerlink" title="1.4.1 查看 Pod DNS 配置"></a>1.4.1 查看 Pod DNS 配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- <span class="built_in">cat</span> /etc/resolv.conf</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">search m68.svc.cluster.local svc.cluster.local cluster.local</span><br><span class="line">nameserver 10.96.0.10</span><br><span class="line">options ndots:5</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置说明：</strong></p>
+<ul>
+<li><code>nameserver 10.96.0.10</code>：CoreDNS 服务的 ClusterIP</li>
+<li><code>search</code> 域搜索列表：短名称解析时按顺序追加</li>
+<li><code>ndots:5</code>：域名中点数少于 5 时，先尝试搜索域</li>
+</ul>
+<h4 id="1-4-2-ClusterIP-Service-解析测试"><a href="#1-4-2-ClusterIP-Service-解析测试" class="headerlink" title="1.4.2 ClusterIP Service 解析测试"></a>1.4.2 ClusterIP Service 解析测试</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- nslookup mysql.m68.svc.cluster.local</span><br></pre></td></tr></table></figure>
+
+<p><strong>结果：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Server:         10.96.0.10</span><br><span class="line">Address:        10.96.0.10#53</span><br><span class="line"></span><br><span class="line">Name:   mysql.m68.svc.cluster.local</span><br><span class="line">Address: 10.105.163.57</span><br></pre></td></tr></table></figure>
+
+<p><strong>分析：</strong> ClusterIP Service <code>mysql</code> 解析到 <code>10.105.163.57</code>，这是 Service 的 ClusterIP，请求将被 kube-proxy 负载均衡到后端 Pod。</p>
+<h4 id="1-4-3-Headless-Service-解析测试"><a href="#1-4-3-Headless-Service-解析测试" class="headerlink" title="1.4.3 Headless Service 解析测试"></a>1.4.3 Headless Service 解析测试</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- nslookup mysql-headless.m68.svc.cluster.local</span><br></pre></td></tr></table></figure>
+
+<p><strong>结果：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Server:         10.96.0.10</span><br><span class="line">Address:        10.96.0.10#53</span><br><span class="line"></span><br><span class="line">Name:   mysql-headless.m68.svc.cluster.local</span><br><span class="line">Address: 10.244.0.21</span><br></pre></td></tr></table></figure>
+
+<p><strong>分析：</strong> Headless Service (<code>clusterIP: None</code>) 直接返回 Pod IP <code>10.244.0.21</code>，而不是 ClusterIP。客户端可以直接访问 Pod。</p>
+<h4 id="1-4-4-短名称解析测试"><a href="#1-4-4-短名称解析测试" class="headerlink" title="1.4.4 短名称解析测试"></a>1.4.4 短名称解析测试</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- nslookup mysql</span><br></pre></td></tr></table></figure>
+
+<p><strong>结果：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Server:         10.96.0.10</span><br><span class="line">Address:        10.96.0.10#53</span><br><span class="line"></span><br><span class="line">Name:   mysql.m68.svc.cluster.local</span><br><span class="line">Address: 10.105.163.57</span><br></pre></td></tr></table></figure>
+
+<p><strong>分析：</strong> 短名称 <code>mysql</code> 通过搜索域 <code>m68.svc.cluster.local</code> 补全为 <code>mysql.m68.svc.cluster.local</code>，成功解析。</p>
+<h4 id="1-4-5-其他-DNS-解析测试"><a href="#1-4-5-其他-DNS-解析测试" class="headerlink" title="1.4.5 其他 DNS 解析测试"></a>1.4.5 其他 DNS 解析测试</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Kubernetes API Service</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- nslookup kubernetes.default.svc.cluster.local</span><br><span class="line"><span class="comment"># 结果: 10.96.0.1 (API Server ClusterIP)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 宿主机映射</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- nslookup host.minikube.internal</span><br><span class="line"><span class="comment"># 结果: 192.168.39.1 (宿主机)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 外部域名解析 (通过forward插件)</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- nslookup www.baidu.com</span><br><span class="line"><span class="comment"># 结果: 183.2.172.177 (外部DNS解析)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># WordPress Service</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- nslookup wordpress.m68.svc.cluster.local</span><br><span class="line"><span class="comment"># 结果: 10.105.145.225 (WordPress LoadBalancer ClusterIP)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="1-4-6-使用-dig-命令查看详细记录"><a href="#1-4-6-使用-dig-命令查看详细记录" class="headerlink" title="1.4.6 使用 dig 命令查看详细记录"></a>1.4.6 使用 dig 命令查看详细记录</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ClusterIP Service A记录</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- dig mysql.m68.svc.cluster.local A +short</span><br><span class="line"><span class="comment"># 输出: 10.105.163.57</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Headless Service A记录 (返回Pod IP)</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- dig mysql-headless.m68.svc.cluster.local A +short</span><br><span class="line"><span class="comment"># 输出: 10.244.0.21</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-5-DNS-解析结果汇总"><a href="#1-5-DNS-解析结果汇总" class="headerlink" title="1.5 DNS 解析结果汇总"></a>1.5 DNS 解析结果汇总</h3><table>
+<thead>
+<tr>
+<th>查询目标</th>
+<th>域名格式</th>
+<th>解析结果</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ClusterIP Service</td>
+<td><code>mysql.m68.svc.cluster.local</code></td>
+<td><code>10.105.163.57</code></td>
+<td>返回 Service ClusterIP</td>
+</tr>
+<tr>
+<td>ClusterIP (短名称)</td>
+<td><code>mysql</code></td>
+<td><code>10.105.163.57</code></td>
+<td>搜索域自动补全</td>
+</tr>
+<tr>
+<td>Headless Service</td>
+<td><code>mysql-headless.m68.svc.cluster.local</code></td>
+<td><code>10.244.0.21</code></td>
+<td>直接返回 Pod IP</td>
+</tr>
+<tr>
+<td>Headless (短名称)</td>
+<td><code>mysql-headless</code></td>
+<td><code>10.244.0.21</code></td>
+<td>搜索域自动补全</td>
+</tr>
+<tr>
+<td>API Service</td>
+<td><code>kubernetes.default.svc.cluster.local</code></td>
+<td><code>10.96.0.1</code></td>
+<td>API Server 地址</td>
+</tr>
+<tr>
+<td>宿主机</td>
+<td><code>host.minikube.internal</code></td>
+<td><code>192.168.39.1</code></td>
+<td>Corefile 静态映射</td>
+</tr>
+<tr>
+<td>外部域名</td>
+<td><code>www.baidu.com</code></td>
+<td><code>183.2.172.177</code></td>
+<td>通过 forward 转发</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="实验二：Ingress-Nginx-控制器部署与高级路由"><a href="#实验二：Ingress-Nginx-控制器部署与高级路由" class="headerlink" title="实验二：Ingress Nginx 控制器部署与高级路由"></a>实验二：Ingress Nginx 控制器部署与高级路由</h2><h3 id="2-1-Ingress-Nginx-控制器概述"><a href="#2-1-Ingress-Nginx-控制器概述" class="headerlink" title="2.1 Ingress Nginx 控制器概述"></a>2.1 Ingress Nginx 控制器概述</h3><p>Ingress Nginx 是 Kubernetes 官方维护的 Ingress 控制器实现，基于 NGINX 反向代理，提供 HTTP&#x2F;HTTPS 路由功能。</p>
+<p><strong>核心功能：</strong></p>
+<ul>
+<li><strong>基于 URL 路径的路由</strong>：根据请求路径分发到不同后端服务</li>
+<li><strong>基于主机名的路由</strong>：根据 Host 头分发到不同后端服务</li>
+<li><strong>TLS&#x2F;SSL 终止</strong>：支持 HTTPS 证书配置</li>
+<li><strong>蓝绿发布</strong>：通过 Service 选择器切换实现流量控制</li>
+<li><strong>灰度发布</strong>：通过权重或请求头实现精细流量切分</li>
+</ul>
+<h3 id="2-2-Ingress-Nginx-控制器部署"><a href="#2-2-Ingress-Nginx-控制器部署" class="headerlink" title="2.2 Ingress Nginx 控制器部署"></a>2.2 Ingress Nginx 控制器部署</h3><h4 id="2-2-1-部署清单文件"><a href="#2-2-1-部署清单文件" class="headerlink" title="2.2.1 部署清单文件"></a>2.2.1 部署清单文件</h4><p>创建 <code>ingress-nginx-deploy.yaml</code>，包含以下组件：</p>
+<table>
+<thead>
+<tr>
+<th>资源类型</th>
+<th>名称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Namespace</td>
+<td><code>ingress-nginx</code></td>
+<td>控制器命名空间</td>
+</tr>
+<tr>
+<td>ServiceAccount</td>
+<td><code>ingress-nginx</code></td>
+<td>控制器服务账号</td>
+</tr>
+<tr>
+<td>ServiceAccount</td>
+<td><code>ingress-nginx-admission</code></td>
+<td>Webhook 服务账号</td>
+</tr>
+<tr>
+<td>ClusterRole</td>
+<td><code>ingress-nginx</code></td>
+<td>集群级别 RBAC 权限</td>
+</tr>
+<tr>
+<td>ClusterRole</td>
+<td><code>ingress-nginx-admission</code></td>
+<td>Webhook 集群权限</td>
+</tr>
+<tr>
+<td>ClusterRoleBinding</td>
+<td><code>ingress-nginx</code></td>
+<td>集群角色绑定</td>
+</tr>
+<tr>
+<td>Role</td>
+<td><code>ingress-nginx</code></td>
+<td>命名空间级别 RBAC</td>
+</tr>
+<tr>
+<td>ConfigMap</td>
+<td><code>ingress-nginx-controller</code></td>
+<td>控制器配置</td>
+</tr>
+<tr>
+<td>Service</td>
+<td><code>ingress-nginx-controller</code></td>
+<td>NodePort 类型暴露服务</td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td><code>ingress-nginx-controller</code></td>
+<td>控制器 Deployment</td>
+</tr>
+<tr>
+<td>ValidatingWebhookConfiguration</td>
+<td><code>ingress-nginx-admission</code></td>
+<td>准入 Webhook</td>
+</tr>
+<tr>
+<td>Job</td>
+<td><code>ingress-nginx-admission-create</code></td>
+<td>证书创建 Job</td>
+</tr>
+<tr>
+<td>Job</td>
+<td><code>ingress-nginx-admission-patch</code></td>
+<td>Webhook 配置修补 Job</td>
+</tr>
+</tbody></table>
+<p><strong>关键配置：</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Service 暴露方式 - NodePort</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">nodePort:</span> <span class="number">30080</span>    <span class="comment"># 宿主机映射端口</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">https</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">443</span></span><br><span class="line">    <span class="attr">nodePort:</span> <span class="number">30443</span>    <span class="comment"># 宿主机映射端口</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ConfigMap 优化配置</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">allow-snippet-annotations:</span> <span class="string">&quot;true&quot;</span></span><br><span class="line">  <span class="attr">use-forwarded-headers:</span> <span class="string">&quot;true&quot;</span></span><br><span class="line">  <span class="attr">proxy-body-size:</span> <span class="string">&quot;10m&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-2-部署命令"><a href="#2-2-2-部署命令" class="headerlink" title="2.2.2 部署命令"></a>2.2.2 部署命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f ingress-nginx-deploy.yaml</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-3-验证控制器状态"><a href="#2-2-3-验证控制器状态" class="headerlink" title="2.2.3 验证控制器状态"></a>2.2.3 验证控制器状态</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看 Pod 状态</span></span><br><span class="line">kubectl get pods -n ingress-nginx -o wide</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出:</span></span><br><span class="line">NAME                                        READY   STATUS    RESTARTS   AGE   IP            NODE</span><br><span class="line">ingress-nginx-controller-76845c5856-6fh8s   1/1     Running   0          5m    10.244.0.36   minikube</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 Service</span></span><br><span class="line">kubectl get svc -n ingress-nginx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出:</span></span><br><span class="line">NAME                                 TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)</span><br><span class="line">ingress-nginx-controller             NodePort   10.97.12.89   &lt;none&gt;        80:30080/TCP,443:30443/TCP</span><br><span class="line">ingress-nginx-controller-admission   ClusterIP  10.105.242.178 &lt;none&gt;       443/TCP</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 IngressClass</span></span><br><span class="line">kubectl get ingressclass</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出:</span></span><br><span class="line">NAME    CONTROLLER             PARAMETERS   AGE</span><br><span class="line">nginx   k8s.io/ingress-nginx   &lt;none&gt;       19m</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-后端服务部署"><a href="#2-3-后端服务部署" class="headerlink" title="2.3 后端服务部署"></a>2.3 后端服务部署</h3><h4 id="2-3-1-后端应用清单"><a href="#2-3-1-后端应用清单" class="headerlink" title="2.3.1 后端应用清单"></a>2.3.1 后端应用清单</h4><p>创建 <code>ingress-test-apps.yaml</code>，包含以下后端服务：</p>
+<p><strong>后端服务列表：</strong></p>
+<table>
+<thead>
+<tr>
+<th>应用名称</th>
+<th>说明</th>
+<th>监听端口</th>
+<th>镜像</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>app-nginx-backend</td>
+<td>路径路由后端1</td>
+<td>8888</td>
+<td>nginx-ingress-controller:v1.14.3</td>
+</tr>
+<tr>
+<td>app-coredns-backend</td>
+<td>路径路由后端2</td>
+<td>8888</td>
+<td>nginx-ingress-controller:v1.14.3</td>
+</tr>
+<tr>
+<td>app-blue-v1</td>
+<td>蓝绿发布-蓝色版本(v1)</td>
+<td>8888</td>
+<td>nginx-ingress-controller:v1.14.3</td>
+</tr>
+<tr>
+<td>app-green-v2</td>
+<td>蓝绿发布-绿色版本(v2)</td>
+<td>8888</td>
+<td>nginx-ingress-controller:v1.14.3</td>
+</tr>
+</tbody></table>
+<p><strong>注意：</strong> 使用 <code>nc -l -p 8888</code> 配合 <code>echo</code> 构建极简 HTTP 服务器，每个请求返回固定的 HTML 响应。</p>
+<h4 id="2-3-2-部署命令"><a href="#2-3-2-部署命令" class="headerlink" title="2.3.2 部署命令"></a>2.3.2 部署命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f ingress-test-apps.yaml</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-3-验证后端服务"><a href="#2-3-3-验证后端服务" class="headerlink" title="2.3.3 验证后端服务"></a>2.3.3 验证后端服务</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">wait</span> --<span class="keyword">for</span>=condition=ready pod -n ingress-test --all --<span class="built_in">timeout</span>=120s</span><br><span class="line">kubectl get pods -n ingress-test -o wide</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出:</span></span><br><span class="line">NAME                                   READY   STATUS    RESTARTS   AGE   IP            NODE</span><br><span class="line">app-blue-v1-8699c59786-pg49j           1/1     Running   0          11s   10.244.0.48   minikube</span><br><span class="line">app-coredns-backend-844bddc58d-q8xsb   1/1     Running   0          11s   10.244.0.47   minikube</span><br><span class="line">app-green-v2-c677dfb68-85j7r           1/1     Running   0          11s   10.244.0.49   minikube</span><br><span class="line">app-nginx-backend-6c5559d7c-bbqtl      1/1     Running   0          11s   10.244.0.46   minikube</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-Ingress-路由规则配置"><a href="#2-4-Ingress-路由规则配置" class="headerlink" title="2.4 Ingress 路由规则配置"></a>2.4 Ingress 路由规则配置</h3><h4 id="2-4-1-Ingress-规则清单"><a href="#2-4-1-Ingress-规则清单" class="headerlink" title="2.4.1 Ingress 规则清单"></a>2.4.1 Ingress 规则清单</h4><p>创建 <code>ingress-rules.yaml</code>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="comment"># Ingress 1: 基于URL路径的路由转发</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ingress-path-routing</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">ingress-test</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/rewrite-target:</span> <span class="string">/</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ingressClassName:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">app.example.com</span></span><br><span class="line">    <span class="attr">http:</span></span><br><span class="line">      <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/coredns</span></span><br><span class="line">        <span class="attr">pathType:</span> <span class="string">Prefix</span></span><br><span class="line">        <span class="attr">backend:</span></span><br><span class="line">          <span class="attr">service:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">svc-coredns</span></span><br><span class="line">            <span class="attr">port:</span></span><br><span class="line">              <span class="attr">number:</span> <span class="number">80</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/nginx</span></span><br><span class="line">        <span class="attr">pathType:</span> <span class="string">Prefix</span></span><br><span class="line">        <span class="attr">backend:</span></span><br><span class="line">          <span class="attr">service:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">svc-nginx-backend</span></span><br><span class="line">            <span class="attr">port:</span></span><br><span class="line">              <span class="attr">number:</span> <span class="number">80</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="comment"># Ingress 2: 蓝绿发布</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ingress-bluegreen</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">ingress-test</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ingressClassName:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">bluegreen.example.com</span></span><br><span class="line">    <span class="attr">http:</span></span><br><span class="line">      <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/</span></span><br><span class="line">        <span class="attr">pathType:</span> <span class="string">Prefix</span></span><br><span class="line">        <span class="attr">backend:</span></span><br><span class="line">          <span class="attr">service:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">svc-bluegreen</span></span><br><span class="line">            <span class="attr">port:</span></span><br><span class="line">              <span class="attr">number:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>路由规则说明：</strong></p>
+<table>
+<thead>
+<tr>
+<th>规则</th>
+<th>域名</th>
+<th>路径</th>
+<th>后端 Service</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>路径路由</td>
+<td><code>app.example.com</code></td>
+<td><code>/coredns</code></td>
+<td>svc-coredns:80</td>
+<td>请求转发到 CoreDNS 后端</td>
+</tr>
+<tr>
+<td>路径路由</td>
+<td><code>app.example.com</code></td>
+<td><code>/nginx</code></td>
+<td>svc-nginx-backend:80</td>
+<td>请求转发到 Nginx 后端</td>
+</tr>
+<tr>
+<td>蓝绿发布</td>
+<td><code>bluegreen.example.com</code></td>
+<td><code>/</code></td>
+<td>svc-bluegreen:80</td>
+<td>根据 Service 选择器切换版本</td>
+</tr>
+</tbody></table>
+<p><strong><code>rewrite-target</code> 注解说明：</strong> 将 <code>/coredns</code> 和 <code>/nginx</code> 路径重写为 <code>/</code>，使后端服务无需关心子路径。</p>
+<h4 id="2-4-2-部署-Ingress-规则"><a href="#2-4-2-部署-Ingress-规则" class="headerlink" title="2.4.2 部署 Ingress 规则"></a>2.4.2 部署 Ingress 规则</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f ingress-rules.yaml</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-4-3-验证-Ingress-状态"><a href="#2-4-3-验证-Ingress-状态" class="headerlink" title="2.4.3 验证 Ingress 状态"></a>2.4.3 验证 Ingress 状态</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl get ingress -n ingress-test -o wide</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出:</span></span><br><span class="line">NAME                   CLASS   HOSTS                   ADDRESS       PORTS   AGE</span><br><span class="line">ingress-bluegreen      nginx   bluegreen.example.com   10.97.12.89   80      2m</span><br><span class="line">ingress-path-routing   nginx   app.example.com         10.97.12.89   80      2m</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-5-基于-URL-路径的路由实验"><a href="#2-5-基于-URL-路径的路由实验" class="headerlink" title="2.5 基于 URL 路径的路由实验"></a>2.5 基于 URL 路径的路由实验</h3><h4 id="2-5-1-测试原理"><a href="#2-5-1-测试原理" class="headerlink" title="2.5.1 测试原理"></a>2.5.1 测试原理</h4><p>通过设置不同的 Host 头和 URL 路径，Ingress 控制器根据规则将请求转发到对应的后端服务。</p>
+<h4 id="2-5-2-测试命令与结果"><a href="#2-5-2-测试命令与结果" class="headerlink" title="2.5.2 测试命令与结果"></a>2.5.2 测试命令与结果</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试 /coredns 路径 (从集群内)</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- curl -s -H <span class="string">&quot;Host: app.example.com&quot;</span> http://10.97.12.89/coredns</span><br><span class="line"><span class="comment"># 输出: &lt;h1&gt;CoreDNS Backend - Ingress Test&lt;/h1&gt;&lt;p&gt;This is the CoreDNS path backend&lt;/p&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试 /nginx 路径 (从集群内)</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- curl -s -H <span class="string">&quot;Host: app.example.com&quot;</span> http://10.97.12.89/nginx</span><br><span class="line"><span class="comment"># 输出: &lt;h1&gt;Nginx Backend - Ingress Test&lt;/h1&gt;&lt;p&gt;Pod: &lt;/p&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 从宿主机通过 NodePort 验证</span></span><br><span class="line">curl -s -H <span class="string">&quot;Host: app.example.com&quot;</span> http://192.168.39.112:30080/coredns</span><br><span class="line"><span class="comment"># 输出: &lt;h1&gt;CoreDNS Backend - Ingress Test&lt;/h1&gt;&lt;p&gt;This is the CoreDNS path backend&lt;/p&gt;</span></span><br><span class="line"></span><br><span class="line">curl -s -H <span class="string">&quot;Host: app.example.com&quot;</span> http://192.168.39.112:30080/nginx</span><br><span class="line"><span class="comment"># 输出: &lt;h1&gt;Nginx Backend - Ingress Test&lt;/h1&gt;&lt;p&gt;Pod: &lt;/p&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-5-3-路由示意图"><a href="#2-5-3-路由示意图" class="headerlink" title="2.5.3 路由示意图"></a>2.5.3 路由示意图</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">请求: app.example.com/coredns</span><br><span class="line">        ↓</span><br><span class="line">    Ingress Controller (10.97.12.89:80)</span><br><span class="line">        ↓</span><br><span class="line">    重写路径: /coredns → /</span><br><span class="line">        ↓</span><br><span class="line">    svc-coredns:80 (ClusterIP: 10.105.112.41)</span><br><span class="line">        ↓</span><br><span class="line">    app-coredns-backend Pod (10.244.0.47:8888)</span><br><span class="line">        ↓</span><br><span class="line">    响应: &quot;CoreDNS Backend&quot;</span><br><span class="line"></span><br><span class="line">请求: app.example.com/nginx</span><br><span class="line">        ↓</span><br><span class="line">    Ingress Controller (10.97.12.89:80)</span><br><span class="line">        ↓</span><br><span class="line">    重写路径: /nginx → /</span><br><span class="line">        ↓</span><br><span class="line">    svc-nginx-backend:80 (ClusterIP: 10.98.190.19)</span><br><span class="line">        ↓</span><br><span class="line">    app-nginx-backend Pod (10.244.0.46:8888)</span><br><span class="line">        ↓</span><br><span class="line">    响应: &quot;Nginx Backend&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-6-蓝绿发布实验"><a href="#2-6-蓝绿发布实验" class="headerlink" title="2.6 蓝绿发布实验"></a>2.6 蓝绿发布实验</h3><h4 id="2-6-1-蓝绿发布原理"><a href="#2-6-1-蓝绿发布原理" class="headerlink" title="2.6.1 蓝绿发布原理"></a>2.6.1 蓝绿发布原理</h4><p>蓝绿发布是一种零宕机部署策略，同时维护两个相同生产环境（蓝色&#x3D;当前版本，绿色&#x3D;新版本），通过切换流量入口实现版本切换。</p>
+<p><strong>蓝绿发布流程：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">部署绿色版本(v2) → 验证绿色版本 → 切换流量到绿色 → 保留蓝色版本作为回滚</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-6-2-初始状态-蓝色版本活跃"><a href="#2-6-2-初始状态-蓝色版本活跃" class="headerlink" title="2.6.2 初始状态 (蓝色版本活跃)"></a>2.6.2 初始状态 (蓝色版本活跃)</h4><p><code>svc-bluegreen</code> 的 selector 初始指向 <code>version: blue</code>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">selector:</span></span><br><span class="line">  <span class="attr">app:</span> <span class="string">app-bluegreen</span></span><br><span class="line">  <span class="attr">version:</span> <span class="string">blue</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-6-3-验证蓝色版本"><a href="#2-6-3-验证蓝色版本" class="headerlink" title="2.6.3 验证蓝色版本"></a>2.6.3 验证蓝色版本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> http://10.97.12.89/</span><br><span class="line"><span class="comment"># 输出: &lt;h1&gt;Blue Version (v1)&lt;/h1&gt;&lt;p&gt;Color: Blue&lt;/p&gt;&lt;p&gt;Version: 1.0&lt;/p&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-6-4-切换流量到绿色版本"><a href="#2-6-4-切换流量到绿色版本" class="headerlink" title="2.6.4 切换流量到绿色版本"></a>2.6.4 切换流量到绿色版本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl patch svc svc-bluegreen -n ingress-test -p <span class="string">&#x27;&#123;&quot;spec&quot;:&#123;&quot;selector&quot;:&#123;&quot;app&quot;:&quot;app-bluegreen&quot;,&quot;version&quot;:&quot;green&quot;&#125;&#125;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-6-5-验证切换效果"><a href="#2-6-5-验证切换效果" class="headerlink" title="2.6.5 验证切换效果"></a>2.6.5 验证切换效果</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 等待Ingress控制器更新缓存</span></span><br><span class="line"><span class="built_in">sleep</span> 5</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证绿色版本</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> http://10.97.12.89/</span><br><span class="line"><span class="comment"># 输出: &lt;h1&gt;Green Version (v2)&lt;/h1&gt;&lt;p&gt;Color: Green&lt;/p&gt;&lt;p&gt;Version: 2.0&lt;/p&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看端点变化</span></span><br><span class="line">kubectl get endpoints -n ingress-test svc-bluegreen</span><br><span class="line"><span class="comment"># 输出: NAME            ENDPOINTS          AGE</span></span><br><span class="line"><span class="comment">#       svc-bluegreen   10.244.0.49:8888   47s</span></span><br><span class="line"><span class="comment"># (10.244.0.49 = 绿色版本 Pod IP)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-6-6-切换回蓝色版本-回滚"><a href="#2-6-6-切换回蓝色版本-回滚" class="headerlink" title="2.6.6 切换回蓝色版本 (回滚)"></a>2.6.6 切换回蓝色版本 (回滚)</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl patch svc svc-bluegreen -n ingress-test -p <span class="string">&#x27;&#123;&quot;spec&quot;:&#123;&quot;selector&quot;:&#123;&quot;app&quot;:&quot;app-bluegreen&quot;,&quot;version&quot;:&quot;blue&quot;&#125;&#125;&#125;&#x27;</span></span><br><span class="line"><span class="built_in">sleep</span> 5</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证回滚成功</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> http://10.97.12.89/</span><br><span class="line"><span class="comment"># 输出: &lt;h1&gt;Blue Version (v1)&lt;/h1&gt;&lt;p&gt;Color: Blue&lt;/p&gt;&lt;p&gt;Version: 1.0&lt;/p&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-6-7-蓝绿发布过程示意图"><a href="#2-6-7-蓝绿发布过程示意图" class="headerlink" title="2.6.7 蓝绿发布过程示意图"></a>2.6.7 蓝绿发布过程示意图</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│ 阶段1: 蓝色版本活跃                                      │</span><br><span class="line">│                                                         │</span><br><span class="line">│ 客户端 → Ingress → svc-bluegreen (selector: blue)         │</span><br><span class="line">│                        ↓                                 │</span><br><span class="line">│               app-blue-v1 (10.244.0.48:8888)             │</span><br><span class="line">│               &quot;Blue Version (v1)&quot;                        │</span><br><span class="line">└─────────────────────────────────────────────────────────┘</span><br><span class="line"></span><br><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│ 阶段2: 切换流量到绿色版本                                │</span><br><span class="line">│                                                         │</span><br><span class="line">│ kubectl patch svc → selector: green                      │</span><br><span class="line">│                                                         │</span><br><span class="line">│ 客户端 → Ingress → svc-bluegreen (selector: green)       │</span><br><span class="line">│                        ↓                                 │</span><br><span class="line">│               app-green-v2 (10.244.0.49:8888)            │</span><br><span class="line">│               &quot;Green Version (v2)&quot;                       │</span><br><span class="line">└─────────────────────────────────────────────────────────┘</span><br><span class="line"></span><br><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│ 阶段3: 回滚到蓝色版本                                    │</span><br><span class="line">│                                                         │</span><br><span class="line">│ kubectl patch svc → selector: blue                       │</span><br><span class="line">│                                                         │</span><br><span class="line">│ 客户端 → Ingress → svc-bluegreen (selector: blue)         │</span><br><span class="line">│                        ↓                                 │</span><br><span class="line">│               app-blue-v1 (10.244.0.48:8888)             │</span><br><span class="line">│               &quot;Blue Version (v1)&quot;                        │</span><br><span class="line">└─────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-7-演练验证总结"><a href="#2-7-演练验证总结" class="headerlink" title="2.7 演练验证总结"></a>2.7 演练验证总结</h3><h4 id="2-7-1-路径路由验证结果"><a href="#2-7-1-路径路由验证结果" class="headerlink" title="2.7.1 路径路由验证结果"></a>2.7.1 路径路由验证结果</h4><table>
+<thead>
+<tr>
+<th>测试场景</th>
+<th>请求</th>
+<th>预期结果</th>
+<th>实际结果</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>集群内-路径&#x2F;coredns</td>
+<td><code>app.example.com/coredns</code></td>
+<td>CoreDNS Backend</td>
+<td>CoreDNS Backend</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>集群内-路径&#x2F;nginx</td>
+<td><code>app.example.com/nginx</code></td>
+<td>Nginx Backend</td>
+<td>Nginx Backend</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>宿主机-路径&#x2F;coredns</td>
+<td><code>app.example.com/coredns</code></td>
+<td>CoreDNS Backend</td>
+<td>CoreDNS Backend</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>宿主机-路径&#x2F;nginx</td>
+<td><code>app.example.com/nginx</code></td>
+<td>Nginx Backend</td>
+<td>Nginx Backend</td>
+<td>✅</td>
+</tr>
+</tbody></table>
+<h4 id="2-7-2-蓝绿发布验证结果"><a href="#2-7-2-蓝绿发布验证结果" class="headerlink" title="2.7.2 蓝绿发布验证结果"></a>2.7.2 蓝绿发布验证结果</h4><table>
+<thead>
+<tr>
+<th>测试场景</th>
+<th>操作</th>
+<th>预期结果</th>
+<th>实际结果</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>蓝色版本</td>
+<td>初始状态</td>
+<td>Blue Version (v1)</td>
+<td>Blue Version (v1)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>切换到绿色</td>
+<td><code>patch selector: green</code></td>
+<td>Green Version (v2)</td>
+<td>Green Version (v2)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>回滚到蓝色</td>
+<td><code>patch selector: blue</code></td>
+<td>Blue Version (v1)</td>
+<td>Blue Version (v1)</td>
+<td>✅</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="实验三：灰度发布（金丝雀发布）实验"><a href="#实验三：灰度发布（金丝雀发布）实验" class="headerlink" title="实验三：灰度发布（金丝雀发布）实验"></a>实验三：灰度发布（金丝雀发布）实验</h2><h3 id="3-1-灰度发布原理"><a href="#3-1-灰度发布原理" class="headerlink" title="3.1 灰度发布原理"></a>3.1 灰度发布原理</h3><p>灰度发布（Canary Release）是一种比蓝绿发布更渐进、更安全的发布策略。它通过将一小部分用户流量（例如 10%）引导至新版本（金丝雀版本），在生产环境中进行真实流量验证。如果新版本运行稳定且无异常，再逐步增加流量比例，直至全部切换；若发现问题，可立即将流量切回旧版本。</p>
+<p><strong>与蓝绿发布的区别：</strong></p>
+<ul>
+<li><strong>蓝绿发布</strong>：瞬间切换全部流量，适合对停机时间要求极高的场景，但回滚也是全量。</li>
+<li><strong>灰度发布</strong>：逐步迁移流量，风险更低，可以在线监控新版本的性能与错误率，但发布周期更长。</li>
+</ul>
+<p><strong>灰度发布流程：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">部署新版本(v2) → 将10%流量导入v2 → 监控验证 → 提高至50% → 验证通过 → 全量切换至v2</span><br><span class="line">                                                                  ↓ 发现问题</span><br><span class="line">                                                              立即回滚至v1</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-Ingress-Nginx-的-Canary-机制"><a href="#3-2-Ingress-Nginx-的-Canary-机制" class="headerlink" title="3.2 Ingress-Nginx 的 Canary 机制"></a>3.2 Ingress-Nginx 的 Canary 机制</h3><p>Ingress-Nginx 控制器原生支持灰度发布，通过在 Ingress 资源上添加特定的 <strong>annotation（注解）</strong> 来实现。核心注解如下：</p>
+<table>
+<thead>
+<tr>
+<th>注解</th>
+<th>说明</th>
+<th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>nginx.ingress.kubernetes.io/canary</code></td>
+<td>开启灰度发布</td>
+<td><code>&quot;true&quot;</code></td>
+</tr>
+<tr>
+<td><code>nginx.ingress.kubernetes.io/canary-weight</code></td>
+<td>基于权重的流量比例</td>
+<td><code>0</code> - <code>100</code> 的整数</td>
+</tr>
+<tr>
+<td><code>nginx.ingress.kubernetes.io/canary-by-header</code></td>
+<td>基于请求头的灰度（如 <code>X-Canary: always</code>）</td>
+<td>自定义 Header 名称</td>
+</tr>
+<tr>
+<td><code>nginx.ingress.kubernetes.io/canary-by-cookie</code></td>
+<td>基于 Cookie 的灰度（如 <code>canary=always</code>）</td>
+<td>自定义 Cookie 名称</td>
+</tr>
+</tbody></table>
+<p><strong>优先级：</strong> <code>canary-by-header</code> &gt; <code>canary-by-cookie</code> &gt; <code>canary-weight</code></p>
+<p><strong>工作原理：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">客户端请求 → Ingress Controller</span><br><span class="line">                    ↓</span><br><span class="line">        判断是否存在匹配的 Canary Ingress</span><br><span class="line">                    ↓</span><br><span class="line">    ┌───────────────┴───────────────┐</span><br><span class="line">    │                               │</span><br><span class="line">  有 Canary Ingress               无 Canary Ingress</span><br><span class="line">    │                               │</span><br><span class="line">  根据权重/Header/Cookie          走主 Ingress 规则</span><br><span class="line">  决定路由到哪个后端</span><br><span class="line">    │</span><br><span class="line">    ├── 命中金丝雀条件 → svc-canary (v2)</span><br><span class="line">    └── 未命中          → svc-main (v1)</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-实验准备：确认后端服务"><a href="#3-3-实验准备：确认后端服务" class="headerlink" title="3.3 实验准备：确认后端服务"></a>3.3 实验准备：确认后端服务</h3><p>沿用蓝绿发布实验中的两个版本 Pod：</p>
+<table>
+<thead>
+<tr>
+<th>应用名称</th>
+<th>版本</th>
+<th>说明</th>
+<th>Pod IP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>app-blue-v1</td>
+<td>v1.0</td>
+<td>旧版（稳定版）</td>
+<td>10.244.0.48</td>
+</tr>
+<tr>
+<td>app-green-v2</td>
+<td>v2.0</td>
+<td>新版（金丝雀版）</td>
+<td>10.244.0.49</td>
+</tr>
+</tbody></table>
+<p>以及对应的 Service：</p>
+<ul>
+<li><code>svc-bluegreen</code>：主 Service，selector 当前指向蓝色版本（v1）</li>
+<li><code>svc-bluegreen-canary</code>：金丝雀 Service，selector 指向绿色版本（v2）</li>
+</ul>
+<h3 id="3-4-创建金丝雀-Service"><a href="#3-4-创建金丝雀-Service" class="headerlink" title="3.4 创建金丝雀 Service"></a>3.4 创建金丝雀 Service</h3><p>创建文件 <code>svc-canary.yaml</code>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">svc-bluegreen-canary</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">ingress-test</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">app-bluegreen</span></span><br><span class="line">    <span class="attr">version:</span> <span class="string">canary</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">app-bluegreen</span></span><br><span class="line">    <span class="attr">version:</span> <span class="string">green</span>       <span class="comment"># 指向绿色版本(v2)</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">8888</span></span><br></pre></td></tr></table></figure>
+
+<p>部署命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f svc-canary.yaml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证</span></span><br><span class="line">kubectl get svc -n ingress-test svc-bluegreen-canary</span><br><span class="line"><span class="comment"># 输出:</span></span><br><span class="line"><span class="comment"># NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)</span></span><br><span class="line"><span class="comment"># svc-bluegreen-canary   ClusterIP   10.103.45.67    &lt;none&gt;        80/TCP</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-5-创建灰度发布-Ingress-规则"><a href="#3-5-创建灰度发布-Ingress-规则" class="headerlink" title="3.5 创建灰度发布 Ingress 规则"></a>3.5 创建灰度发布 Ingress 规则</h3><p>创建文件 <code>ingress-canary.yaml</code>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ingress-bluegreen-canary</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">ingress-test</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/canary:</span> <span class="string">&quot;true&quot;</span>          <span class="comment"># 开启灰度</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/canary-weight:</span> <span class="string">&quot;10&quot;</span>     <span class="comment"># 10% 流量</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ingressClassName:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">bluegreen.example.com</span></span><br><span class="line">    <span class="attr">http:</span></span><br><span class="line">      <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/</span></span><br><span class="line">        <span class="attr">pathType:</span> <span class="string">Prefix</span></span><br><span class="line">        <span class="attr">backend:</span></span><br><span class="line">          <span class="attr">service:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">svc-bluegreen-canary</span>    <span class="comment"># 指向金丝雀 Service</span></span><br><span class="line">            <span class="attr">port:</span></span><br><span class="line">              <span class="attr">number:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>关键说明：</strong></p>
+<ul>
+<li>金丝雀 Ingress 必须与主 Ingress <code>ingress-bluegreen</code> 共享同一个 Host (<code>bluegreen.example.com</code>)</li>
+<li>Ingress-Nginx 会自动将两者合并，根据 <code>canary-weight</code> 分配流量</li>
+<li>主 Ingress 继续指向 <code>svc-bluegreen</code>（蓝色版本 v1）</li>
+<li>金丝雀 Ingress 指向 <code>svc-bluegreen-canary</code>（绿色版本 v2）</li>
+</ul>
+<p>部署命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f ingress-canary.yaml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看所有 Ingress</span></span><br><span class="line">kubectl get ingress -n ingress-test -o wide</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出:</span></span><br><span class="line"><span class="comment"># NAME                         CLASS   HOSTS                   ADDRESS       PORTS   AGE</span></span><br><span class="line"><span class="comment"># ingress-bluegreen            nginx   bluegreen.example.com   10.97.12.89   80      30m</span></span><br><span class="line"><span class="comment"># ingress-bluegreen-canary     nginx   bluegreen.example.com   10.97.12.89   80      10s</span></span><br><span class="line"><span class="comment"># ingress-path-routing         nginx   app.example.com         10.97.12.89   80      45m</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-6-测试灰度流量分配（权重模式）"><a href="#3-6-测试灰度流量分配（权重模式）" class="headerlink" title="3.6 测试灰度流量分配（权重模式）"></a>3.6 测试灰度流量分配（权重模式）</h3><h4 id="3-6-1-小规模验证（20次请求）"><a href="#3-6-1-小规模验证（20次请求）" class="headerlink" title="3.6.1 小规模验证（20次请求）"></a>3.6.1 小规模验证（20次请求）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 循环发送 20 次请求，统计返回结果</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> &#123;1..20&#125;; <span class="keyword">do</span></span><br><span class="line">  kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- \</span><br><span class="line">    curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> http://10.97.12.89/ | grep -oP <span class="string">&#x27;(Blue|Green)&#x27;</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>预期输出（大致比例）：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Blue</span><br><span class="line">Blue</span><br><span class="line">Blue</span><br><span class="line">Green   # 约 10% 的概率出现</span><br><span class="line">Blue</span><br><span class="line">Blue</span><br><span class="line">Blue</span><br><span class="line">Blue</span><br><span class="line">Blue</span><br><span class="line">Green   # 第二次出现</span><br><span class="line">Blue</span><br><span class="line">Blue</span><br><span class="line">Blue</span><br><span class="line">Blue</span><br><span class="line">Blue</span><br><span class="line">Blue</span><br><span class="line">Green   # 第三次出现</span><br><span class="line">Blue</span><br><span class="line">Blue</span><br><span class="line">Blue</span><br><span class="line">Blue</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-6-2-大规模统计验证（100次请求）"><a href="#3-6-2-大规模统计验证（100次请求）" class="headerlink" title="3.6.2 大规模统计验证（100次请求）"></a>3.6.2 大规模统计验证（100次请求）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 发送 100 次请求，统计 Green 出现的次数</span></span><br><span class="line">total=100</span><br><span class="line">green_count=0</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> $(<span class="built_in">seq</span> 1 <span class="variable">$total</span>); <span class="keyword">do</span></span><br><span class="line">  result=$(kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- \</span><br><span class="line">    curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> http://10.97.12.89/)</span><br><span class="line">  <span class="keyword">if</span> <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$result</span>&quot;</span> | grep -q <span class="string">&quot;Green&quot;</span>; <span class="keyword">then</span></span><br><span class="line">    ((green_count++))</span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Total requests: <span class="variable">$total</span>, Green responses: <span class="variable">$green_count</span> (<span class="subst">$((green_count * 100 / total)</span>)%)&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>输出示例：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Total requests: 100, Green responses: 11 (11%)</span><br></pre></td></tr></table></figure>
+
+<p><strong>分析：</strong> 实际比例（11%）接近配置的 10% 权重，波动属于正常随机分布。</p>
+<h4 id="3-6-3-从宿主机验证"><a href="#3-6-3-从宿主机验证" class="headerlink" title="3.6.3 从宿主机验证"></a>3.6.3 从宿主机验证</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过 NodePort 验证</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> &#123;1..10&#125;; <span class="keyword">do</span></span><br><span class="line">  curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> http://192.168.39.112:30080/ | grep -oP <span class="string">&#x27;(Blue|Green)&#x27;</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-7-基于请求头的灰度测试（进阶）"><a href="#3-7-基于请求头的灰度测试（进阶）" class="headerlink" title="3.7 基于请求头的灰度测试（进阶）"></a>3.7 基于请求头的灰度测试（进阶）</h3><p>除了权重模式，还可以基于特定请求头进行灰度，适合内部测试人员先行验证新版本。</p>
+<h4 id="3-7-1-修改金丝雀-Ingress-为-Header-模式"><a href="#3-7-1-修改金丝雀-Ingress-为-Header-模式" class="headerlink" title="3.7.1 修改金丝雀 Ingress 为 Header 模式"></a>3.7.1 修改金丝雀 Ingress 为 Header 模式</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl annotate ingress ingress-bluegreen-canary -n ingress-test \</span><br><span class="line">  nginx.ingress.kubernetes.io/canary-weight=<span class="string">&quot;0&quot;</span> --overwrite</span><br><span class="line"></span><br><span class="line">kubectl annotate ingress ingress-bluegreen-canary -n ingress-test \</span><br><span class="line">  nginx.ingress.kubernetes.io/canary-by-header=<span class="string">&quot;X-Canary&quot;</span> --overwrite</span><br><span class="line"></span><br><span class="line">kubectl annotate ingress ingress-bluegreen-canary -n ingress-test \</span><br><span class="line">  nginx.ingress.kubernetes.io/canary-by-header-value=<span class="string">&quot;always&quot;</span> --overwrite</span><br></pre></td></tr></table></figure>
+
+<p><strong>修改后的注解组合：</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/canary:</span> <span class="string">&quot;true&quot;</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/canary-weight:</span> <span class="string">&quot;0&quot;</span>              <span class="comment"># 关闭权重灰度</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/canary-by-header:</span> <span class="string">&quot;X-Canary&quot;</span>    <span class="comment"># 基于 Header</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/canary-by-header-value:</span> <span class="string">&quot;always&quot;</span> <span class="comment"># Header 值为 always 时走金丝雀</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-7-2-测试-Header-灰度"><a href="#3-7-2-测试-Header-灰度" class="headerlink" title="3.7.2 测试 Header 灰度"></a>3.7.2 测试 Header 灰度</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 不带特殊 Header → 走蓝色版本（主 Ingress）</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;=== 无 Header ===&quot;</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- \</span><br><span class="line">  curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> http://10.97.12.89/</span><br><span class="line"><span class="comment"># 输出: &lt;h1&gt;Blue Version (v1)&lt;/h1&gt;&lt;p&gt;Color: Blue&lt;/p&gt;&lt;p&gt;Version: 1.0&lt;/p&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 带特殊 Header X-Canary: always → 走绿色版本（金丝雀 Ingress）</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;=== 带 X-Canary: always ===&quot;</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- \</span><br><span class="line">  curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> -H <span class="string">&quot;X-Canary: always&quot;</span> http://10.97.12.89/</span><br><span class="line"><span class="comment"># 输出: &lt;h1&gt;Green Version (v2)&lt;/h1&gt;&lt;p&gt;Color: Green&lt;/p&gt;&lt;p&gt;Version: 2.0&lt;/p&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 带其他 Header 值 → 不走金丝雀</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;=== 带 X-Canary: never ===&quot;</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- \</span><br><span class="line">  curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> -H <span class="string">&quot;X-Canary: never&quot;</span> http://10.97.12.89/</span><br><span class="line"><span class="comment"># 输出: &lt;h1&gt;Blue Version (v1)&lt;/h1&gt;&lt;p&gt;Color: Blue&lt;/p&gt;&lt;p&gt;Version: 1.0&lt;/p&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-7-3-基于-Cookie-的灰度测试"><a href="#3-7-3-基于-Cookie-的灰度测试" class="headerlink" title="3.7.3 基于 Cookie 的灰度测试"></a>3.7.3 基于 Cookie 的灰度测试</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置 Cookie 方式</span></span><br><span class="line">kubectl annotate ingress ingress-bluegreen-canary -n ingress-test \</span><br><span class="line">  nginx.ingress.kubernetes.io/canary-by-header- <span class="string">&quot;true&quot;</span> --overwrite  <span class="comment"># 删除 header 注解</span></span><br><span class="line"></span><br><span class="line">kubectl annotate ingress ingress-bluegreen-canary -n ingress-test \</span><br><span class="line">  nginx.ingress.kubernetes.io/canary-by-cookie=<span class="string">&quot;canary&quot;</span> --overwrite</span><br><span class="line"></span><br><span class="line">kubectl annotate ingress ingress-bluegreen-canary -n ingress-test \</span><br><span class="line">  nginx.ingress.kubernetes.io/canary-weight=<span class="string">&quot;0&quot;</span> --overwrite</span><br></pre></td></tr></table></figure>
+
+<p><strong>测试 Cookie 灰度：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 无 Cookie → 走蓝色版本</span></span><br><span class="line">curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> http://192.168.39.112:30080/</span><br><span class="line"><span class="comment"># 输出: &lt;h1&gt;Blue Version (v1)&lt;/h1&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 带 Cookie canary=always → 走绿色版本</span></span><br><span class="line">curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> --cookie <span class="string">&quot;canary=always&quot;</span> http://192.168.39.112:30080/</span><br><span class="line"><span class="comment"># 输出: &lt;h1&gt;Green Version (v2)&lt;/h1&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 带 Cookie canary=never → 不走金丝雀</span></span><br><span class="line">curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> --cookie <span class="string">&quot;canary=never&quot;</span> http://192.168.39.112:30080/</span><br><span class="line"><span class="comment"># 输出: &lt;h1&gt;Blue Version (v1)&lt;/h1&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-8-灰度升级：逐步增加流量比例"><a href="#3-8-灰度升级：逐步增加流量比例" class="headerlink" title="3.8 灰度升级：逐步增加流量比例"></a>3.8 灰度升级：逐步增加流量比例</h3><p>验证金丝雀版本稳定后，逐步提高 <code>canary-weight</code> 的值，最终完成全量切换。</p>
+<h4 id="3-8-1-第一阶段：10-流量（初始灰度）"><a href="#3-8-1-第一阶段：10-流量（初始灰度）" class="headerlink" title="3.8.1 第一阶段：10% 流量（初始灰度）"></a>3.8.1 第一阶段：10% 流量（初始灰度）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 恢复权重模式，关闭 Header/Cookie</span></span><br><span class="line">kubectl annotate ingress ingress-bluegreen-canary -n ingress-test \</span><br><span class="line">  nginx.ingress.kubernetes.io/canary-by-header- <span class="string">&quot;true&quot;</span> --overwrite</span><br><span class="line">kubectl annotate ingress ingress-bluegreen-canary -n ingress-test \</span><br><span class="line">  nginx.ingress.kubernetes.io/canary-by-cookie- <span class="string">&quot;true&quot;</span> --overwrite</span><br><span class="line">kubectl annotate ingress ingress-bluegreen-canary -n ingress-test \</span><br><span class="line">  nginx.ingress.kubernetes.io/canary-weight=<span class="string">&quot;10&quot;</span> --overwrite</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;=== 10% 灰度阶段 ===&quot;</span></span><br><span class="line">green=0; total=100</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> $(<span class="built_in">seq</span> 1 <span class="variable">$total</span>); <span class="keyword">do</span></span><br><span class="line">  result=$(kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- \</span><br><span class="line">    curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> http://10.97.12.89/)</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$result</span>&quot;</span> | grep -q <span class="string">&quot;Green&quot;</span> &amp;&amp; ((green++))</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Green: <span class="variable">$green</span>/<span class="variable">$total</span> (<span class="subst">$((green*100/total)</span>)%)&quot;</span></span><br><span class="line"><span class="comment"># 输出: Green: 10/100 (10%)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-8-2-第二阶段：50-流量（扩大灰度）"><a href="#3-8-2-第二阶段：50-流量（扩大灰度）" class="headerlink" title="3.8.2 第二阶段：50% 流量（扩大灰度）"></a>3.8.2 第二阶段：50% 流量（扩大灰度）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">kubectl annotate ingress ingress-bluegreen-canary -n ingress-test \</span><br><span class="line">  nginx.ingress.kubernetes.io/canary-weight=<span class="string">&quot;50&quot;</span> --overwrite</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;=== 50% 灰度阶段 ===&quot;</span></span><br><span class="line">green=0; total=100</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> $(<span class="built_in">seq</span> 1 <span class="variable">$total</span>); <span class="keyword">do</span></span><br><span class="line">  result=$(kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- \</span><br><span class="line">    curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> http://10.97.12.89/)</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$result</span>&quot;</span> | grep -q <span class="string">&quot;Green&quot;</span> &amp;&amp; ((green++))</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Green: <span class="variable">$green</span>/<span class="variable">$total</span> (<span class="subst">$((green*100/total)</span>)%)&quot;</span></span><br><span class="line"><span class="comment"># 输出: Green: 52/100 (52%)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-8-3-第三阶段：100-全量切换"><a href="#3-8-3-第三阶段：100-全量切换" class="headerlink" title="3.8.3 第三阶段：100% 全量切换"></a>3.8.3 第三阶段：100% 全量切换</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">kubectl annotate ingress ingress-bluegreen-canary -n ingress-test \</span><br><span class="line">  nginx.ingress.kubernetes.io/canary-weight=<span class="string">&quot;100&quot;</span> --overwrite</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;=== 100% 全量阶段 ===&quot;</span></span><br><span class="line">green=0; total=100</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> $(<span class="built_in">seq</span> 1 <span class="variable">$total</span>); <span class="keyword">do</span></span><br><span class="line">  result=$(kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- \</span><br><span class="line">    curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> http://10.97.12.89/)</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$result</span>&quot;</span> | grep -q <span class="string">&quot;Green&quot;</span> &amp;&amp; ((green++))</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Green: <span class="variable">$green</span>/<span class="variable">$total</span> (<span class="subst">$((green*100/total)</span>)%)&quot;</span></span><br><span class="line"><span class="comment"># 输出: Green: 100/100 (100%)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-8-4-清理资源（切换完成）"><a href="#3-8-4-清理资源（切换完成）" class="headerlink" title="3.8.4 清理资源（切换完成）"></a>3.8.4 清理资源（切换完成）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 全量切换完成后，将主 Service 也指向绿色版本</span></span><br><span class="line">kubectl patch svc svc-bluegreen -n ingress-test \</span><br><span class="line">  -p <span class="string">&#x27;&#123;&quot;spec&quot;:&#123;&quot;selector&quot;:&#123;&quot;app&quot;:&quot;app-bluegreen&quot;,&quot;version&quot;:&quot;green&quot;&#125;&#125;&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除金丝雀 Ingress 和 Service</span></span><br><span class="line">kubectl delete ingress ingress-bluegreen-canary -n ingress-test</span><br><span class="line">kubectl delete svc svc-bluegreen-canary -n ingress-test</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证最终状态</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -n m68 wordpress-668b478849-mqqlv -- \</span><br><span class="line">  curl -s -H <span class="string">&quot;Host: bluegreen.example.com&quot;</span> http://10.97.12.89/</span><br><span class="line"><span class="comment"># 输出: &lt;h1&gt;Green Version (v2)&lt;/h1&gt;&lt;p&gt;Color: Green&lt;/p&gt;&lt;p&gt;Version: 2.0&lt;/p&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-9-灰度发布过程示意图"><a href="#3-9-灰度发布过程示意图" class="headerlink" title="3.9 灰度发布过程示意图"></a>3.9 灰度发布过程示意图</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────────────────────┐</span><br><span class="line">│ 阶段1: 10% 灰度                                                  │</span><br><span class="line">│                                                                 │</span><br><span class="line">│  客户端请求 (100个)                                               │</span><br><span class="line">│       ↓                                                          │</span><br><span class="line">│  Ingress Controller                                              │</span><br><span class="line">│       ↓ canary-weight: 10                                        │</span><br><span class="line">│  ┌────────────────────────────────────────┐                      │</span><br><span class="line">│  │ 10个请求 → svc-bluegreen-canary (v2)   │ → Green Version    │</span><br><span class="line">│  │ 90个请求 → svc-bluegreen (v1)         │ → Blue Version     │</span><br><span class="line">│  └────────────────────────────────────────┘                      │</span><br><span class="line">└─────────────────────────────────────────────────────────────────┘</span><br><span class="line"></span><br><span class="line">┌─────────────────────────────────────────────────────────────────┐</span><br><span class="line">│ 阶段2: 50% 灰度                                                  │</span><br><span class="line">│                                                                 │</span><br><span class="line">│  客户端请求 (100个)                                               │</span><br><span class="line">│       ↓                                                          │</span><br><span class="line">│  Ingress Controller                                              │</span><br><span class="line">│       ↓ canary-weight: 50                                        │</span><br><span class="line">│  ┌────────────────────────────────────────┐                      │</span><br><span class="line">│  │ 50个请求 → svc-bluegreen-canary (v2)   │ → Green Version    │</span><br><span class="line">│  │ 50个请求 → svc-bluegreen (v1)         │ → Blue Version     │</span><br><span class="line">│  └────────────────────────────────────────┘                      │</span><br><span class="line">└─────────────────────────────────────────────────────────────────┘</span><br><span class="line"></span><br><span class="line">┌─────────────────────────────────────────────────────────────────┐</span><br><span class="line">│ 阶段3: 100% 全量                                                 │</span><br><span class="line">│                                                                 │</span><br><span class="line">│  客户端请求 (100个)                                               │</span><br><span class="line">│       ↓                                                          │</span><br><span class="line">│  Ingress Controller                                              │</span><br><span class="line">│       ↓ canary-weight: 100                                       │</span><br><span class="line">│  ┌────────────────────────────────────────┐                      │</span><br><span class="line">│  │ 100个请求 → svc-bluegreen-canary (v2)  │ → Green Version    │</span><br><span class="line">│  │   0个请求 → svc-bluegreen (v1)         │                    │</span><br><span class="line">│  └────────────────────────────────────────┘                      │</span><br><span class="line">│                                                                 │</span><br><span class="line">│  随后删除金丝雀资源，主 Service 指向 v2                           │</span><br><span class="line">└─────────────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-10-灰度发布验证总结"><a href="#3-10-灰度发布验证总结" class="headerlink" title="3.10 灰度发布验证总结"></a>3.10 灰度发布验证总结</h3><h4 id="3-10-1-权重灰度验证结果"><a href="#3-10-1-权重灰度验证结果" class="headerlink" title="3.10.1 权重灰度验证结果"></a>3.10.1 权重灰度验证结果</h4><table>
+<thead>
+<tr>
+<th>测试场景</th>
+<th>操作</th>
+<th>预期结果</th>
+<th>实际结果</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>权重 10% - 小规模</td>
+<td>20次循环请求</td>
+<td>约2次返回Green</td>
+<td>符合预期</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>权重 10% - 大规模</td>
+<td>100次请求统计</td>
+<td>Green占比 ~10%</td>
+<td>11%</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>权重 50% - 大规模</td>
+<td>100次请求统计</td>
+<td>Green占比 ~50%</td>
+<td>52%</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>权重 100% - 全量</td>
+<td>100次请求统计</td>
+<td>Green占比 100%</td>
+<td>100%</td>
+<td>✅</td>
+</tr>
+</tbody></table>
+<h4 id="3-10-2-Header-x2F-Cookie-灰度验证结果"><a href="#3-10-2-Header-x2F-Cookie-灰度验证结果" class="headerlink" title="3.10.2 Header&#x2F;Cookie 灰度验证结果"></a>3.10.2 Header&#x2F;Cookie 灰度验证结果</h4><table>
+<thead>
+<tr>
+<th>测试场景</th>
+<th>操作</th>
+<th>预期结果</th>
+<th>实际结果</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Header灰度 - 无Header</td>
+<td>不带X-Canary</td>
+<td>Blue版本</td>
+<td>Blue版本</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Header灰度 - always</td>
+<td><code>X-Canary: always</code></td>
+<td>Green版本</td>
+<td>Green版本</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Header灰度 - 其他值</td>
+<td><code>X-Canary: never</code></td>
+<td>Blue版本</td>
+<td>Blue版本</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Cookie灰度 - 无Cookie</td>
+<td>不带Cookie</td>
+<td>Blue版本</td>
+<td>Blue版本</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Cookie灰度 - always</td>
+<td><code>canary=always</code></td>
+<td>Green版本</td>
+<td>Green版本</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Cookie灰度 - never</td>
+<td><code>canary=never</code></td>
+<td>Blue版本</td>
+<td>Blue版本</td>
+<td>✅</td>
+</tr>
+</tbody></table>
+<h4 id="3-10-3-回滚验证"><a href="#3-10-3-回滚验证" class="headerlink" title="3.10.3 回滚验证"></a>3.10.3 回滚验证</h4><table>
+<thead>
+<tr>
+<th>测试场景</th>
+<th>操作</th>
+<th>预期结果</th>
+<th>实际结果</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>紧急回滚</td>
+<td><code>canary-weight: 0</code></td>
+<td>全部返回Blue</td>
+<td>全部Blue</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>删除金丝雀</td>
+<td><code>kubectl delete ingress ...canary</code></td>
+<td>全部返回Blue</td>
+<td>全部Blue</td>
+<td>✅</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="实验总结"><a href="#实验总结" class="headerlink" title="实验总结"></a>实验总结</h2><h3 id="CoreDNS-实验总结"><a href="#CoreDNS-实验总结" class="headerlink" title="CoreDNS 实验总结"></a>CoreDNS 实验总结</h3><ol>
+<li><strong>CoreDNS 自动为所有 Service 生成 DNS 记录</strong>，包括 ClusterIP 和 Headless 类型</li>
+<li><strong>ClusterIP Service 解析返回 ClusterIP</strong>，由 kube-proxy 实现负载均衡</li>
+<li><strong>Headless Service 解析直接返回 Pod IP</strong>，适用于需要直接访问 Pod 的场景</li>
+<li><strong>短名称解析</strong>通过 <code>/etc/resolv.conf</code> 中的 search 域自动补全</li>
+<li><strong>外部域名解析</strong>通过 CoreDNS 的 forward 插件转发到上游 DNS</li>
+<li><strong>宿主机映射</strong>通过 Corefile 的 hosts 插件实现</li>
+</ol>
+<h3 id="Ingress-Nginx-实验总结"><a href="#Ingress-Nginx-实验总结" class="headerlink" title="Ingress Nginx 实验总结"></a>Ingress Nginx 实验总结</h3><ol>
+<li><strong>Ingress 控制器通过 Service NodePort 暴露</strong>，宿主机通过 <code>192.168.39.112:30080</code> 访问</li>
+<li><strong>基于 URL 路径的路由</strong>通过 <code>rewrite-target</code> 注解实现路径重写，后端服务无需感知子路径</li>
+<li><strong>蓝绿发布</strong>通过修改 Service 的 selector 实现流量切换，即时生效（需等待控制器缓存更新）</li>
+<li><strong>灰度发布</strong>通过 Canary Ingress 注解实现精细流量控制，支持权重、Header、Cookie 三种模式</li>
+<li><strong>灰度升级流程</strong>：10% → 50% → 100%，逐步验证新版本稳定性后再全量切换</li>
+<li><strong>Ingress 控制器监听 IngressClass</strong>，通过 <code>ingressClassName: nginx</code> 关联</li>
+<li><strong>RBAC 权限</strong>需包含 <code>leases</code> 资源（coordination.k8s.io）以支持领导者选举</li>
+</ol>
+<h3 id="灰度发布-vs-蓝绿发布对比"><a href="#灰度发布-vs-蓝绿发布对比" class="headerlink" title="灰度发布 vs 蓝绿发布对比"></a>灰度发布 vs 蓝绿发布对比</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>蓝绿发布</th>
+<th>灰度发布</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>切换速度</td>
+<td>瞬间全量</td>
+<td>逐步增量</td>
+</tr>
+<tr>
+<td>风险等级</td>
+<td>较高（全量切换失败影响所有用户）</td>
+<td>低（仅影响小部分用户）</td>
+</tr>
+<tr>
+<td>回滚速度</td>
+<td>快（瞬间切回）</td>
+<td>快（降低权重或直接切回）</td>
+</tr>
+<tr>
+<td>真实流量验证</td>
+<td>无法在线验证</td>
+<td>可以用小流量在线验证</td>
+</tr>
+<tr>
+<td>流量控制粒度</td>
+<td>粗粒度（全有或全无）</td>
+<td>细粒度（百分比&#x2F;Header&#x2F;Cookie）</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>紧急修复、无状态应用</td>
+<td>重大版本更新、需要长期观察</td>
+</tr>
+</tbody></table>
+<h3 id="关键技术点"><a href="#关键技术点" class="headerlink" title="关键技术点"></a>关键技术点</h3><table>
+<thead>
+<tr>
+<th>技术点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DNS 解析流程</td>
+<td>Pod → resolv.conf → CoreDNS → API Server → 返回记录</td>
+</tr>
+<tr>
+<td>Service 类型影响</td>
+<td>ClusterIP 返回虚拟 IP，Headless 返回 Pod IP</td>
+</tr>
+<tr>
+<td>Ingress 路由</td>
+<td>基于 Host + Path 分发到不同后端 Service</td>
+</tr>
+<tr>
+<td>蓝绿切换</td>
+<td>修改 Service selector 即时切换，保留旧版本用于回滚</td>
+</tr>
+<tr>
+<td>灰度权重</td>
+<td><code>canary-weight</code> 控制流量比例，0-100 整数</td>
+</tr>
+<tr>
+<td>灰度 Header</td>
+<td><code>canary-by-header</code> 定向放行特定请求到新版本</td>
+</tr>
+<tr>
+<td>灰度 Cookie</td>
+<td><code>canary-by-cookie</code> 按用户会话保持版本一致性</td>
+</tr>
+<tr>
+<td>路径重写</td>
+<td><code>rewrite-target</code> 注解去除前缀路径</td>
+</tr>
+<tr>
+<td>金丝雀 Ingress</td>
+<td>与主 Ingress 共享 Host，通过注解开启灰度</td>
+</tr>
+</tbody></table>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ul>
+<li>金丝雀 Ingress 必须与主 Ingress 的 <code>host</code> 完全一致</li>
+<li>金丝雀 Ingress 不需要包含主 Ingress 的所有路径规则，只需定义需要灰度的路径即可</li>
+<li>多个金丝雀 Ingress 可以共存，但权重会叠加计算</li>
+<li>基于 Header&#x2F;Cookie 的灰度优先级高于权重，适合 QA 或内部测试团队定向验证</li>
+<li>灰度期间旧版本 Pod 必须保持运行，不可提前删除</li>
+<li>全量切换后应及时清理金丝雀 Ingress 和 Service 资源，避免遗留配置</li>
+<li><code>canary-weight: 0</code> 不等于删除金丝雀 Ingress，流量仍可能被 Header&#x2F;Cookie 规则命中</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/f73e93c1.html">https://raidenxe.github.io/archives/f73e93c1.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/kubernetes/">kubernetes</a><a class="post-meta__tags" href="/tags/coredns/">coredns</a><a class="post-meta__tags" href="/tags/ingress-nginx/">ingress-nginx</a></div><div class="post-share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260802095209559.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/archives/8a1b3c2d.html" title="helm安装与使用"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260807160343492.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">helm安装与使用</div></div><div class="info-2"><div class="info-item-1">Helm 安装与使用 目录 Helm 简介 Helm 安装 使用 Helm 安装 CNI 插件 Helm 常用命令总结 Helm 使用与安全管理   1. Helm 简介Helm 是 Kubernetes 的包管理工具，类似于 Linux 中的 apt 或 yum。它通过 Chart（图表）的方式将 Kubernetes 资源打包、版本化管理，实现一键部署、升级和回滚。 1.1 核心概念   概念 说明    Chart Helm 的软件包，包含部署应用所需的所有 Kubernetes 资源模板   Release Chart 在集群中的一次运行实例，同一个 Chart 可以部署多次   Repository Chart 的存储仓库，可以公开或私有   Values 配置值，覆盖 Chart 中的默认参数   1.2 Helm v3 架构变化Helm v3 移除了 v2 中的 Tiller 服务端组件，改为直接通过 kubeconfig 与 Kubernetes API Server 通信： 12Helm v2:  helm → Tiller (集群内) → K8s APIHel...</div></div></div></a><a class="pagination-related" href="/archives/358de43c.html" title="mysql集群k8s部署笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260802094800850.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">mysql集群k8s部署笔记</div></div><div class="info-2"><div class="info-item-1">Minikube 上部署 MySQL 主从复制集群（1 主 2 从）完整实战指南一、概述本文详细记录在 Minikube（三节点）上基于 Kubernetes StatefulSet 部署 MySQL 主从复制集群的完整过程，涵盖 NFS 持久化存储、数据自动克隆、主从复制自动配置、读写分离验证等核心功能。 1.1 拓扑架构 1.2 实验环境   组件 配置    宿主机 Debian, IP 192.168.39.1   K8s 集群 Minikube 3 节点（1 control-plane + 2 worker）   节点 192.168.39.112 (minikube), 192.168.39.59 (m02), 192.168.39.94 (m03)   网络插件 Flannel vxlan (10.244.0.0&#x2F;16)   存储 NFS 服务部署在宿主机   MySQL 镜像 registry.cn-beijing.aliyuncs.com&#x2F;wangxiaochun&#x2F;mysql:5.7   xtrabackup 镜像 registry...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Raidenxe</div><div class="author-info-description">向着真理和自由，无名的献身。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Kubernetes-CoreDNS-%E4%B8%8E-Ingress-Nginx-%E5%AE%9E%E9%AA%8C%E7%AC%94%E8%AE%B0"><span class="toc-number">1.</span> <span class="toc-text">Kubernetes CoreDNS 与 Ingress Nginx 实验笔记</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%80%EF%BC%9ACoreDNS-%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%86%85%E9%83%A8%E6%9C%8D%E5%8A%A1%E8%A7%A3%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">实验一：CoreDNS 部署与内部服务解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-CoreDNS-%E7%BB%84%E4%BB%B6%E6%A6%82%E8%BF%B0"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.1 CoreDNS 组件概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-CoreDNS-%E9%83%A8%E7%BD%B2%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.2.</span> <span class="toc-text">1.2 CoreDNS 部署架构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-1-%E6%9F%A5%E7%9C%8B-CoreDNS-%E9%83%A8%E7%BD%B2%E7%8A%B6%E6%80%81"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">1.2.1 查看 CoreDNS 部署状态</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-2-%E6%9F%A5%E7%9C%8B-CoreDNS-%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">1.2.2 查看 CoreDNS 服务</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-3-CoreDNS-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6-Corefile"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">1.2.3 CoreDNS 配置文件 (Corefile)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-CoreDNS-%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90"><span class="toc-number">1.2.3.</span> <span class="toc-text">1.3 CoreDNS 工作原理分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-1-DNS-%E8%AE%B0%E5%BD%95%E7%94%9F%E6%88%90%E8%A7%84%E5%88%99"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">1.3.1 DNS 记录生成规则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-2-%E8%A7%A3%E6%9E%90%E6%B5%81%E7%A8%8B"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">1.3.2 解析流程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-DNS-%E8%A7%A3%E6%9E%90%E6%B5%8B%E8%AF%95%E9%AA%8C%E8%AF%81"><span class="toc-number">1.2.4.</span> <span class="toc-text">1.4 DNS 解析测试验证</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-1-%E6%9F%A5%E7%9C%8B-Pod-DNS-%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">1.4.1 查看 Pod DNS 配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-2-ClusterIP-Service-%E8%A7%A3%E6%9E%90%E6%B5%8B%E8%AF%95"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">1.4.2 ClusterIP Service 解析测试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-3-Headless-Service-%E8%A7%A3%E6%9E%90%E6%B5%8B%E8%AF%95"><span class="toc-number">1.2.4.3.</span> <span class="toc-text">1.4.3 Headless Service 解析测试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-4-%E7%9F%AD%E5%90%8D%E7%A7%B0%E8%A7%A3%E6%9E%90%E6%B5%8B%E8%AF%95"><span class="toc-number">1.2.4.4.</span> <span class="toc-text">1.4.4 短名称解析测试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-5-%E5%85%B6%E4%BB%96-DNS-%E8%A7%A3%E6%9E%90%E6%B5%8B%E8%AF%95"><span class="toc-number">1.2.4.5.</span> <span class="toc-text">1.4.5 其他 DNS 解析测试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-6-%E4%BD%BF%E7%94%A8-dig-%E5%91%BD%E4%BB%A4%E6%9F%A5%E7%9C%8B%E8%AF%A6%E7%BB%86%E8%AE%B0%E5%BD%95"><span class="toc-number">1.2.4.6.</span> <span class="toc-text">1.4.6 使用 dig 命令查看详细记录</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-DNS-%E8%A7%A3%E6%9E%90%E7%BB%93%E6%9E%9C%E6%B1%87%E6%80%BB"><span class="toc-number">1.2.5.</span> <span class="toc-text">1.5 DNS 解析结果汇总</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%BA%8C%EF%BC%9AIngress-Nginx-%E6%8E%A7%E5%88%B6%E5%99%A8%E9%83%A8%E7%BD%B2%E4%B8%8E%E9%AB%98%E7%BA%A7%E8%B7%AF%E7%94%B1"><span class="toc-number">1.3.</span> <span class="toc-text">实验二：Ingress Nginx 控制器部署与高级路由</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Ingress-Nginx-%E6%8E%A7%E5%88%B6%E5%99%A8%E6%A6%82%E8%BF%B0"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1 Ingress Nginx 控制器概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Ingress-Nginx-%E6%8E%A7%E5%88%B6%E5%99%A8%E9%83%A8%E7%BD%B2"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.2 Ingress Nginx 控制器部署</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-1-%E9%83%A8%E7%BD%B2%E6%B8%85%E5%8D%95%E6%96%87%E4%BB%B6"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">2.2.1 部署清单文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-2-%E9%83%A8%E7%BD%B2%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">2.2.2 部署命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-3-%E9%AA%8C%E8%AF%81%E6%8E%A7%E5%88%B6%E5%99%A8%E7%8A%B6%E6%80%81"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">2.2.3 验证控制器状态</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%90%8E%E7%AB%AF%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2"><span class="toc-number">1.3.3.</span> <span class="toc-text">2.3 后端服务部署</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-1-%E5%90%8E%E7%AB%AF%E5%BA%94%E7%94%A8%E6%B8%85%E5%8D%95"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">2.3.1 后端应用清单</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-2-%E9%83%A8%E7%BD%B2%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">2.3.2 部署命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-3-%E9%AA%8C%E8%AF%81%E5%90%8E%E7%AB%AF%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">2.3.3 验证后端服务</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-Ingress-%E8%B7%AF%E7%94%B1%E8%A7%84%E5%88%99%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.4.</span> <span class="toc-text">2.4 Ingress 路由规则配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-1-Ingress-%E8%A7%84%E5%88%99%E6%B8%85%E5%8D%95"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">2.4.1 Ingress 规则清单</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-2-%E9%83%A8%E7%BD%B2-Ingress-%E8%A7%84%E5%88%99"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">2.4.2 部署 Ingress 规则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-3-%E9%AA%8C%E8%AF%81-Ingress-%E7%8A%B6%E6%80%81"><span class="toc-number">1.3.4.3.</span> <span class="toc-text">2.4.3 验证 Ingress 状态</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-%E5%9F%BA%E4%BA%8E-URL-%E8%B7%AF%E5%BE%84%E7%9A%84%E8%B7%AF%E7%94%B1%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.3.5.</span> <span class="toc-text">2.5 基于 URL 路径的路由实验</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5-1-%E6%B5%8B%E8%AF%95%E5%8E%9F%E7%90%86"><span class="toc-number">1.3.5.1.</span> <span class="toc-text">2.5.1 测试原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5-2-%E6%B5%8B%E8%AF%95%E5%91%BD%E4%BB%A4%E4%B8%8E%E7%BB%93%E6%9E%9C"><span class="toc-number">1.3.5.2.</span> <span class="toc-text">2.5.2 测试命令与结果</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5-3-%E8%B7%AF%E7%94%B1%E7%A4%BA%E6%84%8F%E5%9B%BE"><span class="toc-number">1.3.5.3.</span> <span class="toc-text">2.5.3 路由示意图</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-%E8%93%9D%E7%BB%BF%E5%8F%91%E5%B8%83%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.3.6.</span> <span class="toc-text">2.6 蓝绿发布实验</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-1-%E8%93%9D%E7%BB%BF%E5%8F%91%E5%B8%83%E5%8E%9F%E7%90%86"><span class="toc-number">1.3.6.1.</span> <span class="toc-text">2.6.1 蓝绿发布原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-2-%E5%88%9D%E5%A7%8B%E7%8A%B6%E6%80%81-%E8%93%9D%E8%89%B2%E7%89%88%E6%9C%AC%E6%B4%BB%E8%B7%83"><span class="toc-number">1.3.6.2.</span> <span class="toc-text">2.6.2 初始状态 (蓝色版本活跃)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-3-%E9%AA%8C%E8%AF%81%E8%93%9D%E8%89%B2%E7%89%88%E6%9C%AC"><span class="toc-number">1.3.6.3.</span> <span class="toc-text">2.6.3 验证蓝色版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-4-%E5%88%87%E6%8D%A2%E6%B5%81%E9%87%8F%E5%88%B0%E7%BB%BF%E8%89%B2%E7%89%88%E6%9C%AC"><span class="toc-number">1.3.6.4.</span> <span class="toc-text">2.6.4 切换流量到绿色版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-5-%E9%AA%8C%E8%AF%81%E5%88%87%E6%8D%A2%E6%95%88%E6%9E%9C"><span class="toc-number">1.3.6.5.</span> <span class="toc-text">2.6.5 验证切换效果</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-6-%E5%88%87%E6%8D%A2%E5%9B%9E%E8%93%9D%E8%89%B2%E7%89%88%E6%9C%AC-%E5%9B%9E%E6%BB%9A"><span class="toc-number">1.3.6.6.</span> <span class="toc-text">2.6.6 切换回蓝色版本 (回滚)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-7-%E8%93%9D%E7%BB%BF%E5%8F%91%E5%B8%83%E8%BF%87%E7%A8%8B%E7%A4%BA%E6%84%8F%E5%9B%BE"><span class="toc-number">1.3.6.7.</span> <span class="toc-text">2.6.7 蓝绿发布过程示意图</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-7-%E6%BC%94%E7%BB%83%E9%AA%8C%E8%AF%81%E6%80%BB%E7%BB%93"><span class="toc-number">1.3.7.</span> <span class="toc-text">2.7 演练验证总结</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-7-1-%E8%B7%AF%E5%BE%84%E8%B7%AF%E7%94%B1%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C"><span class="toc-number">1.3.7.1.</span> <span class="toc-text">2.7.1 路径路由验证结果</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-7-2-%E8%93%9D%E7%BB%BF%E5%8F%91%E5%B8%83%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C"><span class="toc-number">1.3.7.2.</span> <span class="toc-text">2.7.2 蓝绿发布验证结果</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%89%EF%BC%9A%E7%81%B0%E5%BA%A6%E5%8F%91%E5%B8%83%EF%BC%88%E9%87%91%E4%B8%9D%E9%9B%80%E5%8F%91%E5%B8%83%EF%BC%89%E5%AE%9E%E9%AA%8C"><span class="toc-number">1.4.</span> <span class="toc-text">实验三：灰度发布（金丝雀发布）实验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E7%81%B0%E5%BA%A6%E5%8F%91%E5%B8%83%E5%8E%9F%E7%90%86"><span class="toc-number">1.4.1.</span> <span class="toc-text">3.1 灰度发布原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-Ingress-Nginx-%E7%9A%84-Canary-%E6%9C%BA%E5%88%B6"><span class="toc-number">1.4.2.</span> <span class="toc-text">3.2 Ingress-Nginx 的 Canary 机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%AE%9E%E9%AA%8C%E5%87%86%E5%A4%87%EF%BC%9A%E7%A1%AE%E8%AE%A4%E5%90%8E%E7%AB%AF%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.4.3.</span> <span class="toc-text">3.3 实验准备：确认后端服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E5%88%9B%E5%BB%BA%E9%87%91%E4%B8%9D%E9%9B%80-Service"><span class="toc-number">1.4.4.</span> <span class="toc-text">3.4 创建金丝雀 Service</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E5%88%9B%E5%BB%BA%E7%81%B0%E5%BA%A6%E5%8F%91%E5%B8%83-Ingress-%E8%A7%84%E5%88%99"><span class="toc-number">1.4.5.</span> <span class="toc-text">3.5 创建灰度发布 Ingress 规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6-%E6%B5%8B%E8%AF%95%E7%81%B0%E5%BA%A6%E6%B5%81%E9%87%8F%E5%88%86%E9%85%8D%EF%BC%88%E6%9D%83%E9%87%8D%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="toc-number">1.4.6.</span> <span class="toc-text">3.6 测试灰度流量分配（权重模式）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-6-1-%E5%B0%8F%E8%A7%84%E6%A8%A1%E9%AA%8C%E8%AF%81%EF%BC%8820%E6%AC%A1%E8%AF%B7%E6%B1%82%EF%BC%89"><span class="toc-number">1.4.6.1.</span> <span class="toc-text">3.6.1 小规模验证（20次请求）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-6-2-%E5%A4%A7%E8%A7%84%E6%A8%A1%E7%BB%9F%E8%AE%A1%E9%AA%8C%E8%AF%81%EF%BC%88100%E6%AC%A1%E8%AF%B7%E6%B1%82%EF%BC%89"><span class="toc-number">1.4.6.2.</span> <span class="toc-text">3.6.2 大规模统计验证（100次请求）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-6-3-%E4%BB%8E%E5%AE%BF%E4%B8%BB%E6%9C%BA%E9%AA%8C%E8%AF%81"><span class="toc-number">1.4.6.3.</span> <span class="toc-text">3.6.3 从宿主机验证</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-7-%E5%9F%BA%E4%BA%8E%E8%AF%B7%E6%B1%82%E5%A4%B4%E7%9A%84%E7%81%B0%E5%BA%A6%E6%B5%8B%E8%AF%95%EF%BC%88%E8%BF%9B%E9%98%B6%EF%BC%89"><span class="toc-number">1.4.7.</span> <span class="toc-text">3.7 基于请求头的灰度测试（进阶）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-7-1-%E4%BF%AE%E6%94%B9%E9%87%91%E4%B8%9D%E9%9B%80-Ingress-%E4%B8%BA-Header-%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.4.7.1.</span> <span class="toc-text">3.7.1 修改金丝雀 Ingress 为 Header 模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-7-2-%E6%B5%8B%E8%AF%95-Header-%E7%81%B0%E5%BA%A6"><span class="toc-number">1.4.7.2.</span> <span class="toc-text">3.7.2 测试 Header 灰度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-7-3-%E5%9F%BA%E4%BA%8E-Cookie-%E7%9A%84%E7%81%B0%E5%BA%A6%E6%B5%8B%E8%AF%95"><span class="toc-number">1.4.7.3.</span> <span class="toc-text">3.7.3 基于 Cookie 的灰度测试</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-8-%E7%81%B0%E5%BA%A6%E5%8D%87%E7%BA%A7%EF%BC%9A%E9%80%90%E6%AD%A5%E5%A2%9E%E5%8A%A0%E6%B5%81%E9%87%8F%E6%AF%94%E4%BE%8B"><span class="toc-number">1.4.8.</span> <span class="toc-text">3.8 灰度升级：逐步增加流量比例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-8-1-%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%EF%BC%9A10-%E6%B5%81%E9%87%8F%EF%BC%88%E5%88%9D%E5%A7%8B%E7%81%B0%E5%BA%A6%EF%BC%89"><span class="toc-number">1.4.8.1.</span> <span class="toc-text">3.8.1 第一阶段：10% 流量（初始灰度）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-8-2-%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%EF%BC%9A50-%E6%B5%81%E9%87%8F%EF%BC%88%E6%89%A9%E5%A4%A7%E7%81%B0%E5%BA%A6%EF%BC%89"><span class="toc-number">1.4.8.2.</span> <span class="toc-text">3.8.2 第二阶段：50% 流量（扩大灰度）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-8-3-%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5%EF%BC%9A100-%E5%85%A8%E9%87%8F%E5%88%87%E6%8D%A2"><span class="toc-number">1.4.8.3.</span> <span class="toc-text">3.8.3 第三阶段：100% 全量切换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-8-4-%E6%B8%85%E7%90%86%E8%B5%84%E6%BA%90%EF%BC%88%E5%88%87%E6%8D%A2%E5%AE%8C%E6%88%90%EF%BC%89"><span class="toc-number">1.4.8.4.</span> <span class="toc-text">3.8.4 清理资源（切换完成）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-9-%E7%81%B0%E5%BA%A6%E5%8F%91%E5%B8%83%E8%BF%87%E7%A8%8B%E7%A4%BA%E6%84%8F%E5%9B%BE"><span class="toc-number">1.4.9.</span> <span class="toc-text">3.9 灰度发布过程示意图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-10-%E7%81%B0%E5%BA%A6%E5%8F%91%E5%B8%83%E9%AA%8C%E8%AF%81%E6%80%BB%E7%BB%93"><span class="toc-number">1.4.10.</span> <span class="toc-text">3.10 灰度发布验证总结</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-10-1-%E6%9D%83%E9%87%8D%E7%81%B0%E5%BA%A6%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C"><span class="toc-number">1.4.10.1.</span> <span class="toc-text">3.10.1 权重灰度验证结果</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-10-2-Header-x2F-Cookie-%E7%81%B0%E5%BA%A6%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C"><span class="toc-number">1.4.10.2.</span> <span class="toc-text">3.10.2 Header&#x2F;Cookie 灰度验证结果</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-10-3-%E5%9B%9E%E6%BB%9A%E9%AA%8C%E8%AF%81"><span class="toc-number">1.4.10.3.</span> <span class="toc-text">3.10.3 回滚验证</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.</span> <span class="toc-text">实验总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CoreDNS-%E5%AE%9E%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.1.</span> <span class="toc-text">CoreDNS 实验总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ingress-Nginx-%E5%AE%9E%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.2.</span> <span class="toc-text">Ingress Nginx 实验总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%81%B0%E5%BA%A6%E5%8F%91%E5%B8%83-vs-%E8%93%9D%E7%BB%BF%E5%8F%91%E5%B8%83%E5%AF%B9%E6%AF%94"><span class="toc-number">1.5.3.</span> <span class="toc-text">灰度发布 vs 蓝绿发布对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E7%82%B9"><span class="toc-number">1.5.4.</span> <span class="toc-text">关键技术点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">1.5.5.</span> <span class="toc-text">注意事项</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/61196baf.html" title="Jenkins-CICD实战"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins-CICD实战"/></a><div class="content"><a class="title" href="/archives/61196baf.html" title="Jenkins-CICD实战">Jenkins-CICD实战</a><time datetime="2026-08-11T17:09:47.000Z" title="发表于 2026-08-12 01:09:47">2026-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a3e16fea.html" title="面试题1"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试题1"/></a><div class="content"><a class="title" href="/archives/a3e16fea.html" title="面试题1">面试题1</a><time datetime="2026-08-11T14:53:55.000Z" title="发表于 2026-08-11 22:53:55">2026-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/35864571.html" title="docker部署jenkins"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署jenkins"/></a><div class="content"><a class="title" href="/archives/35864571.html" title="docker部署jenkins">docker部署jenkins</a><time datetime="2026-08-10T05:55:00.000Z" title="发表于 2026-08-10 13:55:00">2026-08-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/be6d62ff.html" title="docker部署gitlab"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署gitlab"/></a><div class="content"><a class="title" href="/archives/be6d62ff.html" title="docker部署gitlab">docker部署gitlab</a><time datetime="2026-08-08T07:16:03.000Z" title="发表于 2026-08-08 15:16:03">2026-08-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260807160530247.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s+Helm部署kube-prometheus-stack"/></a><div class="content"><a class="title" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack">K8s+Helm部署kube-prometheus-stack</a><time datetime="2026-08-07T07:12:03.000Z" title="发表于 2026-08-07 15:12:03">2026-08-07</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2020 - 2026 By Raidenxe</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5"></script><script src="/js/main.js?v=5.5.5"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="false"> </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5"></script></div></div></body></html>

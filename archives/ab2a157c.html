@@ -1,0 +1,732 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>bocker笔记 | Raidenxe的博客</title><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Bocker 源码深度解析 —— 100 行 Bash 实现的容器运行时 目录 什么是 Bocker 架构概览：四层核心技术 源码逐层深度解析 核心技术原理深度探讨 Bocker 与 Docker 的对比 设计缺陷与改进方向   1. 什么是 BockerBocker 是一个用 约 100 行..."><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "bocker笔记",
+  "url": "https://raidenxe.github.io/archives/ab2a157c.html",
+  "image": "https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg3.png",
+  "datePublished": "2026-07-24T07:35:35.000Z",
+  "dateModified": "2026-07-24T07:59:08.433Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Raidenxe",
+      "url": "https://Raidenxe.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/ab2a157c.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css?v=5.5.5"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'bocker笔记',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/macblack.css"><style>
+  #web_bg{background-image:url(/img/风景006.png)}
+  #footer{background-image:url(/img/风景008.png);background-size:cover;background-position:center}
+  .aplayer-lrc{display:none !important}
+</style>
+<meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/%E9%A3%8E%E6%99%AF006.png));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg3.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Raidenxe的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">bocker笔记</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">bocker笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-24T07:35:35.000Z" title="发表于 2026-07-24 15:35:35">2026-07-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-07-24T07:59:08.433Z" title="更新于 2026-07-24 15:59:08">2026-07-24</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">5.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>23分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Bocker-源码深度解析-——-100-行-Bash-实现的容器运行时"><a href="#Bocker-源码深度解析-——-100-行-Bash-实现的容器运行时" class="headerlink" title="Bocker 源码深度解析 —— 100 行 Bash 实现的容器运行时"></a>Bocker 源码深度解析 —— 100 行 Bash 实现的容器运行时</h1><hr>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ol>
+<li><a href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-bocker">什么是 Bocker</a></li>
+<li><a href="#2-%E6%9E%B6%E6%9E%84%E6%A6%82%E8%A7%88%E5%9B%9B%E5%B1%82%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF">架构概览：四层核心技术</a></li>
+<li><a href="#3-%E6%BA%90%E7%A0%81%E9%80%90%E5%B1%82%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90">源码逐层深度解析</a></li>
+<li><a href="#4-%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E6%B7%B1%E5%BA%A6%E6%8E%A2%E8%AE%A8">核心技术原理深度探讨</a></li>
+<li><a href="#5-bocker-%E4%B8%8E-docker-%E7%9A%84%E5%AF%B9%E6%AF%94">Bocker 与 Docker 的对比</a></li>
+<li><a href="#6-%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7%E4%B8%8E%E6%94%B9%E8%BF%9B%E6%96%B9%E5%90%91">设计缺陷与改进方向</a></li>
+</ol>
+<hr>
+<h2 id="1-什么是-Bocker"><a href="#1-什么是-Bocker" class="headerlink" title="1. 什么是 Bocker"></a>1. 什么是 Bocker</h2><p>Bocker 是一个用 <strong>约 100 行 Bash 脚本</strong> 实现的极简容器运行时，由英国系统工程师 Peter Wilmott 创建。它并非用于生产环境，而是通过最精简的代码，揭示 Docker 等容器技术的核心本质——<strong>利用 Linux 内核的命名空间（Namespaces）、控制组（Cgroups）、Btrfs 文件系统、veth pair 等特性，组合出一个隔离的执行环境</strong>。</p>
+<blockquote>
+<p>项目地址：p8952&#x2F;bocker（已归档）</p>
+</blockquote>
+<h3 id="1-1-整体架构"><a href="#1-1-整体架构" class="headerlink" title="1.1 整体架构"></a>1.1 整体架构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────────────────────┐</span><br><span class="line">│                        Bocker 脚本                               │</span><br><span class="line">│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────────────┐  │</span><br><span class="line">│  │ 镜像管理  │  │ 容器管理  │  │网络管理  │  │ 资源限制       │  │</span><br><span class="line">│  │ pull/init │  │ run/exec │  │veth+bridge│  │ cgroups        │  │</span><br><span class="line">│  │ images/rm │  │ logs/ps  │  │          │  │ CPU/Memory     │  │</span><br><span class="line">│  └─────┬────┘  └────┬─────┘  └────┬─────┘  └───────┬────────┘  │</span><br><span class="line">│        │            │              │                │           │</span><br><span class="line">└────────┼────────────┼──────────────┼────────────────┼───────────┘</span><br><span class="line">         │            │              │                │</span><br><span class="line">         ▼            ▼              ▼                ▼</span><br><span class="line">  ┌──────────┐ ┌──────────┐ ┌──────────────┐ ┌──────────────┐</span><br><span class="line">  │  Btrfs   │ │ unshare  │ │  iproute2    │ │  libcgroup   │</span><br><span class="line">  │ 子卷/快照 │ │ +chroot  │ │ veth+netns   │ │ CPU/Mem限制  │</span><br><span class="line">  └──────────┘ └──────────┘ └──────────────┘ └──────────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-功能一览"><a href="#1-2-功能一览" class="headerlink" title="1.2 功能一览"></a>1.2 功能一览</h3><table>
+<thead>
+<tr>
+<th>分类</th>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>镜像管理</td>
+<td><code>bocker pull &lt;name&gt; &lt;tag&gt;</code></td>
+<td>从 Docker Hub 拉取镜像</td>
+</tr>
+<tr>
+<td></td>
+<td><code>bocker init &lt;dir&gt;</code></td>
+<td>从目录创建镜像</td>
+</tr>
+<tr>
+<td></td>
+<td><code>bocker images</code></td>
+<td>列出所有镜像</td>
+</tr>
+<tr>
+<td></td>
+<td><code>bocker rm &lt;id&gt;</code></td>
+<td>删除镜像或容器</td>
+</tr>
+<tr>
+<td>容器管理</td>
+<td><code>bocker run &lt;image&gt; &lt;cmd&gt;</code></td>
+<td>创建并运行容器</td>
+</tr>
+<tr>
+<td></td>
+<td><code>bocker ps</code></td>
+<td>列出所有容器</td>
+</tr>
+<tr>
+<td></td>
+<td><code>bocker exec &lt;id&gt; &lt;cmd&gt;</code></td>
+<td>在运行中的容器内执行命令</td>
+</tr>
+<tr>
+<td></td>
+<td><code>bocker logs &lt;id&gt;</code></td>
+<td>查看容器日志</td>
+</tr>
+<tr>
+<td></td>
+<td><code>bocker commit &lt;id&gt; &lt;image&gt;</code></td>
+<td>将容器提交为新镜像</td>
+</tr>
+<tr>
+<td>资源限制</td>
+<td>环境变量</td>
+<td><code>BOCKER_CPU_SHARE</code>、<code>BOCKER_MEM_LIMIT</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="2-架构概览：四层核心技术"><a href="#2-架构概览：四层核心技术" class="headerlink" title="2. 架构概览：四层核心技术"></a>2. 架构概览：四层核心技术</h2><p>Bocker 的核心建立在 <strong>四层 Linux 内核技术</strong> 之上，每层解决一个容器化的关键问题：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">      问题                       技术方案</span><br><span class="line">┌─────────────────┐    ┌─────────────────────────┐</span><br><span class="line">│ 文件系统隔离     │    │  Btrfs 子卷 + 快照(COW)  │</span><br><span class="line">│ 启动快、省空间   │    │  btrfs subvolume snapshot │</span><br><span class="line">└─────────────────┘    └─────────────────────────┘</span><br><span class="line">┌─────────────────┐    ┌─────────────────────────┐</span><br><span class="line">│ 进程/主机名隔离  │    │  Namespace 命名空间隔离   │</span><br><span class="line">│ 看不到其他进程   │    │  unshare -fmuip          │</span><br><span class="line">└─────────────────┘    └─────────────────────────┘</span><br><span class="line">┌─────────────────┐    ┌─────────────────────────┐</span><br><span class="line">│ 资源使用限制     │    │  Cgroups 控制组          │</span><br><span class="line">│ 防止资源争抢     │    │  cgcreate + cgset        │</span><br><span class="line">└─────────────────┘    └─────────────────────────┘</span><br><span class="line">┌─────────────────┐    ┌─────────────────────────┐</span><br><span class="line">│ 网络通信隔离     │    │  veth pair + 网络命名空间 │</span><br><span class="line">│ 独立IP、可对外   │    │  ip netns + bridge0     │</span><br><span class="line">└─────────────────┘    └─────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="3-源码逐层深度解析"><a href="#3-源码逐层深度解析" class="headerlink" title="3. 源码逐层深度解析"></a>3. 源码逐层深度解析</h2><h3 id="3-1-脚本头部与环境准备"><a href="#3-1-脚本头部与环境准备" class="headerlink" title="3.1 脚本头部与环境准备"></a>3.1 脚本头部与环境准备</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"><span class="built_in">set</span> -o errexit -o nounset -o pipefail; <span class="built_in">shopt</span> -s nullglob</span><br><span class="line">btrfs_path=<span class="string">&#x27;/var/bocker&#x27;</span> &amp;&amp; cgroups=<span class="string">&#x27;cpu,cpuacct,memory&#x27;</span>;</span><br><span class="line">[[ <span class="variable">$#</span> -gt 0 ]] &amp;&amp; <span class="keyword">while</span> [ <span class="string">&quot;<span class="variable">$&#123;1:0:2&#125;</span>&quot;</span> == <span class="string">&#x27;--&#x27;</span> ]; <span class="keyword">do</span></span><br><span class="line">  OPTION=<span class="variable">$&#123;1:2&#125;</span></span><br><span class="line">  [[ <span class="variable">$OPTION</span> =~ = ]] &amp;&amp; <span class="built_in">declare</span> <span class="string">&quot;BOCKER_<span class="variable">$&#123;OPTION/=*/&#125;</span>=<span class="variable">$&#123;OPTION/*=/&#125;</span>&quot;</span> || <span class="built_in">declare</span> <span class="string">&quot;BOCKER_<span class="variable">$&#123;OPTION&#125;</span>=x&quot;</span></span><br><span class="line">  <span class="built_in">shift</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="逐行解析"><a href="#逐行解析" class="headerlink" title="逐行解析"></a>逐行解析</h4><table>
+<thead>
+<tr>
+<th>代码</th>
+<th>作用</th>
+<th>原理</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>set -o errexit</code></td>
+<td>命令失败时立即退出（<code>set -e</code>）</td>
+<td>防止错误累积，但需注意管道和子shell的边界</td>
+</tr>
+<tr>
+<td><code>set -o nounset</code></td>
+<td>使用未定义变量时报错（<code>set -u</code>）</td>
+<td>避免拼写错误导致的静默bug</td>
+</tr>
+<tr>
+<td><code>set -o pipefail</code></td>
+<td>管道中任一命令失败则整体失败</td>
+<td>默认行为只检查最后一个命令，&#96;cmd1</td>
+</tr>
+<tr>
+<td><code>shopt -s nullglob</code></td>
+<td>通配符无匹配时展开为空字符串</td>
+<td>默认会保留 <code>img_*</code> 字面量，导致遍历出错</td>
+</tr>
+<tr>
+<td><code>btrfs_path=&#39;/var/bocker&#39;</code></td>
+<td>所有子卷的存储根目录</td>
+<td>必须是 Btrfs 文件系统</td>
+</tr>
+<tr>
+<td><code>cgroups=&#39;cpu,cpuacct,memory&#39;</code></td>
+<td>启用的 cgroup 子系统</td>
+<td>控制 CPU 和内存分配</td>
+</tr>
+</tbody></table>
+<h4 id="选项解析机制"><a href="#选项解析机制" class="headerlink" title="选项解析机制"></a>选项解析机制</h4><p><code>--BOCKER_CPU_SHARE=256</code> 和 <code>--debug</code> 两种格式：</p>
+<ul>
+<li>带等号：<code>declare &quot;BOCKER_CPU_SHARE=256&quot;</code> → 生成变量 <code>$BOCKER_CPU_SHARE=256</code></li>
+<li>不带等号：<code>declare &quot;BOCKER_debug=x&quot;</code> → 生成变量 <code>$BOCKER_debug=x</code></li>
+</ul>
+<p><strong>设计意图</strong>：在命令行中临时调整资源限制，无需修改脚本。Docker 通过 <code>--cpu-shares</code> 和 <code>--memory</code> 参数实现类似功能。</p>
+<hr>
+<h3 id="3-2-辅助函数：bocker-check"><a href="#3-2-辅助函数：bocker-check" class="headerlink" title="3.2 辅助函数：bocker_check"></a>3.2 辅助函数：bocker_check</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">bocker_check</span></span>() &#123;</span><br><span class="line">  btrfs subvolume list <span class="string">&quot;<span class="variable">$btrfs_path</span>&quot;</span> | grep -qw <span class="string">&quot;<span class="variable">$1</span>&quot;</span> &amp;&amp; <span class="built_in">echo</span> 0 || <span class="built_in">echo</span> 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="原理分析"><a href="#原理分析" class="headerlink" title="原理分析"></a>原理分析</h4><ul>
+<li><code>btrfs subvolume list</code> 列出 <code>/var/bocker</code> 下所有子卷的 ID 和路径</li>
+<li><code>grep -qw</code>：<code>-q</code> 静默模式（只返回退出码），<code>-w</code> 精确匹配整个单词</li>
+<li>技巧：<code>&amp;&amp; echo 0 || echo 1</code> 将布尔结果转为字符串，方便在 <code>[[ ]]</code> 中比较</li>
+</ul>
+<p><strong>为什么不直接使用 <code>test -d</code> 判断目录？</strong></p>
+<p>因为 Btrfs 子卷虽然是目录，但普通目录检测无法区分”子卷”和”普通目录”。<code>btrfs subvolume list</code> 是权威的检测方式，确保操作的确实是 Btrfs 子卷。</p>
+<hr>
+<h3 id="3-3-镜像管理深入分析"><a href="#3-3-镜像管理深入分析" class="headerlink" title="3.3 镜像管理深入分析"></a>3.3 镜像管理深入分析</h3><h4 id="3-3-1-bocker-init-——-从目录创建镜像"><a href="#3-3-1-bocker-init-——-从目录创建镜像" class="headerlink" title="3.3.1 bocker_init —— 从目录创建镜像"></a>3.3.1 bocker_init —— 从目录创建镜像</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">bocker_init</span></span>() &#123;</span><br><span class="line">  uuid=<span class="string">&quot;img_<span class="subst">$(shuf -i 42002-42254 -n 1)</span>&quot;</span></span><br><span class="line">  <span class="keyword">if</span> [[ -d <span class="string">&quot;<span class="variable">$1</span>&quot;</span> ]]; <span class="keyword">then</span></span><br><span class="line">    [[ <span class="string">&quot;<span class="subst">$(bocker_check <span class="string">&quot;<span class="variable">$uuid</span>&quot;</span>)</span>&quot;</span> == 0 ]] &amp;&amp; bocker_run <span class="string">&quot;<span class="variable">$@</span>&quot;</span></span><br><span class="line">    btrfs subvolume create <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$uuid</span>&quot;</span> &gt; /dev/null</span><br><span class="line">    <span class="built_in">cp</span> -rf --reflink=auto <span class="string">&quot;<span class="variable">$1</span>&quot;</span>/* <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$uuid</span>&quot;</span> &gt; /dev/null</span><br><span class="line">    [[ ! -f <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$uuid</span>&quot;</span>/img.source ]] &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$1</span>&quot;</span> &gt; <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$uuid</span>&quot;</span>/img.source</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Created: <span class="variable">$uuid</span>&quot;</span></span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;No directory named &#x27;<span class="variable">$1</span>&#x27; exists&quot;</span></span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="核心机制：Btrfs-写时复制（COW）"><a href="#核心机制：Btrfs-写时复制（COW）" class="headerlink" title="核心机制：Btrfs 写时复制（COW）"></a>核心机制：Btrfs 写时复制（COW）</h5><p><code>cp --reflink=auto</code> 是关键。它利用了 Btrfs 的 <strong>Reflink（引用链接）</strong> 特性：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">普通复制:  源文件 → 读取 → 写入新块 → 占用双倍空间</span><br><span class="line">COW复制:   源文件 → 创建新inode指向相同数据块 → 仅当修改时才复制数据块</span><br></pre></td></tr></table></figure>
+
+<p>这意味着从目录创建镜像几乎是瞬时完成的，且不占用额外空间——直到修改文件时，才会逐块复制。</p>
+<h5 id="UUID-生成策略"><a href="#UUID-生成策略" class="headerlink" title="UUID 生成策略"></a>UUID 生成策略</h5><p><code>shuf -i 42002-42254 -n 1</code> 从 42002~42254（共 253 个值）中随机选一个。这是一个<strong>教学级简化</strong>：</p>
+<ul>
+<li>真实 Docker 使用 64 位十六进制 SHA256 hash（<code>a1b2c3d4...</code>）</li>
+<li>Bocker 只有 253 个可用 ID，长时间运行必然碰撞</li>
+</ul>
+<h5 id="冲突处理的-bug"><a href="#冲突处理的-bug" class="headerlink" title="冲突处理的 bug"></a>冲突处理的 bug</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[ <span class="string">&quot;<span class="subst">$(bocker_check <span class="string">&quot;<span class="variable">$uuid</span>&quot;</span>)</span>&quot;</span> == 0 ]] &amp;&amp; bocker_run <span class="string">&quot;<span class="variable">$@</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>当 UUID 冲突时，本应递归调用 <code>bocker_init</code> 重新生成，但这里错误地调用了 <code>bocker_run</code>。由于 <code>bocker_run</code> 需要两个参数（image_id 和 command），而此处只传入了 <code>$@</code>（即目录名），会导致 <code>bocker_run</code> 执行失败。不过由于 253 个 ID 的碰撞概率极低，这个 bug 在实践中几乎不会被触发。</p>
+<hr>
+<h4 id="3-3-2-bocker-pull-——-从-Docker-Hub-拉取镜像"><a href="#3-3-2-bocker-pull-——-从-Docker-Hub-拉取镜像" class="headerlink" title="3.3.2 bocker_pull —— 从 Docker Hub 拉取镜像"></a>3.3.2 bocker_pull —— 从 Docker Hub 拉取镜像</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">bocker_pull</span></span>() &#123;</span><br><span class="line">  token=<span class="string">&quot;<span class="subst">$(curl -sL -o /dev/null -D- -H &#x27;X-Docker-Token: true&#x27; \</span></span></span><br><span class="line"><span class="subst"><span class="string">    <span class="string">&quot;https://index.docker.io/v1/repositories/<span class="variable">$1</span>/images&quot;</span> \</span></span></span><br><span class="line"><span class="subst"><span class="string">    | tr -d &#x27;\r&#x27; | awk -F &#x27;: *&#x27; &#x27;$1 == <span class="string">&quot;X-Docker-Token&quot;</span> &#123; print $2 &#125;&#x27;)</span>&quot;</span></span><br><span class="line">  registry=<span class="string">&#x27;https://registry-1.docker.io/v1&#x27;</span></span><br><span class="line">  <span class="built_in">id</span>=<span class="string">&quot;<span class="subst">$(curl -sL -H <span class="string">&quot;Authorization: Token <span class="variable">$token</span>&quot;</span> \</span></span></span><br><span class="line"><span class="subst"><span class="string">    <span class="string">&quot;<span class="variable">$registry</span>/repositories/<span class="variable">$1</span>/tags/<span class="variable">$2</span>&quot;</span> | sed &#x27;s/<span class="string">&quot;//g&#x27;)&quot;</span></span></span></span><br><span class="line"><span class="subst"><span class="string">  [[ <span class="string">&quot;<span class="variable">$&#123;#id&#125;</span>&quot;</span> -ne 64 ]] &amp;&amp; echo <span class="string">&quot;No image named &#x27;<span class="variable">$1</span>:<span class="variable">$2</span>&#x27; exists&quot;</span> &amp;&amp; exit 1</span></span></span><br><span class="line"><span class="subst"><span class="string">  ancestry=<span class="string">&quot;<span class="subst">$(curl -sL -H <span class="string">&quot;Authorization: Token <span class="variable">$token</span>&quot;</span> <span class="string">&quot;<span class="variable">$registry</span>/images/<span class="variable">$id</span>/ancestry&quot;</span>)</span>&quot;</span></span></span></span><br><span class="line"><span class="subst"><span class="string">  IFS=&#x27;,&#x27; &amp;&amp; ancestry=($&#123;ancestry//[\[\] \&quot;]/&#125;)</span> &amp;&amp; IFS=&#x27; \n\t&#x27;</span></span><br><span class="line"><span class="string">  tmp_uuid=&quot;</span>$(uuidgen)<span class="string">&quot; &amp;&amp; mkdir /tmp/&quot;</span><span class="variable">$tmp_uuid</span><span class="string">&quot;</span></span><br><span class="line"><span class="string">  for id in &quot;</span><span class="variable">$&#123;ancestry[@]&#125;</span><span class="string">&quot;; do</span></span><br><span class="line"><span class="string">    curl -#L -H &quot;</span>Authorization: Token <span class="variable">$token</span><span class="string">&quot; \</span></span><br><span class="line"><span class="string">      &quot;</span><span class="variable">$registry</span>/images/<span class="variable">$id</span>/layer<span class="string">&quot; -o /tmp/&quot;</span><span class="variable">$tmp_uuid</span><span class="string">&quot;/layer.tar</span></span><br><span class="line"><span class="string">    tar xf /tmp/&quot;</span><span class="variable">$tmp_uuid</span><span class="string">&quot;/layer.tar -C /tmp/&quot;</span><span class="variable">$tmp_uuid</span><span class="string">&quot; \</span></span><br><span class="line"><span class="string">      &amp;&amp; rm /tmp/&quot;</span><span class="variable">$tmp_uuid</span><span class="string">&quot;/layer.tar</span></span><br><span class="line"><span class="string">  done</span></span><br><span class="line"><span class="string">  echo &quot;</span><span class="variable">$1</span>:<span class="variable">$2</span><span class="string">&quot; &gt; /tmp/&quot;</span><span class="variable">$tmp_uuid</span><span class="string">&quot;/img.source</span></span><br><span class="line"><span class="string">  bocker_init /tmp/&quot;</span><span class="variable">$tmp_uuid</span><span class="string">&quot; &amp;&amp; rm -rf /tmp/&quot;</span><span class="variable">$tmp_uuid</span><span class="string">&quot;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="镜像拉取流程"><a href="#镜像拉取流程" class="headerlink" title="镜像拉取流程"></a>镜像拉取流程</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Docker Hub V1 Registry API</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">  第一步：获取 Token</span><br><span class="line">  GET /v1/repositories/&lt;name&gt;/images</span><br><span class="line">  Header: X-Docker-Token: true</span><br><span class="line">  Response Header: X-Docker-Token: &lt;token&gt;</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">  第二步：获取镜像 ID（64 位 hex）</span><br><span class="line">  GET /v1/repositories/&lt;name&gt;/tags/&lt;tag&gt;</span><br><span class="line">  Authorization: Token &lt;token&gt;</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">  第三步：获取层列表（ancestry）</span><br><span class="line">  GET /v1/images/&lt;id&gt;/ancestry</span><br><span class="line">  Response: [&quot;sha256:a...&quot;, &quot;sha256:b...&quot;, ...]</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">  第四步：逐层下载并解压叠加</span><br><span class="line">  for each layer:</span><br><span class="line">    GET /v1/images/&lt;layer_id&gt;/layer</span><br><span class="line">    → layer.tar → 解压到临时目录 → 删除 tar</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">  第五步：调用 bocker_init 创建镜像子卷</span><br><span class="line">  临时目录 → bocker_init → Btrfs 子卷</span><br></pre></td></tr></table></figure>
+
+<h5 id="镜像层叠原理"><a href="#镜像层叠原理" class="headerlink" title="镜像层叠原理"></a>镜像层叠原理</h5><p>Docker 镜像是<strong>分层叠加</strong>的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">┌──────────────────────┐  ← 第 n 层（最上层，APP）</span><br><span class="line">├──────────────────────┤  ← 第 3 层（配置修改）</span><br><span class="line">├──────────────────────┤  ← 第 2 层（系统工具）</span><br><span class="line">├──────────────────────┤  ← 第 1 层（基础 OS）</span><br><span class="line">└──────────────────────┘  ← 第 0 层（rootfs 基座）</span><br></pre></td></tr></table></figure>
+
+<p>Bocker 通过将所有层依次解压到同一目录（后一层覆盖前一层同名文件），实现了<strong>层的叠加合并</strong>。这与 Docker 的 UnionFS（OverlayFS）原理不同——Docker 保留各层独立，只在上层记录差异；而 Bocker 合并成单一文件系统。这意味着 Bocker 无法利用 Docker 的缓存复用（每一层可以独立缓存），但实现更简单。</p>
+<hr>
+<h4 id="3-3-3-bocker-images-x2F-bocker-rm"><a href="#3-3-3-bocker-images-x2F-bocker-rm" class="headerlink" title="3.3.3 bocker_images &#x2F; bocker_rm"></a>3.3.3 bocker_images &#x2F; bocker_rm</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">bocker_images</span></span>() &#123;</span><br><span class="line">  <span class="built_in">echo</span> -e <span class="string">&quot;IMAGE_ID\t\tSOURCE&quot;</span></span><br><span class="line">  <span class="keyword">for</span> img <span class="keyword">in</span> <span class="string">&quot;<span class="variable">$btrfs_path</span>&quot;</span>/img_*; <span class="keyword">do</span></span><br><span class="line">    img=$(<span class="built_in">basename</span> <span class="string">&quot;<span class="variable">$img</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">echo</span> -e <span class="string">&quot;<span class="variable">$img</span>\t\t<span class="subst">$(cat <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$img</span>/img.source&quot;</span>)</span>&quot;</span></span><br><span class="line">  <span class="keyword">done</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">bocker_rm</span></span>() &#123;</span><br><span class="line">  [[ <span class="string">&quot;<span class="subst">$(bocker_check <span class="string">&quot;<span class="variable">$1</span>&quot;</span>)</span>&quot;</span> == 1 ]] &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;No container named &#x27;<span class="variable">$1</span>&#x27; exists&quot;</span> &amp;&amp; <span class="built_in">exit</span> 1</span><br><span class="line">  btrfs subvolume delete <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$1</span>&quot;</span> &gt; /dev/null</span><br><span class="line">  cgdelete -g <span class="string">&quot;<span class="variable">$cgroups</span>:/<span class="variable">$1</span>&quot;</span> &amp;&gt; /dev/null || <span class="literal">true</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;Removed: <span class="variable">$1</span>&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键点</strong>：</p>
+<ul>
+<li><code>img_*</code> 前缀区分镜像，<code>ps_*</code> 前缀区分容器——命名约定取代了数据库</li>
+<li><code>bocker_rm</code> 同时删除 Btrfs 子卷和 cgroup。<code>cgdelete</code> 后的 <code>|| true</code> 确保即使 cgroup 不存在也不报错</li>
+<li>对比 Docker：Docker 使用 etcd&#x2F;数据库维护元数据，Bocker 用文件系统作为”数据库”</li>
+</ul>
+<hr>
+<h3 id="3-4-容器管理深入分析（核心）"><a href="#3-4-容器管理深入分析（核心）" class="headerlink" title="3.4 容器管理深入分析（核心）"></a>3.4 容器管理深入分析（核心）</h3><h4 id="3-4-1-bocker-run-——-容器创建与运行"><a href="#3-4-1-bocker-run-——-容器创建与运行" class="headerlink" title="3.4.1 bocker_run —— 容器创建与运行"></a>3.4.1 bocker_run —— 容器创建与运行</h4><p>这是 Bocker 最复杂的函数，也是理解容器运行时的关键。我将它拆解为 <strong>5 个阶段</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">bocker_run</span></span>() &#123;</span><br><span class="line">  uuid=<span class="string">&quot;ps_<span class="subst">$(shuf -i 42002-42254 -n 1)</span>&quot;</span></span><br><span class="line">  [[ <span class="string">&quot;<span class="subst">$(bocker_check <span class="string">&quot;<span class="variable">$1</span>&quot;</span>)</span>&quot;</span> == 1 ]] &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;No image named &#x27;<span class="variable">$1</span>&#x27; exists&quot;</span> &amp;&amp; <span class="built_in">exit</span> 1</span><br><span class="line">  [[ <span class="string">&quot;<span class="subst">$(bocker_check <span class="string">&quot;<span class="variable">$uuid</span>&quot;</span>)</span>&quot;</span> == 0 ]] &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;UUID conflict, retrying...&quot;</span> &amp;&amp; bocker_run <span class="string">&quot;<span class="variable">$@</span>&quot;</span> &amp;&amp; <span class="built_in">return</span></span><br><span class="line">  cmd=<span class="string">&quot;<span class="variable">$&#123;@:2&#125;</span>&quot;</span> &amp;&amp; ip=<span class="string">&quot;<span class="subst">$(echo <span class="string">&quot;<span class="variable">$&#123;uuid: -3&#125;</span>&quot;</span> | sed &#x27;s/0//g&#x27;)</span>&quot;</span> &amp;&amp; mac=<span class="string">&quot;<span class="variable">$&#123;uuid: -3:1&#125;</span>:<span class="variable">$&#123;uuid: -2&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># ─── 阶段1：网络设置 ───</span></span><br><span class="line">  ip <span class="built_in">link</span> add dev veth0_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span> <span class="built_in">type</span> veth peer name veth1_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span></span><br><span class="line">  ip <span class="built_in">link</span> <span class="built_in">set</span> dev veth0_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span> up</span><br><span class="line">  ip <span class="built_in">link</span> <span class="built_in">set</span> veth0_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span> master bridge0</span><br><span class="line">  ip netns add netns_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span></span><br><span class="line">  ip <span class="built_in">link</span> <span class="built_in">set</span> veth1_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span> netns netns_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span></span><br><span class="line">  ip netns <span class="built_in">exec</span> netns_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span> ip <span class="built_in">link</span> <span class="built_in">set</span> dev lo up</span><br><span class="line">  ip netns <span class="built_in">exec</span> netns_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span> ip <span class="built_in">link</span> <span class="built_in">set</span> veth1_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span> address 02:42:ac:11:00<span class="string">&quot;<span class="variable">$mac</span>&quot;</span></span><br><span class="line">  ip netns <span class="built_in">exec</span> netns_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span> ip addr add 10.0.0.<span class="string">&quot;<span class="variable">$ip</span>&quot;</span>/24 dev veth1_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span></span><br><span class="line">  ip netns <span class="built_in">exec</span> netns_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span> ip <span class="built_in">link</span> <span class="built_in">set</span> dev veth1_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span> up</span><br><span class="line">  ip netns <span class="built_in">exec</span> netns_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span> ip route add default via 10.0.0.1</span><br><span class="line"></span><br><span class="line">  <span class="comment"># ─── 阶段2：根文件系统 ───</span></span><br><span class="line">  btrfs subvolume snapshot <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$1</span>&quot;</span> <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$uuid</span>&quot;</span> &gt; /dev/null</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&#x27;nameserver 8.8.8.8&#x27;</span> &gt; <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$uuid</span>&quot;</span>/etc/resolv.conf</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$cmd</span>&quot;</span> &gt; <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$uuid</span>/<span class="variable">$uuid</span>.cmd&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># ─── 阶段3：cgroup 资源限制 ───</span></span><br><span class="line">  cgcreate -g <span class="string">&quot;<span class="variable">$cgroups</span>:/<span class="variable">$uuid</span>&quot;</span></span><br><span class="line">  : <span class="string">&quot;<span class="variable">$&#123;BOCKER_CPU_SHARE:=512&#125;</span>&quot;</span> &amp;&amp; cgset -r cpu.shares=<span class="string">&quot;<span class="variable">$BOCKER_CPU_SHARE</span>&quot;</span> <span class="string">&quot;<span class="variable">$uuid</span>&quot;</span></span><br><span class="line">  : <span class="string">&quot;<span class="variable">$&#123;BOCKER_MEM_LIMIT:=512&#125;</span>&quot;</span> &amp;&amp; cgset -r memory.limit_in_bytes=<span class="string">&quot;<span class="subst">$((BOCKER_MEM_LIMIT * 1000000)</span>)&quot;</span> <span class="string">&quot;<span class="variable">$uuid</span>&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># ─── 阶段4：启动容器进程 ───</span></span><br><span class="line">  cgexec -g <span class="string">&quot;<span class="variable">$cgroups</span>:<span class="variable">$uuid</span>&quot;</span> \</span><br><span class="line">    ip netns <span class="built_in">exec</span> netns_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span> \</span><br><span class="line">    unshare -fmuip --mount-proc \</span><br><span class="line">    <span class="built_in">chroot</span> <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$uuid</span>&quot;</span> \</span><br><span class="line">    /bin/sh -c <span class="string">&quot;/bin/mount -t proc proc /proc &amp;&amp; <span class="variable">$cmd</span>&quot;</span> \</span><br><span class="line">    2&gt;&amp;1 | <span class="built_in">tee</span> <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$uuid</span>/<span class="variable">$uuid</span>.log&quot;</span> || <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># ─── 阶段5：清理网络 ───</span></span><br><span class="line">  ip <span class="built_in">link</span> del dev veth0_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span></span><br><span class="line">  ip netns del netns_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="阶段1：网络设置详解"><a href="#阶段1：网络设置详解" class="headerlink" title="阶段1：网络设置详解"></a>阶段1：网络设置详解</h5><p><strong>veth pair 的工作原理</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">🔌 主机侧 (bridge0)          🔌 容器侧 (netns_xxx)</span><br><span class="line">┌─────────────────┐        ┌──────────────────────┐</span><br><span class="line">│  veth0_xxx       │        │  veth1_xxx           │</span><br><span class="line">│  10.0.0.1/24     │◄──────►│  10.0.0.2/24         │</span><br><span class="line">│  (bridge0)       │  veth  │  MAC: 02:42:ac:11:00 │</span><br><span class="line">│                  │  pair  │  lo: 127.0.0.1       │</span><br><span class="line">└─────────────────┘        └──────────┬───────────┘</span><br><span class="line">                                       │</span><br><span class="line">                                 default gw: 10.0.0.1</span><br></pre></td></tr></table></figure>
+
+<p>veth pair 像一个<strong>虚拟网线</strong>——两端永远连通，一端发送的数据另一端立即接收。将一端放入容器网络命名空间，另一端连接到主机网桥，就实现了容器与主机的网络互通。</p>
+<p><strong>IP 和 MAC 生成的简化策略</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip=<span class="string">&quot;<span class="subst">$(echo <span class="string">&quot;<span class="variable">$&#123;uuid: -3&#125;</span>&quot;</span> | sed &#x27;s/0//g&#x27;)</span>&quot;</span></span><br><span class="line">mac=<span class="string">&quot;<span class="variable">$&#123;uuid: -3:1&#125;</span>:<span class="variable">$&#123;uuid: -2&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>UUID 为 <code>ps_42150</code>，取后三位 <code>150</code> → IP <code>10.0.0.150</code>，MAC <code>02:42:ac:11:00:1:50</code></li>
+<li>这种简化方式会导致 IP 冲突（若两位容器 ID 相同）和 IP 格式异常（如 <code>10.0.0.0</code> 被压缩为 <code>10.0.0.</code>）</li>
+</ul>
+<h5 id="阶段2：根文件系统-——-Btrfs-快照"><a href="#阶段2：根文件系统-——-Btrfs-快照" class="headerlink" title="阶段2：根文件系统 —— Btrfs 快照"></a>阶段2：根文件系统 —— Btrfs 快照</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">btrfs subvolume snapshot <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$1</span>&quot;</span> <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$uuid</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>这是 Bocker 最精妙的设计之一。Docker 使用<strong>多层 OverlayFS</strong>（lowerdir + upperdir + workdir），而 Bocker 使用<strong>单层 Btrfs 快照</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Docker 的 OverlayFS:</span><br><span class="line">  ┌──────────────┐  ← upperdir（容器可写层）</span><br><span class="line">  ├──────────────┤  ← lowerdir（镜像层，只读）</span><br><span class="line">  └──────────────┘</span><br><span class="line"></span><br><span class="line">Bocker 的 Btrfs 快照:</span><br><span class="line">  ┌──────────────┐  ← 快照（独立可写，但共享未修改数据块）</span><br><span class="line">  │  (指向镜像)   │</span><br><span class="line">  └──────────────┘</span><br><span class="line">      │</span><br><span class="line">      ▼</span><br><span class="line">  ┌──────────────┐  ← 镜像子卷（只读，被多个快照共享）</span><br><span class="line">  └──────────────┘</span><br></pre></td></tr></table></figure>
+
+<p>Btrfs 快照的写时复制（COW）特性：</p>
+<ul>
+<li>创建快照时<strong>不复制数据</strong>，只复制元数据</li>
+<li>当容器修改文件时，被修改的数据块才被复制到快照</li>
+<li>多个容器基于同一镜像运行时，共享未修改的数据块，<strong>极大节省磁盘空间</strong></li>
+</ul>
+<h5 id="阶段3：cgroup-资源限制"><a href="#阶段3：cgroup-资源限制" class="headerlink" title="阶段3：cgroup 资源限制"></a>阶段3：cgroup 资源限制</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cgcreate -g <span class="string">&quot;<span class="variable">$cgroups</span>:/<span class="variable">$uuid</span>&quot;</span></span><br><span class="line">: <span class="string">&quot;<span class="variable">$&#123;BOCKER_CPU_SHARE:=512&#125;</span>&quot;</span> &amp;&amp; cgset -r cpu.shares=<span class="string">&quot;<span class="variable">$BOCKER_CPU_SHARE</span>&quot;</span> <span class="string">&quot;<span class="variable">$uuid</span>&quot;</span></span><br><span class="line">: <span class="string">&quot;<span class="variable">$&#123;BOCKER_MEM_LIMIT:=512&#125;</span>&quot;</span> &amp;&amp; cgset -r memory.limit_in_bytes=<span class="string">&quot;<span class="subst">$((BOCKER_MEM_LIMIT * 1000000)</span>)&quot;</span> <span class="string">&quot;<span class="variable">$uuid</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>cgroup 层级结构</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/sys/fs/cgroup/</span><br><span class="line">├── cpu/</span><br><span class="line">│   └── ps_42150/          ← 新建的 cgroup</span><br><span class="line">│       └── cpu.shares     ← 写入 512（默认）</span><br><span class="line">├── cpuacct/</span><br><span class="line">│   └── ps_42150/</span><br><span class="line">└── memory/</span><br><span class="line">    └── ps_42150/</span><br><span class="line">        └── memory.limit_in_bytes  ← 写入 512000000（512MB）</span><br></pre></td></tr></table></figure>
+
+<p>关键参数说明：</p>
+<ul>
+<li><code>cpu.shares=512</code>：相对权重，默认 1024，512 表示该容器获得默认一半的 CPU 时间</li>
+<li><code>memory.limit_in_bytes=512MB</code>：硬限制，超出则触发 OOM killer</li>
+<li><code>: &quot;${VAR:=default}&quot;</code> 是 Bash 的<strong>参数展开</strong>语法，当变量未设置或为空时使用默认值</li>
+</ul>
+<h5 id="阶段4：启动容器进程-——-命令链解析"><a href="#阶段4：启动容器进程-——-命令链解析" class="headerlink" title="阶段4：启动容器进程 —— 命令链解析"></a>阶段4：启动容器进程 —— 命令链解析</h5><p>这是整个脚本最精妙的部分，一条命令链串联了 5 层隔离机制：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cgexec -g <span class="string">&quot;<span class="variable">$cgroups</span>:<span class="variable">$uuid</span>&quot;</span> \          <span class="comment"># 第1层：cgroup 资源限制</span></span><br><span class="line">  ip netns <span class="built_in">exec</span> netns_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span> \        <span class="comment"># 第2层：网络命名空间</span></span><br><span class="line">  unshare -fmuip --mount-proc \        <span class="comment"># 第3层：隔离命名空间</span></span><br><span class="line">  <span class="built_in">chroot</span> <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$uuid</span>&quot;</span> \         <span class="comment"># 第4层：文件系统隔离</span></span><br><span class="line">  /bin/sh -c <span class="string">&quot;/bin/mount -t proc proc /proc &amp;&amp; <span class="variable">$cmd</span>&quot;</span>  <span class="comment"># 第5层：执行命令</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>各层作用详解</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>命令</th>
+<th>创建的命名空间</th>
+<th>隔离内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><code>cgexec</code></td>
+<td>—</td>
+<td>CPU、内存资源限制</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>ip netns exec</code></td>
+<td>网络命名空间</td>
+<td>网络设备、IP、路由表</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>unshare -fmuip</code></td>
+<td>Mount、UTS、IPC、PID</td>
+<td>挂载点、主机名、进程树</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>chroot</code></td>
+<td>—</td>
+<td>根文件系统视图</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>mount -t proc</code></td>
+<td>—</td>
+<td><code>/proc</code> 文件系统</td>
+</tr>
+</tbody></table>
+<p><strong>unshare 参数详解</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>Docker 对应</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-f</code></td>
+<td>fork 子进程</td>
+<td>必须，否则 <code>--mount-proc</code> 无效</td>
+</tr>
+<tr>
+<td><code>-m</code></td>
+<td>挂载命名空间</td>
+<td><code>--mount</code></td>
+</tr>
+<tr>
+<td><code>-u</code></td>
+<td>UTS 命名空间</td>
+<td><code>--hostname</code></td>
+</tr>
+<tr>
+<td><code>-i</code></td>
+<td>IPC 命名空间</td>
+<td><code>--ipc</code></td>
+</tr>
+<tr>
+<td><code>-p</code></td>
+<td>PID 命名空间</td>
+<td><code>--pid</code></td>
+</tr>
+<tr>
+<td><code>--mount-proc</code></td>
+<td>自动挂载 <code>/proc</code></td>
+<td>需手动 <code>mount -t proc</code></td>
+</tr>
+</tbody></table>
+<p><strong>为什么需要 <code>--mount-proc</code>？</strong></p>
+<p>PID 命名空间隔离了进程视图。但 <code>/proc</code> 文件系统仍会显示宿主机的进程信息。<code>--mount-proc</code> 会在新 PID 命名空间中挂载一个<strong>只包含当前命名空间进程</strong>的 <code>/proc</code>，使容器内 <code>ps aux</code> 只能看到自己的进程。</p>
+<h5 id="阶段5：日志记录与清理"><a href="#阶段5：日志记录与清理" class="headerlink" title="阶段5：日志记录与清理"></a>阶段5：日志记录与清理</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2&gt;&amp;1 | <span class="built_in">tee</span> <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$uuid</span>/<span class="variable">$uuid</span>.log&quot;</span> || <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p><code>tee</code> 同时输出到屏幕和文件，<code>|| true</code> 确保即使命令失败（返回非零退出码），脚本也不会因 <code>set -e</code> 而终止，从而执行后续的清理操作。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip <span class="built_in">link</span> del dev veth0_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span>     <span class="comment"># 删除 veth 设备（veth1 自动删除）</span></span><br><span class="line">ip netns del netns_<span class="string">&quot;<span class="variable">$uuid</span>&quot;</span>        <span class="comment"># 删除网络命名空间</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：网络清理只在容器命令执行完毕后进行。如果容器是后台长期运行的（如 Web 服务器），<code>bocker_run</code> 会阻塞直到容器退出。Bocker 缺少 Docker 的 <code>-d</code>（detach）模式。</p>
+<hr>
+<h4 id="3-4-2-bocker-exec-——-进入运行中的容器"><a href="#3-4-2-bocker-exec-——-进入运行中的容器" class="headerlink" title="3.4.2 bocker_exec —— 进入运行中的容器"></a>3.4.2 bocker_exec —— 进入运行中的容器</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">bocker_exec</span></span>() &#123;</span><br><span class="line">  [[ <span class="string">&quot;<span class="subst">$(bocker_check <span class="string">&quot;<span class="variable">$1</span>&quot;</span>)</span>&quot;</span> == 1 ]] &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;No container named &#x27;<span class="variable">$1</span>&#x27; exists&quot;</span> &amp;&amp; <span class="built_in">exit</span> 1</span><br><span class="line">  cid=<span class="string">&quot;<span class="subst">$(ps o ppid,pid | grep <span class="string">&quot;^<span class="subst">$(ps o pid,cmd | grep -E <span class="string">&quot;^\ *[0-9]+ unshare.*<span class="variable">$1</span>&quot;</span> | awk &#x27;&#123;print $1&#125;&#x27;)</span>&quot;</span> | awk &#x27;&#123;print $2&#125;&#x27;)</span>&quot;</span></span><br><span class="line">  [[ ! <span class="string">&quot;<span class="variable">$cid</span>&quot;</span> =~ ^\ *[0-9]+$ ]] &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;Container &#x27;<span class="variable">$1</span>&#x27; exists but is not running&quot;</span> &amp;&amp; <span class="built_in">exit</span> 1</span><br><span class="line">  nsenter -t <span class="string">&quot;<span class="variable">$cid</span>&quot;</span> -m -u -i -n -p <span class="built_in">chroot</span> <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$1</span>&quot;</span> <span class="string">&quot;<span class="variable">$&#123;@:2&#125;</span>&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="PID-查找逻辑拆解"><a href="#PID-查找逻辑拆解" class="headerlink" title="PID 查找逻辑拆解"></a>PID 查找逻辑拆解</h5><p>这条命令链非常精巧，分三层查找容器主进程 PID：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">第1步：查找 unshare 进程</span><br><span class="line">ps o pid,cmd → grep &quot;unshare.*$1&quot; → awk &#x27;&#123;print $1&#125;&#x27;</span><br><span class="line">输出：unshare 进程的 PID（如 12345）</span><br><span class="line"></span><br><span class="line">第2步：查找 unshare 的子进程（实际容器进程）</span><br><span class="line">ps o ppid,pid → grep &quot;^12345&quot; → awk &#x27;&#123;print $2&#125;&#x27;</span><br><span class="line">输出：容器主进程的 PID（如 12346）</span><br><span class="line"></span><br><span class="line">第3步：nsenter 进入容器命名空间</span><br><span class="line">nsenter -t 12346 -m -u -i -n -p chroot /var/bocker/ps_xxx /bin/sh</span><br></pre></td></tr></table></figure>
+
+<p><strong>进程树关系</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cgexec</span><br><span class="line">  └─ ip netns exec</span><br><span class="line">       └─ unshare -f       ← PID 12345（unshare fork 出子进程）</span><br><span class="line">            └─ sh -c       ← PID 12346（容器主进程，在 PID 命名空间中 PID=1）</span><br><span class="line">                 └─ $cmd   ← 用户命令（如 cat /etc/os-release）</span><br></pre></td></tr></table></figure>
+
+<p><strong>nsenter 参数</strong>：<code>-t</code> 指定目标 PID，<code>-m -u -i -n -p</code> 分别进入 mount、UTS、IPC、network、PID 命名空间。这样 <code>exec</code> 命令就能”看到”与容器主进程相同的环境。</p>
+<hr>
+<h4 id="3-4-3-bocker-commit-——-容器提交为镜像"><a href="#3-4-3-bocker-commit-——-容器提交为镜像" class="headerlink" title="3.4.3 bocker_commit —— 容器提交为镜像"></a>3.4.3 bocker_commit —— 容器提交为镜像</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">bocker_commit</span></span>() &#123;</span><br><span class="line">  [[ <span class="string">&quot;<span class="subst">$(bocker_check <span class="string">&quot;<span class="variable">$1</span>&quot;</span>)</span>&quot;</span> == 1 ]] &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;No container named &#x27;<span class="variable">$1</span>&#x27; exists&quot;</span> &amp;&amp; <span class="built_in">exit</span> 1</span><br><span class="line">  [[ <span class="string">&quot;<span class="subst">$(bocker_check <span class="string">&quot;<span class="variable">$2</span>&quot;</span>)</span>&quot;</span> == 1 ]] &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;No image named &#x27;<span class="variable">$2</span>&#x27; exists&quot;</span> &amp;&amp; <span class="built_in">exit</span> 1</span><br><span class="line">  bocker_rm <span class="string">&quot;<span class="variable">$2</span>&quot;</span> &amp;&amp; btrfs subvolume snapshot <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$1</span>&quot;</span> <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$2</span>&quot;</span> &gt; /dev/null</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;Created: <span class="variable">$2</span>&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>流程</strong>：删除旧镜像 → 创建容器快照作为新镜像。<strong>注意</strong>：先 <code>bocker_rm</code> 删除旧镜像子卷，再创建新快照。如果 <code>bocker_rm</code> 失败（如旧镜像不存在），<code>&amp;&amp;</code> 会阻止后续操作。</p>
+<hr>
+<h3 id="3-5-帮助函数与入口"><a href="#3-5-帮助函数与入口" class="headerlink" title="3.5 帮助函数与入口"></a>3.5 帮助函数与入口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">bocker_help</span></span>() &#123;</span><br><span class="line">  sed -n <span class="string">&quot;s/^.*#HELP\\s//p;&quot;</span> &lt; <span class="string">&quot;<span class="variable">$1</span>&quot;</span> | sed <span class="string">&quot;s/\\\\n/\n\t/g;s/$/\n/;s!BOCKER!<span class="variable">$&#123;1/!/\\!&#125;</span>!g&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[[ -z <span class="string">&quot;<span class="variable">$&#123;1-&#125;</span>&quot;</span> ]] &amp;&amp; bocker_help <span class="string">&quot;<span class="variable">$0</span>&quot;</span></span><br><span class="line"><span class="keyword">case</span> <span class="variable">$1</span> <span class="keyword">in</span></span><br><span class="line">  pull|init|<span class="built_in">rm</span>|images|ps|run|<span class="built_in">exec</span>|logs|commit) bocker_<span class="string">&quot;<span class="variable">$1</span>&quot;</span> <span class="string">&quot;<span class="variable">$&#123;@:2&#125;</span>&quot;</span> ;;</span><br><span class="line">  *) bocker_help <span class="string">&quot;<span class="variable">$0</span>&quot;</span> ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>帮助文档的提取方式</strong>：从脚本自身提取以 <code>#HELP</code> 开头的注释，这种<strong>自文档化</strong>技术很巧妙。<code>sed</code> 替换 <code>\n</code> 为实际换行符来实现格式化输出。</p>
+<p><strong>命令分发模式</strong>：<code>bocker_&quot;$1&quot; &quot;${@:2}&quot;</code> 是典型的 Bash 命令分发模式，将 <code>bocker run img_xxx cmd</code> 映射为 <code>bocker_run &quot;img_xxx&quot; &quot;cmd&quot;</code>。</p>
+<hr>
+<h2 id="4-核心技术原理深度探讨"><a href="#4-核心技术原理深度探讨" class="headerlink" title="4. 核心技术原理深度探讨"></a>4. 核心技术原理深度探讨</h2><h3 id="4-1-Btrfs-子卷-vs-Docker-OverlayFS"><a href="#4-1-Btrfs-子卷-vs-Docker-OverlayFS" class="headerlink" title="4.1 Btrfs 子卷 vs Docker OverlayFS"></a>4.1 Btrfs 子卷 vs Docker OverlayFS</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Bocker (Btrfs)</th>
+<th>Docker (OverlayFS)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>存储后端</td>
+<td>Btrfs 子卷</td>
+<td>OverlayFS &#x2F; overlay2</td>
+</tr>
+<tr>
+<td>分层方式</td>
+<td>每层合并为单一文件系统</td>
+<td>保留独立层，差异覆盖</td>
+</tr>
+<tr>
+<td>写时复制</td>
+<td>Btrfs 快照 COW</td>
+<td>文件级 COW（copy-up）</td>
+</tr>
+<tr>
+<td>快照创建</td>
+<td>瞬时</td>
+<td>无需显式快照</td>
+</tr>
+<tr>
+<td>空间效率</td>
+<td>共享未修改数据块</td>
+<td>共享未修改层</td>
+</tr>
+<tr>
+<td>缓存复用</td>
+<td>不支持（层已合并）</td>
+<td>支持（每层独立缓存）</td>
+</tr>
+<tr>
+<td>镜像推送</td>
+<td>不支持</td>
+<td>支持分层推送</td>
+</tr>
+</tbody></table>
+<p><strong>Bocker 的简化</strong>：将多层合并为一层，牺牲了 Docker 的缓存复用能力，但代码复杂度大大降低。</p>
+<h3 id="4-2-命名空间隔离对照"><a href="#4-2-命名空间隔离对照" class="headerlink" title="4.2 命名空间隔离对照"></a>4.2 命名空间隔离对照</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Bocker 使用的命名空间</span></span><br><span class="line">unshare -fmuip --mount-proc</span><br><span class="line"><span class="comment">#          ││││</span></span><br><span class="line"><span class="comment">#          │││└─ PID：隔离进程树</span></span><br><span class="line"><span class="comment">#          ││└── IPC：隔离进程间通信</span></span><br><span class="line"><span class="comment">#          │└─── UTS：隔离主机名/域名</span></span><br><span class="line"><span class="comment">#          └──── Mount：隔离挂载点</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Docker 默认使用的命名空间</span></span><br><span class="line">docker run --pid --ipc --uts --mount --net --user</span><br><span class="line"><span class="comment"># 还额外支持：</span></span><br><span class="line"><span class="comment">#   --user：用户命名空间（root 映射）</span></span><br><span class="line"><span class="comment">#   --cgroup：cgroup 命名空间</span></span><br><span class="line"><span class="comment">#   --time：时间命名空间</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Bocker 未实现的重要隔离</strong>：</p>
+<ul>
+<li><strong>用户命名空间</strong>：容器内 root 即主机 root，安全隐患</li>
+<li><strong>cgroup 命名空间</strong>：容器内看不到宿主机的 cgroup 层级</li>
+<li><strong>SELinux&#x2F;AppArmor</strong>：缺乏强制访问控制</li>
+</ul>
+<h3 id="4-3-完整的容器生命周期"><a href="#4-3-完整的容器生命周期" class="headerlink" title="4.3 完整的容器生命周期"></a>4.3 完整的容器生命周期</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">bocker pull centos 7</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">  镜像层下载 → 合并 → bocker_init → Btrfs 子卷 (img_xxxxx)</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">bocker run img_xxxxx &quot;cat /etc/os-release&quot;</span><br><span class="line">        │</span><br><span class="line">        ├── 创建 Btrfs 快照（ps_xxxxx ← 镜像子卷）</span><br><span class="line">        ├── 创建 veth pair + 网络命名空间</span><br><span class="line">        ├── 创建 cgroup (CPU/Memory 限制)</span><br><span class="line">        ├── cgexec → ip netns exec → unshare → chroot → 执行命令</span><br><span class="line">        ├── 输出日志（tee 到屏幕和文件）</span><br><span class="line">        └── 清理网络（veth0 + netns）</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">bocker exec ps_xxxxx &quot;ls -la&quot;    # nsenter 进入命名空间执行命令</span><br><span class="line">bocker logs ps_xxxxx              # cat 日志文件</span><br><span class="line">bocker commit ps_xxxxx img_xxxxx # 快照容器为新镜像</span><br><span class="line">bocker rm ps_xxxxx               # 删除子卷 + cgroup</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="5-Bocker-与-Docker-的对比"><a href="#5-Bocker-与-Docker-的对比" class="headerlink" title="5. Bocker 与 Docker 的对比"></a>5. Bocker 与 Docker 的对比</h2><h3 id="5-1-功能对比"><a href="#5-1-功能对比" class="headerlink" title="5.1 功能对比"></a>5.1 功能对比</h3><table>
+<thead>
+<tr>
+<th>功能</th>
+<th>Bocker</th>
+<th>Docker</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>代码量</td>
+<td>~100 行 Bash</td>
+<td>数百万行 Go</td>
+</tr>
+<tr>
+<td>镜像拉取</td>
+<td>Docker Hub V1 API</td>
+<td>Registry V2 API + 认证</td>
+</tr>
+<tr>
+<td>镜像分层</td>
+<td>合并为单层</td>
+<td>多层 OverlayFS</td>
+</tr>
+<tr>
+<td>容器隔离</td>
+<td>Namespace + chroot</td>
+<td>Namespace + pivot_root</td>
+</tr>
+<tr>
+<td>资源限制</td>
+<td>cgroups (CPU&#x2F;Memory)</td>
+<td>cgroups v2 + 更多子系统</td>
+</tr>
+<tr>
+<td>网络</td>
+<td>veth + bridge0</td>
+<td>CNI&#x2F;CNM 插件化</td>
+</tr>
+<tr>
+<td>存储</td>
+<td>Btrfs 子卷</td>
+<td>多种存储驱动</td>
+</tr>
+<tr>
+<td>容器编排</td>
+<td>无</td>
+<td>Docker Compose&#x2F;Swarm</td>
+</tr>
+<tr>
+<td>安全性</td>
+<td>root 运行，无用户映射</td>
+<td>用户命名空间 + seccomp</td>
+</tr>
+<tr>
+<td>持久化</td>
+<td>无</td>
+<td>Volume 绑定挂载</td>
+</tr>
+<tr>
+<td>构建</td>
+<td>无</td>
+<td>Dockerfile 构建</td>
+</tr>
+</tbody></table>
+<h3 id="5-2-关键差异深度分析"><a href="#5-2-关键差异深度分析" class="headerlink" title="5.2 关键差异深度分析"></a>5.2 关键差异深度分析</h3><p><strong>1. 文件系统隔离：chroot vs pivot_root</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Bocker 使用 chroot</span></span><br><span class="line"><span class="built_in">chroot</span> <span class="string">&quot;<span class="variable">$btrfs_path</span>/<span class="variable">$uuid</span>&quot;</span> /bin/sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># Docker 使用 pivot_root</span></span><br><span class="line">pivot_root . put_old</span><br></pre></td></tr></table></figure>
+
+<p><code>chroot</code> 只是改变当前进程的根目录，但<strong>不会切换全局根挂载点</strong>。这意味着理论上可以通过 <code>chroot</code> 逃逸（如 <code>chroot</code> 后的进程若拿到文件描述符，仍可访问宿主机文件系统）。<code>pivot_root</code> 则将整个系统根目录切换，安全性更高。</p>
+<p><strong>2. 容器进程管理</strong></p>
+<p>Bocker 的容器进程是 <code>cgexec</code> 的子进程，<code>bocker_run</code> 会阻塞等待。Docker 的容器进程是 <code>containerd</code> 的子进程，通过 <code>runc</code> 创建并分离，支持 <code>docker run -d</code> 后台运行。</p>
+<p><strong>3. 网络模型</strong></p>
+<p>Bocker 的 <code>bridge0</code> 是预创建的。Docker 的 <code>docker0</code> 网桥是自动创建和管理的，且支持用户自定义网络。</p>
+<hr>
+<h2 id="6-设计缺陷与改进方向"><a href="#6-设计缺陷与改进方向" class="headerlink" title="6. 设计缺陷与改进方向"></a>6. 设计缺陷与改进方向</h2><h3 id="6-1-已知缺陷"><a href="#6-1-已知缺陷" class="headerlink" title="6.1 已知缺陷"></a>6.1 已知缺陷</h3><table>
+<thead>
+<tr>
+<th>缺陷</th>
+<th>位置</th>
+<th>影响</th>
+<th>改进方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>UUID 范围过小</td>
+<td><code>bocker_init</code>&#x2F;<code>bocker_run</code></td>
+<td>最多 253 个容器</td>
+<td>使用 <code>mktemp -u</code> 或 <code>uuidgen</code></td>
+</tr>
+<tr>
+<td><code>bocker_init</code> 冲突处理 bug</td>
+<td>第 5 行</td>
+<td>极端情况无法正确重试</td>
+<td>改为递归调用自身</td>
+</tr>
+<tr>
+<td>IP 生成简化</td>
+<td><code>bocker_run</code></td>
+<td>可能冲突</td>
+<td>使用 <code>shuf</code> 生成随机 IP</td>
+</tr>
+<tr>
+<td>无后台运行模式</td>
+<td><code>bocker_run</code></td>
+<td>无法运行长期服务</td>
+<td>添加 <code>-d</code> 参数，使用 <code>&amp;</code> 后台</td>
+</tr>
+<tr>
+<td>无用户命名空间</td>
+<td><code>unshare</code> 参数</td>
+<td>安全风险</td>
+<td>添加 <code>--user</code> 映射</td>
+</tr>
+<tr>
+<td>网络清理不完整</td>
+<td><code>bocker_run</code> 末尾</td>
+<td>容器崩溃时可能残留</td>
+<td>添加 <code>trap</code> 清理</td>
+</tr>
+</tbody></table>
+<h3 id="6-2-值得学习的设计亮点"><a href="#6-2-值得学习的设计亮点" class="headerlink" title="6.2 值得学习的设计亮点"></a>6.2 值得学习的设计亮点</h3><p>尽管有缺陷，Bocker 的代码设计仍有不少亮点：</p>
+<ol>
+<li><strong>极致简约</strong>：100 行代码实现容器运行时，每行代码解决一个核心问题</li>
+<li><strong>自文档化</strong>：<code>#HELP</code> 注释自动生成帮助文档</li>
+<li><strong>命令分发模式</strong>：<code>case</code> 加动态函数调用，简洁优雅</li>
+<li><strong>利用 Linux 内核特性组合</strong>：不重复造轮子，直接调用 <code>btrfs</code>、<code>ip</code>、<code>unshare</code> 等工具</li>
+<li><strong>Btrfs 快照作为容器层</strong>：巧妙利用 COW 特性，实现秒级容器创建</li>
+</ol>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Bocker 是一个精妙的容器技术教学项目。它用最少的代码让我们窥见了容器的本质：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">容器 = Btrfs 快照（存储）</span><br><span class="line">     + unshare 命名空间（隔离）</span><br><span class="line">     + cgroups（资源限制）</span><br><span class="line">     + veth pair + bridge（网络）</span><br><span class="line">     + chroot（文件系统）</span><br></pre></td></tr></table></figure>
+
+<p>每一行代码都对应一个内核特性，没有任何多余的抽象层。对于希望深入理解容器原理的开发者，Bocker 是一把绝佳的钥匙——它剥离了 Docker 的复杂性，直击本质。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/ab2a157c.html">https://raidenxe.github.io/archives/ab2a157c.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg3.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/archives/1fb3a2c8.html" title="ACP大模型C2笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">ACP大模型C2笔记</div></div><div class="info-2"><div class="info-item-1">阿里云大模型ACP认证 · C2 构造问答系统 知识点总结 目录 项目背景与课程体系 大模型API调用与多轮对话 大模型工作原理与生成参数 RAG检索增强生成 提示词工程 自动化评测体系 RAG优化策略 考试重点与权重分布   1. 项目背景与课程体系1.1 项目场景课程以一个教育内容开发公司为背景，新员工频繁提问导致答疑成本高。公司虽整理了文档库，但员工仍难以消化，导致工作出错。传统问答系统依赖固定规则和相似度匹配，存在以下问题：  员工使用不同问法时，系统可能无法回答 人工配置问答对，投入产出比低 无法理解自然语言的多样性  1.2 解决方案利用大模型构建智能问答系统，无需配置问答对，基于公司内部知识库准确回答问题。 1.3 课程结构   章节 内容 核心知识点    2.1 用大模型构建新人答疑机器人 API调用、大模型原理、生成参数   2.2 扩展答疑机器人的知识范围 RAG工作流程、LlamaIndex   2.3 优化提示词改善回答质量 提示词框架、模板、技巧   2.4 自动化评测答疑机器人表现 Ragas、TruLens、DeepEval   2.5 优化RAG...</div></div></div></a><a class="pagination-related" href="/archives/a54ffedb.html" title="jumpserver笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260715102638262.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">jumpserver笔记</div></div><div class="info-2"><div class="info-item-1">JumpServer 部署笔记 版本: v4.10.15 | 部署方式: Docker-Compose | 镜像源: Docker Hub   目录 什么是 JumpServer 环境准备 Docker-Compose 部署 初始化与访问 纳管实验节点 组件架构与作用 配置文件解析 常用管理命令 故障排除   1. 什么是 JumpServerJumpServer 是开源的堡垒机&#x2F;跳板机系统，用于集中管理企业内部服务器的访问权限。它解决了以下核心问题：    问题 JumpServer 解决方案    权限分散 统一认证、细粒度授权管理   操作审计 全程录像、命令审计、操作日志   密钥管理 集中管理 SSH 密钥，避免密钥分散   合规要求 满足等保、SOX 等合规审计需求   JumpServer 采用 B&#x2F;S 架构，支持 Web 端直接管理和操作服务器，无需安装客户端。核心价值在于：让运维操作可追溯、可审计、可控制。  2. 环境准备2.1 系统要求 Linux 内核 3.10+ (推荐 Ubuntu 22.04 &#x2F; CentOS 7.9+)...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Raidenxe</div><div class="author-info-description">向着真理和自由，无名的献身。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Bocker-%E6%BA%90%E7%A0%81%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90-%E2%80%94%E2%80%94-100-%E8%A1%8C-Bash-%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6"><span class="toc-number">1.</span> <span class="toc-text">Bocker 源码深度解析 —— 100 行 Bash 实现的容器运行时</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-Bocker"><span class="toc-number">1.2.</span> <span class="toc-text">1. 什么是 Bocker</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.1 整体架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%8A%9F%E8%83%BD%E4%B8%80%E8%A7%88"><span class="toc-number">1.2.2.</span> <span class="toc-text">1.2 功能一览</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%9E%B6%E6%9E%84%E6%A6%82%E8%A7%88%EF%BC%9A%E5%9B%9B%E5%B1%82%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF"><span class="toc-number">1.3.</span> <span class="toc-text">2. 架构概览：四层核心技术</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%BA%90%E7%A0%81%E9%80%90%E5%B1%82%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">3. 源码逐层深度解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E8%84%9A%E6%9C%AC%E5%A4%B4%E9%83%A8%E4%B8%8E%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.4.1.</span> <span class="toc-text">3.1 脚本头部与环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%90%E8%A1%8C%E8%A7%A3%E6%9E%90"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">逐行解析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%89%E9%A1%B9%E8%A7%A3%E6%9E%90%E6%9C%BA%E5%88%B6"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">选项解析机制</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0%EF%BC%9Abocker-check"><span class="toc-number">1.4.2.</span> <span class="toc-text">3.2 辅助函数：bocker_check</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">原理分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90"><span class="toc-number">1.4.3.</span> <span class="toc-text">3.3 镜像管理深入分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-bocker-init-%E2%80%94%E2%80%94-%E4%BB%8E%E7%9B%AE%E5%BD%95%E5%88%9B%E5%BB%BA%E9%95%9C%E5%83%8F"><span class="toc-number">1.4.3.1.</span> <span class="toc-text">3.3.1 bocker_init —— 从目录创建镜像</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6%EF%BC%9ABtrfs-%E5%86%99%E6%97%B6%E5%A4%8D%E5%88%B6%EF%BC%88COW%EF%BC%89"><span class="toc-number">1.4.3.1.1.</span> <span class="toc-text">核心机制：Btrfs 写时复制（COW）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#UUID-%E7%94%9F%E6%88%90%E7%AD%96%E7%95%A5"><span class="toc-number">1.4.3.1.2.</span> <span class="toc-text">UUID 生成策略</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%86%B2%E7%AA%81%E5%A4%84%E7%90%86%E7%9A%84-bug"><span class="toc-number">1.4.3.1.3.</span> <span class="toc-text">冲突处理的 bug</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-bocker-pull-%E2%80%94%E2%80%94-%E4%BB%8E-Docker-Hub-%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F"><span class="toc-number">1.4.3.2.</span> <span class="toc-text">3.3.2 bocker_pull —— 从 Docker Hub 拉取镜像</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%95%9C%E5%83%8F%E6%8B%89%E5%8F%96%E6%B5%81%E7%A8%8B"><span class="toc-number">1.4.3.2.1.</span> <span class="toc-text">镜像拉取流程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%95%9C%E5%83%8F%E5%B1%82%E5%8F%A0%E5%8E%9F%E7%90%86"><span class="toc-number">1.4.3.2.2.</span> <span class="toc-text">镜像层叠原理</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-3-bocker-images-x2F-bocker-rm"><span class="toc-number">1.4.3.3.</span> <span class="toc-text">3.3.3 bocker_images &#x2F; bocker_rm</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%88%E6%A0%B8%E5%BF%83%EF%BC%89"><span class="toc-number">1.4.4.</span> <span class="toc-text">3.4 容器管理深入分析（核心）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-1-bocker-run-%E2%80%94%E2%80%94-%E5%AE%B9%E5%99%A8%E5%88%9B%E5%BB%BA%E4%B8%8E%E8%BF%90%E8%A1%8C"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">3.4.1 bocker_run —— 容器创建与运行</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%98%B6%E6%AE%B51%EF%BC%9A%E7%BD%91%E7%BB%9C%E8%AE%BE%E7%BD%AE%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.4.4.1.1.</span> <span class="toc-text">阶段1：网络设置详解</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%98%B6%E6%AE%B52%EF%BC%9A%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-%E2%80%94%E2%80%94-Btrfs-%E5%BF%AB%E7%85%A7"><span class="toc-number">1.4.4.1.2.</span> <span class="toc-text">阶段2：根文件系统 —— Btrfs 快照</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%98%B6%E6%AE%B53%EF%BC%9Acgroup-%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6"><span class="toc-number">1.4.4.1.3.</span> <span class="toc-text">阶段3：cgroup 资源限制</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%98%B6%E6%AE%B54%EF%BC%9A%E5%90%AF%E5%8A%A8%E5%AE%B9%E5%99%A8%E8%BF%9B%E7%A8%8B-%E2%80%94%E2%80%94-%E5%91%BD%E4%BB%A4%E9%93%BE%E8%A7%A3%E6%9E%90"><span class="toc-number">1.4.4.1.4.</span> <span class="toc-text">阶段4：启动容器进程 —— 命令链解析</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%98%B6%E6%AE%B55%EF%BC%9A%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95%E4%B8%8E%E6%B8%85%E7%90%86"><span class="toc-number">1.4.4.1.5.</span> <span class="toc-text">阶段5：日志记录与清理</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-2-bocker-exec-%E2%80%94%E2%80%94-%E8%BF%9B%E5%85%A5%E8%BF%90%E8%A1%8C%E4%B8%AD%E7%9A%84%E5%AE%B9%E5%99%A8"><span class="toc-number">1.4.4.2.</span> <span class="toc-text">3.4.2 bocker_exec —— 进入运行中的容器</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#PID-%E6%9F%A5%E6%89%BE%E9%80%BB%E8%BE%91%E6%8B%86%E8%A7%A3"><span class="toc-number">1.4.4.2.1.</span> <span class="toc-text">PID 查找逻辑拆解</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-3-bocker-commit-%E2%80%94%E2%80%94-%E5%AE%B9%E5%99%A8%E6%8F%90%E4%BA%A4%E4%B8%BA%E9%95%9C%E5%83%8F"><span class="toc-number">1.4.4.3.</span> <span class="toc-text">3.4.3 bocker_commit —— 容器提交为镜像</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E5%B8%AE%E5%8A%A9%E5%87%BD%E6%95%B0%E4%B8%8E%E5%85%A5%E5%8F%A3"><span class="toc-number">1.4.5.</span> <span class="toc-text">3.5 帮助函数与入口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E6%B7%B1%E5%BA%A6%E6%8E%A2%E8%AE%A8"><span class="toc-number">1.5.</span> <span class="toc-text">4. 核心技术原理深度探讨</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-Btrfs-%E5%AD%90%E5%8D%B7-vs-Docker-OverlayFS"><span class="toc-number">1.5.1.</span> <span class="toc-text">4.1 Btrfs 子卷 vs Docker OverlayFS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E9%9A%94%E7%A6%BB%E5%AF%B9%E7%85%A7"><span class="toc-number">1.5.2.</span> <span class="toc-text">4.2 命名空间隔离对照</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%AE%8C%E6%95%B4%E7%9A%84%E5%AE%B9%E5%99%A8%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">1.5.3.</span> <span class="toc-text">4.3 完整的容器生命周期</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Bocker-%E4%B8%8E-Docker-%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number">1.6.</span> <span class="toc-text">5. Bocker 与 Docker 的对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E5%8A%9F%E8%83%BD%E5%AF%B9%E6%AF%94"><span class="toc-number">1.6.1.</span> <span class="toc-text">5.1 功能对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E5%85%B3%E9%94%AE%E5%B7%AE%E5%BC%82%E6%B7%B1%E5%BA%A6%E5%88%86%E6%9E%90"><span class="toc-number">1.6.2.</span> <span class="toc-text">5.2 关键差异深度分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7%E4%B8%8E%E6%94%B9%E8%BF%9B%E6%96%B9%E5%90%91"><span class="toc-number">1.7.</span> <span class="toc-text">6. 设计缺陷与改进方向</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E5%B7%B2%E7%9F%A5%E7%BC%BA%E9%99%B7"><span class="toc-number">1.7.1.</span> <span class="toc-text">6.1 已知缺陷</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E5%80%BC%E5%BE%97%E5%AD%A6%E4%B9%A0%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%BA%AE%E7%82%B9"><span class="toc-number">1.7.2.</span> <span class="toc-text">6.2 值得学习的设计亮点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.8.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/61196baf.html" title="Jenkins-CICD实战"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins-CICD实战"/></a><div class="content"><a class="title" href="/archives/61196baf.html" title="Jenkins-CICD实战">Jenkins-CICD实战</a><time datetime="2026-08-11T17:09:47.000Z" title="发表于 2026-08-12 01:09:47">2026-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a3e16fea.html" title="面试题1"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试题1"/></a><div class="content"><a class="title" href="/archives/a3e16fea.html" title="面试题1">面试题1</a><time datetime="2026-08-11T14:53:55.000Z" title="发表于 2026-08-11 22:53:55">2026-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/35864571.html" title="docker部署jenkins"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署jenkins"/></a><div class="content"><a class="title" href="/archives/35864571.html" title="docker部署jenkins">docker部署jenkins</a><time datetime="2026-08-10T05:55:00.000Z" title="发表于 2026-08-10 13:55:00">2026-08-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/be6d62ff.html" title="docker部署gitlab"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署gitlab"/></a><div class="content"><a class="title" href="/archives/be6d62ff.html" title="docker部署gitlab">docker部署gitlab</a><time datetime="2026-08-08T07:16:03.000Z" title="发表于 2026-08-08 15:16:03">2026-08-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260807160530247.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s+Helm部署kube-prometheus-stack"/></a><div class="content"><a class="title" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack">K8s+Helm部署kube-prometheus-stack</a><time datetime="2026-08-07T07:12:03.000Z" title="发表于 2026-08-07 15:12:03">2026-08-07</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2020 - 2026 By Raidenxe</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5"></script><script src="/js/main.js?v=5.5.5"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="false"> </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5"></script></div></div></body></html>

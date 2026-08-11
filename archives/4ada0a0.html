@@ -1,0 +1,645 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Redis集群与高可用 | Raidenxe的博客</title><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Redis集群与高可用本文基于我自己写的 redis-manage.sh 脚本中集群相关模块整理。日常运维中手动敲命令配置主从、哨兵和Cluster太繁琐，容易出错，所以写了这个脚本把常用操作封装成交互式菜单，生产环境用下来确实省力不少。  脚本集群管理逻辑总览redis-manage.sh ..."><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Redis集群与高可用",
+  "url": "https://raidenxe.github.io/archives/4ada0a0.html",
+  "image": "https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260704212618712.png",
+  "datePublished": "2026-07-02T14:30:53.000Z",
+  "dateModified": "2026-07-05T00:58:33.312Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Raidenxe",
+      "url": "https://Raidenxe.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/4ada0a0.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css?v=5.5.5"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Redis集群与高可用',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/macblack.css"><style>
+  #web_bg{background-image:url(/img/风景006.png)}
+  #footer{background-image:url(/img/风景008.png);background-size:cover;background-position:center}
+  .aplayer-lrc{display:none !important}
+</style>
+<meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/%E9%A3%8E%E6%99%AF006.png));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260704212618712.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Raidenxe的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Redis集群与高可用</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Redis集群与高可用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-02T14:30:53.000Z" title="发表于 2026-07-02 22:30:53">2026-07-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-07-05T00:58:33.312Z" title="更新于 2026-07-05 08:58:33">2026-07-05</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">5.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>20分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="Redis集群与高可用"><a href="#Redis集群与高可用" class="headerlink" title="Redis集群与高可用"></a>Redis集群与高可用</h2><p>本文基于我自己写的 <code>redis-manage.sh</code> 脚本中集群相关模块整理。日常运维中手动敲命令配置主从、哨兵和Cluster太繁琐，容易出错，所以写了这个脚本把常用操作封装成交互式菜单，生产环境用下来确实省力不少。</p>
+<hr>
+<h3 id="脚本集群管理逻辑总览"><a href="#脚本集群管理逻辑总览" class="headerlink" title="脚本集群管理逻辑总览"></a>脚本集群管理逻辑总览</h3><p><code>redis-manage.sh</code> 的主菜单里有三个子菜单对应三种集群模式，功能划分得比较清晰：</p>
+<p>主从复制相关的操作都在”集群管理”里，哨兵有独立的”哨兵管理”菜单，Redis Cluster则在”Redis Cluster管理”中。整个脚本的设计思路是：</p>
+<p>所有修改操作都会先备份配置文件，万一操作失败能回滚。优先用 <code>CONFIG SET</code> 或 <code>SENTINEL SET</code> 动态改参数，避免重启服务。密码通过环境变量传递，不在命令行暴露。还用了时间戳缓存机制，减少重复检测，菜单响应快一些。关键操作会记日志，方便事后排查。</p>
+<p><strong>集群相关函数调用关系</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">main_menu()</span><br><span class="line">  ├─ 6) cluster_menu()           → 主从复制</span><br><span class="line">  │    ├─ cluster_setup_master   (配置主节点参数)</span><br><span class="line">  │    ├─ cluster_add_slave      (挂载从节点)</span><br><span class="line">  │    ├─ cluster_status         (查看复制状态)</span><br><span class="line">  │    ├─ cluster_failover       (手动提升从节点)</span><br><span class="line">  │    └─ cluster_backup_restore (配置备份与恢复)</span><br><span class="line">  │</span><br><span class="line">  ├─ 7) sentinel_menu()          → 哨兵</span><br><span class="line">  │    ├─ sentinel_init          (生成配置并创建systemd服务)</span><br><span class="line">  │    ├─ sentinel_start_stop    (启停管理)</span><br><span class="line">  │    ├─ sentinel_status        (监控状态)</span><br><span class="line">  │    ├─ sentinel_configure     (动态调整参数)</span><br><span class="line">  │    ├─ sentinel_failover      (手动触发故障转移)</span><br><span class="line">  │    └─ sentinel_visualize     (拓扑可视化)</span><br><span class="line">  │</span><br><span class="line">  └─ 8) redis_cluster_menu()     → Redis Cluster</span><br><span class="line">       ├─ redis_cluster_create   (创建集群)</span><br><span class="line">       ├─ redis_cluster_status   (查看状态)</span><br><span class="line">       ├─ redis_cluster_add_node (添加节点)</span><br><span class="line">       ├─ redis_cluster_del_node (移除节点)</span><br><span class="line">       ├─ redis_cluster_reshard  (重新分片)</span><br><span class="line">       ├─ redis_cluster_rebalance(负载均衡)</span><br><span class="line">       ├─ redis_cluster_check    (健康检查)</span><br><span class="line">       └─ redis_cluster_fix      (修复集群)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="3-1-Redis主从复制"><a href="#3-1-Redis主从复制" class="headerlink" title="3.1 Redis主从复制"></a>3.1 Redis主从复制</h2><h3 id="3-1-1-Redis主从复制架构"><a href="#3-1-1-Redis主从复制架构" class="headerlink" title="3.1.1 Redis主从复制架构"></a>3.1.1 Redis主从复制架构</h3><p>Redis主从复制是一主多从的结构，主节点负责写，从节点通过异步复制同步数据并提供读服务。初次连接时主节点会生成RDB快照发给从节点（全量同步），之后写命令实时传播（增量同步）。从节点可以分担读压力，提升吞吐量。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">              ┌─────────────────┐</span><br><span class="line">              │     Client      │</span><br><span class="line">              │  (Read/Write)   │</span><br><span class="line">              └────────┬────────┘</span><br><span class="line">                       │</span><br><span class="line">        ┌──────────────┼──────────────┐</span><br><span class="line">        │              │              │</span><br><span class="line">        ▼              ▼              ▼</span><br><span class="line">┌──────────┐   ┌──────────┐   ┌──────────┐</span><br><span class="line">│  Slave 1 │   │  Master  │   │  Slave 2 │</span><br><span class="line">│ (只读)    │   │ (读写)   │    │ (只读)   │</span><br><span class="line">└────┬─────┘   └─────┬────┘   └────┬─────┘</span><br><span class="line">     │                │             │</span><br><span class="line">     │   ← RDB全量同步 │ →           │</span><br><span class="line">     │   ← 增量命令流  │ →           │</span><br><span class="line">     └────────────────┼─────────────┘</span><br><span class="line">                      │</span><br><span class="line">              异步复制（非阻塞）</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-1-2-主从复制实现"><a href="#3-1-2-主从复制实现" class="headerlink" title="3.1.2 主从复制实现"></a>3.1.2 主从复制实现</h3><p>脚本把主从配置流程自动化了，主要涉及两个核心函数。</p>
+<h4 id="（1）配置主节点（cluster-setup-master）"><a href="#（1）配置主节点（cluster-setup-master）" class="headerlink" title="（1）配置主节点（cluster_setup_master）"></a>（1）配置主节点（<code>cluster_setup_master</code>）</h4><p>执行时会先检查Redis是否在运行，然后获取当前角色，如果已经是从节点会给出警告。接下来备份配置文件，设置 <code>replica-serve-stale-data = yes</code>，还会提醒用户设置 <code>min-replicas-to-write</code> 和 <code>min-replicas-max-lag</code> 参数——这些参数对保证数据一致性很重要。如果配置文件里有 <code>requirepass</code>，会自动同步设置 <code>masterauth</code>。最后把修改写入配置文件，显示更新项和错误数。</p>
+<p>脚本内部执行的核心命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查Redis运行状态和角色</span></span><br><span class="line">redis-cli PING</span><br><span class="line">redis-cli INFO replication | grep role</span><br><span class="line"></span><br><span class="line"><span class="comment"># 动态设置复制参数</span></span><br><span class="line">redis-cli CONFIG SET replica-serve-stale-data <span class="built_in">yes</span></span><br><span class="line">redis-cli CONFIG SET min-replicas-to-write 1</span><br><span class="line">redis-cli CONFIG SET min-replicas-max-lag 10</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果主节点有密码，同步设置masterauth</span></span><br><span class="line">redis-cli CONFIG SET masterauth <span class="string">&quot;yourpassword&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将修改写入配置文件</span></span><br><span class="line">redis-cli CONFIG REWRITE</span><br></pre></td></tr></table></figure>
+
+<h4 id="（2）挂载从节点（cluster-add-slave）"><a href="#（2）挂载从节点（cluster-add-slave）" class="headerlink" title="（2）挂载从节点（cluster_add_slave）"></a>（2）挂载从节点（<code>cluster_add_slave</code>）</h4><p>执行时先检查Redis运行状态，如果当前已经是从节点，会询问是否强制重新挂载。然后交互输入主节点的IP、端口和密码（可选），先测试连通性，验证主节点身份——如果主节点本身也是从节点，会给出警告。之后备份配置文件，设置 <code>masterauth</code>（如果密码非空）和 <code>replica-read-only = yes</code>，执行 <code>REPLICAOF</code> 命令挂载。挂载成功后会把配置写入文件，等待最多10秒检查同步状态，最后输出结果。</p>
+<p>脚本内部执行的核心命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试主节点连通性</span></span><br><span class="line">redis-cli -h 192.168.1.10 -p 6379 PING</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证主节点身份（role应为master）</span></span><br><span class="line">redis-cli -h 192.168.1.10 -p 6379 INFO replication | grep role</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置从节点参数</span></span><br><span class="line">redis-cli CONFIG SET masterauth <span class="string">&quot;yourpassword&quot;</span></span><br><span class="line">redis-cli CONFIG SET replica-read-only <span class="built_in">yes</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行挂载</span></span><br><span class="line">redis-cli REPLICAOF 192.168.1.10 6379</span><br><span class="line"></span><br><span class="line"><span class="comment"># 写入配置文件</span></span><br><span class="line">redis-cli CONFIG REWRITE</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查同步状态（master_link_status应为up）</span></span><br><span class="line">redis-cli INFO replication | grep -E <span class="string">&quot;role|master_host|master_link_status|slave_repl_offset&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-1-3-主从复制故障恢复"><a href="#3-1-3-主从复制故障恢复" class="headerlink" title="3.1.3 主从复制故障恢复"></a>3.1.3 主从复制故障恢复</h3><p>脚本提供了 <code>cluster_failover</code> 函数来手动切换故障。执行时先检查当前角色，只有从节点才能执行。然后显示当前主节点地址和连接状态，这里会警告脑裂风险——如果旧主节点还在线，贸然切换可能导致数据不一致。确认后执行 <code>REPLICAOF NO ONE</code> 提升为主节点，注释掉配置文件中的 <code>replicaof</code> 行，验证角色变更后给出后续操作建议，比如把旧主节点降级为从节点重新挂载。</p>
+<p>脚本内部执行的核心命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查当前角色（必须为slave才能切换）</span></span><br><span class="line">redis-cli INFO replication | grep role</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前主节点地址和连接状态</span></span><br><span class="line">redis-cli INFO replication | grep -E <span class="string">&quot;master_host|master_port|master_link_status&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 提升为主节点</span></span><br><span class="line">redis-cli REPLICAOF NO ONE</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证角色已变更为master</span></span><br><span class="line">redis-cli INFO replication | grep role</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将配置文件中的replicaof行注释掉（需手动编辑或用sed）</span></span><br><span class="line"><span class="comment"># sed -i &#x27;s/^replicaof/#replicaof/&#x27; /etc/redis/redis.conf</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 后续：将旧主节点降级为从节点重新挂载（在旧主节点上执行）</span></span><br><span class="line">redis-cli REPLICAOF &lt;new_master_ip&gt; &lt;new_master_port&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-1-4-实现Redis的级联复制"><a href="#3-1-4-实现Redis的级联复制" class="headerlink" title="3.1.4 实现Redis的级联复制"></a>3.1.4 实现Redis的级联复制</h3><p>脚本没有单独封装级联复制的菜单，但可以通过组合操作实现：在中间节点上先执行 <code>cluster_setup_master</code> 优化参数，再执行 <code>cluster_add_slave</code> 挂载到顶级主节点，其他节点再挂载到中间节点就能形成链式复制。不过要注意级联会增加延迟，不建议太长的链。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">            ┌──────────┐</span><br><span class="line">            │  Master  │</span><br><span class="line">            │ (顶级主) │</span><br><span class="line">            └────┬─────┘</span><br><span class="line">                 │ 复制</span><br><span class="line">                 ▼</span><br><span class="line">        ┌────────────────┐</span><br><span class="line">        │  Intermediate  │</span><br><span class="line">        │   (中间节点)   │</span><br><span class="line">        └────┬─────┬─────┘</span><br><span class="line">             │     │</span><br><span class="line">      ┌──────┘     └──────┐</span><br><span class="line">      ▼                   ▼</span><br><span class="line">┌──────────┐        ┌──────────┐</span><br><span class="line">│  Slave 1 │        │  Slave 2 │</span><br><span class="line">│ (叶子)   │        │ (叶子)   │</span><br><span class="line">└──────────┘        └──────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-1-5-主从复制优化"><a href="#3-1-5-主从复制优化" class="headerlink" title="3.1.5 主从复制优化"></a>3.1.5 主从复制优化</h3><p>脚本内置了一些优化措施：从节点默认设置 <code>replica-read-only yes</code> 防止误写；主节点会提醒配置 <code>min-replicas-to-write</code> 和 <code>min-replicas-max-lag</code> 来保证一致性；<code>repl-backlog-size</code> 建议不小于64MB，脚本没有直接修改，可以手动调整。</p>
+<h3 id="3-1-6-常见主从复制故障"><a href="#3-1-6-常见主从复制故障" class="headerlink" title="3.1.6 常见主从复制故障"></a>3.1.6 常见主从复制故障</h3><p><code>cluster_status</code> 函数会输出角色、主节点地址、连接状态、同步滞后、从节点列表等关键指标，帮助定位问题。常见故障排查可以参考下表：</p>
+<table>
+<thead>
+<tr>
+<th align="left">故障现象</th>
+<th align="left">可能原因</th>
+<th align="left">脚本排查方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>master_link_status: down</code></td>
+<td align="left">网络不通或密码错误</td>
+<td align="left">显示 <code>master_host</code>，检查连通性</td>
+</tr>
+<tr>
+<td align="left"><code>slave_repl_offset</code> 停滞</td>
+<td align="left">复制中断</td>
+<td align="left">查看 <code>master_last_io_seconds_ago</code></td>
+</tr>
+<tr>
+<td align="left">主节点无从节点</td>
+<td align="left">未配置 <code>replicaof</code></td>
+<td align="left">查看 <code>connected_slaves</code> 计数</td>
+</tr>
+<tr>
+<td align="left">写入被拒绝</td>
+<td align="left"><code>min-replicas-to-write</code> 未满足</td>
+<td align="left">检查从节点数和延迟</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="3-2-Redis-Sentinel-哨兵"><a href="#3-2-Redis-Sentinel-哨兵" class="headerlink" title="3.2 Redis Sentinel 哨兵"></a>3.2 Redis Sentinel 哨兵</h2><h3 id="3-2-1-为什么需要哨兵"><a href="#3-2-1-为什么需要哨兵" class="headerlink" title="3.2.1 为什么需要哨兵"></a>3.2.1 为什么需要哨兵</h3><p>主从复制的问题在于故障发生时需要手动切换，无法自动恢复。生产环境中这个风险太高，所以需要引入哨兵机制。Redis Sentinel提供高可用能力，通过监控主从节点并自动执行故障转移。Sentinel本身也是分布式系统，建议部署奇数个节点（至少3个），这样能保证选举的可靠性。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">     ┌──────────────┐  ┌──────────────┐  ┌──────────────┐</span><br><span class="line">     │  Sentinel 1  │  │  Sentinel 2  │  │  Sentinel 3  │</span><br><span class="line">     │   (监控)     │  │   (监控)     │  │   (监控)     │</span><br><span class="line">     └──────┬───────┘  └──────┬───────┘  └──────┬───────┘</span><br><span class="line">            │    ↕  互相通信   │    ↕             │</span><br><span class="line">            │                 │                  │</span><br><span class="line">            └────────┬────────┴──────────────────┘</span><br><span class="line">                     │ 监控</span><br><span class="line">        ┌────────────┼────────────┐</span><br><span class="line">        ▼            ▼            ▼</span><br><span class="line">┌──────────┐  ┌──────────┐  ┌──────────┐</span><br><span class="line">│  Master  │  │  Slave 1 │  │  Slave 2 │</span><br><span class="line">│ (读写)   │←─│ (只读)   │  │ (只读)   │</span><br><span class="line">└──────────┘  └──────────┘  └──────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-2-哨兵Sentinel工作原理"><a href="#3-2-2-哨兵Sentinel工作原理" class="headerlink" title="3.2.2 哨兵Sentinel工作原理"></a>3.2.2 哨兵Sentinel工作原理</h3><p>Sentinel的工作流程可以简单概括为四个阶段：监控阶段定期PING节点；单节点判定不可达称为主观下线（SDOWN）；达到quorum数的Sentinel确认后称为客观下线（ODOWN）；之后选举从节点晋升为主节点，更新配置并通知客户端完成故障转移。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">┌──────────────────────────────────────────────────────────┐</span><br><span class="line">│                    Sentinel 集群                         │</span><br><span class="line">│                                                          │</span><br><span class="line">│  ① 监控阶段        ② 主观下线(SDOWN)    ③ 客观下线(ODOWN) │</span><br><span class="line">│  ┌─────────┐      ┌─────────┐         ┌─────────┐        │</span><br><span class="line">│  │ 定期PING │ ──→ │ 单节点判定│ ──→    │ quorum  │        │</span><br><span class="line">│  │ 所有节点 │      │  不可达  │         │ 确认下线│        │</span><br><span class="line">│  └─────────┘      └─────────┘         └────┬────┘        │</span><br><span class="line">└─────────────────────────────────────────┼────────────────┘</span><br><span class="line">                                          │</span><br><span class="line">                                          ▼</span><br><span class="line">┌──────────────────────────────────────────────────────────┐</span><br><span class="line">│                   ④ 故障转移阶段                         │</span><br><span class="line">│                                                          │</span><br><span class="line">│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐  │</span><br><span class="line">│   │ 选举Leader  │ ──→│ 选最优Slave │ ──→│ 提升为Master│  │</span><br><span class="line">│   │ Sentinel    │    │ (优先级/偏移)│    │ REPLICAOF  │  │</span><br><span class="line">│   └─────────────┘    └─────────────┘    │ NO ONE     │  │</span><br><span class="line">│                                          └─────┬─────┘  │</span><br><span class="line">└────────────────────────────────────────────────┼────────┘</span><br><span class="line">                                                 │</span><br><span class="line">                                                 ▼</span><br><span class="line">                                     ┌───────────────────┐</span><br><span class="line">                                     │ 通知客户端新主节点 │</span><br><span class="line">                                     │ 更新配置          │</span><br><span class="line">                                     └───────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-3-实现哨兵架构"><a href="#3-2-3-实现哨兵架构" class="headerlink" title="3.2.3 实现哨兵架构"></a>3.2.3 实现哨兵架构</h3><p>脚本的 <code>sentinel_menu</code> 提供了从初始化到运维的完整支持。</p>
+<h4 id="（1）初始化哨兵配置（sentinel-init）"><a href="#（1）初始化哨兵配置（sentinel-init）" class="headerlink" title="（1）初始化哨兵配置（sentinel_init）"></a>（1）初始化哨兵配置（<code>sentinel_init</code>）</h4><p>执行时会交互输入集群名称、主节点IP和端口，以及quorum、down-after、failover-timeout、parallel-syncs等参数。如果主节点有密码，会自动检测并提示输入。配置文件如果已存在会先备份，然后生成 <code>sentinel.conf</code>，设置文件权限为redis用户所有。如果systemd服务单元文件不存在，会自动生成并执行 <code>daemon-reload</code>，最后显示配置摘要。</p>
+<p>生成的哨兵配置文件示例（<code>/etc/redis/sentinel.conf</code>）：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">port 26379</span><br><span class="line">daemonize yes</span><br><span class="line">protected-mode no</span><br><span class="line">pidfile /var/run/redis-sentinel.pid</span><br><span class="line">sentinel monitor mymaster 192.168.1.10 6379 2</span><br><span class="line">sentinel down-after-milliseconds mymaster 5000</span><br><span class="line">sentinel failover-timeout mymaster 60000</span><br><span class="line">sentinel parallel-syncs mymaster 1</span><br><span class="line">sentinel auth-pass mymaster yourpassword</span><br><span class="line">logfile /var/log/redis/sentinel.log</span><br><span class="line">dir /var/lib/redis</span><br></pre></td></tr></table></figure>
+
+<p>生成的systemd单元文件（<code>/etc/systemd/system/redis-sentinel.service</code>）：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Unit]</span></span><br><span class="line"><span class="attr">Description</span>=Redis Sentinel</span><br><span class="line"><span class="attr">After</span>=network.target</span><br><span class="line"></span><br><span class="line"><span class="section">[Service]</span></span><br><span class="line"><span class="attr">Type</span>=simple</span><br><span class="line"><span class="attr">ExecStart</span>=/usr/bin/redis-server /etc/redis/sentinel.conf --sentinel</span><br><span class="line"><span class="attr">ExecStop</span>=/usr/bin/redis-cli -p <span class="number">26379</span> SHUTDOWN</span><br><span class="line"><span class="attr">User</span>=redis</span><br><span class="line"><span class="attr">Group</span>=redis</span><br><span class="line"><span class="attr">LimitNOFILE</span>=<span class="number">1000000</span></span><br><span class="line"><span class="attr">Restart</span>=<span class="literal">on</span>-failure</span><br><span class="line"></span><br><span class="line"><span class="section">[Install]</span></span><br><span class="line"><span class="attr">WantedBy</span>=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<p>配置完成后执行以下命令启用并启动哨兵服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 重新加载systemd配置</span></span><br><span class="line">systemctl daemon-reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置开机自启</span></span><br><span class="line">systemctl <span class="built_in">enable</span> redis-sentinel</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动哨兵</span></span><br><span class="line">systemctl start redis-sentinel</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看状态</span></span><br><span class="line">systemctl status redis-sentinel</span><br></pre></td></tr></table></figure>
+
+<h4 id="（2）启动-x2F-停止-x2F-重启哨兵（sentinel-start-stop）"><a href="#（2）启动-x2F-停止-x2F-重启哨兵（sentinel-start-stop）" class="headerlink" title="（2）启动&#x2F;停止&#x2F;重启哨兵（sentinel_start_stop）"></a>（2）启动&#x2F;停止&#x2F;重启哨兵（<code>sentinel_start_stop</code>）</h4><p>优先使用 <code>systemctl</code> 管理服务，如果失败会回退到直接运行 <code>redis-sentinel</code> 或 <code>redis-server --sentinel</code>，用nohup后台运行并管理PID文件。</p>
+<p>对应的操作命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过systemd管理（推荐）</span></span><br><span class="line">systemctl start redis-sentinel     <span class="comment"># 启动</span></span><br><span class="line">systemctl stop redis-sentinel      <span class="comment"># 停止</span></span><br><span class="line">systemctl restart redis-sentinel   <span class="comment"># 重启</span></span><br><span class="line">systemctl status redis-sentinel    <span class="comment"># 查看状态</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 回退方案：直接运行（无systemd时）</span></span><br><span class="line">redis-server /etc/redis/sentinel.conf --sentinel --daemonize <span class="built_in">yes</span></span><br><span class="line"><span class="comment"># 或</span></span><br><span class="line">redis-sentinel /etc/redis/sentinel.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 停止哨兵</span></span><br><span class="line">redis-cli -p 26379 SHUTDOWN</span><br></pre></td></tr></table></figure>
+
+<h4 id="（3）哨兵状态监控（sentinel-status）"><a href="#（3）哨兵状态监控（sentinel-status）" class="headerlink" title="（3）哨兵状态监控（sentinel_status）"></a>（3）哨兵状态监控（<code>sentinel_status</code>）</h4><p>先检查哨兵服务是否运行，然后获取所有监控的主节点名称，对每个主节点获取IP、端口、flags、quorum等信息，再获取从节点列表并解析状态。如果发现缺少 <code>auth-pass</code> 配置会给出提示，最后输出格式化的状态信息。</p>
+<p>对应的查询命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查哨兵是否运行</span></span><br><span class="line">redis-cli -p 26379 PING</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取所有监控的主节点名称</span></span><br><span class="line">redis-cli -p 26379 SENTINEL masters</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看指定主节点详情</span></span><br><span class="line">redis-cli -p 26379 SENTINEL master mymaster</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看主节点的从节点列表</span></span><br><span class="line">redis-cli -p 26379 SENTINEL slaves mymaster</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看其他哨兵节点</span></span><br><span class="line">redis-cli -p 26379 SENTINEL sentinels mymaster</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-4-Sentinel运维"><a href="#3-2-4-Sentinel运维" class="headerlink" title="3.2.4 Sentinel运维"></a>3.2.4 Sentinel运维</h3><p>动态参数调整通过 <code>sentinel_configure</code> 函数实现：列出当前监控的集群，用户选择要调整的集群和参数（quorum、down-after、failover-timeout、parallel-syncs），执行 <code>SENTINEL SET</code> 命令热生效，同时同步更新配置文件——这里要注意quorum需要修改 <code>sentinel monitor</code> 行，其他参数通过追加方式添加。</p>
+<p>动态参数调整对应的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 调整quorum（需要同时改配置文件的sentinel monitor行）</span></span><br><span class="line">redis-cli -p 26379 SENTINEL SET mymaster quorum 2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调整主观下线判定时间（毫秒）</span></span><br><span class="line">redis-cli -p 26379 SENTINEL SET mymaster down-after-milliseconds 5000</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调整故障转移超时时间（毫秒）</span></span><br><span class="line">redis-cli -p 26379 SENTINEL SET mymaster failover-timeout 60000</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调整故障转移后从节点重新同步的并行数</span></span><br><span class="line">redis-cli -p 26379 SENTINEL SET mymaster parallel-syncs 1</span><br></pre></td></tr></table></figure>
+
+<p>手动故障转移用 <code>sentinel_failover</code> 函数：选择要操作的集群，显示当前主节点和从节点数量，执行 <code>SENTINEL FAILOVER</code> 命令，等待最多30秒检测新主节点是否变更，输出结果。</p>
+<p>手动故障转移对应的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看当前主节点和从节点数量</span></span><br><span class="line">redis-cli -p 26379 SENTINEL master mymaster</span><br><span class="line">redis-cli -p 26379 SENTINEL slaves mymaster</span><br><span class="line"></span><br><span class="line"><span class="comment"># 手动触发故障转移</span></span><br><span class="line">redis-cli -p 26379 SENTINEL FAILOVER mymaster</span><br><span class="line"></span><br><span class="line"><span class="comment"># 等待几秒后检查新主节点是否变更</span></span><br><span class="line">redis-cli -p 26379 SENTINEL get-master-addr-by-name mymaster</span><br></pre></td></tr></table></figure>
+
+<p>拓扑可视化通过 <code>sentinel_visualize</code> 函数以树形图展示主节点、从节点和哨兵节点的关系，使用 <code>SENTINEL sentinels</code> 获取哨兵成员信息。</p>
+<p>拓扑可视化对应的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取主节点信息</span></span><br><span class="line">redis-cli -p 26379 SENTINEL master mymaster</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取从节点列表</span></span><br><span class="line">redis-cli -p 26379 SENTINEL slaves mymaster</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取其他哨兵节点信息</span></span><br><span class="line">redis-cli -p 26379 SENTINEL sentinels mymaster</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-5-应用程序连接Sentinel"><a href="#3-2-5-应用程序连接Sentinel" class="headerlink" title="3.2.5 应用程序连接Sentinel"></a>3.2.5 应用程序连接Sentinel</h3><p>应用程序不应直接连接Redis节点，而应通过Sentinel获取当前主节点地址：使用 <code>SENTINEL get-master-addr-by-name</code> 获取主节点，用 <code>SENTINEL slaves</code> 获取从节点列表。主流客户端库如Jedis、Lettuce都支持Sentinel模式，配置哨兵节点列表即可自动处理故障转移。</p>
+<hr>
+<h2 id="3-3-Redis-Cluster"><a href="#3-3-Redis-Cluster" class="headerlink" title="3.3 Redis Cluster"></a>3.3 Redis Cluster</h2><h3 id="3-3-1-Redis-Cluster介绍"><a href="#3-3-1-Redis-Cluster介绍" class="headerlink" title="3.3.1 Redis Cluster介绍"></a>3.3.1 Redis Cluster介绍</h3><p>主从+哨兵模式解决了高可用问题，但所有数据都在同一个主节点上，容量和性能受到限制。当单节点无法满足需求时，就需要Redis Cluster来实现数据分片。Cluster支持16384个slot的分片和自动故障转移，采用无中心架构，节点间通过Gossip协议通信。</p>
+<h3 id="3-3-2-Redis-Cluster架构"><a href="#3-3-2-Redis-Cluster架构" class="headerlink" title="3.3.2 Redis Cluster架构"></a>3.3.2 Redis Cluster架构</h3><p>数据槽位通过 <code>CRC16(key) % 16384</code> 计算映射；故障检测需要半数以上节点确认主节点不可达才会触发failover；客户端访问时如果key不在当前节点，会收到 <code>MOVED</code> 或 <code>ASK</code> 错误并重定向到正确的节点。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────────────────┐</span><br><span class="line">│                    Redis Cluster (6节点)                    │</span><br><span class="line">│                                                            │</span><br><span class="line">│   ┌────────────┐         ┌────────────┐         ┌────────────┐</span><br><span class="line">│   │  Master A  │◄───────►│  Master B  │◄───────►│  Master C  │</span><br><span class="line">│   │ 槽位 0-5460│ Gossip  │槽位5461-10922 Gossip│槽位10923-16383│</span><br><span class="line">│   └─────┬──────┘         └─────┬──────┘         └─────┬──────┘</span><br><span class="line">│         │                      │                      │</span><br><span class="line">│         │ 复制                 │ 复制                 │ 复制</span><br><span class="line">│         ▼                      ▼                      ▼</span><br><span class="line">│   ┌────────────┐         ┌────────────┐         ┌────────────┐</span><br><span class="line">│   │  Slave A&#x27;  │         │  Slave B&#x27;  │         │  Slave C&#x27;  │</span><br><span class="line">│   │ (A的从节点)│         │ (B的从节点)│         │ (C的从节点)│</span><br><span class="line">│   └────────────┘         └────────────┘         └────────────┘</span><br><span class="line">│                                                            │</span><br><span class="line">└─────────────────────────────────────────────────────────────┘</span><br><span class="line"></span><br><span class="line">客户端访问流程：</span><br><span class="line">┌────────┐     ┌──────────┐     ┌──────────┐</span><br><span class="line">│ Client │────►│ Master A │────►│ MOVED    │</span><br><span class="line">└────────┘     │ (key→B)  │     │ 重定向到B │</span><br><span class="line">               └──────────┘     └────┬─────┘</span><br><span class="line">                                     │</span><br><span class="line">                                     ▼</span><br><span class="line">                               ┌──────────┐</span><br><span class="line">                               │ Master B │</span><br><span class="line">                               │ (key在B) │</span><br><span class="line">                               └──────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-3-实战案例：Redis-Cluster"><a href="#3-3-3-实战案例：Redis-Cluster" class="headerlink" title="3.3.3 实战案例：Redis Cluster"></a>3.3.3 实战案例：Redis Cluster</h3><p>脚本的 <code>redis_cluster_menu</code> 提供了完整的生命周期管理功能。</p>
+<h4 id="（1）创建集群（redis-cluster-create）"><a href="#（1）创建集群（redis-cluster-create）" class="headerlink" title="（1）创建集群（redis_cluster_create）"></a>（1）创建集群（<code>redis_cluster_create</code>）</h4><p>执行时先提示用户输入所有节点列表（空格分隔），询问每个主节点的副本数（默认1），确认信息后执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli --cluster create &lt;node_list&gt; --cluster-replicas &lt;N&gt; --cluster-yes</span><br></pre></td></tr></table></figure>
+
+<p>执行完成后检查返回码，输出成功或失败信息。需要注意的是，所有节点必须已经启动且配置了 <code>cluster-enabled yes</code>。</p>
+<h4 id="（2）集群状态查看（redis-cluster-status）"><a href="#（2）集群状态查看（redis-cluster-status）" class="headerlink" title="（2）集群状态查看（redis_cluster_status）"></a>（2）集群状态查看（<code>redis_cluster_status</code>）</h4><p>输入集群中任意一个节点地址，连接后执行 <code>CLUSTER INFO</code> 解析集群状态、槽位数量、节点数等信息，再执行 <code>CLUSTER NODES</code> 以表格形式列出每个节点的地址、角色、槽位范围和连接状态，并用颜色区分不同角色。</p>
+<p>对应的查询命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看集群状态（cluster_state应为ok）</span></span><br><span class="line">redis-cli -h 10.0.0.1 -p 6379 CLUSTER INFO</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看所有节点信息（地址、角色、槽位范围、连接状态）</span></span><br><span class="line">redis-cli -h 10.0.0.1 -p 6379 CLUSTER NODES</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看槽位分配情况</span></span><br><span class="line">redis-cli -h 10.0.0.1 -p 6379 CLUSTER SLOTS</span><br></pre></td></tr></table></figure>
+
+<h4 id="（3）添加节点（redis-cluster-add-node）"><a href="#（3）添加节点（redis-cluster-add-node）" class="headerlink" title="（3）添加节点（redis_cluster_add_node）"></a>（3）添加节点（<code>redis_cluster_add_node</code>）</h4><p>输入集群中现有节点地址和要添加的新节点地址，询问是否添加为从节点；如果是从节点，还可以指定主节点ID。执行 <code>redis-cli --cluster add-node</code> 命令完成添加。</p>
+<p>对应的操作命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加主节点（新节点为空，无槽位）</span></span><br><span class="line">redis-cli --cluster add-node 10.0.0.3:6379 10.0.0.1:6379</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加从节点（自动选择主节点）</span></span><br><span class="line">redis-cli --cluster add-node 10.0.0.4:6379 10.0.0.1:6379 --cluster-slave</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加从节点并指定主节点ID</span></span><br><span class="line">redis-cli --cluster add-node 10.0.0.4:6379 10.0.0.1:6379 --cluster-slave --cluster-master-id &lt;node-id&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="（4）移除节点（redis-cluster-del-node）"><a href="#（4）移除节点（redis-cluster-del-node）" class="headerlink" title="（4）移除节点（redis_cluster_del_node）"></a>（4）移除节点（<code>redis_cluster_del_node</code>）</h4><p>先获取当前集群所有节点列表，显示编号、地址和ID，用户选择要移除的编号后执行 <code>redis-cli --cluster del-node</code> 命令。如果节点上有槽位会报错，需要先执行重分片迁移槽位才能移除。</p>
+<p>对应的操作命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看所有节点ID</span></span><br><span class="line">redis-cli -h 10.0.0.1 -p 6379 CLUSTER NODES</span><br><span class="line"></span><br><span class="line"><span class="comment"># 移除节点（节点必须无槽位，否则会报错）</span></span><br><span class="line">redis-cli --cluster del-node 10.0.0.1:6379 &lt;node-id&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果节点上有槽位，需要先迁移（见下方重新分片）</span></span><br><span class="line">redis-cli --cluster reshard 10.0.0.1:6379</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-4-Redis-Cluster管理"><a href="#3-3-4-Redis-Cluster管理" class="headerlink" title="3.3.4 Redis Cluster管理"></a>3.3.4 Redis Cluster管理</h3><p>脚本涵盖了日常运维的主要操作：</p>
+<p>重新分片通过 <code>redis_cluster_reshard</code> 函数：输入集群节点和要迁移的槽位数，指定目标节点ID（可选）和源节点ID（可选，all表示所有节点），执行重分片命令并自动确认。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 重新分片（从所有节点迁移1000个槽位到目标节点）</span></span><br><span class="line">redis-cli --cluster reshard 10.0.0.1:6379 \</span><br><span class="line">  --cluster-from all \</span><br><span class="line">  --cluster-to &lt;target-node-id&gt; \</span><br><span class="line">  --cluster-slots 1000 \</span><br><span class="line">  --cluster-yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从指定节点迁移500个槽位到目标节点</span></span><br><span class="line">redis-cli --cluster reshard 10.0.0.1:6379 \</span><br><span class="line">  --cluster-from &lt;source-node-id&gt; \</span><br><span class="line">  --cluster-to &lt;target-node-id&gt; \</span><br><span class="line">  --cluster-slots 500 \</span><br><span class="line">  --cluster-yes</span><br></pre></td></tr></table></figure>
+
+<p>负载均衡使用 <code>redis_cluster_rebalance</code> 函数：输入节点地址，可选指定权重和是否使用空主节点，执行 <code>rebalance</code> 命令。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 负载均衡（自动分配槽位）</span></span><br><span class="line">redis-cli --cluster rebalance 10.0.0.1:6379</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定权重（格式：nodeid=weight）</span></span><br><span class="line">redis-cli --cluster rebalance 10.0.0.1:6379 \</span><br><span class="line">  --cluster-weight &lt;node-id-1&gt;=1 &lt;node-id-2&gt;=2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用空主节点参与均衡</span></span><br><span class="line">redis-cli --cluster rebalance 10.0.0.1:6379 --cluster-use-empty-masters</span><br></pre></td></tr></table></figure>
+
+<p>健康检查直接执行 <code>redis-cli --cluster check</code>，输出详细检查结果。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 健康检查</span></span><br><span class="line">redis-cli --cluster check 10.0.0.1:6379</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看更多详细信息</span></span><br><span class="line">redis-cli --cluster check 10.0.0.1:6379 --cluster-search-multiple-owners</span><br></pre></td></tr></table></figure>
+
+<p>集群修复执行 <code>redis-cli --cluster fix</code>，尝试自动修复常见问题。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 自动修复集群（修复槽位不一致等问题）</span></span><br><span class="line">redis-cli --cluster fix 10.0.0.1:6379</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修复时自动同意所有确认提示</span></span><br><span class="line">redis-cli --cluster fix 10.0.0.1:6379 --cluster-yes</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-5-Redis-Cluster的局限性"><a href="#3-3-5-Redis-Cluster的局限性" class="headerlink" title="3.3.5 Redis Cluster的局限性"></a>3.3.5 Redis Cluster的局限性</h3><p>Cluster模式虽然强大，但也有一些需要注意的地方：不支持多数据库；批量操作要求所有键在同一槽位（需要使用hash tag）；事务仅限于单槽位；运维相对复杂，不过脚本已经把常用操作自动化了；客户端需要支持集群协议才能正常工作。</p>
+<hr>
+<h2 id="附录：脚本集群模块核心函数列表"><a href="#附录：脚本集群模块核心函数列表" class="headerlink" title="附录：脚本集群模块核心函数列表"></a>附录：脚本集群模块核心函数列表</h2><table>
+<thead>
+<tr>
+<th align="left">模块</th>
+<th align="left">函数名</th>
+<th align="left">功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">主从复制</td>
+<td align="left"><code>cluster_setup_master</code></td>
+<td align="left">优化主节点复制参数</td>
+</tr>
+<tr>
+<td align="left">主从复制</td>
+<td align="left"><code>cluster_add_slave</code></td>
+<td align="left">将当前节点挂载为从节点</td>
+</tr>
+<tr>
+<td align="left">主从复制</td>
+<td align="left"><code>cluster_status</code></td>
+<td align="left">显示复制状态</td>
+</tr>
+<tr>
+<td align="left">主从复制</td>
+<td align="left"><code>cluster_failover</code></td>
+<td align="left">手动提升从节点</td>
+</tr>
+<tr>
+<td align="left">主从复制</td>
+<td align="left"><code>cluster_backup_restore</code></td>
+<td align="left">备份&#x2F;恢复复制配置</td>
+</tr>
+<tr>
+<td align="left">哨兵</td>
+<td align="left"><code>sentinel_init</code></td>
+<td align="left">生成哨兵配置及systemd服务</td>
+</tr>
+<tr>
+<td align="left">哨兵</td>
+<td align="left"><code>sentinel_start_stop</code></td>
+<td align="left">启停哨兵</td>
+</tr>
+<tr>
+<td align="left">哨兵</td>
+<td align="left"><code>sentinel_status</code></td>
+<td align="left">监控主从状态</td>
+</tr>
+<tr>
+<td align="left">哨兵</td>
+<td align="left"><code>sentinel_configure</code></td>
+<td align="left">动态调整哨兵参数</td>
+</tr>
+<tr>
+<td align="left">哨兵</td>
+<td align="left"><code>sentinel_failover</code></td>
+<td align="left">手动触发failover</td>
+</tr>
+<tr>
+<td align="left">哨兵</td>
+<td align="left"><code>sentinel_visualize</code></td>
+<td align="left">拓扑可视化</td>
+</tr>
+<tr>
+<td align="left">Redis Cluster</td>
+<td align="left"><code>redis_cluster_create</code></td>
+<td align="left">创建集群</td>
+</tr>
+<tr>
+<td align="left">Redis Cluster</td>
+<td align="left"><code>redis_cluster_status</code></td>
+<td align="left">查看集群状态</td>
+</tr>
+<tr>
+<td align="left">Redis Cluster</td>
+<td align="left"><code>redis_cluster_add_node</code></td>
+<td align="left">添加节点</td>
+</tr>
+<tr>
+<td align="left">Redis Cluster</td>
+<td align="left"><code>redis_cluster_del_node</code></td>
+<td align="left">移除节点</td>
+</tr>
+<tr>
+<td align="left">Redis Cluster</td>
+<td align="left"><code>redis_cluster_reshard</code></td>
+<td align="left">重新分片</td>
+</tr>
+<tr>
+<td align="left">Redis Cluster</td>
+<td align="left"><code>redis_cluster_rebalance</code></td>
+<td align="left">负载均衡</td>
+</tr>
+<tr>
+<td align="left">Redis Cluster</td>
+<td align="left"><code>redis_cluster_check</code></td>
+<td align="left">健康检查</td>
+</tr>
+<tr>
+<td align="left">Redis Cluster</td>
+<td align="left"><code>redis_cluster_fix</code></td>
+<td align="left">集群修复</td>
+</tr>
+</tbody></table>
+<h2 id="附录：Redis命令速查"><a href="#附录：Redis命令速查" class="headerlink" title="附录：Redis命令速查"></a>附录：Redis命令速查</h2><p>脚本中封装的底层命令大多可以直接在 <code>redis-cli</code> 中手动执行，这里整理出来方便查阅和排障。</p>
+<h3 id="通用命令"><a href="#通用命令" class="headerlink" title="通用命令"></a>通用命令</h3><table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">用途</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>PING</code></td>
+<td align="left">测试连通性</td>
+<td align="left"><code>redis-cli -h 192.168.1.10 -p 6379 PING</code></td>
+</tr>
+<tr>
+<td align="left"><code>CONFIG SET</code></td>
+<td align="left">动态修改参数，无需重启</td>
+<td align="left"><code>CONFIG SET replica-read-only yes</code></td>
+</tr>
+<tr>
+<td align="left"><code>CONFIG GET</code></td>
+<td align="left">查看当前配置值</td>
+<td align="left"><code>CONFIG GET maxmemory</code></td>
+</tr>
+<tr>
+<td align="left"><code>INFO replication</code></td>
+<td align="left">查看复制状态</td>
+<td align="left"><code>redis-cli INFO replication</code></td>
+</tr>
+<tr>
+<td align="left"><code>SHUTDOWN</code></td>
+<td align="left">关闭Redis服务</td>
+<td align="left"><code>redis-cli SHUTDOWN NOSAVE</code></td>
+</tr>
+</tbody></table>
+<h3 id="主从复制命令"><a href="#主从复制命令" class="headerlink" title="主从复制命令"></a>主从复制命令</h3><table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">用途</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>REPLICAOF host port</code></td>
+<td align="left">将当前节点挂载为从节点</td>
+<td align="left"><code>REPLICAOF 192.168.1.10 6379</code></td>
+</tr>
+<tr>
+<td align="left"><code>REPLICAOF NO ONE</code></td>
+<td align="left">提升从节点为主节点</td>
+<td align="left"><code>REPLICAOF NO ONE</code></td>
+</tr>
+</tbody></table>
+<p>主从切换前后用 <code>INFO replication</code> 确认 <code>role</code> 字段变化即可。</p>
+<h3 id="哨兵命令"><a href="#哨兵命令" class="headerlink" title="哨兵命令"></a>哨兵命令</h3><table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">用途</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>SENTINEL masters</code></td>
+<td align="left">列出所有监控的主节点</td>
+<td align="left"><code>redis-cli -p 26379 SENTINEL masters</code></td>
+</tr>
+<tr>
+<td align="left"><code>SENTINEL master &lt;name&gt;</code></td>
+<td align="left">查看指定主节点详情</td>
+<td align="left"><code>SENTINEL master mymaster</code></td>
+</tr>
+<tr>
+<td align="left"><code>SENTINEL slaves &lt;name&gt;</code></td>
+<td align="left">查看主节点的从节点列表</td>
+<td align="left"><code>SENTINEL slaves mymaster</code></td>
+</tr>
+<tr>
+<td align="left"><code>SENTINEL sentinels &lt;name&gt;</code></td>
+<td align="left">查看其他哨兵节点</td>
+<td align="left"><code>SENTINEL sentinels mymaster</code></td>
+</tr>
+<tr>
+<td align="left"><code>SENTINEL get-master-addr-by-name &lt;name&gt;</code></td>
+<td align="left">获取当前主节点地址</td>
+<td align="left"><code>SENTINEL get-master-addr-by-name mymaster</code></td>
+</tr>
+<tr>
+<td align="left"><code>SENTINEL FAILOVER &lt;name&gt;</code></td>
+<td align="left">手动触发故障转移</td>
+<td align="left"><code>SENTINEL FAILOVER mymaster</code></td>
+</tr>
+<tr>
+<td align="left"><code>SENTINEL SET &lt;name&gt; &lt;option&gt; &lt;value&gt;</code></td>
+<td align="left">动态调整参数</td>
+<td align="left"><code>SENTINEL SET mymaster quorum 2</code></td>
+</tr>
+<tr>
+<td align="left"><code>SENTINEL monitor &lt;name&gt; &lt;ip&gt; &lt;port&gt; &lt;quorum&gt;</code></td>
+<td align="left">添加监控目标</td>
+<td align="left"><code>SENTINEL monitor mymaster 192.168.1.10 6379 2</code></td>
+</tr>
+</tbody></table>
+<p><code>sentinel.conf</code> 中的 <code>sentinel monitor</code> 行在初始化时写入，后续修改 quorum 需要同时改配置文件和执行 <code>SENTINEL SET</code>。</p>
+<h3 id="Redis-Cluster-命令"><a href="#Redis-Cluster-命令" class="headerlink" title="Redis Cluster 命令"></a>Redis Cluster 命令</h3><table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">用途</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>CLUSTER INFO</code></td>
+<td align="left">查看集群状态</td>
+<td align="left"><code>redis-cli CLUSTER INFO</code></td>
+</tr>
+<tr>
+<td align="left"><code>CLUSTER NODES</code></td>
+<td align="left">查看所有节点信息</td>
+<td align="left"><code>redis-cli CLUSTER NODES</code></td>
+</tr>
+<tr>
+<td align="left"><code>CLUSTER SLOTS</code></td>
+<td align="left">查看槽位分配</td>
+<td align="left"><code>redis-cli CLUSTER SLOTS</code></td>
+</tr>
+<tr>
+<td align="left"><code>CLUSTER COUNTKEYSINSLOT &lt;slot&gt;</code></td>
+<td align="left">查看槽位中的key数量</td>
+<td align="left"><code>CLUSTER COUNTKEYSINSLOT 1234</code></td>
+</tr>
+<tr>
+<td align="left"><code>CLUSTER KEYSLOT &lt;key&gt;</code></td>
+<td align="left">计算key所属槽位</td>
+<td align="left"><code>CLUSTER KEYSLOT mykey</code></td>
+</tr>
+<tr>
+<td align="left"><code>redis-cli --cluster create</code></td>
+<td align="left">创建集群</td>
+<td align="left"><code>redis-cli --cluster create 10.0.0.1:6379 10.0.0.2:6379 --cluster-replicas 1</code></td>
+</tr>
+<tr>
+<td align="left"><code>redis-cli --cluster add-node</code></td>
+<td align="left">添加节点</td>
+<td align="left"><code>redis-cli --cluster add-node 10.0.0.3:6379 10.0.0.1:6379</code></td>
+</tr>
+<tr>
+<td align="left"><code>redis-cli --cluster del-node</code></td>
+<td align="left">移除节点</td>
+<td align="left"><code>redis-cli --cluster del-node 10.0.0.1:6379 &lt;node-id&gt;</code></td>
+</tr>
+<tr>
+<td align="left"><code>redis-cli --cluster reshard</code></td>
+<td align="left">迁移槽位</td>
+<td align="left"><code>redis-cli --cluster reshard 10.0.0.1:6379 --cluster-from &lt;id&gt; --cluster-to &lt;id&gt; --cluster-slots 1000</code></td>
+</tr>
+<tr>
+<td align="left"><code>redis-cli --cluster rebalance</code></td>
+<td align="left">负载均衡</td>
+<td align="left"><code>redis-cli --cluster rebalance 10.0.0.1:6379</code></td>
+</tr>
+<tr>
+<td align="left"><code>redis-cli --cluster check</code></td>
+<td align="left">健康检查</td>
+<td align="left"><code>redis-cli --cluster check 10.0.0.1:6379</code></td>
+</tr>
+<tr>
+<td align="left"><code>redis-cli --cluster fix</code></td>
+<td align="left">自动修复集群</td>
+<td align="left"><code>redis-cli --cluster fix 10.0.0.1:6379</code></td>
+</tr>
+</tbody></table>
+<p>移除节点前必须先迁移槽位，否则会报错；<code>fix</code> 命令会尝试修复槽位不一致等常见问题，但操作不可逆，建议先 <code>check</code> 确认问题再决定是否 <code>fix</code>。</p>
+<blockquote>
+<p>官方参考：<a target="_blank" rel="noopener external nofollow noreferrer" href="https://redis.io/docs/management/sentinel/">Redis Sentinel Documentation</a> | <a target="_blank" rel="noopener external nofollow noreferrer" href="https://redis.io/docs/reference/cluster-spec/">Redis Cluster Specification</a></p>
+<p>🔽 <a href="/downloads/redis-manage.sh">下载脚本 redis-manage.sh</a></p>
+</blockquote>
+<p> 单机安装完成效果<br><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260704210816530.png"></p>
+<p>集群启动效果<br><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260704212300198.png"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/4ada0a0.html">https://raidenxe.github.io/archives/4ada0a0.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Redis/">Redis</a><a class="post-meta__tags" href="/tags/%E9%9B%86%E7%BE%A4/">集群</a><a class="post-meta__tags" href="/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/">高可用</a><a class="post-meta__tags" href="/tags/%E5%93%A8%E5%85%B5/">哨兵</a><a class="post-meta__tags" href="/tags/Redis-Cluster/">Redis Cluster</a></div><div class="post-share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260704212618712.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/archives/4417b09c.html" title="使用Shell脚本一键完成Docker二进制部署与镜像加速配置"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260705153854651.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">使用Shell脚本一键完成Docker二进制部署与镜像加速配置</div></div><div class="info-2"><div class="info-item-1">背景与痛点Docker 作为云原生时代的核心基础设施，几乎是每位开发者和运维人员的必备工具。然而在国内网络环境下，Docker 的部署和镜像拉取往往面临两大痛点：  痛点一：官方源访问不稳定。Docker 官方下载站 download.docker.com 在国内部分地区访问缓慢甚至无法连接，导致二进制包下载失败。 痛点二：镜像拉取速度极慢。由于网络原因，从 Docker Hub 拉取镜像时经常超时或速度极慢，严重影响开发效率。  传统的解决方案是手动下载二进制包、复制到 /usr/bin、配置 systemd 服务、再手工编辑 daemon.json 添加镜像源——步骤繁琐且容易出错。本文将分享一个一键完成的 Shell 脚本，实现 Docker 二进制部署与镜像加速配置的自动化。 脚本功能概述该脚本主要实现以下功能：  支持指定版本或自动获取最新版本：可通过命令行参数指定版本号（如 ./install_docker.sh 29.6.0），不传参数则自动从多个镜像源获取最新稳定版。 多源下载容错：依次尝试官方源、阿里云镜像、清华镜像等多个地址下载二进制包。 全自动安装：解压二进...</div></div></div></a><a class="pagination-related" href="/archives/34769e12.html" title="kvm-qemu学习笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260704205341746.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">kvm-qemu学习笔记</div></div><div class="info-2"><div class="info-item-1">KVM 虚拟化从入门到实践：架构、部署与网络管理一文讲透 KVM 虚拟化技术栈：KVM、QEMU、libvirt 三组件的分工与协作，从环境部署到网络配置的完整实战记录。 目录 虚拟化基础 KVM架构与核心组件 部署 KVM 虚拟化环境 创建虚拟机 虚拟机管理 存储管理 网络管理（重点） 总结   1 虚拟化基础虚拟化是通过软件技术将物理资源（CPU、内存、存储、网络）抽象成逻辑资源，实现单台物理机运行多个隔离的**”虚拟机”**的技术。主要类型：  全虚拟化：模拟完整硬件环境，无需修改客户机操作系统（如 KVM、VMware ESXi） 半虚拟化：客户机需修改内核，通过特定接口访问硬件，性能接近物理机（如 Xen 的 PV 模式） 容器化：操作系统级虚拟化，共享宿主机内核（如 Docker）  KVM（Kernel-based Virtual Machine）是 Linux 内核模块，将 Linux 转变为类型 1（裸金属）虚拟机监控器（Hypervisor），依赖硬件虚拟化技术（Intel VT-x &#x2F; AMD SVM）。  2 KVM架构与核心组件KVM 技术栈由...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/archives/21f67780.html" title="k8s部署笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260711230814041.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-15</div><div class="info-item-2">k8s部署笔记</div></div><div class="info-2"><div class="info-item-1">Kubernetes 集群部署：从原理到实践 环境：Ubuntu 26.04 LTS &#x2F; Kubernetes v1.36.2 &#x2F; containerd + cri-dockerd   一、Kubernetes 集群部署架构概述1.1 kubeadm 的作用与原理kubeadm 是 Kubernetes 官方提供的集群部署工具，它的核心任务是将一个 Kubernetes 集群的各个组件以容器化的方式部署到目标机器上。kubeadm 的工作原理可以概括为三个阶段：  前置检查：kubeadm init 执行前会进行一系列预检，包括主机名解析、端口占用、CRI 端点可用性、Swap 状态等。任何一项不通过都会阻止初始化。 组件启动：以静态 Pod 的方式启动 kube-apiserver、kube-controller-manager、kube-scheduler、etcd 等控制平面组件。这些组件的 YAML 清单由 kubeadm 生成并放置在 /etc/kubernetes/manifests/ 目录下，kubelet 会监听该目录并自动启动对应的容器。 集...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Raidenxe</div><div class="author-info-description">向着真理和自由，无名的献身。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E9%9B%86%E7%BE%A4%E4%B8%8E%E9%AB%98%E5%8F%AF%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">Redis集群与高可用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%84%9A%E6%9C%AC%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86%E9%80%BB%E8%BE%91%E6%80%BB%E8%A7%88"><span class="toc-number">1.1.</span> <span class="toc-text">脚本集群管理逻辑总览</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">3.1 Redis主从复制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-1-Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%9E%B6%E6%9E%84"><span class="toc-number">2.1.</span> <span class="toc-text">3.1.1 Redis主从复制架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-2-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.2.</span> <span class="toc-text">3.1.2 主从复制实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%881%EF%BC%89%E9%85%8D%E7%BD%AE%E4%B8%BB%E8%8A%82%E7%82%B9%EF%BC%88cluster-setup-master%EF%BC%89"><span class="toc-number">2.2.1.</span> <span class="toc-text">（1）配置主节点（cluster_setup_master）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%882%EF%BC%89%E6%8C%82%E8%BD%BD%E4%BB%8E%E8%8A%82%E7%82%B9%EF%BC%88cluster-add-slave%EF%BC%89"><span class="toc-number">2.2.2.</span> <span class="toc-text">（2）挂载从节点（cluster_add_slave）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-3-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%95%85%E9%9A%9C%E6%81%A2%E5%A4%8D"><span class="toc-number">2.3.</span> <span class="toc-text">3.1.3 主从复制故障恢复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-4-%E5%AE%9E%E7%8E%B0Redis%E7%9A%84%E7%BA%A7%E8%81%94%E5%A4%8D%E5%88%B6"><span class="toc-number">2.4.</span> <span class="toc-text">3.1.4 实现Redis的级联复制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-5-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E4%BC%98%E5%8C%96"><span class="toc-number">2.5.</span> <span class="toc-text">3.1.5 主从复制优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-6-%E5%B8%B8%E8%A7%81%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%95%85%E9%9A%9C"><span class="toc-number">2.6.</span> <span class="toc-text">3.1.6 常见主从复制故障</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-Redis-Sentinel-%E5%93%A8%E5%85%B5"><span class="toc-number">3.</span> <span class="toc-text">3.2 Redis Sentinel 哨兵</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%93%A8%E5%85%B5"><span class="toc-number">3.1.</span> <span class="toc-text">3.2.1 为什么需要哨兵</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-2-%E5%93%A8%E5%85%B5Sentinel%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">3.2.</span> <span class="toc-text">3.2.2 哨兵Sentinel工作原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-3-%E5%AE%9E%E7%8E%B0%E5%93%A8%E5%85%B5%E6%9E%B6%E6%9E%84"><span class="toc-number">3.3.</span> <span class="toc-text">3.2.3 实现哨兵架构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%881%EF%BC%89%E5%88%9D%E5%A7%8B%E5%8C%96%E5%93%A8%E5%85%B5%E9%85%8D%E7%BD%AE%EF%BC%88sentinel-init%EF%BC%89"><span class="toc-number">3.3.1.</span> <span class="toc-text">（1）初始化哨兵配置（sentinel_init）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%882%EF%BC%89%E5%90%AF%E5%8A%A8-x2F-%E5%81%9C%E6%AD%A2-x2F-%E9%87%8D%E5%90%AF%E5%93%A8%E5%85%B5%EF%BC%88sentinel-start-stop%EF%BC%89"><span class="toc-number">3.3.2.</span> <span class="toc-text">（2）启动&#x2F;停止&#x2F;重启哨兵（sentinel_start_stop）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%883%EF%BC%89%E5%93%A8%E5%85%B5%E7%8A%B6%E6%80%81%E7%9B%91%E6%8E%A7%EF%BC%88sentinel-status%EF%BC%89"><span class="toc-number">3.3.3.</span> <span class="toc-text">（3）哨兵状态监控（sentinel_status）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-4-Sentinel%E8%BF%90%E7%BB%B4"><span class="toc-number">3.4.</span> <span class="toc-text">3.2.4 Sentinel运维</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-5-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E8%BF%9E%E6%8E%A5Sentinel"><span class="toc-number">3.5.</span> <span class="toc-text">3.2.5 应用程序连接Sentinel</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-Redis-Cluster"><span class="toc-number">4.</span> <span class="toc-text">3.3 Redis Cluster</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-1-Redis-Cluster%E4%BB%8B%E7%BB%8D"><span class="toc-number">4.1.</span> <span class="toc-text">3.3.1 Redis Cluster介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-2-Redis-Cluster%E6%9E%B6%E6%9E%84"><span class="toc-number">4.2.</span> <span class="toc-text">3.3.2 Redis Cluster架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-3-%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B%EF%BC%9ARedis-Cluster"><span class="toc-number">4.3.</span> <span class="toc-text">3.3.3 实战案例：Redis Cluster</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%881%EF%BC%89%E5%88%9B%E5%BB%BA%E9%9B%86%E7%BE%A4%EF%BC%88redis-cluster-create%EF%BC%89"><span class="toc-number">4.3.1.</span> <span class="toc-text">（1）创建集群（redis_cluster_create）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%882%EF%BC%89%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81%E6%9F%A5%E7%9C%8B%EF%BC%88redis-cluster-status%EF%BC%89"><span class="toc-number">4.3.2.</span> <span class="toc-text">（2）集群状态查看（redis_cluster_status）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%883%EF%BC%89%E6%B7%BB%E5%8A%A0%E8%8A%82%E7%82%B9%EF%BC%88redis-cluster-add-node%EF%BC%89"><span class="toc-number">4.3.3.</span> <span class="toc-text">（3）添加节点（redis_cluster_add_node）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%884%EF%BC%89%E7%A7%BB%E9%99%A4%E8%8A%82%E7%82%B9%EF%BC%88redis-cluster-del-node%EF%BC%89"><span class="toc-number">4.3.4.</span> <span class="toc-text">（4）移除节点（redis_cluster_del_node）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-4-Redis-Cluster%E7%AE%A1%E7%90%86"><span class="toc-number">4.4.</span> <span class="toc-text">3.3.4 Redis Cluster管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-5-Redis-Cluster%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">4.5.</span> <span class="toc-text">3.3.5 Redis Cluster的局限性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95%EF%BC%9A%E8%84%9A%E6%9C%AC%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%9D%97%E6%A0%B8%E5%BF%83%E5%87%BD%E6%95%B0%E5%88%97%E8%A1%A8"><span class="toc-number">5.</span> <span class="toc-text">附录：脚本集群模块核心函数列表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95%EF%BC%9ARedis%E5%91%BD%E4%BB%A4%E9%80%9F%E6%9F%A5"><span class="toc-number">6.</span> <span class="toc-text">附录：Redis命令速查</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">6.1.</span> <span class="toc-text">通用命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%91%BD%E4%BB%A4"><span class="toc-number">6.2.</span> <span class="toc-text">主从复制命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%A8%E5%85%B5%E5%91%BD%E4%BB%A4"><span class="toc-number">6.3.</span> <span class="toc-text">哨兵命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-Cluster-%E5%91%BD%E4%BB%A4"><span class="toc-number">6.4.</span> <span class="toc-text">Redis Cluster 命令</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/61196baf.html" title="Jenkins-CICD实战"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins-CICD实战"/></a><div class="content"><a class="title" href="/archives/61196baf.html" title="Jenkins-CICD实战">Jenkins-CICD实战</a><time datetime="2026-08-11T17:09:47.000Z" title="发表于 2026-08-12 01:09:47">2026-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a3e16fea.html" title="面试题1"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试题1"/></a><div class="content"><a class="title" href="/archives/a3e16fea.html" title="面试题1">面试题1</a><time datetime="2026-08-11T14:53:55.000Z" title="发表于 2026-08-11 22:53:55">2026-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/35864571.html" title="docker部署jenkins"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署jenkins"/></a><div class="content"><a class="title" href="/archives/35864571.html" title="docker部署jenkins">docker部署jenkins</a><time datetime="2026-08-10T05:55:00.000Z" title="发表于 2026-08-10 13:55:00">2026-08-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/be6d62ff.html" title="docker部署gitlab"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署gitlab"/></a><div class="content"><a class="title" href="/archives/be6d62ff.html" title="docker部署gitlab">docker部署gitlab</a><time datetime="2026-08-08T07:16:03.000Z" title="发表于 2026-08-08 15:16:03">2026-08-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260807160530247.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s+Helm部署kube-prometheus-stack"/></a><div class="content"><a class="title" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack">K8s+Helm部署kube-prometheus-stack</a><time datetime="2026-08-07T07:12:03.000Z" title="发表于 2026-08-07 15:12:03">2026-08-07</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2020 - 2026 By Raidenxe</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5"></script><script src="/js/main.js?v=5.5.5"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="false"> </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5"></script></div></div></body></html>

@@ -1,0 +1,751 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>jumpserver笔记 | Raidenxe的博客</title><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="JumpServer 部署笔记 版本: v4.10.15 | 部署方式: Docker-Compose | 镜像源: Docker Hub   目录 什么是 JumpServer 环境准备 Docker-Compose 部署 初始化与访问 纳管实验节点 组件架构与作用 配置文件解析 常用管理命..."><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "jumpserver笔记",
+  "url": "https://raidenxe.github.io/archives/a54ffedb.html",
+  "image": "https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260715102638262.png",
+  "datePublished": "2026-07-15T02:00:56.000Z",
+  "dateModified": "2026-07-15T02:27:15.155Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Raidenxe",
+      "url": "https://Raidenxe.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/a54ffedb.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css?v=5.5.5"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'jumpserver笔记',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/macblack.css"><style>
+  #web_bg{background-image:url(/img/风景006.png)}
+  #footer{background-image:url(/img/风景008.png);background-size:cover;background-position:center}
+  .aplayer-lrc{display:none !important}
+</style>
+<meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/%E9%A3%8E%E6%99%AF006.png));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260715102638262.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Raidenxe的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">jumpserver笔记</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">jumpserver笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-15T02:00:56.000Z" title="发表于 2026-07-15 10:00:56">2026-07-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-07-15T02:27:15.155Z" title="更新于 2026-07-15 10:27:15">2026-07-15</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>14分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="JumpServer-部署笔记"><a href="#JumpServer-部署笔记" class="headerlink" title="JumpServer 部署笔记"></a>JumpServer 部署笔记</h1><blockquote>
+<p>版本: v4.10.15 | 部署方式: Docker-Compose | 镜像源: Docker Hub</p>
+</blockquote>
+<hr>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ol>
+<li><a href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-jumpserver">什么是 JumpServer</a></li>
+<li><a href="#2-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87">环境准备</a></li>
+<li><a href="#3-docker-compose-%E9%83%A8%E7%BD%B2">Docker-Compose 部署</a></li>
+<li><a href="#4-%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%8E%E8%AE%BF%E9%97%AE">初始化与访问</a></li>
+<li><a href="#5-%E7%BA%B3%E7%AE%A1%E5%AE%9E%E9%AA%8C%E8%8A%82%E7%82%B9">纳管实验节点</a></li>
+<li><a href="#6-%E7%BB%84%E4%BB%B6%E6%9E%B6%E6%9E%84%E4%B8%8E%E4%BD%9C%E7%94%A8">组件架构与作用</a></li>
+<li><a href="#7-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90">配置文件解析</a></li>
+<li><a href="#8-%E5%B8%B8%E7%94%A8%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4">常用管理命令</a></li>
+<li><a href="#9-%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4">故障排除</a></li>
+</ol>
+<hr>
+<h2 id="1-什么是-JumpServer"><a href="#1-什么是-JumpServer" class="headerlink" title="1. 什么是 JumpServer"></a>1. 什么是 JumpServer</h2><p>JumpServer 是<strong>开源的堡垒机&#x2F;跳板机</strong>系统，用于集中管理企业内部服务器的访问权限。它解决了以下核心问题：</p>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>JumpServer 解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>权限分散</strong></td>
+<td>统一认证、细粒度授权管理</td>
+</tr>
+<tr>
+<td><strong>操作审计</strong></td>
+<td>全程录像、命令审计、操作日志</td>
+</tr>
+<tr>
+<td><strong>密钥管理</strong></td>
+<td>集中管理 SSH 密钥，避免密钥分散</td>
+</tr>
+<tr>
+<td><strong>合规要求</strong></td>
+<td>满足等保、SOX 等合规审计需求</td>
+</tr>
+</tbody></table>
+<p>JumpServer 采用 <strong>B&#x2F;S 架构</strong>，支持 Web 端直接管理和操作服务器，无需安装客户端。核心价值在于：<strong>让运维操作可追溯、可审计、可控制</strong>。</p>
+<hr>
+<h2 id="2-环境准备"><a href="#2-环境准备" class="headerlink" title="2. 环境准备"></a>2. 环境准备</h2><h3 id="2-1-系统要求"><a href="#2-1-系统要求" class="headerlink" title="2.1 系统要求"></a>2.1 系统要求</h3><ul>
+<li>Linux 内核 3.10+ (推荐 Ubuntu 22.04 &#x2F; CentOS 7.9+)</li>
+<li>Docker 20.10+ | Docker Compose v2.0+</li>
+<li>最低配置: 2C4G, 20G 磁盘</li>
+<li>推荐配置: 4C8G, 50G 磁盘</li>
+</ul>
+<h3 id="2-2-安装-Docker"><a href="#2-2-安装-Docker" class="headerlink" title="2.2 安装 Docker"></a>2.2 安装 Docker</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 Docker</span></span><br><span class="line">curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 Docker</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> --now docker</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 Docker Compose (v2 已内置于 Docker CLI)</span></span><br><span class="line">docker compose version</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加用户到 docker 组 (避免每次 sudo)</span></span><br><span class="line"><span class="built_in">sudo</span> usermod -aG docker <span class="variable">$USER</span> &amp;&amp; newgrp docker</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-配置镜像加速-国内环境"><a href="#2-3-配置镜像加速-国内环境" class="headerlink" title="2.3 配置镜像加速 (国内环境)"></a>2.3 配置镜像加速 (国内环境)</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">tee</span> /etc/docker/daemon.json &lt;&lt; <span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://docker.1panel.live&quot;</span>],</span><br><span class="line">    <span class="string">&quot;data-root&quot;</span>: <span class="string">&quot;/var/lib/docker&quot;</span>,</span><br><span class="line">    <span class="string">&quot;log-driver&quot;</span>: <span class="string">&quot;json-file&quot;</span>,</span><br><span class="line">    <span class="string">&quot;log-opts&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;max-size&quot;</span>: <span class="string">&quot;10m&quot;</span>,</span><br><span class="line">        <span class="string">&quot;max-file&quot;</span>: <span class="string">&quot;3&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"><span class="built_in">sudo</span> systemctl daemon-reload &amp;&amp; <span class="built_in">sudo</span> systemctl restart docker</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="3-Docker-Compose-部署"><a href="#3-Docker-Compose-部署" class="headerlink" title="3. Docker-Compose 部署"></a>3. Docker-Compose 部署</h2><h3 id="3-1-项目目录结构"><a href="#3-1-项目目录结构" class="headerlink" title="3.1 项目目录结构"></a>3.1 项目目录结构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">jumpserver/</span><br><span class="line">├── docker-compose.yml    # 容器编排文件</span><br><span class="line">├── .env                  # 环境变量配置</span><br><span class="line">└── data/                 # 持久化数据目录</span><br><span class="line">    ├── mariadb/data/     # 数据库数据</span><br><span class="line">    ├── redis/data/       # 缓存数据</span><br><span class="line">    ├── core/data/        # 核心数据 (日志、录像、密钥等)</span><br><span class="line">    ├── koko/data/        # Koko 组件数据</span><br><span class="line">    ├── lion/data/        # Lion 组件数据</span><br><span class="line">    ├── chen/data/        # Chen 组件数据</span><br><span class="line">    ├── kael/data/        # Kael 组件数据</span><br><span class="line">    └── web/log/          # Nginx 日志</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-生成密钥"><a href="#3-2-生成密钥" class="headerlink" title="3.2 生成密钥"></a>3.2 生成密钥</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成随机密钥 (首次部署务必执行)</span></span><br><span class="line">SECRET_KEY=$(openssl rand -hex 32)</span><br><span class="line">BOOTSTRAP_TOKEN=$(openssl rand -hex 16)</span><br><span class="line">DB_PASSWORD=$(openssl rand -<span class="built_in">base64</span> 12)</span><br><span class="line">REDIS_PASSWORD=$(openssl rand -<span class="built_in">base64</span> 12)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 写入 .env 文件</span></span><br><span class="line"><span class="built_in">cat</span> &gt; .<span class="built_in">env</span> &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">SECRET_KEY=$&#123;SECRET_KEY&#125;</span></span><br><span class="line"><span class="string">BOOTSTRAP_TOKEN=$&#123;BOOTSTRAP_TOKEN&#125;</span></span><br><span class="line"><span class="string">DB_PASSWORD=$&#123;DB_PASSWORD&#125;</span></span><br><span class="line"><span class="string">REDIS_PASSWORD=$&#123;REDIS_PASSWORD&#125;</span></span><br><span class="line"><span class="string">LOG_LEVEL=ERROR</span></span><br><span class="line"><span class="string">HTTP_PORT=80</span></span><br><span class="line"><span class="string">SSH_PORT=2222</span></span><br><span class="line"><span class="string">VOLUME_DIR=./data</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-docker-compose-yml-详解"><a href="#3-3-docker-compose-yml-详解" class="headerlink" title="3.3 docker-compose.yml 详解"></a>3.3 docker-compose.yml 详解</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 三个服务: mysql + redis + jumpserver</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">mysql:</span>                  <span class="comment"># 数据库服务</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mariadb:10.6</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">jms_mysql</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">MARIADB_ROOT_PASSWORD:</span> <span class="string">$&#123;DB_PASSWORD&#125;</span>   <span class="comment"># 数据库 root 密码</span></span><br><span class="line">      <span class="attr">MARIADB_DATABASE:</span> <span class="string">$&#123;DB_NAME:-jumpserver&#125;</span> <span class="comment"># 数据库名</span></span><br><span class="line">    <span class="attr">healthcheck:</span>          <span class="comment"># 健康检查: 每10s执行 mysql 查询</span></span><br><span class="line">      <span class="attr">test:</span> <span class="string">&quot;mysql -h127.0.0.1 -uroot -p$$MARIADB_ROOT_PASSWORD -e &#x27;SHOW DATABASES;&#x27;&quot;</span></span><br><span class="line">      <span class="attr">interval:</span> <span class="string">10s</span></span><br><span class="line">      <span class="attr">timeout:</span> <span class="string">5s</span></span><br><span class="line">      <span class="attr">retries:</span> <span class="number">3</span></span><br><span class="line">      <span class="attr">start_period:</span> <span class="string">30s</span>   <span class="comment"># 启动后30s开始检查</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">$&#123;VOLUME_DIR:-./data&#125;/mariadb/data:/var/lib/mysql</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">redis:</span>                  <span class="comment"># 缓存服务</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">redis:7.2.5</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">jms_redis</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">redis-server</span> <span class="string">--requirepass</span> <span class="string">$&#123;REDIS_PASSWORD&#125;</span>  <span class="comment"># 设置密码</span></span><br><span class="line">    <span class="attr">healthcheck:</span></span><br><span class="line">      <span class="attr">test:</span> <span class="string">&quot;redis-cli -h 127.0.0.1 -a $$REDIS_PASSWORD info Replication&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">$&#123;VOLUME_DIR:-./data&#125;/redis/data:/data</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">jumpserver:</span>             <span class="comment"># JumpServer 一体服务</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">jumpserver/jms_all:v4.10.15</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">jms_all</span></span><br><span class="line">    <span class="attr">privileged:</span> <span class="literal">true</span>      <span class="comment"># 需要特权模式 (创建容器、网络等)</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="comment"># ----- 核心认证 -----</span></span><br><span class="line">      <span class="attr">SECRET_KEY:</span> <span class="string">$&#123;SECRET_KEY&#125;</span>             <span class="comment"># 数据加密密钥 (迁移必须一致)</span></span><br><span class="line">      <span class="attr">BOOTSTRAP_TOKEN:</span> <span class="string">$&#123;BOOTSTRAP_TOKEN&#125;</span>   <span class="comment"># 组件间通信 Token</span></span><br><span class="line">      <span class="attr">LOG_LEVEL:</span> <span class="string">ERROR</span>                      <span class="comment"># 日志级别</span></span><br><span class="line"></span><br><span class="line">      <span class="comment"># ----- 数据库配置 -----</span></span><br><span class="line">      <span class="attr">DB_ENGINE:</span> <span class="string">mysql</span>      <span class="comment"># 数据库引擎 (mysql / postgresql)</span></span><br><span class="line">      <span class="attr">DB_HOST:</span> <span class="string">mysql</span>        <span class="comment"># 数据库主机 (容器名)</span></span><br><span class="line">      <span class="attr">DB_PORT:</span> <span class="number">3306</span></span><br><span class="line">      <span class="attr">DB_USER:</span> <span class="string">root</span></span><br><span class="line">      <span class="attr">DB_PASSWORD:</span> <span class="string">$&#123;DB_PASSWORD&#125;</span></span><br><span class="line">      <span class="attr">DB_NAME:</span> <span class="string">jumpserver</span></span><br><span class="line"></span><br><span class="line">      <span class="comment"># ----- Redis 配置 -----</span></span><br><span class="line">      <span class="attr">REDIS_HOST:</span> <span class="string">redis</span></span><br><span class="line">      <span class="attr">REDIS_PORT:</span> <span class="number">6379</span></span><br><span class="line">      <span class="attr">REDIS_PASSWORD:</span> <span class="string">$&#123;REDIS_PASSWORD&#125;</span></span><br><span class="line"></span><br><span class="line">      <span class="attr">DOMAINS:</span> <span class="string">$&#123;DOMAINS:-&#125;</span>  <span class="comment"># 允许访问的域名 (留空则不限制)</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">$&#123;HTTP_PORT:-80&#125;:80/tcp</span>       <span class="comment"># Web 访问端口</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">$&#123;SSH_PORT:-2222&#125;:2222/tcp</span>    <span class="comment"># SSH 代理端口</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="attr">mysql:</span></span><br><span class="line">        <span class="attr">condition:</span> <span class="string">service_healthy</span></span><br><span class="line">      <span class="attr">redis:</span></span><br><span class="line">        <span class="attr">condition:</span> <span class="string">service_healthy</span></span><br><span class="line">    <span class="attr">healthcheck:</span></span><br><span class="line">      <span class="attr">test:</span> <span class="string">&quot;curl -fsL http://localhost/api/health/ &gt; /dev/null&quot;</span></span><br><span class="line">      <span class="attr">interval:</span> <span class="string">10s</span></span><br><span class="line">      <span class="attr">timeout:</span> <span class="string">5s</span></span><br><span class="line">      <span class="attr">retries:</span> <span class="number">3</span></span><br><span class="line">      <span class="attr">start_period:</span> <span class="string">90s</span>   <span class="comment"># 初始化需要较长时间 (数据库迁移)</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">$&#123;VOLUME_DIR:-./data&#125;/core/data:/opt/jumpserver/core/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">$&#123;VOLUME_DIR:-./data&#125;/koko/data:/opt/jumpserver/koko/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">$&#123;VOLUME_DIR:-./data&#125;/lion/data:/opt/jumpserver/lion/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">$&#123;VOLUME_DIR:-./data&#125;/chen/data:/opt/jumpserver/chen/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">$&#123;VOLUME_DIR:-./data&#125;/kael/data:/opt/jumpserver/kael/data</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">$&#123;VOLUME_DIR:-./data&#125;/web/log:/var/log/nginx</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">net:</span></span><br><span class="line">    <span class="attr">ipam:</span></span><br><span class="line">      <span class="attr">driver:</span> <span class="string">default</span></span><br><span class="line">      <span class="attr">config:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">subnet:</span> <span class="number">172.27</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span>  <span class="comment"># 容器子网 (避免冲突)</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-4-启动服务"><a href="#3-4-启动服务" class="headerlink" title="3.4 启动服务"></a>3.4 启动服务</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建数据目录</span></span><br><span class="line"><span class="built_in">mkdir</span> -p data/&#123;mariadb,redis,core,koko,lion,chen,kael,web&#125;/data</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动所有服务</span></span><br><span class="line">docker compose up -d</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看启动状态</span></span><br><span class="line">docker compose ps</span><br><span class="line"></span><br><span class="line"><span class="comment"># 等待初始化完成 (约2分钟)</span></span><br><span class="line">watch -n 5 docker compose ps</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-5-验证部署"><a href="#3-5-验证部署" class="headerlink" title="3.5 验证部署"></a>3.5 验证部署</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查服务健康状态</span></span><br><span class="line">docker compose ps</span><br><span class="line"><span class="comment"># 输出示例:</span></span><br><span class="line"><span class="comment"># NAME        IMAGE          COMMAND               SERVICE      STATUS</span></span><br><span class="line"><span class="comment"># jms_all     jms_all:...    &quot;./entrypoint.sh&quot;     jumpserver   Up 2 minutes (healthy)</span></span><br><span class="line"><span class="comment"># jms_mysql   mariadb:10.6   &quot;docker-entrypoint.s…&quot; mysql        Up 2 minutes (healthy)</span></span><br><span class="line"><span class="comment"># jms_redis   redis:7.2.5    &quot;docker-entrypoint.s…&quot; redis        Up 2 minutes (healthy)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试 API 是否响应</span></span><br><span class="line">curl -s http://localhost/api/health/</span><br><span class="line"><span class="comment"># 返回: &#123;&quot;status&quot;: &quot;ok&quot;&#125; 或 HTTP 200</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看初始化日志</span></span><br><span class="line">docker compose logs jumpserver | <span class="built_in">tail</span> -50</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="4-初始化与访问"><a href="#4-初始化与访问" class="headerlink" title="4. 初始化与访问"></a>4. 初始化与访问</h2><h3 id="4-1-Web-访问"><a href="#4-1-Web-访问" class="headerlink" title="4.1 Web 访问"></a>4.1 Web 访问</h3><ul>
+<li>URL: <code>http://&lt;your-server-ip&gt;:80</code></li>
+<li>首次访问会自动跳转到初始化页面<br><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260715094651467.png" alt="初始化页面"></li>
+</ul>
+<h3 id="4-2-创建管理员账号"><a href="#4-2-创建管理员账号" class="headerlink" title="4.2 创建管理员账号"></a>4.2 创建管理员账号</h3><p>首次登录需要设置管理员账号:</p>
+<ol>
+<li>访问 <code>http://&lt;your-server-ip&gt;</code></li>
+<li>设置管理员用户名和密码</li>
+<li>设置邮箱 (可选)</li>
+<li>完成初始化</li>
+</ol>
+<h3 id="4-3-默认账号"><a href="#4-3-默认账号" class="headerlink" title="4.3 默认账号"></a>4.3 默认账号</h3><table>
+<thead>
+<tr>
+<th>角色</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>admin</td>
+<td>超级管理员 (初始化时设置密码)</td>
+</tr>
+<tr>
+<td>普通用户</td>
+<td>由管理员创建</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="5-纳管实验节点"><a href="#5-纳管实验节点" class="headerlink" title="5. 纳管实验节点"></a>5. 纳管实验节点</h2><h3 id="5-1-概念说明"><a href="#5-1-概念说明" class="headerlink" title="5.1 概念说明"></a>5.1 概念说明</h3><p>JumpServer 通过**资产(Assets)**管理被纳管的服务器节点。纳管方式分为:</p>
+<ul>
+<li><strong>SSH 密码登录</strong>: 适用于已知密码的服务器</li>
+<li><strong>SSH 密钥登录</strong>: 使用公私钥认证 (推荐)</li>
+<li><strong>自动推送</strong>: JumpServer 自动将系统用户推送到目标资产</li>
+</ul>
+<h3 id="5-2-纳管流程"><a href="#5-2-纳管流程" class="headerlink" title="5.2 纳管流程"></a>5.2 纳管流程</h3><h4 id="步骤-1-创建资产-被纳管节点"><a href="#步骤-1-创建资产-被纳管节点" class="headerlink" title="步骤 1: 创建资产 (被纳管节点)"></a>步骤 1: 创建资产 (被纳管节点)</h4><p>Web UI: <code>控制台 → 资产管理 → 资产列表 → 创建资产</code></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+<th>示例值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主机名</td>
+<td>资产名称标识</td>
+<td>node-1</td>
+</tr>
+<tr>
+<td>IP 地址</td>
+<td>目标节点 IP</td>
+<td>192.168.x.x</td>
+</tr>
+<tr>
+<td>协议</td>
+<td>管理协议</td>
+<td>SSH</td>
+</tr>
+<tr>
+<td>端口</td>
+<td>SSH 端口</td>
+<td>22</td>
+</tr>
+<tr>
+<td>系统平台</td>
+<td>操作系统</td>
+<td>Linux</td>
+</tr>
+</tbody></table>
+<h4 id="步骤-2-创建系统用户"><a href="#步骤-2-创建系统用户" class="headerlink" title="步骤 2: 创建系统用户"></a>步骤 2: 创建系统用户</h4><p>Web UI: <code>控制台 → 资产管理 → 系统用户 → 创建系统用户</code></p>
+<p>系统用户是目标资产上的<strong>真实用户</strong>，JumpServer 使用该用户登录目标资产。</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+<th>示例值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>名称</td>
+<td>用户标识</td>
+<td>root</td>
+</tr>
+<tr>
+<td>用户名</td>
+<td>目标资产上的用户名</td>
+<td>root</td>
+</tr>
+<tr>
+<td>认证方式</td>
+<td>密码 &#x2F; 密钥 &#x2F; 自动推送</td>
+<td>密钥</td>
+</tr>
+<tr>
+<td>自动推送</td>
+<td>是否自动将用户推送到资产</td>
+<td>勾选</td>
+</tr>
+</tbody></table>
+<h4 id="步骤-3-授权用户"><a href="#步骤-3-授权用户" class="headerlink" title="步骤 3: 授权用户"></a>步骤 3: 授权用户</h4><p>Web UI: <code>控制台 → 权限管理 → 资产授权 → 创建授权</code></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>名称</td>
+<td>授权规则名称</td>
+</tr>
+<tr>
+<td>用户</td>
+<td>选择要授权的 JumpServer 用户</td>
+</tr>
+<tr>
+<td>资产</td>
+<td>选择要授权的目标资产</td>
+</tr>
+<tr>
+<td>系统用户</td>
+<td>选择使用的系统用户</td>
+</tr>
+<tr>
+<td>权限</td>
+<td>全部权限 &#x2F; 连接 &#x2F; 上传下载 &#x2F; 等</td>
+</tr>
+</tbody></table>
+<h3 id="5-3-实验节点纳管示例"><a href="#5-3-实验节点纳管示例" class="headerlink" title="5.3 实验节点纳管示例"></a>5.3 实验节点纳管示例</h3><p>假设要纳管一台 Linux 节点 <code>192.168.x.x</code> (root 密码已知):</p>
+<p><strong>方式一: 密码认证</strong></p>
+<ol>
+<li>创建资产: 主机名&#x3D;<code>node-1</code>, IP&#x3D;<code>192.168.x.x</code>, 协议&#x3D;<code>SSH</code></li>
+<li>创建系统用户: 名称&#x3D;<code>root-ssh</code>, 用户名&#x3D;<code>root</code>, 认证方式&#x3D;<code>密码</code></li>
+<li>在系统用户详情中设置密码</li>
+<li>创建授权: 选择该用户和资产</li>
+<li>在 Web 终端连接测试<br><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260715095735794.png"></li>
+</ol>
+<p><strong>方式二: 密钥认证 (推荐)</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 在 JumpServer 容器中生成密钥对 (或使用已有密钥)</span></span><br><span class="line">docker <span class="built_in">exec</span> jms_all ssh-keygen -t rsa -b 4096 -f /root/.ssh/id_rsa -N <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 复制公钥到目标节点</span></span><br><span class="line">docker <span class="built_in">exec</span> jms_all ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.x.x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 在 Web UI 创建系统用户，认证方式选择 &quot;密钥&quot;，粘贴公钥内容</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>方式三: 自动推送 (最便捷)</strong></p>
+<ol>
+<li>创建资产: 主机名&#x3D;<code>node-1</code>, IP&#x3D;<code>192.168.x.x</code></li>
+<li>创建系统用户: 勾选 <code>自动推送</code>, 设置用户名(如 <code>jmsadmin</code>)和密码</li>
+<li>JumpServer 会自动 SSH 到目标节点创建该用户并设置 sudo 权限</li>
+<li>创建授权规则即可连接</li>
+</ol>
+<h3 id="5-4-连接测试"><a href="#5-4-连接测试" class="headerlink" title="5.4 连接测试"></a>5.4 连接测试</h3><ul>
+<li>Web UI: 进入 <code>工作台 → Web 终端</code>，选择目标资产</li>
+<li>命令: <code>ssh -p 2222 &lt;用户名&gt;@&lt;your-server-ip&gt;</code> (需配置)</li>
+</ul>
+<hr>
+<h2 id="6-组件架构与作用"><a href="#6-组件架构与作用" class="headerlink" title="6. 组件架构与作用"></a>6. 组件架构与作用</h2><h3 id="6-1-架构概览"><a href="#6-1-架构概览" class="headerlink" title="6.1 架构概览"></a>6.1 架构概览</h3><p>JumpServer 采用<strong>单体部署架构</strong>（jms_all 镜像），将所有核心组件打包在一个容器中，便于快速部署和管理。<br><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260715101224560.png" alt="架构概览"></p>
+<h3 id="6-2-组件详解"><a href="#6-2-组件详解" class="headerlink" title="6.2 组件详解"></a>6.2 组件详解</h3><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>服务名</th>
+<th>端口</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Core</strong></td>
+<td>core</td>
+<td>8080</td>
+<td>核心后端 API，处理认证、授权、资产管理、审计日志等所有业务逻辑</td>
+</tr>
+<tr>
+<td><strong>Koko</strong></td>
+<td>koko</td>
+<td>2222</td>
+<td>SSH&#x2F;Telnet 字符协议代理，负责 SSH 连接转发、会话录制</td>
+</tr>
+<tr>
+<td><strong>Lion</strong></td>
+<td>lion</td>
+<td>8081</td>
+<td>VNC 图形协议代理，支持通过 Web 访问 VNC 协议的资产</td>
+</tr>
+<tr>
+<td><strong>Razor</strong></td>
+<td>razor</td>
+<td>3389</td>
+<td>RDP 协议代理，支持 Windows 远程桌面连接</td>
+</tr>
+<tr>
+<td><strong>Chen</strong></td>
+<td>chen</td>
+<td>8083</td>
+<td>数据库代理，支持 MySQL、PostgreSQL 等数据库的 Web 连接</td>
+</tr>
+<tr>
+<td><strong>Kael</strong></td>
+<td>kael</td>
+<td>8085</td>
+<td>应用发布代理，支持发布 Chrome、SQL 工具等应用程序</td>
+</tr>
+<tr>
+<td><strong>Web</strong></td>
+<td>web</td>
+<td>80</td>
+<td>Nginx 前端代理，统一入口，反向代理到各组件</td>
+</tr>
+<tr>
+<td><strong>Celery</strong></td>
+<td>celery</td>
+<td>-</td>
+<td>异步任务队列，处理录像处理、资产推送、邮件通知等后台任务</td>
+</tr>
+<tr>
+<td><strong>Magnus</strong></td>
+<td>magnus</td>
+<td>-</td>
+<td>数据库隧道代理，支持通过 Navicat 等客户端直连数据库</td>
+</tr>
+</tbody></table>
+<h3 id="6-3-数据流"><a href="#6-3-数据流" class="headerlink" title="6.3 数据流"></a>6.3 数据流</h3><p>用户请求经过以下路径：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">用户浏览器 → Nginx(80) → Core(8080) → 认证/授权 → 会话请求</span><br><span class="line">                                          ↓</span><br><span class="line">                              Koko(2222)/Lion/VNC → 目标资产</span><br><span class="line">                                          ↓</span><br><span class="line">                                  会话录制 → Celery → 存储</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-4-协议支持"><a href="#6-4-协议支持" class="headerlink" title="6.4 协议支持"></a>6.4 协议支持</h3><table>
+<thead>
+<tr>
+<th>协议</th>
+<th>组件</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SSH</td>
+<td>Koko</td>
+<td>Linux 服务器、网络设备</td>
+</tr>
+<tr>
+<td>Telnet</td>
+<td>Koko</td>
+<td>网络设备 (交换机、路由器)</td>
+</tr>
+<tr>
+<td>RDP</td>
+<td>Razor</td>
+<td>Windows 服务器</td>
+</tr>
+<tr>
+<td>VNC</td>
+<td>Lion</td>
+<td>图形化 Linux、虚拟机</td>
+</tr>
+<tr>
+<td>MySQL&#x2F;MariaDB</td>
+<td>Chen</td>
+<td>数据库管理</td>
+</tr>
+<tr>
+<td>PostgreSQL</td>
+<td>Chen</td>
+<td>数据库管理</td>
+</tr>
+<tr>
+<td>应用发布</td>
+<td>Kael</td>
+<td>Web 应用、数据库客户端等</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="7-配置文件解析"><a href="#7-配置文件解析" class="headerlink" title="7. 配置文件解析"></a>7. 配置文件解析</h2><h3 id="7-1-env-文件解析"><a href="#7-1-env-文件解析" class="headerlink" title="7.1 .env 文件解析"></a>7.1 .env 文件解析</h3><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ============================================================</span></span><br><span class="line"><span class="comment"># JumpServer Docker-Compose 环境变量配置</span></span><br><span class="line"><span class="comment"># ============================================================</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ----- 核心密钥 -----</span></span><br><span class="line"><span class="attr">SECRET_KEY</span>=&lt;your-secret-key&gt;</span><br><span class="line"><span class="comment"># 作用: 用于加密数据库中的敏感数据 (密码、密钥等)</span></span><br><span class="line"><span class="comment"># 注意: 升级/迁移时必须保持一致，否则数据无法解密</span></span><br><span class="line"><span class="comment"># 生成: openssl rand -hex 32</span></span><br><span class="line"></span><br><span class="line"><span class="attr">BOOTSTRAP_TOKEN</span>=&lt;your-bootstrap-token&gt;</span><br><span class="line"><span class="comment"># 作用: 组件间通信认证 Token (Koko、Lion 等组件连接 Core 时使用)</span></span><br><span class="line"><span class="comment"># 生成: openssl rand -hex 16</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ----- 数据库配置 -----</span></span><br><span class="line"><span class="attr">DB_PASSWORD</span>=&lt;your-db-password&gt;</span><br><span class="line"><span class="comment"># MariaDB/MySQL root 密码，用于存储所有持久化数据</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ----- Redis 配置 -----</span></span><br><span class="line"><span class="attr">REDIS_PASSWORD</span>=&lt;your-redis-password&gt;</span><br><span class="line"><span class="comment"># Redis 密码，用于缓存会话、任务队列等</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ----- 日志级别 -----</span></span><br><span class="line"><span class="attr">LOG_LEVEL</span>=ERROR</span><br><span class="line"><span class="comment"># 可选: DEBUG | INFO | WARN | ERROR</span></span><br><span class="line"><span class="comment"># 生产环境建议 ERROR，调试时可改为 DEBUG</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ----- 对外端口 -----</span></span><br><span class="line"><span class="attr">HTTP_PORT</span>=<span class="number">80</span></span><br><span class="line"><span class="attr">SSH_PORT</span>=<span class="number">2222</span></span><br><span class="line"><span class="comment"># HTTP_PORT: Web 管理界面访问端口</span></span><br><span class="line"><span class="comment"># SSH_PORT: SSH 代理连接端口 (客户端连接时使用 -p 2222)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ----- 数据持久化路径 -----</span></span><br><span class="line"><span class="attr">VOLUME_DIR</span>=./data</span><br><span class="line"><span class="comment"># 所有数据存储的根目录，包括数据库、录像、日志等</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-2-docker-compose-yml-关键配置说明"><a href="#7-2-docker-compose-yml-关键配置说明" class="headerlink" title="7.2 docker-compose.yml 关键配置说明"></a>7.2 docker-compose.yml 关键配置说明</h3><table>
+<thead>
+<tr>
+<th>配置项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>privileged: true</code></td>
+<td>特权模式，JumpServer 需要在容器内创建和管理 Docker 容器</td>
+</tr>
+<tr>
+<td><code>depends_on.condition: service_healthy</code></td>
+<td>等待依赖服务健康后才启动，确保启动顺序</td>
+</tr>
+<tr>
+<td><code>healthcheck</code></td>
+<td>容器健康检查，Docker 根据返回值判断服务是否正常</td>
+</tr>
+<tr>
+<td><code>volumes</code></td>
+<td>数据持久化挂载，将容器内数据映射到宿主机</td>
+</tr>
+<tr>
+<td><code>networks.ipam.config.subnet</code></td>
+<td>指定容器子网，避免与宿主机网络冲突</td>
+</tr>
+</tbody></table>
+<h3 id="7-3-关键数据目录"><a href="#7-3-关键数据目录" class="headerlink" title="7.3 关键数据目录"></a>7.3 关键数据目录</h3><table>
+<thead>
+<tr>
+<th>路径</th>
+<th>存储内容</th>
+<th>重要程度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>./data/core/data/</code></td>
+<td>录像文件、密钥、日志</td>
+<td>⭐⭐⭐ 核心数据</td>
+</tr>
+<tr>
+<td><code>./data/koko/data/</code></td>
+<td>Koko 会话录制</td>
+<td>⭐⭐⭐ 审计数据</td>
+</tr>
+<tr>
+<td><code>./data/lion/data/</code></td>
+<td>Lion 会话录制</td>
+<td>⭐⭐ 图形会话</td>
+</tr>
+<tr>
+<td><code>./data/mariadb/data/</code></td>
+<td>数据库文件</td>
+<td>⭐⭐⭐ 所有配置</td>
+</tr>
+<tr>
+<td><code>./data/redis/data/</code></td>
+<td>Redis 持久化</td>
+<td>⭐ 可恢复</td>
+</tr>
+<tr>
+<td><code>./data/web/log/</code></td>
+<td>Nginx 访问日志</td>
+<td>⭐ 调试用</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>备份建议</strong>: 定期备份 <code>./data/mariadb/data/</code> 和 <code>./data/core/data/</code></p>
+</blockquote>
+<hr>
+<h2 id="8-常用管理命令"><a href="#8-常用管理命令" class="headerlink" title="8. 常用管理命令"></a>8. 常用管理命令</h2><h3 id="8-1-服务管理"><a href="#8-1-服务管理" class="headerlink" title="8.1 服务管理"></a>8.1 服务管理</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看所有服务状态</span></span><br><span class="line">docker compose ps</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看实时日志</span></span><br><span class="line">docker compose logs -f</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看特定服务日志</span></span><br><span class="line">docker compose logs -f jumpserver</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启服务</span></span><br><span class="line">docker compose restart jumpserver</span><br><span class="line"></span><br><span class="line"><span class="comment"># 停止服务 (保留数据)</span></span><br><span class="line">docker compose stop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动服务</span></span><br><span class="line">docker compose start</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重新创建容器 (更新配置后)</span></span><br><span class="line">docker compose up -d --force-recreate</span><br><span class="line"></span><br><span class="line"><span class="comment"># 停止并删除容器 (保留数据卷)</span></span><br><span class="line">docker compose down</span><br><span class="line"></span><br><span class="line"><span class="comment"># 完全清理 (⚠️ 删除所有数据)</span></span><br><span class="line">docker compose down -v</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-2-进入容器"><a href="#8-2-进入容器" class="headerlink" title="8.2 进入容器"></a>8.2 进入容器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入 JumpServer 容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it jms_all bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进入数据库</span></span><br><span class="line">docker <span class="built_in">exec</span> -it jms_mysql mysql -uroot -p<span class="variable">$&#123;DB_PASSWORD&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 进入 Redis</span></span><br><span class="line">docker <span class="built_in">exec</span> -it jms_redis redis-cli -a <span class="variable">$&#123;REDIS_PASSWORD&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3-数据备份与恢复"><a href="#8-3-数据备份与恢复" class="headerlink" title="8.3 数据备份与恢复"></a>8.3 数据备份与恢复</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 备份数据库</span></span><br><span class="line">docker <span class="built_in">exec</span> jms_mysql mysqldump -uroot -p<span class="variable">$&#123;DB_PASSWORD&#125;</span> jumpserver &gt; backup.sql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 恢复数据库</span></span><br><span class="line"><span class="built_in">cat</span> backup.sql | docker <span class="built_in">exec</span> -i jms_mysql mysql -uroot -p<span class="variable">$&#123;DB_PASSWORD&#125;</span> jumpserver</span><br><span class="line"></span><br><span class="line"><span class="comment"># 备份核心数据</span></span><br><span class="line">tar czf core-data-backup.tar.gz ./data/core/data/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 整体备份</span></span><br><span class="line">tar czf jumpserver-backup-$(<span class="built_in">date</span> +%Y%m%d).tar.gz ./data/ .<span class="built_in">env</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="8-4-升级"><a href="#8-4-升级" class="headerlink" title="8.4 升级"></a>8.4 升级</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 备份数据</span></span><br><span class="line">tar czf backup-$(<span class="built_in">date</span> +%Y%m%d).tar.gz ./data/ .<span class="built_in">env</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 拉取新版本镜像</span></span><br><span class="line">docker compose pull</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 重新创建容器</span></span><br><span class="line">docker compose up -d --force-recreate</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 验证升级</span></span><br><span class="line">docker compose ps</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="9-故障排除"><a href="#9-故障排除" class="headerlink" title="9. 故障排除"></a>9. 故障排除</h2><h3 id="9-1-常见问题排查"><a href="#9-1-常见问题排查" class="headerlink" title="9.1 常见问题排查"></a>9.1 常见问题排查</h3><table>
+<thead>
+<tr>
+<th>问题现象</th>
+<th>可能原因</th>
+<th>解决方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>容器启动失败</strong></td>
+<td>端口被占用</td>
+<td>使用 &#96;netstat -tlnp</td>
+</tr>
+<tr>
+<td><strong>健康检查失败</strong></td>
+<td>数据库连接失败</td>
+<td>查看日志 <code>docker compose logs mysql</code>，检查网络连通性</td>
+</tr>
+<tr>
+<td><strong>Web 无法访问</strong></td>
+<td>防火墙阻止</td>
+<td>开放端口 <code>firewall-cmd --add-port=80/tcp --permanent &amp;&amp; firewall-cmd --reload</code></td>
+</tr>
+<tr>
+<td><strong>SSH 连接失败</strong></td>
+<td>Koko 组件异常</td>
+<td>查看 Koko 日志 <code>docker exec jms_all tail -f /opt/jumpserver/koko/logs/koko.log</code></td>
+</tr>
+<tr>
+<td><strong>录像无法播放</strong></td>
+<td>存储空间不足</td>
+<td>检查磁盘空间 <code>df -h</code>，清理旧录像</td>
+</tr>
+</tbody></table>
+<h3 id="9-2-日志排查"><a href="#9-2-日志排查" class="headerlink" title="9.2 日志排查"></a>9.2 日志排查</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看所有服务日志</span></span><br><span class="line">docker compose logs</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 JumpServer 详细日志</span></span><br><span class="line">docker <span class="built_in">exec</span> jms_all <span class="built_in">tail</span> -f /opt/jumpserver/core/logs/jumpserver.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看数据库日志</span></span><br><span class="line">docker compose logs mysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看健康检查失败原因</span></span><br><span class="line">docker inspect jms_all --format=<span class="string">&#x27;&#123;&#123;.State.Health&#125;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="9-3-重置管理员密码"><a href="#9-3-重置管理员密码" class="headerlink" title="9.3 重置管理员密码"></a>9.3 重置管理员密码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入容器</span></span><br><span class="line">docker <span class="built_in">exec</span> -it jms_all bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进入 Python 环境重置密码</span></span><br><span class="line"><span class="built_in">cd</span> /opt/jumpserver</span><br><span class="line">python manage.py shell</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 Python Shell 中执行:</span></span><br><span class="line"><span class="comment"># from users.models import User</span></span><br><span class="line"><span class="comment"># u = User.objects.get(username=&#x27;admin&#x27;)</span></span><br><span class="line"><span class="comment"># u.set_password(&#x27;new_password&#x27;)</span></span><br><span class="line"><span class="comment"># u.save()</span></span><br><span class="line"><span class="comment"># exit()</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="9-4-重置-SECRET-KEY"><a href="#9-4-重置-SECRET-KEY" class="headerlink" title="9.4 重置 SECRET_KEY"></a>9.4 重置 SECRET_KEY</h3><blockquote>
+<p>⚠️ <strong>重要</strong>: 重置 SECRET_KEY 会导致原有加密数据（密码、密钥等）无法解密，需谨慎操作。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 停止服务</span></span><br><span class="line">docker compose stop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重新生成密钥</span></span><br><span class="line">SECRET_KEY=$(openssl rand -hex 32)</span><br><span class="line">sed -i <span class="string">&quot;s/^SECRET_KEY=.*/SECRET_KEY=<span class="variable">$&#123;SECRET_KEY&#125;</span>/&quot;</span> .<span class="built_in">env</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动服务 (数据库会重新初始化，原有数据丢失)</span></span><br><span class="line">docker compose up -d</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><h3 id="A-访问地址"><a href="#A-访问地址" class="headerlink" title="A. 访问地址"></a>A. 访问地址</h3><table>
+<thead>
+<tr>
+<th>服务</th>
+<th>地址</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>JumpServer Web</td>
+<td>http:&#x2F;&#x2F;<your-server-ip>:80</td>
+</tr>
+<tr>
+<td>SSH 代理</td>
+<td>ssh -p 2222 user@<your-server-ip></td>
+</tr>
+</tbody></table>
+<h3 id="B-镜像信息"><a href="#B-镜像信息" class="headerlink" title="B. 镜像信息"></a>B. 镜像信息</h3><table>
+<thead>
+<tr>
+<th>镜像</th>
+<th>版本</th>
+<th>大小</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>jumpserver&#x2F;jms_all</td>
+<td>v4.10.15</td>
+<td>~1.04 GB</td>
+</tr>
+<tr>
+<td>mariadb</td>
+<td>10.6</td>
+<td>~380 MB</td>
+</tr>
+<tr>
+<td>redis</td>
+<td>7.2.5</td>
+<td>~120 MB</td>
+</tr>
+</tbody></table>
+<h3 id="C-端口说明"><a href="#C-端口说明" class="headerlink" title="C. 端口说明"></a>C. 端口说明</h3><table>
+<thead>
+<tr>
+<th>端口</th>
+<th>服务</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>80</td>
+<td>Nginx</td>
+<td>Web 管理界面</td>
+</tr>
+<tr>
+<td>2222</td>
+<td>Koko</td>
+<td>SSH 代理连接</td>
+</tr>
+<tr>
+<td>3306</td>
+<td>MariaDB</td>
+<td>数据库 (仅容器内)</td>
+</tr>
+<tr>
+<td>6379</td>
+<td>Redis</td>
+<td>缓存 (仅容器内)</td>
+</tr>
+</tbody></table>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/a54ffedb.html">https://raidenxe.github.io/archives/a54ffedb.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/docker/">docker</a><a class="post-meta__tags" href="/tags/jumpserver/">jumpserver</a></div><div class="post-share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260715102638262.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/archives/ab2a157c.html" title="bocker笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg3.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">bocker笔记</div></div><div class="info-2"><div class="info-item-1">Bocker 源码深度解析 —— 100 行 Bash 实现的容器运行时 目录 什么是 Bocker 架构概览：四层核心技术 源码逐层深度解析 核心技术原理深度探讨 Bocker 与 Docker 的对比 设计缺陷与改进方向   1. 什么是 BockerBocker 是一个用 约 100 行 Bash 脚本 实现的极简容器运行时，由英国系统工程师 Peter Wilmott 创建。它并非用于生产环境，而是通过最精简的代码，揭示 Docker 等容器技术的核心本质——利用 Linux 内核的命名空间（Namespaces）、控制组（Cgroups）、Btrfs 文件系统、veth pair 等特性，组合出一个隔离的执行环境。  项目地址：p8952&#x2F;bocker（已归档）  1.1 整体架构123456789101112131415┌─────────────────────────────────────────────────────────────────┐│                        Bocker 脚本                    ...</div></div></div></a><a class="pagination-related" href="/archives/21f67780.html" title="k8s部署笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260711230814041.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">k8s部署笔记</div></div><div class="info-2"><div class="info-item-1">Kubernetes 集群部署：从原理到实践 环境：Ubuntu 26.04 LTS &#x2F; Kubernetes v1.36.2 &#x2F; containerd + cri-dockerd   一、Kubernetes 集群部署架构概述1.1 kubeadm 的作用与原理kubeadm 是 Kubernetes 官方提供的集群部署工具，它的核心任务是将一个 Kubernetes 集群的各个组件以容器化的方式部署到目标机器上。kubeadm 的工作原理可以概括为三个阶段：  前置检查：kubeadm init 执行前会进行一系列预检，包括主机名解析、端口占用、CRI 端点可用性、Swap 状态等。任何一项不通过都会阻止初始化。 组件启动：以静态 Pod 的方式启动 kube-apiserver、kube-controller-manager、kube-scheduler、etcd 等控制平面组件。这些组件的 YAML 清单由 kubeadm 生成并放置在 /etc/kubernetes/manifests/ 目录下，kubelet 会监听该目录并自动启动对应的容器。 集...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/archives/be6d62ff.html" title="docker部署gitlab"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-08</div><div class="info-item-2">docker部署gitlab</div></div><div class="info-2"><div class="info-item-1">使用 Docker 部署 GitLab CE（社区版）完整指南作者：raiden环境：Debian 13 &#x2F; Docker 29.7.2 &#x2F; Docker Compose v5.4.0最后更新：2026-08-08  📖 前言GitLab 是目前最受欢迎的开源 DevOps 平台之一，集成了代码托管、CI&#x2F;CD、Issue 跟踪、容器镜像仓库等丰富功能。对于小团队或个人开发者，官方提供的 GitLab CE（社区版） 完全够用，而借助 Docker 部署可以显著降低运维复杂度。 本文将手把手带你完成 GitLab CE 的 Docker 部署，并分享生产环境下的优化建议。无论你是新手还是正在从传统方式迁移，这篇指南都能为你提供可直接落地的操作步骤。  ✅ 前置条件开始前，请确认服务器满足以下最低要求：    项目 最低配置 推荐配置    CPU 2 核 4 核及以上   内存 4 GB 8 GB 或更高   存储 20 GB SSD 50 GB+ SSD   操作系统 Linux（Ubuntu&#x2F;CentOS&#x2F;Debian） 同...</div></div></div></a><a class="pagination-related" href="/archives/4417b09c.html" title="使用Shell脚本一键完成Docker二进制部署与镜像加速配置"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260705153854651.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-04</div><div class="info-item-2">使用Shell脚本一键完成Docker二进制部署与镜像加速配置</div></div><div class="info-2"><div class="info-item-1">背景与痛点Docker 作为云原生时代的核心基础设施，几乎是每位开发者和运维人员的必备工具。然而在国内网络环境下，Docker 的部署和镜像拉取往往面临两大痛点：  痛点一：官方源访问不稳定。Docker 官方下载站 download.docker.com 在国内部分地区访问缓慢甚至无法连接，导致二进制包下载失败。 痛点二：镜像拉取速度极慢。由于网络原因，从 Docker Hub 拉取镜像时经常超时或速度极慢，严重影响开发效率。  传统的解决方案是手动下载二进制包、复制到 /usr/bin、配置 systemd 服务、再手工编辑 daemon.json 添加镜像源——步骤繁琐且容易出错。本文将分享一个一键完成的 Shell 脚本，实现 Docker 二进制部署与镜像加速配置的自动化。 脚本功能概述该脚本主要实现以下功能：  支持指定版本或自动获取最新版本：可通过命令行参数指定版本号（如 ./install_docker.sh 29.6.0），不传参数则自动从多个镜像源获取最新稳定版。 多源下载容错：依次尝试官方源、阿里云镜像、清华镜像等多个地址下载二进制包。 全自动安装：解压二进...</div></div></div></a><a class="pagination-related" href="/archives/35864571.html" title="docker部署jenkins"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-10</div><div class="info-item-2">docker部署jenkins</div></div><div class="info-2"><div class="info-item-1">在 Debian 上部署 Jenkins 的完整实战指南（APT + Docker） 从零搭建 CI&#x2F;CD 环境，踩坑记录与解决方案全公开  作者：raiden测试环境：Debian 13 (Trixie) &#x2F; Jenkins LTS 2.541.1 &#x2F; Docker 29.7.2最后更新：2026-08-09  1. 为什么选择 Jenkins？部署方式怎么选？Jenkins 是目前最成熟的开源自动化服务器，拥有超过 1800 个插件，几乎可以对接任何主流开发工具链。但在 Debian 上部署时，很多人会遇到仓库签名失败、Docker 镜像拉取报错、容器重启后退出、初始密码丢失等一系列问题。 本文提供 APT 和 Docker 两种部署方案的完整操作流程，并重点剖析官方文档未覆盖的”暗坑”。笔者使用的系统是 Debian Trixie (Testing)，遇到的兼容性问题极具代表性，相信对多数读者都有参考价值。 两种部署方式对比   维度 APT（系统包） Docker（容器化）    优点 与 systemd 深度集成，服务管理方便 环境隔离，版...</div></div></div></a><a class="pagination-related" href="/archives/f5d6e7c8.html" title="Docker命令速查与简单实战"><img class="cover" src="https://picx.zhimg.com/70/v2-b5931fd8a0a340ce11953832401d9803_1440w.avis?source=172ae18b&biz_tag=Post" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-06</div><div class="info-item-2">Docker命令速查与简单实战</div></div><div class="info-2"><div class="info-item-1">Docker 常用命令速查笔记一、镜像管理（Image）   命令 用途 示例    docker images 列出本机所有镜像 docker images   docker pull &lt;镜像名&gt;:&lt;标签&gt; 从仓库拉取镜像 docker pull nginx:1.25   docker rmi &lt;镜像ID或名称&gt; 删除镜像（可加 -f 强制） docker rmi nginx:1.25   docker tag &lt;源镜像&gt; &lt;目标镜像:标签&gt; 给镜像打标签 docker tag myapp:v1 myapp:latest   docker inspect &lt;镜像名&gt; 查看镜像详细信息（JSON格式） docker inspect nginx   docker save -o &lt;文件名&gt;.tar &lt;镜像名&gt; 导出镜像为 tar 文件 docker save -o nginx.tar nginx:1.25   docker load -i &lt;文件名&gt;.tar 从 tar 文件...</div></div></div></a><a class="pagination-related" href="/archives/d2c4a8b1.html" title="Docker容器与宿主机的区别"><img class="cover" src="https://picx.zhimg.com/80/v2-c40c351ba7a6f43753fa47b7859bf36e_720w.webp?source=2c26e567" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-10</div><div class="info-item-2">Docker容器与宿主机的区别</div></div><div class="info-2"><div class="info-item-1">Docker 容器与宿主机共享内核但拥有独立的文件系统、进程空间和资源限制。本文从内核架构、Namespace 隔离、cgroup 资源管控、文件系统分层等维度出发，系统梳理容器与宿主机之间的本质区别，并介绍多种实用的容器环境检测方法。 容器与虚拟机的本质区别在深入讨论容器与宿主机的差异之前，有必要先理解容器化技术的底层架构。与传统的虚拟机不同，Docker 容器并非在独立操作系统上运行，而是与宿主机共享同一个 Linux 内核。 共享内核架构一个典型的 Linux 文件系统由 bootfs 和 rootfs 两部分组成：  bootfs：包含 bootloader 和 kernel（操作系统内核）。 rootfs：包含操作系统所需的文件、配置和目录，但不包括内核。   容器正是利用了这一特性——多个不同的镜像可以在同一个宿主机内核上运行各自的 rootfs：  容器、镜像与父镜像之间的关系：  Namespace 隔离容器方案基于 Linux 内核提供的 cgroup 和 namespace 来实现隔离。Linux 内核通过以下六种 Namespace 实现不同维度的隔离：  ...</div></div></div></a><a class="pagination-related" href="/archives/g9h0i1j2.html" title="Dockerfile完全指南：从入门到实战"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260706171038111.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-06</div><div class="info-item-2">Dockerfile完全指南：从入门到实战</div></div><div class="info-2"><div class="info-item-1">前言Docker 的流行离不开其核心概念——镜像。而镜像的构建方式多种多样，但最标准、最透明、最可维护的方式无疑是 Dockerfile。Dockerfile 是一份声明式脚本，它定义了如何从一个基础镜像开始，逐步叠加指令，最终生成一个包含应用程序及其运行环境的可交付镜像。本文将系统讲解 Dockerfile 的方方面面，涵盖基础概念、常用指令、构建流程、分层原理以及一个完整的实战案例，帮你彻底掌握 Dockerfile 的使用。 Dockerfile 是什么？ Dockerfile 是一个文本文件，其中包含了一条条的指令（Instruction），每条指令对应 Linux 系统下的一条命令。Docker 守护程序（dockerd）读取 Dockerfile 并逐条执行这些指令，每执行一条就会生成一个中间镜像层，最终所有层叠加组成最终的镜像。 可以把它理解为”镜像的源代码”——正如我们通过源代码管理应用程序一样，通过 Dockerfile 可以清晰地记录镜像的构建过程，便于版本控制、团队协作和后期维护。 Dockerfile 的优势 自动化：无需手动执行繁杂的 docker co...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Raidenxe</div><div class="author-info-description">向着真理和自由，无名的献身。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JumpServer-%E9%83%A8%E7%BD%B2%E7%AC%94%E8%AE%B0"><span class="toc-number">1.</span> <span class="toc-text">JumpServer 部署笔记</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-JumpServer"><span class="toc-number">1.2.</span> <span class="toc-text">1. 什么是 JumpServer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.3.</span> <span class="toc-text">2. 环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E7%B3%BB%E7%BB%9F%E8%A6%81%E6%B1%82"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1 系统要求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%AE%89%E8%A3%85-Docker"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.2 安装 Docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E9%85%8D%E7%BD%AE%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.3.</span> <span class="toc-text">2.3 配置镜像加速 (国内环境)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Docker-Compose-%E9%83%A8%E7%BD%B2"><span class="toc-number">1.4.</span> <span class="toc-text">3. Docker-Compose 部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="toc-number">1.4.1.</span> <span class="toc-text">3.1 项目目录结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E7%94%9F%E6%88%90%E5%AF%86%E9%92%A5"><span class="toc-number">1.4.2.</span> <span class="toc-text">3.2 生成密钥</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-docker-compose-yml-%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.4.3.</span> <span class="toc-text">3.3 docker-compose.yml 详解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.4.4.</span> <span class="toc-text">3.4 启动服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E9%AA%8C%E8%AF%81%E9%83%A8%E7%BD%B2"><span class="toc-number">1.4.5.</span> <span class="toc-text">3.5 验证部署</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%8E%E8%AE%BF%E9%97%AE"><span class="toc-number">1.5.</span> <span class="toc-text">4. 初始化与访问</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-Web-%E8%AE%BF%E9%97%AE"><span class="toc-number">1.5.1.</span> <span class="toc-text">4.1 Web 访问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%90%86%E5%91%98%E8%B4%A6%E5%8F%B7"><span class="toc-number">1.5.2.</span> <span class="toc-text">4.2 创建管理员账号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E9%BB%98%E8%AE%A4%E8%B4%A6%E5%8F%B7"><span class="toc-number">1.5.3.</span> <span class="toc-text">4.3 默认账号</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%BA%B3%E7%AE%A1%E5%AE%9E%E9%AA%8C%E8%8A%82%E7%82%B9"><span class="toc-number">1.6.</span> <span class="toc-text">5. 纳管实验节点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E6%A6%82%E5%BF%B5%E8%AF%B4%E6%98%8E"><span class="toc-number">1.6.1.</span> <span class="toc-text">5.1 概念说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E7%BA%B3%E7%AE%A1%E6%B5%81%E7%A8%8B"><span class="toc-number">1.6.2.</span> <span class="toc-text">5.2 纳管流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-1-%E5%88%9B%E5%BB%BA%E8%B5%84%E4%BA%A7-%E8%A2%AB%E7%BA%B3%E7%AE%A1%E8%8A%82%E7%82%B9"><span class="toc-number">1.6.2.1.</span> <span class="toc-text">步骤 1: 创建资产 (被纳管节点)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-2-%E5%88%9B%E5%BB%BA%E7%B3%BB%E7%BB%9F%E7%94%A8%E6%88%B7"><span class="toc-number">1.6.2.2.</span> <span class="toc-text">步骤 2: 创建系统用户</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-3-%E6%8E%88%E6%9D%83%E7%94%A8%E6%88%B7"><span class="toc-number">1.6.2.3.</span> <span class="toc-text">步骤 3: 授权用户</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E5%AE%9E%E9%AA%8C%E8%8A%82%E7%82%B9%E7%BA%B3%E7%AE%A1%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.6.3.</span> <span class="toc-text">5.3 实验节点纳管示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E8%BF%9E%E6%8E%A5%E6%B5%8B%E8%AF%95"><span class="toc-number">1.6.4.</span> <span class="toc-text">5.4 连接测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E7%BB%84%E4%BB%B6%E6%9E%B6%E6%9E%84%E4%B8%8E%E4%BD%9C%E7%94%A8"><span class="toc-number">1.7.</span> <span class="toc-text">6. 组件架构与作用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E6%9E%B6%E6%9E%84%E6%A6%82%E8%A7%88"><span class="toc-number">1.7.1.</span> <span class="toc-text">6.1 架构概览</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E7%BB%84%E4%BB%B6%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.7.2.</span> <span class="toc-text">6.2 组件详解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="toc-number">1.7.3.</span> <span class="toc-text">6.3 数据流</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-%E5%8D%8F%E8%AE%AE%E6%94%AF%E6%8C%81"><span class="toc-number">1.7.4.</span> <span class="toc-text">6.4 协议支持</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90"><span class="toc-number">1.8.</span> <span class="toc-text">7. 配置文件解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-env-%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90"><span class="toc-number">1.8.1.</span> <span class="toc-text">7.1 .env 文件解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-docker-compose-yml-%E5%85%B3%E9%94%AE%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E"><span class="toc-number">1.8.2.</span> <span class="toc-text">7.2 docker-compose.yml 关键配置说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E5%85%B3%E9%94%AE%E6%95%B0%E6%8D%AE%E7%9B%AE%E5%BD%95"><span class="toc-number">1.8.3.</span> <span class="toc-text">7.3 关键数据目录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%B8%B8%E7%94%A8%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4"><span class="toc-number">1.9.</span> <span class="toc-text">8. 常用管理命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86"><span class="toc-number">1.9.1.</span> <span class="toc-text">8.1 服务管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8"><span class="toc-number">1.9.2.</span> <span class="toc-text">8.2 进入容器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-3-%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D"><span class="toc-number">1.9.3.</span> <span class="toc-text">8.3 数据备份与恢复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-4-%E5%8D%87%E7%BA%A7"><span class="toc-number">1.9.4.</span> <span class="toc-text">8.4 升级</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="toc-number">1.10.</span> <span class="toc-text">9. 故障排除</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="toc-number">1.10.1.</span> <span class="toc-text">9.1 常见问题排查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-%E6%97%A5%E5%BF%97%E6%8E%92%E6%9F%A5"><span class="toc-number">1.10.2.</span> <span class="toc-text">9.2 日志排查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-3-%E9%87%8D%E7%BD%AE%E7%AE%A1%E7%90%86%E5%91%98%E5%AF%86%E7%A0%81"><span class="toc-number">1.10.3.</span> <span class="toc-text">9.3 重置管理员密码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-4-%E9%87%8D%E7%BD%AE-SECRET-KEY"><span class="toc-number">1.10.4.</span> <span class="toc-text">9.4 重置 SECRET_KEY</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95"><span class="toc-number">1.11.</span> <span class="toc-text">附录</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-%E8%AE%BF%E9%97%AE%E5%9C%B0%E5%9D%80"><span class="toc-number">1.11.1.</span> <span class="toc-text">A. 访问地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B-%E9%95%9C%E5%83%8F%E4%BF%A1%E6%81%AF"><span class="toc-number">1.11.2.</span> <span class="toc-text">B. 镜像信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C-%E7%AB%AF%E5%8F%A3%E8%AF%B4%E6%98%8E"><span class="toc-number">1.11.3.</span> <span class="toc-text">C. 端口说明</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/61196baf.html" title="Jenkins-CICD实战"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins-CICD实战"/></a><div class="content"><a class="title" href="/archives/61196baf.html" title="Jenkins-CICD实战">Jenkins-CICD实战</a><time datetime="2026-08-11T17:09:47.000Z" title="发表于 2026-08-12 01:09:47">2026-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a3e16fea.html" title="面试题1"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试题1"/></a><div class="content"><a class="title" href="/archives/a3e16fea.html" title="面试题1">面试题1</a><time datetime="2026-08-11T14:53:55.000Z" title="发表于 2026-08-11 22:53:55">2026-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/35864571.html" title="docker部署jenkins"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署jenkins"/></a><div class="content"><a class="title" href="/archives/35864571.html" title="docker部署jenkins">docker部署jenkins</a><time datetime="2026-08-10T05:55:00.000Z" title="发表于 2026-08-10 13:55:00">2026-08-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/be6d62ff.html" title="docker部署gitlab"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署gitlab"/></a><div class="content"><a class="title" href="/archives/be6d62ff.html" title="docker部署gitlab">docker部署gitlab</a><time datetime="2026-08-08T07:16:03.000Z" title="发表于 2026-08-08 15:16:03">2026-08-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260807160530247.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s+Helm部署kube-prometheus-stack"/></a><div class="content"><a class="title" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack">K8s+Helm部署kube-prometheus-stack</a><time datetime="2026-08-07T07:12:03.000Z" title="发表于 2026-08-07 15:12:03">2026-08-07</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2020 - 2026 By Raidenxe</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5"></script><script src="/js/main.js?v=5.5.5"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="false"> </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5"></script></div></div></body></html>

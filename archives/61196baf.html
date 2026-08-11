@@ -1,0 +1,613 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Jenkins-CICD实战 | Raidenxe的博客</title><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Jenkins CICD 实战：从 Freestyle 到 Pipeline 全链路演练 作者：Raidenxe环境：Jenkins 2.576 (Docker) | JDK 21 | 124 插件日期：2026-08-12   前言Jenkins 作为 CI&amp;#x2F;CD 领域的老牌工具，..."><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Jenkins-CICD实战",
+  "url": "https://raidenxe.github.io/archives/61196baf.html",
+  "image": "https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png",
+  "datePublished": "2026-08-11T17:09:47.000Z",
+  "dateModified": "2026-08-11T17:29:26.307Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Raidenxe",
+      "url": "https://Raidenxe.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/61196baf.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css?v=5.5.5"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Jenkins-CICD实战',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/macblack.css"><style>
+  #web_bg{background-image:url(/img/风景006.png)}
+  #footer{background-image:url(/img/风景008.png);background-size:cover;background-position:center}
+  .aplayer-lrc{display:none !important}
+</style>
+<meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/%E9%A3%8E%E6%99%AF006.png));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Raidenxe的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Jenkins-CICD实战</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Jenkins-CICD实战</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-11T17:09:47.000Z" title="发表于 2026-08-12 01:09:47">2026-08-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-08-11T17:29:26.307Z" title="更新于 2026-08-12 01:29:26">2026-08-12</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>15分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Jenkins-CICD-实战：从-Freestyle-到-Pipeline-全链路演练"><a href="#Jenkins-CICD-实战：从-Freestyle-到-Pipeline-全链路演练" class="headerlink" title="Jenkins CICD 实战：从 Freestyle 到 Pipeline 全链路演练"></a>Jenkins CICD 实战：从 Freestyle 到 Pipeline 全链路演练</h1><blockquote>
+<p><strong>作者</strong>：Raidenxe<br><strong>环境</strong>：Jenkins 2.576 (Docker) | JDK 21 | 124 插件<br><strong>日期</strong>：2026-08-12</p>
+</blockquote>
+<hr>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Jenkins 作为 CI&#x2F;CD 领域的老牌工具，功能强大但学习曲线陡峭。很多教程要么只讲概念，要么只贴代码片段，缺乏一个<strong>从零到一、完整可运行</strong>的实战案例。</p>
+<p>本文基于真实 Docker 环境，完整演练 Jenkins 五大核心技能：</p>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>实战内容</th>
+<th>核心价值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Freestyle Job</td>
+<td>理解 Jenkins 最基础的任务模型</td>
+</tr>
+<tr>
+<td>2</td>
+<td>声明式 Pipeline</td>
+<td>掌握现代 Jenkins 的标准写法</td>
+</tr>
+<tr>
+<td>3</td>
+<td>脚本式 Pipeline</td>
+<td>解锁 Groovy 级别的灵活控制</td>
+</tr>
+<tr>
+<td>4</td>
+<td>参数化构建</td>
+<td>让同一个 Job 适配多场景</td>
+</tr>
+<tr>
+<td>5</td>
+<td>共享库（Shared Library）</td>
+<td>实现跨项目代码复用，告别复制粘贴</td>
+</tr>
+</tbody></table>
+<p>所有 Pipeline 代码均<strong>真实运行通过</strong>，附带 25 张实操截图和 5 条排错经验。</p>
+<hr>
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><h3 id="快速启动-Jenkins"><a href="#快速启动-Jenkins" class="headerlink" title="快速启动 Jenkins"></a>快速启动 Jenkins</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  --name jenkins \</span><br><span class="line">  -p 8080:8080 \</span><br><span class="line">  -p 50000:50000 \</span><br><span class="line">  -v jenkins_home:/var/jenkins_home \</span><br><span class="line">  jenkins/jenkins:latest</span><br></pre></td></tr></table></figure>
+
+<h3 id="关键配置一览"><a href="#关键配置一览" class="headerlink" title="关键配置一览"></a>关键配置一览</h3><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Jenkins 版本</td>
+<td>2.576</td>
+</tr>
+<tr>
+<td>JDK</td>
+<td>jdk21（在 Global Tool Configuration 中配置）</td>
+</tr>
+<tr>
+<td>插件数</td>
+<td>124（含 Pipeline、Git、Blue Ocean 等核心插件）</td>
+</tr>
+<tr>
+<td>项目代码仓库</td>
+<td><code>/var/jenkins_home/git-repos/sample-app</code></td>
+</tr>
+<tr>
+<td>共享库仓库</td>
+<td><code>/var/jenkins_home/git-repos/shared-library</code></td>
+</tr>
+</tbody></table>
+<h3 id="示例项目结构"><a href="#示例项目结构" class="headerlink" title="示例项目结构"></a>示例项目结构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sample-app/</span><br><span class="line">├── src/</span><br><span class="line">│   ├── main/java/com/example/App.java       # 主应用</span><br><span class="line">│   └── test/java/com/example/AppTest.java   # 单元测试</span><br><span class="line">├── build.sh / test.sh / deploy.sh / quality-check.sh</span><br><span class="line">├── Jenkinsfile.declarative</span><br><span class="line">├── Jenkinsfile.scripted</span><br><span class="line">├── Jenkinsfile.parameterized</span><br><span class="line">└── Jenkinsfile.shared-library</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>💡 <strong>提示</strong>：本文使用本地 file:&#x2F;&#x2F; 协议的 Git 仓库，避免依赖外部网络。生产环境替换为 GitHub&#x2F;GitLab 地址即可。</p>
+</blockquote>
+<hr>
+<h2 id="实战一：Freestyle-Job-——-入门第一课"><a href="#实战一：Freestyle-Job-——-入门第一课" class="headerlink" title="实战一：Freestyle Job —— 入门第一课"></a>实战一：Freestyle Job —— 入门第一课</h2><h3 id="为什么还要学-Freestyle？"><a href="#为什么还要学-Freestyle？" class="headerlink" title="为什么还要学 Freestyle？"></a>为什么还要学 Freestyle？</h3><p>虽然 Pipeline 是趋势，但大量存量 Jenkins 环境仍在运行 Freestyle Job。理解它的配置逻辑，有助于你快速上手维护老项目。</p>
+<h3 id="配置步骤"><a href="#配置步骤" class="headerlink" title="配置步骤"></a>配置步骤</h3><ol>
+<li><strong>新建任务</strong> → 选择 “Freestyle project”，名称 <code>Freestyle-Job</code></li>
+<li><strong>Source Code Management</strong> → Git → <code>file:///var/jenkins_home/git-repos/sample-app</code> → 分支 <code>*/master</code></li>
+<li><strong>Build Triggers</strong> → 勾选 <strong>Poll SCM</strong> → schedule 填 <code>* * * * *</code>（每分钟检查）</li>
+<li><strong>Build Steps</strong> → Execute shell：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x build.sh &amp;&amp; ./build.sh</span><br><span class="line"><span class="built_in">chmod</span> +x test.sh &amp;&amp; ./test.sh</span><br><span class="line"><span class="built_in">chmod</span> +x deploy.sh &amp;&amp; ./deploy.sh 1.0.0</span><br></pre></td></tr></table></figure></li>
+<li><strong>Post-build Actions</strong> → E-mail Notification（本文环境无 SMTP，改用 echo 模拟）</li>
+</ol>
+<h3 id="构建结果"><a href="#构建结果" class="headerlink" title="构建结果"></a>构建结果</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Freestyle-Job #5: SUCCESS</span><br><span class="line">流程: Git Checkout → Build → Test → Deploy → 邮件通知</span><br></pre></td></tr></table></figure>
+
+<h3 id="截图记录"><a href="#截图记录" class="headerlink" title="截图记录"></a>截图记录</h3><p><strong>Jenkins 控制台首页</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/01-jenkins-dashboard.png"></p>
+<p><strong>Freestyle Job 配置页面（Git SCM + 构建步骤）</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/03-freestyle-config.png"></p>
+<p><strong>Freestyle Job 首页（构建历史）</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/04-freestyle-page.png"></p>
+<p><strong>Build #5 控制台输出（Build → Test → Deploy）</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/05-freestyle-console.png"></p>
+<h3 id="Freestyle-的局限性"><a href="#Freestyle-的局限性" class="headerlink" title="Freestyle 的局限性"></a>Freestyle 的局限性</h3><ul>
+<li>❌ 构建逻辑和 Jenkins 配置强耦合，无法版本控制</li>
+<li>❌ 复杂流程难以表达（条件分支、并行等）</li>
+<li>❌ 不同项目之间难以复用构建逻辑</li>
+</ul>
+<p>这正是 <strong>Pipeline as Code</strong> 要解决的问题。</p>
+<hr>
+<h2 id="实战二：声明式-Pipeline-——-现代-Jenkins-的标准写法"><a href="#实战二：声明式-Pipeline-——-现代-Jenkins-的标准写法" class="headerlink" title="实战二：声明式 Pipeline —— 现代 Jenkins 的标准写法"></a>实战二：声明式 Pipeline —— 现代 Jenkins 的标准写法</h2><h3 id="核心理念"><a href="#核心理念" class="headerlink" title="核心理念"></a>核心理念</h3><p>将整个 CI&#x2F;CD 流程写成代码（<code>Jenkinsfile</code>），和项目源码一起存入 Git 仓库，享受版本控制、Code Review、回滚等所有代码管理红利。</p>
+<h3 id="完整-Jenkinsfile"><a href="#完整-Jenkinsfile" class="headerlink" title="完整 Jenkinsfile"></a>完整 Jenkinsfile</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line"></span><br><span class="line">    tools &#123;</span><br><span class="line">        jdk <span class="string">&#x27;jdk21&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    environment &#123;</span><br><span class="line">        APP_NAME = <span class="string">&#x27;SampleApp&#x27;</span></span><br><span class="line">        VERSION  = <span class="string">&#x27;1.0.0&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">&#x27;Checkout&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                echo <span class="string">&#x27;Checking out source code...&#x27;</span></span><br><span class="line">                checkout scm</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        stage(<span class="string">&#x27;Build&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                echo <span class="string">&quot;Building $&#123;APP_NAME&#125; v$&#123;VERSION&#125;...&quot;</span></span><br><span class="line">                sh <span class="string">&#x27;chmod +x build.sh &amp;&amp; ./build.sh&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">            post &#123;</span><br><span class="line">                success &#123; echo <span class="string">&#x27;✅ Build OK&#x27;</span> &#125;</span><br><span class="line">                failure &#123; echo <span class="string">&#x27;❌ Build FAILED&#x27;</span> &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        stage(<span class="string">&#x27;Test&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                echo <span class="string">&#x27;Running unit tests...&#x27;</span></span><br><span class="line">                sh <span class="string">&#x27;chmod +x test.sh &amp;&amp; ./test.sh&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        stage(<span class="string">&#x27;Quality Scan&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                echo <span class="string">&#x27;Performing quality scan...&#x27;</span></span><br><span class="line">                sh <span class="string">&#x27;chmod +x quality-check.sh &amp;&amp; ./quality-check.sh&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        stage(<span class="string">&#x27;Deploy&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                echo <span class="string">&#x27;Deploying application...&#x27;</span></span><br><span class="line">                sh <span class="string">&#x27;./deploy.sh $&#123;VERSION&#125;&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    post &#123;</span><br><span class="line">        always &#123;</span><br><span class="line">            archiveArtifacts <span class="attr">artifacts:</span> <span class="string">&#x27;build/*.jar&#x27;</span>, <span class="attr">allowEmptyArchive:</span> <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">        success &#123; echo <span class="string">&#x27;🎉 Pipeline succeeded!&#x27;</span> &#125;</span><br><span class="line">        failure &#123; echo <span class="string">&#x27;💥 Pipeline failed!&#x27;</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="阶段视图"><a href="#阶段视图" class="headerlink" title="阶段视图"></a>阶段视图</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Checkout ──▶ Build ──▶ Test ──▶ Quality Scan ──▶ Deploy ──▶ Notification</span><br><span class="line">   ✅         ✅         ✅          ✅             ✅           ✅</span><br></pre></td></tr></table></figure>
+
+<h3 id="截图记录-1"><a href="#截图记录-1" class="headerlink" title="截图记录"></a>截图记录</h3><p><strong>声明式 Pipeline 配置页面（SCM 配置）</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/07-declarative-config.png"></p>
+<p><strong>Pipeline 阶段视图（5 个阶段全部通过）</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/08-declarative-stageview.png"></p>
+<p><strong>Build #2 完整控制台输出</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/09-declarative-console.png"></p>
+<h3 id="声明式-Pipeline-的优势"><a href="#声明式-Pipeline-的优势" class="headerlink" title="声明式 Pipeline 的优势"></a>声明式 Pipeline 的优势</h3><ul>
+<li>✅ <strong>结构清晰</strong>：<code>pipeline → stages → stage → steps</code>，层次分明</li>
+<li>✅ <strong>内置指令</strong>：<code>when</code>、<code>parallel</code>、<code>retry</code>、<code>timeout</code> 等开箱即用</li>
+<li>✅ <strong>Blue Ocean 原生支持</strong>：可视化效果极佳</li>
+<li>✅ <strong>入门友好</strong>：不需要懂 Groovy 也能写出完整流水线</li>
+</ul>
+<hr>
+<h2 id="实战三：脚本式-Pipeline-——-Groovy-赋予的终极灵活"><a href="#实战三：脚本式-Pipeline-——-Groovy-赋予的终极灵活" class="headerlink" title="实战三：脚本式 Pipeline —— Groovy 赋予的终极灵活"></a>实战三：脚本式 Pipeline —— Groovy 赋予的终极灵活</h2><h3 id="什么时候用脚本式？"><a href="#什么时候用脚本式？" class="headerlink" title="什么时候用脚本式？"></a>什么时候用脚本式？</h3><p>当声明式 Pipeline 的”结构化”变成束缚时——比如需要<strong>动态生成 stage</strong>、<strong>复杂的异常处理</strong>、<strong>自定义数据结构遍历</strong>——脚本式 Pipeline 让你直接用 Groovy 编程。</p>
+<h3 id="核心代码"><a href="#核心代码" class="headerlink" title="核心代码"></a>核心代码</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">node &#123;</span><br><span class="line">    <span class="comment">// ===== 条件分支：根据分支名决定策略 =====</span></span><br><span class="line">    stage(<span class="string">&#x27;Conditional Branch&#x27;</span>) &#123;</span><br><span class="line">        <span class="keyword">def</span> branchName = env.BRANCH_NAME ?: <span class="string">&#x27;master&#x27;</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (branchName <span class="keyword">in</span> [<span class="string">&#x27;master&#x27;</span>, <span class="string">&#x27;main&#x27;</span>]) &#123;</span><br><span class="line">            env.DEPLOY_ENABLED = <span class="string">&#x27;true&#x27;</span></span><br><span class="line">            env.QUALITY_GATE   = <span class="string">&#x27;strict&#x27;</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (branchName == <span class="string">&#x27;develop&#x27;</span>) &#123;</span><br><span class="line">            env.DEPLOY_ENABLED = <span class="string">&#x27;false&#x27;</span></span><br><span class="line">            env.QUALITY_GATE   = <span class="string">&#x27;normal&#x27;</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            env.QUALITY_GATE   = <span class="string">&#x27;minimal&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Groovy switch 语法</span></span><br><span class="line">        <span class="keyword">switch</span>(env.QUALITY_GATE) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;strict&#x27;</span>:  sh <span class="string">&#x27;./quality-check.sh&#x27;</span>; <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;normal&#x27;</span>:  echo <span class="string">&#x27;Basic check passed&#x27;</span>; <span class="keyword">break</span></span><br><span class="line">            <span class="symbol">default:</span>        echo <span class="string">&#x27;Skipped for feature branch&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ===== 并行任务：3 路并发 =====</span></span><br><span class="line">    stage(<span class="string">&#x27;Parallel Tasks&#x27;</span>) &#123;</span><br><span class="line">        parallel(</span><br><span class="line">            <span class="string">&#x27;Unit Tests&#x27;</span>: &#123;</span><br><span class="line">                sh <span class="string">&#x27;./test.sh&#x27;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&#x27;Code Quality&#x27;</span>: &#123;</span><br><span class="line">                sh <span class="string">&#x27;./quality-check.sh&#x27;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&#x27;Integration Check&#x27;</span>: &#123;</span><br><span class="line">                echo <span class="string">&#x27;API endpoints verified&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ===== 条件部署 =====</span></span><br><span class="line">    stage(<span class="string">&#x27;Deploy&#x27;</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (env.DEPLOY_ENABLED == <span class="string">&#x27;true&#x27;</span>) &#123;</span><br><span class="line">            sh <span class="string">&#x27;./deploy.sh 1.0.0&#x27;</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            echo <span class="string">&#x27;Deploy disabled, skipping...&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="截图记录-2"><a href="#截图记录-2" class="headerlink" title="截图记录"></a>截图记录</h3><p><strong>脚本式 Pipeline 配置页面</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/10-scripted-config.png"></p>
+<p><strong>Pipeline 阶段视图（包含并行任务）</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/11-scripted-stageview.png"></p>
+<p><strong>Build #2 控制台输出（显示条件分支逻辑）</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/12-scripted-console.png"></p>
+<h3 id="声明式-vs-脚本式：怎么选？"><a href="#声明式-vs-脚本式：怎么选？" class="headerlink" title="声明式 vs 脚本式：怎么选？"></a>声明式 vs 脚本式：怎么选？</h3><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>声明式</th>
+<th>脚本式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>学习成本</td>
+<td>⭐⭐ 低</td>
+<td>⭐⭐⭐⭐ 需 Groovy</td>
+</tr>
+<tr>
+<td>灵活性</td>
+<td>中（受 DSL 约束）</td>
+<td>极高（图灵完备）</td>
+</tr>
+<tr>
+<td>可读性</td>
+<td>高（结构统一）</td>
+<td>取决于代码质量</td>
+</tr>
+<tr>
+<td>错误处理</td>
+<td><code>post</code> 指令</td>
+<td><code>try/catch/finally</code></td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>80% 的标准项目</td>
+<td>复杂逻辑、动态流程</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>🎯 <strong>建议</strong>：默认用声明式，遇到声明式”表达不了”的场景再切脚本式。两者可以在同一个 Jenkinsfile 中通过 <code>script { ... }</code> 块混用。</p>
+</blockquote>
+<hr>
+<h2 id="实战四：参数化构建-——-一个-Job-应对多种场景"><a href="#实战四：参数化构建-——-一个-Job-应对多种场景" class="headerlink" title="实战四：参数化构建 —— 一个 Job 应对多种场景"></a>实战四：参数化构建 —— 一个 Job 应对多种场景</h2><h3 id="痛点场景"><a href="#痛点场景" class="headerlink" title="痛点场景"></a>痛点场景</h3><blockquote>
+<p>“我有一个构建任务，开发环境要跑测试，生产环境不要跑测试但要输入版本号，有时候还要紧急跳过部署……”</p>
+</blockquote>
+<p>如果为每个场景建一个 Job，维护噩梦。正确解法是 <strong>参数化构建</strong>。</p>
+<h3 id="Jenkinsfile"><a href="#Jenkinsfile" class="headerlink" title="Jenkinsfile"></a>Jenkinsfile</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line"></span><br><span class="line">    parameters &#123;</span><br><span class="line">        choice(</span><br><span class="line">            <span class="symbol">name:</span> <span class="string">&#x27;ENVIRONMENT&#x27;</span>,</span><br><span class="line">            <span class="symbol">choices:</span> [<span class="string">&#x27;dev&#x27;</span>, <span class="string">&#x27;staging&#x27;</span>, <span class="string">&#x27;production&#x27;</span>],</span><br><span class="line">            <span class="symbol">description:</span> <span class="string">&#x27;目标部署环境&#x27;</span></span><br><span class="line">        )</span><br><span class="line">        string(</span><br><span class="line">            <span class="symbol">name:</span> <span class="string">&#x27;APP_VERSION&#x27;</span>,</span><br><span class="line">            <span class="symbol">defaultValue:</span> <span class="string">&#x27;1.0.0&#x27;</span>,</span><br><span class="line">            <span class="symbol">description:</span> <span class="string">&#x27;应用版本号&#x27;</span></span><br><span class="line">        )</span><br><span class="line">        booleanParam(</span><br><span class="line">            <span class="symbol">name:</span> <span class="string">&#x27;RUN_TESTS&#x27;</span>,</span><br><span class="line">            <span class="symbol">defaultValue:</span> <span class="literal">true</span>,</span><br><span class="line">            <span class="symbol">description:</span> <span class="string">&#x27;是否运行测试&#x27;</span></span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    environment &#123;</span><br><span class="line">        DEPLOY_DIR = <span class="string">&quot;deploy/$&#123;params.ENVIRONMENT&#125;&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">&#x27;Checkout&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                echo <span class="string">&#x27;Checking out source code...&#x27;</span></span><br><span class="line">                checkout scm</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        stage(<span class="string">&#x27;Build&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                echo <span class="string">&quot;Building version $&#123;params.APP_VERSION&#125;...&quot;</span></span><br><span class="line">                sh <span class="string">&#x27;./build.sh&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        stage(<span class="string">&#x27;Test&#x27;</span>) &#123;</span><br><span class="line">            when &#123; expression &#123; params.RUN_TESTS == <span class="literal">true</span> &#125; &#125;</span><br><span class="line">            steps &#123;</span><br><span class="line">                echo <span class="string">&quot;Running tests...&quot;</span></span><br><span class="line">                sh <span class="string">&#x27;./test.sh&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        stage(<span class="string">&#x27;Deploy&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                echo <span class="string">&quot;Deploying to: $&#123;params.ENVIRONMENT&#125;&quot;</span></span><br><span class="line">                sh <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">                    mkdir -p $&#123;DEPLOY_DIR&#125;</span></span><br><span class="line"><span class="string">                    cp build/app-*.jar $&#123;DEPLOY_DIR&#125;/</span></span><br><span class="line"><span class="string">                    echo &quot;Version: $&#123;APP_VERSION&#125;&quot; &gt; $&#123;DEPLOY_DIR&#125;/manifest.txt</span></span><br><span class="line"><span class="string">                    echo &quot;Environment: $&#123;ENVIRONMENT&#125;&quot; &gt;&gt; $&#123;DEPLOY_DIR&#125;/manifest.txt</span></span><br><span class="line"><span class="string">                &quot;&quot;&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    post &#123;</span><br><span class="line">        always &#123;</span><br><span class="line">            archiveArtifacts <span class="attr">artifacts:</span> <span class="string">&#x27;deploy/**/*&#x27;</span>, <span class="attr">allowEmptyArchive:</span> <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">        success &#123;</span><br><span class="line">            echo <span class="string">&quot;Successfully deployed to $&#123;params.ENVIRONMENT&#125;!&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="三种参数类型"><a href="#三种参数类型" class="headerlink" title="三种参数类型"></a>三种参数类型</h3><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>类型</th>
+<th>可选值&#x2F;默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ENVIRONMENT</code></td>
+<td><strong>Choice</strong></td>
+<td><code>dev</code>, <code>staging</code>, <code>production</code></td>
+<td>下拉选择部署环境</td>
+</tr>
+<tr>
+<td><code>APP_VERSION</code></td>
+<td><strong>String</strong></td>
+<td>默认 <code>1.0.0</code></td>
+<td>输入应用版本号</td>
+</tr>
+<tr>
+<td><code>RUN_TESTS</code></td>
+<td><strong>Boolean</strong></td>
+<td>默认 <code>true</code></td>
+<td>是否运行测试</td>
+</tr>
+</tbody></table>
+<h3 id="参数组合演示"><a href="#参数组合演示" class="headerlink" title="参数组合演示"></a>参数组合演示</h3><table>
+<thead>
+<tr>
+<th>构建</th>
+<th>ENVIRONMENT</th>
+<th>APP_VERSION</th>
+<th>RUN_TESTS</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>#2</td>
+<td><code>dev</code></td>
+<td><code>1.0.0</code></td>
+<td>✅ true</td>
+<td>✅ SUCCESS（完整流程）</td>
+</tr>
+<tr>
+<td>#3</td>
+<td><code>staging</code></td>
+<td><code>2.0.0</code></td>
+<td>❌ false</td>
+<td>✅ SUCCESS（跳过测试）</td>
+</tr>
+</tbody></table>
+<h3 id="截图记录-3"><a href="#截图记录-3" class="headerlink" title="截图记录"></a>截图记录</h3><p><strong>参数化构建配置页面（三种参数定义）</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/13-parameterized-config.png"></p>
+<p><strong>构建时参数选择界面（Choice &#x2F; String &#x2F; Boolean）</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/14-parameterized-params.png"></p>
+<p><strong>Build #2 控制台（dev + 1.0.0 + tests&#x3D;true）</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/15-parameterized-console-2.png"></p>
+<p><strong>Build #3 控制台（staging + 2.0.0 + tests&#x3D;false → 测试阶段自动跳过）</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/16-parameterized-console-3.png"></p>
+<p><strong>Build #2 构建详情页面</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/24-parameterized-build2.png"></p>
+<hr>
+<h2 id="实战五：共享库-——-DRY-原则在-Jenkins-中的终极实践"><a href="#实战五：共享库-——-DRY-原则在-Jenkins-中的终极实践" class="headerlink" title="实战五：共享库 —— DRY 原则在 Jenkins 中的终极实践"></a>实战五：共享库 —— DRY 原则在 Jenkins 中的终极实践</h2><h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>你有 20 个微服务，每个的 Jenkinsfile 都有几乎相同的 Build → Test → Deploy 代码。改一个逻辑要改 20 个文件？</p>
+<h3 id="解决方案：Shared-Library"><a href="#解决方案：Shared-Library" class="headerlink" title="解决方案：Shared Library"></a>解决方案：Shared Library</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">shared-library/</span><br><span class="line">└── vars/</span><br><span class="line">    ├── sayHello.groovy       # 通用打招呼</span><br><span class="line">    ├── buildApp.groovy       # 标准化构建</span><br><span class="line">    ├── testApp.groovy        # 标准化测试</span><br><span class="line">    ├── qualityScan.groovy    # 标准化质量扫描</span><br><span class="line">    ├── deployApp.groovy      # 标准化部署</span><br><span class="line">    └── notifyBuild.groovy    # 标准化通知</span><br></pre></td></tr></table></figure>
+
+<h3 id="共享库方法示例"><a href="#共享库方法示例" class="headerlink" title="共享库方法示例"></a>共享库方法示例</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vars/sayHello.groovy</span></span><br><span class="line"><span class="keyword">def</span> call(String name = <span class="string">&#x27;World&#x27;</span>) &#123;</span><br><span class="line">    echo <span class="string">&quot;Hello, $&#123;name&#125;! Welcome to Jenkins Shared Library!&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// vars/buildApp.groovy</span></span><br><span class="line"><span class="keyword">def</span> call() &#123;</span><br><span class="line">    echo <span class="string">&quot;========================================&quot;</span></span><br><span class="line">    echo <span class="string">&quot; [Shared Library] Building Application&quot;</span></span><br><span class="line">    echo <span class="string">&quot;========================================&quot;</span></span><br><span class="line">    sh <span class="string">&#x27;chmod +x build.sh &amp;&amp; ./build.sh&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// vars/deployApp.groovy</span></span><br><span class="line"><span class="keyword">def</span> call(String version = <span class="string">&#x27;1.0.0&#x27;</span>) &#123;</span><br><span class="line">    echo <span class="string">&quot; [Shared Library] Deploying v$&#123;version&#125;&quot;</span></span><br><span class="line">    sh <span class="string">&quot;./deploy.sh $&#123;version&#125;&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// vars/notifyBuild.groovy</span></span><br><span class="line"><span class="keyword">def</span> call(String status, String emailTo = <span class="string">&#x27;&#x27;</span>) &#123;</span><br><span class="line">    echo <span class="string">&quot;Build Status: $&#123;status&#125;&quot;</span></span><br><span class="line">    echo <span class="string">&quot;Job: $&#123;env.JOB_NAME&#125; #$&#123;env.BUILD_NUMBER&#125;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> (emailTo) &#123;</span><br><span class="line">        mail(<span class="attr">to:</span> emailTo, <span class="attr">subject:</span> <span class="string">&quot;Build $&#123;status&#125;&quot;</span>, <span class="attr">body:</span> <span class="string">&quot;...&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="在-Pipeline-中调用"><a href="#在-Pipeline-中调用" class="headerlink" title="在 Pipeline 中调用"></a>在 Pipeline 中调用</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">&#x27;Init&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                script &#123;</span><br><span class="line">                    <span class="comment">// 内联加载共享库（无需全局配置）</span></span><br><span class="line">                    library <span class="attr">identifier:</span> <span class="string">&#x27;jenkins-shared-library@master&#x27;</span>,</span><br><span class="line">                            <span class="symbol">retriever:</span> modernSCM(</span><br><span class="line">                                [<span class="attr">$class:</span> <span class="string">&#x27;GitSCMSource&#x27;</span>,</span><br><span class="line">                                 <span class="symbol">remote:</span> <span class="string">&#x27;file:///var/jenkins_home/git-repos/shared-library&#x27;</span>]</span><br><span class="line">                            )</span><br><span class="line">                    sayHello(<span class="string">&#x27;Jenkins User&#x27;</span>)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        stage(<span class="string">&#x27;Build&#x27;</span>)   &#123; steps &#123; script &#123; buildApp() &#125; &#125; &#125;</span><br><span class="line">        stage(<span class="string">&#x27;Test&#x27;</span>)    &#123; steps &#123; script &#123; testApp() &#125; &#125; &#125;</span><br><span class="line">        stage(<span class="string">&#x27;Quality&#x27;</span>) &#123; steps &#123; script &#123; qualityScan() &#125; &#125; &#125;</span><br><span class="line">        stage(<span class="string">&#x27;Deploy&#x27;</span>)  &#123; steps &#123; script &#123; deployApp(<span class="string">&#x27;1.0.0&#x27;</span>) &#125; &#125; &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    post &#123;</span><br><span class="line">        success &#123; script &#123; notifyBuild(<span class="string">&#x27;SUCCESS&#x27;</span>) &#125; &#125;</span><br><span class="line">        failure &#123; script &#123; notifyBuild(<span class="string">&#x27;FAILURE&#x27;</span>) &#125; &#125;</span><br><span class="line">        always  &#123; archiveArtifacts <span class="attr">artifacts:</span> <span class="string">&#x27;build/*.jar&#x27;</span>, <span class="attr">allowEmptyArchive:</span> <span class="literal">true</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="跨项目调用说明"><a href="#跨项目调用说明" class="headerlink" title="跨项目调用说明"></a>跨项目调用说明</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>实现方式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>库加载</strong></td>
+<td><code>library identifier</code> + <code>modernSCM</code></td>
+<td>内联加载共享库，无需全局配置</td>
+</tr>
+<tr>
+<td><strong>方法调用</strong></td>
+<td><code>buildApp()</code>, <code>testApp()</code> 等</td>
+<td>加载后方法全局可用</td>
+</tr>
+<tr>
+<td><strong>参数传递</strong></td>
+<td><code>deployApp(&#39;1.0.0&#39;)</code></td>
+<td>支持向共享方法传递参数</td>
+</tr>
+</tbody></table>
+<h3 id="截图记录-4"><a href="#截图记录-4" class="headerlink" title="截图记录"></a>截图记录</h3><p><strong>共享库 Pipeline 配置页面</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/17-sharedlib-config.png"></p>
+<p><strong>Pipeline 阶段视图（Init → Build → Test → Quality → Deploy）</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/18-sharedlib-stageview.png"></p>
+<p><strong>Build #2 控制台输出（6 个共享方法依次调用）</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/19-sharedlib-console.png"></p>
+<h3 id="共享库最佳实践"><a href="#共享库最佳实践" class="headerlink" title="共享库最佳实践"></a>共享库最佳实践</h3><ul>
+<li>📦 <strong>按功能拆分</strong>：<code>vars/buildApp.groovy</code>、<code>vars/deployK8s.groovy</code>，单一职责</li>
+<li>🔒 <strong>加参数校验</strong>：在 <code>.groovy</code> 文件开头校验入参，避免下游踩坑</li>
+<li>📝 <strong>写 README</strong>：说明每个方法的用途、参数、返回值</li>
+<li>🧪 <strong>本地测试</strong>：用 <code>JenkinsPipelineUnit</code> 框架做单元测试</li>
+</ul>
+<hr>
+<h2 id="踩坑记录（5-条血泪经验）"><a href="#踩坑记录（5-条血泪经验）" class="headerlink" title="踩坑记录（5 条血泪经验）"></a>踩坑记录（5 条血泪经验）</h2><table>
+<thead>
+<tr>
+<th>#</th>
+<th>问题</th>
+<th>根因</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Git 本地仓库 Checkout 报 <code>permission denied</code></td>
+<td>Jenkins 安全策略默认禁止 file:&#x2F;&#x2F; 协议</td>
+<td>在 <code>init.groovy.d/</code> 中设置 <code>hudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>邮件通知一直失败</td>
+<td>SMTP 未配置 + 缺 Email Extension 插件</td>
+<td>先用 <code>echo</code> 模拟，生产环境务必配置 SMTP 或接入钉钉&#x2F;飞书 Webhook</td>
+</tr>
+<tr>
+<td>3</td>
+<td>共享库方法 <code>not found</code></td>
+<td>全局库名称与仓库目录名不匹配</td>
+<td>改用 <code>library identifier</code> + <code>modernSCM</code> 内联加载，精确指定仓库地址</td>
+</tr>
+<tr>
+<td>4</td>
+<td>API 触发构建返回 403</td>
+<td>CSRF Crumb 验证拦截</td>
+<td>先请求 <code>/crumbIssuer/api/json</code> 获取 crumb，再放进请求头</td>
+</tr>
+<tr>
+<td>5</td>
+<td>参数化 Job 首次构建失败</td>
+<td>有参数的 Job 不能用 <code>/build</code>，要用 <code>/buildWithParameters</code></td>
+<td>端点换成 <code>buildWithParameters</code> 并附上所有必填参数</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="总结与进阶路线"><a href="#总结与进阶路线" class="headerlink" title="总结与进阶路线"></a>总结与进阶路线</h2><h3 id="本文完成情况"><a href="#本文完成情况" class="headerlink" title="本文完成情况"></a>本文完成情况</h3><table>
+<thead>
+<tr>
+<th>任务</th>
+<th>状态</th>
+<th>构建验证</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>✅ Freestyle Job</td>
+<td>通过</td>
+<td>#5 SUCCESS</td>
+</tr>
+<tr>
+<td>✅ 声明式 Pipeline</td>
+<td>通过</td>
+<td>#2 SUCCESS</td>
+</tr>
+<tr>
+<td>✅ 脚本式 Pipeline</td>
+<td>通过</td>
+<td>#2 SUCCESS</td>
+</tr>
+<tr>
+<td>✅ 参数化构建</td>
+<td>通过</td>
+<td>#3 SUCCESS</td>
+</tr>
+<tr>
+<td>✅ 共享库</td>
+<td>通过</td>
+<td>#2 SUCCESS</td>
+</tr>
+</tbody></table>
+<h3 id="推荐进阶路线"><a href="#推荐进阶路线" class="headerlink" title="推荐进阶路线"></a>推荐进阶路线</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Level 1（本文）: Freestyle → 声明式 Pipeline → 参数化 → 共享库</span><br><span class="line">Level 2        : Docker Agent → 多阶段构建 → 制品归档</span><br><span class="line">Level 3        : Jenkins + Kubernetes (Jenkinsfile 中动态创建 Pod)</span><br><span class="line">Level 4        : 多分支 Pipeline + GitHub Webhook 自动触发</span><br><span class="line">Level 5        : Jenkins + ArgoCD / Spinnaker 实现 GitOps</span><br></pre></td></tr></table></figure>
+
+<h3 id="关键收获"><a href="#关键收获" class="headerlink" title="关键收获"></a>关键收获</h3><ol>
+<li><strong>Pipeline as Code</strong> 不是口号——当你的 CI&#x2F;CD 流程和源码一样受版本控制时，回滚、Review、协作都变得自然</li>
+<li><strong>声明式优先，脚本式补位</strong>——不要为了炫技一上来就写纯脚本式</li>
+<li><strong>共享库是规模化的前提</strong>——项目超过 5 个就应该考虑抽共享库</li>
+<li><strong>参数化是运维友好的设计</strong>——让非开发人员也能安全触发构建</li>
+</ol>
+<hr>
+<h2 id="附录：系统信息截图"><a href="#附录：系统信息截图" class="headerlink" title="附录：系统信息截图"></a>附录：系统信息截图</h2><p><strong>Jenkins 系统管理页面</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20-manage-jenkins.png"></p>
+<p><strong>Jenkins 系统信息页面</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/21-system-info.png"></p>
+<p><strong>已安装插件列表（124 个插件）</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/22-plugin-list.png"></p>
+<p><strong>Blue Ocean 可视化视图（声明式 Pipeline）</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/25-blueocean-declarative.png"></p>
+<hr>
+<h2 id="附录：示例项目完整代码"><a href="#附录：示例项目完整代码" class="headerlink" title="附录：示例项目完整代码"></a>附录：示例项目完整代码</h2><h3 id="App-java"><a href="#App-java" class="headerlink" title="App.java"></a>App.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">App</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello from Jenkins Pipeline!&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;App version: 1.0.0&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">add</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> a + b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="AppTest-java"><a href="#AppTest-java" class="headerlink" title="AppTest.java"></a>AppTest.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">result</span> <span class="operator">=</span> App.add(<span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">        <span class="keyword">if</span> (result == <span class="number">5</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;PASS: add(2,3) = &quot;</span> + result);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;FAIL: add(2,3) = &quot;</span> + result + <span class="string">&quot;, expected 5&quot;</span>);</span><br><span class="line">            System.exit(<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        result = App.add(-<span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">if</span> (result == <span class="number">0</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;PASS: add(-1,1) = &quot;</span> + result);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;FAIL: add(-1,1) = &quot;</span> + result + <span class="string">&quot;, expected 0&quot;</span>);</span><br><span class="line">            System.exit(<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;All tests passed!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="build-sh"><a href="#build-sh" class="headerlink" title="build.sh"></a>build.sh</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line">SRC_DIR=<span class="string">&quot;src/main/java&quot;</span></span><br><span class="line">BUILD_DIR=<span class="string">&quot;build&quot;</span></span><br><span class="line">CLASSES_DIR=<span class="string">&quot;<span class="variable">$BUILD_DIR</span>/classes&quot;</span></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$CLASSES_DIR</span></span><br><span class="line">javac -d <span class="variable">$CLASSES_DIR</span> <span class="variable">$SRC_DIR</span>/com/example/App.java</span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$CLASSES_DIR</span></span><br><span class="line">jar cf ../app-1.0.0.jar com/example/App.class</span><br><span class="line"><span class="built_in">cd</span> ../..</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Output: <span class="variable">$BUILD_DIR</span>/app-1.0.0.jar&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="test-sh"><a href="#test-sh" class="headerlink" title="test.sh"></a>test.sh</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line">SRC_DIR=<span class="string">&quot;src/main/java&quot;</span></span><br><span class="line">TEST_SRC_DIR=<span class="string">&quot;src/test/java&quot;</span></span><br><span class="line">BUILD_DIR=<span class="string">&quot;build&quot;</span></span><br><span class="line">CLASSES_DIR=<span class="string">&quot;<span class="variable">$BUILD_DIR</span>/classes&quot;</span></span><br><span class="line">TEST_CLASSES_DIR=<span class="string">&quot;<span class="variable">$BUILD_DIR</span>/test-classes&quot;</span></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$TEST_CLASSES_DIR</span></span><br><span class="line">javac -d <span class="variable">$CLASSES_DIR</span> <span class="variable">$SRC_DIR</span>/com/example/App.java</span><br><span class="line">javac -<span class="built_in">cp</span> <span class="variable">$CLASSES_DIR</span> -d <span class="variable">$TEST_CLASSES_DIR</span> <span class="variable">$TEST_SRC_DIR</span>/com/example/AppTest.java</span><br><span class="line">java -<span class="built_in">cp</span> <span class="string">&quot;<span class="variable">$CLASSES_DIR</span>:<span class="variable">$TEST_CLASSES_DIR</span>&quot;</span> com.example.AppTest</span><br></pre></td></tr></table></figure>
+
+<h3 id="deploy-sh"><a href="#deploy-sh" class="headerlink" title="deploy.sh"></a>deploy.sh</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line">VERSION=<span class="variable">$&#123;1:-1.0.0&#125;</span></span><br><span class="line">DEPLOY_DIR=<span class="string">&quot;deploy&quot;</span></span><br><span class="line">BUILD_DIR=<span class="string">&quot;build&quot;</span></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$DEPLOY_DIR</span></span><br><span class="line"><span class="built_in">cp</span> <span class="variable">$BUILD_DIR</span>/app-<span class="variable">$&#123;VERSION&#125;</span>.jar <span class="variable">$DEPLOY_DIR</span>/</span><br><span class="line"><span class="built_in">cat</span> &gt; <span class="variable">$DEPLOY_DIR</span>/manifest.txt &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">Application: Sample App</span></span><br><span class="line"><span class="string">Version: $&#123;VERSION&#125;</span></span><br><span class="line"><span class="string">Deploy Time: $(date)</span></span><br><span class="line"><span class="string">Deployed by: Jenkins Pipeline</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="quality-check-sh"><a href="#quality-check-sh" class="headerlink" title="quality-check.sh"></a>quality-check.sh</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line">SRC_DIR=<span class="string">&quot;src/main/java&quot;</span></span><br><span class="line">BUILD_DIR=<span class="string">&quot;build&quot;</span></span><br><span class="line">CLASSES_DIR=<span class="string">&quot;<span class="variable">$BUILD_DIR</span>/classes&quot;</span></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$BUILD_DIR</span></span><br><span class="line">javac -d <span class="variable">$CLASSES_DIR</span> <span class="variable">$SRC_DIR</span>/com/example/App.java</span><br><span class="line">SRC_COUNT=$(find <span class="variable">$SRC_DIR</span> -name <span class="string">&quot;*.java&quot;</span> | <span class="built_in">wc</span> -l)</span><br><span class="line">LINE_COUNT=$(find <span class="variable">$SRC_DIR</span> -name <span class="string">&quot;*.java&quot;</span> -<span class="built_in">exec</span> <span class="built_in">cat</span> &#123;&#125; + | <span class="built_in">wc</span> -l)</span><br><span class="line">CLASS_COUNT=$(find <span class="variable">$CLASSES_DIR</span> -name <span class="string">&quot;*.class&quot;</span> | <span class="built_in">wc</span> -l)</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Source files: <span class="variable">$SRC_COUNT</span>, Lines: <span class="variable">$LINE_COUNT</span>, Classes: <span class="variable">$CLASS_COUNT</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Score: PASS&quot;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/61196baf.html">https://raidenxe.github.io/archives/61196baf.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Jenkins/">Jenkins</a><a class="post-meta__tags" href="/tags/CI-CD/">CI/CD</a></div><div class="post-share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width no-desc" href="/archives/a3e16fea.html" title="面试题1"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">面试题1</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Raidenxe</div><div class="author-info-description">向着真理和自由，无名的献身。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Jenkins-CICD-%E5%AE%9E%E6%88%98%EF%BC%9A%E4%BB%8E-Freestyle-%E5%88%B0-Pipeline-%E5%85%A8%E9%93%BE%E8%B7%AF%E6%BC%94%E7%BB%83"><span class="toc-number">1.</span> <span class="toc-text">Jenkins CICD 实战：从 Freestyle 到 Pipeline 全链路演练</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.2.</span> <span class="toc-text">环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E5%90%AF%E5%8A%A8-Jenkins"><span class="toc-number">1.2.1.</span> <span class="toc-text">快速启动 Jenkins</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E9%85%8D%E7%BD%AE%E4%B8%80%E8%A7%88"><span class="toc-number">1.2.2.</span> <span class="toc-text">关键配置一览</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="toc-number">1.2.3.</span> <span class="toc-text">示例项目结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E4%B8%80%EF%BC%9AFreestyle-Job-%E2%80%94%E2%80%94-%E5%85%A5%E9%97%A8%E7%AC%AC%E4%B8%80%E8%AF%BE"><span class="toc-number">1.3.</span> <span class="toc-text">实战一：Freestyle Job —— 入门第一课</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E8%A6%81%E5%AD%A6-Freestyle%EF%BC%9F"><span class="toc-number">1.3.1.</span> <span class="toc-text">为什么还要学 Freestyle？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.3.2.</span> <span class="toc-text">配置步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E7%BB%93%E6%9E%9C"><span class="toc-number">1.3.3.</span> <span class="toc-text">构建结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%AA%E5%9B%BE%E8%AE%B0%E5%BD%95"><span class="toc-number">1.3.4.</span> <span class="toc-text">截图记录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Freestyle-%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">1.3.5.</span> <span class="toc-text">Freestyle 的局限性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E4%BA%8C%EF%BC%9A%E5%A3%B0%E6%98%8E%E5%BC%8F-Pipeline-%E2%80%94%E2%80%94-%E7%8E%B0%E4%BB%A3-Jenkins-%E7%9A%84%E6%A0%87%E5%87%86%E5%86%99%E6%B3%95"><span class="toc-number">1.4.</span> <span class="toc-text">实战二：声明式 Pipeline —— 现代 Jenkins 的标准写法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E7%90%86%E5%BF%B5"><span class="toc-number">1.4.1.</span> <span class="toc-text">核心理念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4-Jenkinsfile"><span class="toc-number">1.4.2.</span> <span class="toc-text">完整 Jenkinsfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5%E8%A7%86%E5%9B%BE"><span class="toc-number">1.4.3.</span> <span class="toc-text">阶段视图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%AA%E5%9B%BE%E8%AE%B0%E5%BD%95-1"><span class="toc-number">1.4.4.</span> <span class="toc-text">截图记录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A3%B0%E6%98%8E%E5%BC%8F-Pipeline-%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-number">1.4.5.</span> <span class="toc-text">声明式 Pipeline 的优势</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E4%B8%89%EF%BC%9A%E8%84%9A%E6%9C%AC%E5%BC%8F-Pipeline-%E2%80%94%E2%80%94-Groovy-%E8%B5%8B%E4%BA%88%E7%9A%84%E7%BB%88%E6%9E%81%E7%81%B5%E6%B4%BB"><span class="toc-number">1.5.</span> <span class="toc-text">实战三：脚本式 Pipeline —— Groovy 赋予的终极灵活</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8%E8%84%9A%E6%9C%AC%E5%BC%8F%EF%BC%9F"><span class="toc-number">1.5.1.</span> <span class="toc-text">什么时候用脚本式？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E4%BB%A3%E7%A0%81"><span class="toc-number">1.5.2.</span> <span class="toc-text">核心代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%AA%E5%9B%BE%E8%AE%B0%E5%BD%95-2"><span class="toc-number">1.5.3.</span> <span class="toc-text">截图记录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A3%B0%E6%98%8E%E5%BC%8F-vs-%E8%84%9A%E6%9C%AC%E5%BC%8F%EF%BC%9A%E6%80%8E%E4%B9%88%E9%80%89%EF%BC%9F"><span class="toc-number">1.5.4.</span> <span class="toc-text">声明式 vs 脚本式：怎么选？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E5%9B%9B%EF%BC%9A%E5%8F%82%E6%95%B0%E5%8C%96%E6%9E%84%E5%BB%BA-%E2%80%94%E2%80%94-%E4%B8%80%E4%B8%AA-Job-%E5%BA%94%E5%AF%B9%E5%A4%9A%E7%A7%8D%E5%9C%BA%E6%99%AF"><span class="toc-number">1.6.</span> <span class="toc-text">实战四：参数化构建 —— 一个 Job 应对多种场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%97%9B%E7%82%B9%E5%9C%BA%E6%99%AF"><span class="toc-number">1.6.1.</span> <span class="toc-text">痛点场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Jenkinsfile"><span class="toc-number">1.6.2.</span> <span class="toc-text">Jenkinsfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E5%8F%82%E6%95%B0%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.6.3.</span> <span class="toc-text">三种参数类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E7%BB%84%E5%90%88%E6%BC%94%E7%A4%BA"><span class="toc-number">1.6.4.</span> <span class="toc-text">参数组合演示</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%AA%E5%9B%BE%E8%AE%B0%E5%BD%95-3"><span class="toc-number">1.6.5.</span> <span class="toc-text">截图记录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E4%BA%94%EF%BC%9A%E5%85%B1%E4%BA%AB%E5%BA%93-%E2%80%94%E2%80%94-DRY-%E5%8E%9F%E5%88%99%E5%9C%A8-Jenkins-%E4%B8%AD%E7%9A%84%E7%BB%88%E6%9E%81%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.7.</span> <span class="toc-text">实战五：共享库 —— DRY 原则在 Jenkins 中的终极实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98"><span class="toc-number">1.7.1.</span> <span class="toc-text">问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9AShared-Library"><span class="toc-number">1.7.2.</span> <span class="toc-text">解决方案：Shared Library</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B1%E4%BA%AB%E5%BA%93%E6%96%B9%E6%B3%95%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.7.3.</span> <span class="toc-text">共享库方法示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8-Pipeline-%E4%B8%AD%E8%B0%83%E7%94%A8"><span class="toc-number">1.7.4.</span> <span class="toc-text">在 Pipeline 中调用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%A8%E9%A1%B9%E7%9B%AE%E8%B0%83%E7%94%A8%E8%AF%B4%E6%98%8E"><span class="toc-number">1.7.5.</span> <span class="toc-text">跨项目调用说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%AA%E5%9B%BE%E8%AE%B0%E5%BD%95-4"><span class="toc-number">1.7.6.</span> <span class="toc-text">截图记录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B1%E4%BA%AB%E5%BA%93%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.7.7.</span> <span class="toc-text">共享库最佳实践</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95%EF%BC%885-%E6%9D%A1%E8%A1%80%E6%B3%AA%E7%BB%8F%E9%AA%8C%EF%BC%89"><span class="toc-number">1.8.</span> <span class="toc-text">踩坑记录（5 条血泪经验）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E4%B8%8E%E8%BF%9B%E9%98%B6%E8%B7%AF%E7%BA%BF"><span class="toc-number">1.9.</span> <span class="toc-text">总结与进阶路线</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E6%96%87%E5%AE%8C%E6%88%90%E6%83%85%E5%86%B5"><span class="toc-number">1.9.1.</span> <span class="toc-text">本文完成情况</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E8%BF%9B%E9%98%B6%E8%B7%AF%E7%BA%BF"><span class="toc-number">1.9.2.</span> <span class="toc-text">推荐进阶路线</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%94%B6%E8%8E%B7"><span class="toc-number">1.9.3.</span> <span class="toc-text">关键收获</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95%EF%BC%9A%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E6%88%AA%E5%9B%BE"><span class="toc-number">1.10.</span> <span class="toc-text">附录：系统信息截图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95%EF%BC%9A%E7%A4%BA%E4%BE%8B%E9%A1%B9%E7%9B%AE%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="toc-number">1.11.</span> <span class="toc-text">附录：示例项目完整代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#App-java"><span class="toc-number">1.11.1.</span> <span class="toc-text">App.java</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AppTest-java"><span class="toc-number">1.11.2.</span> <span class="toc-text">AppTest.java</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#build-sh"><span class="toc-number">1.11.3.</span> <span class="toc-text">build.sh</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#test-sh"><span class="toc-number">1.11.4.</span> <span class="toc-text">test.sh</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#deploy-sh"><span class="toc-number">1.11.5.</span> <span class="toc-text">deploy.sh</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#quality-check-sh"><span class="toc-number">1.11.6.</span> <span class="toc-text">quality-check.sh</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/61196baf.html" title="Jenkins-CICD实战"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins-CICD实战"/></a><div class="content"><a class="title" href="/archives/61196baf.html" title="Jenkins-CICD实战">Jenkins-CICD实战</a><time datetime="2026-08-11T17:09:47.000Z" title="发表于 2026-08-12 01:09:47">2026-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a3e16fea.html" title="面试题1"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试题1"/></a><div class="content"><a class="title" href="/archives/a3e16fea.html" title="面试题1">面试题1</a><time datetime="2026-08-11T14:53:55.000Z" title="发表于 2026-08-11 22:53:55">2026-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/35864571.html" title="docker部署jenkins"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署jenkins"/></a><div class="content"><a class="title" href="/archives/35864571.html" title="docker部署jenkins">docker部署jenkins</a><time datetime="2026-08-10T05:55:00.000Z" title="发表于 2026-08-10 13:55:00">2026-08-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/be6d62ff.html" title="docker部署gitlab"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署gitlab"/></a><div class="content"><a class="title" href="/archives/be6d62ff.html" title="docker部署gitlab">docker部署gitlab</a><time datetime="2026-08-08T07:16:03.000Z" title="发表于 2026-08-08 15:16:03">2026-08-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260807160530247.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s+Helm部署kube-prometheus-stack"/></a><div class="content"><a class="title" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack">K8s+Helm部署kube-prometheus-stack</a><time datetime="2026-08-07T07:12:03.000Z" title="发表于 2026-08-07 15:12:03">2026-08-07</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2020 - 2026 By Raidenxe</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5"></script><script src="/js/main.js?v=5.5.5"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="false"> </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5"></script></div></div></body></html>

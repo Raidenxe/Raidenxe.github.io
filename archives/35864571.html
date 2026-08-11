@@ -1,0 +1,541 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>docker部署jenkins | Raidenxe的博客</title><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="在 Debian 上部署 Jenkins 的完整实战指南（APT + Docker） 从零搭建 CI&amp;#x2F;CD 环境，踩坑记录与解决方案全公开  作者：raiden测试环境：Debian 13 (Trixie) &amp;#x2F; Jenkins LTS 2.541.1 &amp;#x2F; Dock..."><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "docker部署jenkins",
+  "url": "https://raidenxe.github.io/archives/35864571.html",
+  "image": "https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png",
+  "datePublished": "2026-08-10T05:55:00.000Z",
+  "dateModified": "2026-08-11T17:30:37.812Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Raidenxe",
+      "url": "https://Raidenxe.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/35864571.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css?v=5.5.5"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'docker部署jenkins',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/macblack.css"><style>
+  #web_bg{background-image:url(/img/风景006.png)}
+  #footer{background-image:url(/img/风景008.png);background-size:cover;background-position:center}
+  .aplayer-lrc{display:none !important}
+</style>
+<meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/%E9%A3%8E%E6%99%AF006.png));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Raidenxe的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">docker部署jenkins</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">docker部署jenkins</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-10T05:55:00.000Z" title="发表于 2026-08-10 13:55:00">2026-08-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-08-11T17:30:37.812Z" title="更新于 2026-08-12 01:30:37">2026-08-12</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>12分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="在-Debian-上部署-Jenkins-的完整实战指南（APT-Docker）"><a href="#在-Debian-上部署-Jenkins-的完整实战指南（APT-Docker）" class="headerlink" title="在 Debian 上部署 Jenkins 的完整实战指南（APT + Docker）"></a>在 Debian 上部署 Jenkins 的完整实战指南（APT + Docker）</h1><blockquote>
+<p>从零搭建 CI&#x2F;CD 环境，踩坑记录与解决方案全公开</p>
+</blockquote>
+<p><strong>作者</strong>：raiden<br><strong>测试环境</strong>：Debian 13 (Trixie) &#x2F; Jenkins LTS 2.541.1 &#x2F; Docker 29.7.2<br><strong>最后更新</strong>：2026-08-09</p>
+<hr>
+<h2 id="1-为什么选择-Jenkins？部署方式怎么选？"><a href="#1-为什么选择-Jenkins？部署方式怎么选？" class="headerlink" title="1. 为什么选择 Jenkins？部署方式怎么选？"></a>1. 为什么选择 Jenkins？部署方式怎么选？</h2><p>Jenkins 是目前最成熟的开源自动化服务器，拥有超过 1800 个插件，几乎可以对接任何主流开发工具链。但在 Debian 上部署时，很多人会遇到仓库签名失败、Docker 镜像拉取报错、容器重启后退出、初始密码丢失等一系列问题。</p>
+<p>本文提供 <strong>APT</strong> 和 <strong>Docker</strong> 两种部署方案的完整操作流程，并重点剖析官方文档未覆盖的”暗坑”。笔者使用的系统是 Debian Trixie (Testing)，遇到的兼容性问题极具代表性，相信对多数读者都有参考价值。</p>
+<h3 id="两种部署方式对比"><a href="#两种部署方式对比" class="headerlink" title="两种部署方式对比"></a>两种部署方式对比</h3><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>APT（系统包）</th>
+<th>Docker（容器化）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>优点</strong></td>
+<td>与 systemd 深度集成，服务管理方便</td>
+<td>环境隔离，版本切换灵活，迁移友好</td>
+</tr>
+<tr>
+<td><strong>缺点</strong></td>
+<td>依赖系统版本，Testing 分支可能无预编译包</td>
+<td>需额外管理容器生命周期与数据卷</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>生产环境、长期维护</td>
+<td>测试环境、快速验证、多版本共存</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="2-方案一：APT-方式部署（适合稳定生产）"><a href="#2-方案一：APT-方式部署（适合稳定生产）" class="headerlink" title="2. 方案一：APT 方式部署（适合稳定生产）"></a>2. 方案一：APT 方式部署（适合稳定生产）</h2><h3 id="2-1-安装-Java-运行时（必须前置）"><a href="#2-1-安装-Java-运行时（必须前置）" class="headerlink" title="2.1 安装 Java 运行时（必须前置）"></a>2.1 安装 Java 运行时（必须前置）</h3><p>Jenkins 基于 Java 开发，运行前必须安装 JRE&#x2F;JDK。自 2025 年 12 月起，Jenkins 要求 <strong>Java 17 或 21</strong>，推荐 OpenJDK 21 [citation:10][citation:16]。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install -y openjdk-21-jdk</span><br><span class="line">java -version   <span class="comment"># 确认安装成功，预期输出包含 &quot;21.x.x&quot;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注意</strong>：若系统同时安装了多个 Java 版本，使用 <code>sudo update-alternatives --config java</code> 切换至 Java 21。</p>
+</blockquote>
+<h3 id="2-2-添加-Jenkins-官方-APT-仓库"><a href="#2-2-添加-Jenkins-官方-APT-仓库" class="headerlink" title="2.2 添加 Jenkins 官方 APT 仓库"></a>2.2 添加 Jenkins 官方 APT 仓库</h3><p>这是最容易出错的环节。很多人执行 <code>apt install jenkins</code> 后提示”没有可用的软件包”，根源就在于仓库未正确添加 [citation:7]。</p>
+<p><strong>关键变更（2025.12 起生效）</strong>：Jenkins 更换了 Linux 仓库签名密钥，新密钥文件名为 <code>jenkins.io-2026.key</code>，旧版 <code>jenkins.io-2023.key</code> 仍可用于旧版本，但安装最新 LTS 必须导入新密钥 [citation:13]。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 下载并导入 GPG 签名密钥（LTS 稳定版）</span></span><br><span class="line">curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key \</span><br><span class="line">  | <span class="built_in">sudo</span> <span class="built_in">tee</span> /usr/share/keyrings/jenkins-keyring.asc &gt; /dev/null</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 添加 APT 源（注意 signed-by 路径必须匹配）</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \</span></span><br><span class="line"><span class="string">https://pkg.jenkins.io/debian-stable binary/&quot;</span> \</span><br><span class="line">  | <span class="built_in">sudo</span> <span class="built_in">tee</span> /etc/apt/sources.list.d/jenkins.list &gt; /dev/null</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 更新包索引</span></span><br><span class="line"><span class="built_in">sudo</span> apt update</span><br></pre></td></tr></table></figure>
+
+<p><strong>排错要点</strong>：</p>
+<ul>
+<li>若 <code>apt update</code> 输出中看不到 Jenkins 源，检查 <code>/etc/apt/sources.list.d/jenkins.list</code> 是否存在且内容正确。</li>
+<li>文件缺失通常是因为 <code>tee</code> 命令前未加 <code>sudo</code>，导致写入失败却无报错。</li>
+<li>若仍报错 <code>NO_PUBKEY</code>，确认密钥环路径与源文件中 <code>signed-by=</code> 完全一致 [citation:13][citation:16]。</li>
+</ul>
+<blockquote>
+<p><strong>Weekly 版本用户</strong>：将上面的 <code>debian-stable</code> 替换为 <code>debian</code>，密钥也对应使用 <code>jenkins.io-2026.key</code>（weekly 地址）[citation:13]。</p>
+</blockquote>
+<h3 id="2-3-安装-Jenkins"><a href="#2-3-安装-Jenkins" class="headerlink" title="2.3 安装 Jenkins"></a>2.3 安装 Jenkins</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install -y jenkins</span><br></pre></td></tr></table></figure>
+
+<p>安装完成后，包管理器会自动完成以下操作 [citation:16][citation:19]：</p>
+<ul>
+<li>创建 <code>jenkins</code> 系统用户</li>
+<li>设置 <code>/var/lib/jenkins</code> 为工作目录（<code>JENKINS_HOME</code>）</li>
+<li>注册 systemd 服务单元</li>
+<li>默认监听 <code>8080</code> 端口</li>
+</ul>
+<h3 id="2-4-启动服务与防火墙放行"><a href="#2-4-启动服务与防火墙放行" class="headerlink" title="2.4 启动服务与防火墙放行"></a>2.4 启动服务与防火墙放行</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> jenkins   <span class="comment"># 开机自启</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl start jenkins   <span class="comment"># 启动服务</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl status jenkins  <span class="comment"># 确认状态为 active (running)</span></span><br></pre></td></tr></table></figure>
+
+<p>若系统启用了 UFW 防火墙：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> ufw allow 8080/tcp</span><br><span class="line"><span class="built_in">sudo</span> ufw reload</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>验证</strong>：<code>curl -sI http://localhost:8080 | head -1</code> 返回 <code>HTTP/1.1 403</code> 或 <code>200</code> 均表示服务已就绪（Jenkins 对根路径返回 403 是正常行为）。</p>
+</blockquote>
+<h3 id="2-5-初始化配置"><a href="#2-5-初始化配置" class="headerlink" title="2.5 初始化配置"></a>2.5 初始化配置</h3><p>浏览器访问 <code>http://服务器IP:8080</code>，按向导完成以下步骤 [citation:16]：</p>
+<ol>
+<li><p><strong>解锁 Jenkins</strong>：获取初始密码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">cat</span> /var/lib/jenkins/secrets/initialAdminPassword</span><br></pre></td></tr></table></figure>
+<p>复制输出的随机字符串粘贴到网页中。</p>
+</li>
+<li><p><strong>安装插件</strong>：选择 “Install suggested plugins”（推荐插件），等待 5~10 分钟。</p>
+</li>
+<li><p><strong>创建管理员用户</strong>：务必填写用户名和密码，<strong>不要跳过此步骤</strong>——依赖初始密码在生产环境是安全风险 [citation:16]。</p>
+</li>
+<li><p><strong>确认 Jenkins URL</strong>：填写实际访问地址（如配置了反向代理则填域名）。</p>
+</li>
+</ol>
+<h3 id="2-6-APT-方式常见问题排查"><a href="#2-6-APT-方式常见问题排查" class="headerlink" title="2.6 APT 方式常见问题排查"></a>2.6 APT 方式常见问题排查</h3><p><strong>问题 1：<code>apt install jenkins</code> 提示”没有可用的软件包”</strong></p>
+<ul>
+<li><strong>原因 A</strong>：仓库未成功添加，回到 2.2 节逐步检查。</li>
+<li><strong>原因 B</strong>：Debian Testing (Trixie) 官方仓库可能尚未提供预编译包 [citation:7]。</li>
+<li><strong>解决方案</strong>：改用 Docker 方式（见第三节），或直接下载 WAR 包运行：<code>java -jar jenkins.war --httpPort=8080</code> [citation:19]。</li>
+</ul>
+<p><strong>问题 2：安装插件后重启，服务起不来</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> journalctl -u jenkins -f   <span class="comment"># 实时查看日志</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>常见原因是 Java 版本过低，升级至 Java 17+ 后重试 [citation:10]。</li>
+<li>也可能是插件与当前 Jenkins 版本不兼容，可暂时移除问题插件：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">mv</span> /var/lib/jenkins/plugins/问题插件名 /tmp/</span><br><span class="line"><span class="built_in">sudo</span> systemctl restart jenkins</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h2 id="3-方案二：Docker-方式部署（推荐新手-x2F-测试环境）"><a href="#3-方案二：Docker-方式部署（推荐新手-x2F-测试环境）" class="headerlink" title="3. 方案二：Docker 方式部署（推荐新手 &#x2F; 测试环境）"></a>3. 方案二：Docker 方式部署（推荐新手 &#x2F; 测试环境）</h2><p>Docker 方式可以彻底规避系统版本兼容性问题，环境隔离干净，适合快速搭建和迁移 [citation:5]。</p>
+<h3 id="3-1-安装-Docker（若未安装）"><a href="#3-1-安装-Docker（若未安装）" class="headerlink" title="3.1 安装 Docker（若未安装）"></a>3.1 安装 Docker（若未安装）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install -y docker.io</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> --now docker</span><br><span class="line">docker --version   <span class="comment"># 确认安装成功</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-拉取正确的镜像"><a href="#3-2-拉取正确的镜像" class="headerlink" title="3.2 拉取正确的镜像"></a>3.2 拉取正确的镜像</h3><blockquote>
+<p>⚠️ <strong>致命陷阱</strong>：<code>jenkins</code> 这个镜像名早已废弃，强行拉取会报错 <code>failed size validation</code> 或得到过时版本 [citation:11]。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ✅ 正确写法</span></span><br><span class="line">docker pull jenkins/jenkins:lts      <span class="comment"># 长期支持版（推荐生产）</span></span><br><span class="line">docker pull jenkins/jenkins:lts-jdk21 <span class="comment"># 指定 Java 21 运行时</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-运行容器（含重启策略）"><a href="#3-3-运行容器（含重启策略）" class="headerlink" title="3.3 运行容器（含重启策略）"></a>3.3 运行容器（含重启策略）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  --name jenkins \</span><br><span class="line">  --restart=on-failure \</span><br><span class="line">  -p 8080:8080 \</span><br><span class="line">  -p 50000:50000 \</span><br><span class="line">  -v jenkins_home:/var/jenkins_home \</span><br><span class="line">  -v /etc/localtime:/etc/localtime:ro \</span><br><span class="line">  -e JAVA_OPTS=<span class="string">&quot;-Xms512m -Xmx2048m&quot;</span> \</span><br><span class="line">  --user root \</span><br><span class="line">  jenkins/jenkins:lts-jdk21</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键参数解析</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>--restart=on-failure</code></td>
+<td>非正常退出时自动重启</td>
+<td><strong>核心参数</strong>，解决容器安装插件后 Exited 5 的问题 [citation:5][citation:8]</td>
+</tr>
+<tr>
+<td><code>-p 8080:8080</code></td>
+<td>Web 界面端口</td>
+<td>可改为 <code>-p 9090:8080</code> 避免端口冲突</td>
+</tr>
+<tr>
+<td><code>-p 50000:50000</code></td>
+<td>Agent 通信端口</td>
+<td>无自建 Agent 需求可不映射</td>
+</tr>
+<tr>
+<td><code>-v jenkins_home:...</code></td>
+<td>数据持久化</td>
+<td>使用命名卷，容器删除后数据不丢失</td>
+</tr>
+<tr>
+<td><code>-e JAVA_OPTS</code></td>
+<td>JVM 内存限制</td>
+<td>低配服务器务必设置，防止 OOM</td>
+</tr>
+</tbody></table>
+<p><strong>关于 <code>--restart=on-failure</code> 的官方说明</strong>：自 Jenkins 2.344（2022-04）起，控制器镜像的退出&#x2F;重启行为已变更。Jenkins 升级插件或手动重启时不再使用 <code>exec()</code> 自重启，而是主动退出（exit code 非 0），交由 Docker 守护进程拉起。因此 <strong>必须设置重启策略</strong>，否则容器会”假死”退出 [citation:5]。</p>
+<h3 id="3-4-获取初始密码"><a href="#3-4-获取初始密码" class="headerlink" title="3.4 获取初始密码"></a>3.4 获取初始密码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> jenkins <span class="built_in">cat</span> /var/jenkins_home/secrets/initialAdminPassword</span><br></pre></td></tr></table></figure>
+
+<p>后续 Web 初始化流程与 APT 方式一致（安装插件 → 创建管理员 → 确认 URL）。</p>
+<h3 id="3-5-Docker-方式常见问题排查"><a href="#3-5-Docker-方式常见问题排查" class="headerlink" title="3.5 Docker 方式常见问题排查"></a>3.5 Docker 方式常见问题排查</h3><p><strong>问题 1：<code>docker pull jenkins</code> 报错 <code>failed size validation</code></strong></p>
+<ul>
+<li><strong>原因</strong>：旧镜像 <code>jenkins</code>（无命名空间）已损坏或废弃。</li>
+<li><strong>解决</strong>：改用 <code>jenkins/jenkins:lts</code> [citation:11]。</li>
+</ul>
+<p><strong>问题 2：容器启动后很快退出，状态显示 <code>Exited (5)</code></strong></p>
+<ul>
+<li><strong>原因</strong>：Jenkins 内部触发重启（如插件安装后），主动退出但外部无重启策略。</li>
+<li><strong>解决</strong>：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker update --restart=on-failure jenkins</span><br><span class="line">docker start jenkins</span><br></pre></td></tr></table></figure>
+无需重建容器，<code>docker update</code> 可热更新重启策略 [citation:5][citation:20]。</li>
+</ul>
+<p><strong>问题 3：重启策略应该用 <code>on-failure</code> 还是 <code>always</code>？</strong></p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>行为</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>no</code></td>
+<td>永不重启（默认）</td>
+<td>调试阶段</td>
+</tr>
+<tr>
+<td><code>on-failure[:N]</code></td>
+<td>仅异常退出时重启，可限次数</td>
+<td><strong>Jenkins 官方推荐</strong> [citation:5]</td>
+</tr>
+<tr>
+<td><code>always</code></td>
+<td>任何情况都重启（含正常退出）</td>
+<td>纯 Web 服务</td>
+</tr>
+<tr>
+<td><code>unless-stopped</code></td>
+<td>类似 always，但手动 stop 后不再自动拉起</td>
+<td>需手动控制生命周期</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>**推荐 <code>on-failure</code>**：Jenkins 的正常退出码为 0（如手动 stop），此时不需要重启；异常退出码非 0 时才需要 Docker 介入 [citation:17][citation:20]。</p>
+</blockquote>
+<hr>
+<h2 id="4-密码丢失或登录失败怎么办？"><a href="#4-密码丢失或登录失败怎么办？" class="headerlink" title="4. 密码丢失或登录失败怎么办？"></a>4. 密码丢失或登录失败怎么办？</h2><p>无论 APT 还是 Docker 方式，管理员凭据都存储在 <code>JENKINS_HOME</code> 中。如果忘记密码或输错导致锁死，有以下几种恢复路径。</p>
+<h3 id="4-1-方案一：修改-config-xml-禁用安全认证（最常用）"><a href="#4-1-方案一：修改-config-xml-禁用安全认证（最常用）" class="headerlink" title="4.1 方案一：修改 config.xml 禁用安全认证（最常用）"></a>4.1 方案一：修改 config.xml 禁用安全认证（最常用）</h3><p>此方法适用于 <strong>Jenkins 可停止</strong> 的场景，是官方推荐的标准流程 [citation:6]。</p>
+<p><strong>步骤（APT 方式）</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl stop jenkins</span><br><span class="line"><span class="built_in">sudo</span> nano /var/lib/jenkins/config.xml</span><br></pre></td></tr></table></figure>
+
+<p><strong>步骤（Docker 方式）</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker stop jenkins</span><br><span class="line">docker run -it --<span class="built_in">rm</span> -v jenkins_home:/var/jenkins_home busybox vi /var/jenkins_home/config.xml</span><br></pre></td></tr></table></figure>
+
+<p><strong>修改内容</strong>：</p>
+<ol>
+<li>将 <code>&lt;useSecurity&gt;true&lt;/useSecurity&gt;</code> 改为 <code>&lt;useSecurity&gt;false&lt;/useSecurity&gt;</code></li>
+<li>删除或注释掉 <code>&lt;authorizationStrategy&gt;...&lt;/authorizationStrategy&gt;</code> 块</li>
+<li>删除或注释掉 <code>&lt;securityRealm&gt;...&lt;/securityRealm&gt;</code> 块</li>
+</ol>
+<p><strong>重新启动</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># APT</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl start jenkins</span><br><span class="line"></span><br><span class="line"><span class="comment"># Docker</span></span><br><span class="line">docker start jenkins</span><br></pre></td></tr></table></figure>
+
+<p>此时访问 <code>http://IP:8080</code> <strong>无需密码</strong>即可进入管理界面。</p>
+<p><strong>重新启用安全认证并重置密码</strong> [citation:6][citation:9]：</p>
+<ol>
+<li>进入 <strong>Manage Jenkins → Configure Global Security</strong></li>
+<li>勾选 <strong>Enable security</strong></li>
+<li><strong>Security Realm</strong> 选择 <strong>Jenkins’ own user database</strong></li>
+<li>取消勾选 <strong>Allow users to sign up</strong>，保存</li>
+<li>进入 <strong>Manage Jenkins → Users</strong>，找到 <code>admin</code> 用户，点击齿轮图标修改密码</li>
+<li>重新登录验证新密码生效</li>
+</ol>
+<h3 id="4-2-方案二：通过-Groovy-脚本创建管理员（进阶）"><a href="#4-2-方案二：通过-Groovy-脚本创建管理员（进阶）" class="headerlink" title="4.2 方案二：通过 Groovy 脚本创建管理员（进阶）"></a>4.2 方案二：通过 Groovy 脚本创建管理员（进阶）</h3><p>当 Jenkins 处于运行状态但无法登录时，可通过 Groovy 脚本注入新管理员账户 [citation:12][citation:15]。</p>
+<p><strong>通过 Jenkins CLI 执行</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">java -jar jenkins-cli.jar -s http://localhost:8080 groovy = &lt;&lt;<span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">jenkins.model.Jenkins.instance.securityRealm.createAccount(<span class="string">&#x27;newAdmin&#x27;</span>, <span class="string">&#x27;StrongPass!2026&#x27;</span>)</span><br><span class="line">println <span class="string">&quot;Account created: newAdmin / StrongPass!2026&quot;</span></span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p><strong>通过 Script Console（需有访问权限）</strong>：</p>
+<p>访问 <code>http://IP:8080/script</code>，执行：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jenkins.model.Jenkins.instance.securityRealm.createAccount(<span class="string">&#x27;newAdmin&#x27;</span>, <span class="string">&#x27;StrongPass!2026&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>⚠️ <strong>安全警告</strong>：Groovy 脚本拥有最高权限，生产环境使用后务必审计执行记录。</p>
+</blockquote>
+<h3 id="4-3-方案三：删除-config-xml-完全重置（终极手段）"><a href="#4-3-方案三：删除-config-xml-完全重置（终极手段）" class="headerlink" title="4.3 方案三：删除 config.xml 完全重置（终极手段）"></a>4.3 方案三：删除 config.xml 完全重置（终极手段）</h3><p>如果上述方法均不可行，可删除配置文件让 Jenkins 重新生成 [citation:9]：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker stop jenkins</span><br><span class="line"></span><br><span class="line"><span class="comment"># Docker 方式（使用 busybox 辅助容器）</span></span><br><span class="line">docker run -it --<span class="built_in">rm</span> -v jenkins_home:/var/jenkins_home busybox <span class="built_in">rm</span> /var/jenkins_home/config.xml</span><br><span class="line"></span><br><span class="line"><span class="comment"># APT 方式</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">rm</span> /var/lib/jenkins/config.xml</span><br><span class="line"></span><br><span class="line">docker start jenkins   <span class="comment"># 或 sudo systemctl start jenkins</span></span><br></pre></td></tr></table></figure>
+
+<p>Jenkins 会自动生成全新的默认配置，安全认证关闭，可重新走初始化向导。</p>
+<hr>
+<h2 id="5-部署后的最佳实践"><a href="#5-部署后的最佳实践" class="headerlink" title="5. 部署后的最佳实践"></a>5. 部署后的最佳实践</h2><h3 id="5-1-版本策略"><a href="#5-1-版本策略" class="headerlink" title="5.1 版本策略"></a>5.1 版本策略</h3><ul>
+<li><strong>生产环境</strong>：始终使用 <code>lts</code> 标签，稳定性优先，避免 Weekly 版本的频繁变更风险 [citation:10]。</li>
+<li><strong>测试环境</strong>：可尝试 Weekly 版本体验新特性，当前 Weekly 版本已迭代至 2.549+ [citation:10]。</li>
+</ul>
+<h3 id="5-2-数据持久化"><a href="#5-2-数据持久化" class="headerlink" title="5.2 数据持久化"></a>5.2 数据持久化</h3><table>
+<thead>
+<tr>
+<th>部署方式</th>
+<th>数据位置</th>
+<th>备份命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>APT</td>
+<td><code>/var/lib/jenkins/</code></td>
+<td><code>sudo tar czf jenkins-backup.tar.gz /var/lib/jenkins/</code></td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>命名卷 <code>jenkins_home</code></td>
+<td><code>docker run --rm -v jenkins_home:/data -v $(pwd):/backup busybox tar czf /backup/jenkins-backup.tar.gz /data</code></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>核心原则</strong>：<code>JENKINS_HOME</code> 包含所有作业配置、构建历史、插件和用户凭据，是灾难恢复的唯一关键数据 [citation:6]。</p>
+</blockquote>
+<h3 id="5-3-配置国内镜像加速插件下载"><a href="#5-3-配置国内镜像加速插件下载" class="headerlink" title="5.3 配置国内镜像加速插件下载"></a>5.3 配置国内镜像加速插件下载</h3><p>官方插件源在国内访问较慢，建议替换为清华镜像 [citation:7]：</p>
+<ol>
+<li>进入 <strong>Manage Jenkins → Plugins → Advanced settings</strong></li>
+<li>将 <strong>Update Site</strong> 替换为：<code>https://mirrors.tuna.tsinghua.edu.cn/jenkins/updates/update-center.json</code></li>
+<li>保存后点击 <strong>Check now</strong> 验证连通性</li>
+</ol>
+<h3 id="5-4-反向代理与-HTTPS"><a href="#5-4-反向代理与-HTTPS" class="headerlink" title="5.4 反向代理与 HTTPS"></a>5.4 反向代理与 HTTPS</h3><p>生产环境建议前置 Nginx&#x2F;Caddy 反向代理，实现：</p>
+<ul>
+<li>域名访问（替代 IP:端口）</li>
+<li>TLS 加密（Let’s Encrypt 免费证书）</li>
+<li>静态资源缓存加速</li>
+</ul>
+<p><strong>Nginx 关键配置片段</strong>：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">location</span> / &#123;</span><br><span class="line">    <span class="attribute">proxy_pass</span> http://127.0.0.1:8080;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-5-安全加固清单"><a href="#5-5-安全加固清单" class="headerlink" title="5.5 安全加固清单"></a>5.5 安全加固清单</h3><ul>
+<li><input disabled="" type="checkbox"> 修改默认 8080 端口（Docker 映射 <code>-p 9090:8080</code>，APT 修改 <code>/etc/default/jenkins</code> 中 <code>JENKINS_PORT</code>）</li>
+<li><input disabled="" type="checkbox"> 禁用匿名用户访问</li>
+<li><input disabled="" type="checkbox"> 启用 CSRF 保护（默认开启）</li>
+<li><input disabled="" type="checkbox"> 定期更新插件和 Jenkins 核心版本</li>
+<li><input disabled="" type="checkbox"> 配置定期备份策略（cron + 异地存储）</li>
+</ul>
+<hr>
+<h2 id="6-总结"><a href="#6-总结" class="headerlink" title="6. 总结"></a>6. 总结</h2><table>
+<thead>
+<tr>
+<th>部署方式</th>
+<th>成功关键点</th>
+<th>典型坑位</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>APT</strong></td>
+<td>正确导入 2026 版 GPG 密钥；Java 21 前置安装</td>
+<td>Debian Testing 无预编译包；插件不兼容导致启动失败</td>
+</tr>
+<tr>
+<td><strong>Docker</strong></td>
+<td>使用 <code>jenkins/jenkins:lts</code> 镜像；设置 <code>--restart=on-failure</code></td>
+<td>误用废弃的 <code>jenkins</code> 镜像；容器 Exited 5 后不自动恢复</td>
+</tr>
+<tr>
+<td><strong>密码重置</strong></td>
+<td>修改 <code>config.xml</code> 禁用安全 → 重置 → 重新启用</td>
+<td>忘记停止服务就修改配置导致不生效</td>
+</tr>
+</tbody></table>
+<p>希望这篇指南能帮你避开我从 Debian Buster 到 Trixie 一路踩过来的所有坑，顺利在 Debian 上跑起 Jenkins CI&#x2F;CD 流水线。</p>
+<p>如果仍有疑问，欢迎在评论区留言交流。</p>
+<p><strong>Happy CI&#x2F;CD! 🚀</strong></p>
+<hr>
+<h2 id="附录：参考资源"><a href="#附录：参考资源" class="headerlink" title="附录：参考资源"></a>附录：参考资源</h2><ul>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://jenkins.io/doc/book/system-administration/">Jenkins 官方文档 - 系统管理</a></li>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://www.jenkins-ci.org/blog/2022/05/27/docker-image-new-lifecycle/">Jenkins Docker 镜像新生命周期说明</a></li>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://jenkins.io/blog/2025/12/23/repository-signing-keys-changing">Jenkins 2026 新签名密钥公告</a></li>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://computingforgeeks.com/install-jenkins-ubuntu-debian/">Install Jenkins on Debian 13 (ComputingForGeeks)</a></li>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://docs.docker.com/engine/containers/start-containers-automatically/">Docker 重启策略官方文档</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/35864571.html">https://raidenxe.github.io/archives/35864571.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/docker/">docker</a><a class="post-meta__tags" href="/tags/jenkins/">jenkins</a><a class="post-meta__tags" href="/tags/ci-cd/">ci-cd</a></div><div class="post-share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related  no-desc" href="/archives/a3e16fea.html" title="面试题1"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">面试题1</div></div></div></a><a class="pagination-related" href="/archives/be6d62ff.html" title="docker部署gitlab"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">docker部署gitlab</div></div><div class="info-2"><div class="info-item-1">使用 Docker 部署 GitLab CE（社区版）完整指南作者：raiden环境：Debian 13 &#x2F; Docker 29.7.2 &#x2F; Docker Compose v5.4.0最后更新：2026-08-08  📖 前言GitLab 是目前最受欢迎的开源 DevOps 平台之一，集成了代码托管、CI&#x2F;CD、Issue 跟踪、容器镜像仓库等丰富功能。对于小团队或个人开发者，官方提供的 GitLab CE（社区版） 完全够用，而借助 Docker 部署可以显著降低运维复杂度。 本文将手把手带你完成 GitLab CE 的 Docker 部署，并分享生产环境下的优化建议。无论你是新手还是正在从传统方式迁移，这篇指南都能为你提供可直接落地的操作步骤。  ✅ 前置条件开始前，请确认服务器满足以下最低要求：    项目 最低配置 推荐配置    CPU 2 核 4 核及以上   内存 4 GB 8 GB 或更高   存储 20 GB SSD 50 GB+ SSD   操作系统 Linux（Ubuntu&#x2F;CentOS&#x2F;Debian） 同...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/archives/d2c4a8b1.html" title="Docker容器与宿主机的区别"><img class="cover" src="https://picx.zhimg.com/80/v2-c40c351ba7a6f43753fa47b7859bf36e_720w.webp?source=2c26e567" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-10</div><div class="info-item-2">Docker容器与宿主机的区别</div></div><div class="info-2"><div class="info-item-1">Docker 容器与宿主机共享内核但拥有独立的文件系统、进程空间和资源限制。本文从内核架构、Namespace 隔离、cgroup 资源管控、文件系统分层等维度出发，系统梳理容器与宿主机之间的本质区别，并介绍多种实用的容器环境检测方法。 容器与虚拟机的本质区别在深入讨论容器与宿主机的差异之前，有必要先理解容器化技术的底层架构。与传统的虚拟机不同，Docker 容器并非在独立操作系统上运行，而是与宿主机共享同一个 Linux 内核。 共享内核架构一个典型的 Linux 文件系统由 bootfs 和 rootfs 两部分组成：  bootfs：包含 bootloader 和 kernel（操作系统内核）。 rootfs：包含操作系统所需的文件、配置和目录，但不包括内核。   容器正是利用了这一特性——多个不同的镜像可以在同一个宿主机内核上运行各自的 rootfs：  容器、镜像与父镜像之间的关系：  Namespace 隔离容器方案基于 Linux 内核提供的 cgroup 和 namespace 来实现隔离。Linux 内核通过以下六种 Namespace 实现不同维度的隔离：  ...</div></div></div></a><a class="pagination-related" href="/archives/4417b09c.html" title="使用Shell脚本一键完成Docker二进制部署与镜像加速配置"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260705153854651.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-04</div><div class="info-item-2">使用Shell脚本一键完成Docker二进制部署与镜像加速配置</div></div><div class="info-2"><div class="info-item-1">背景与痛点Docker 作为云原生时代的核心基础设施，几乎是每位开发者和运维人员的必备工具。然而在国内网络环境下，Docker 的部署和镜像拉取往往面临两大痛点：  痛点一：官方源访问不稳定。Docker 官方下载站 download.docker.com 在国内部分地区访问缓慢甚至无法连接，导致二进制包下载失败。 痛点二：镜像拉取速度极慢。由于网络原因，从 Docker Hub 拉取镜像时经常超时或速度极慢，严重影响开发效率。  传统的解决方案是手动下载二进制包、复制到 /usr/bin、配置 systemd 服务、再手工编辑 daemon.json 添加镜像源——步骤繁琐且容易出错。本文将分享一个一键完成的 Shell 脚本，实现 Docker 二进制部署与镜像加速配置的自动化。 脚本功能概述该脚本主要实现以下功能：  支持指定版本或自动获取最新版本：可通过命令行参数指定版本号（如 ./install_docker.sh 29.6.0），不传参数则自动从多个镜像源获取最新稳定版。 多源下载容错：依次尝试官方源、阿里云镜像、清华镜像等多个地址下载二进制包。 全自动安装：解压二进...</div></div></div></a><a class="pagination-related" href="/archives/be6d62ff.html" title="docker部署gitlab"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-08</div><div class="info-item-2">docker部署gitlab</div></div><div class="info-2"><div class="info-item-1">使用 Docker 部署 GitLab CE（社区版）完整指南作者：raiden环境：Debian 13 &#x2F; Docker 29.7.2 &#x2F; Docker Compose v5.4.0最后更新：2026-08-08  📖 前言GitLab 是目前最受欢迎的开源 DevOps 平台之一，集成了代码托管、CI&#x2F;CD、Issue 跟踪、容器镜像仓库等丰富功能。对于小团队或个人开发者，官方提供的 GitLab CE（社区版） 完全够用，而借助 Docker 部署可以显著降低运维复杂度。 本文将手把手带你完成 GitLab CE 的 Docker 部署，并分享生产环境下的优化建议。无论你是新手还是正在从传统方式迁移，这篇指南都能为你提供可直接落地的操作步骤。  ✅ 前置条件开始前，请确认服务器满足以下最低要求：    项目 最低配置 推荐配置    CPU 2 核 4 核及以上   内存 4 GB 8 GB 或更高   存储 20 GB SSD 50 GB+ SSD   操作系统 Linux（Ubuntu&#x2F;CentOS&#x2F;Debian） 同...</div></div></div></a><a class="pagination-related" href="/archives/g9h0i1j2.html" title="Dockerfile完全指南：从入门到实战"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260706171038111.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-06</div><div class="info-item-2">Dockerfile完全指南：从入门到实战</div></div><div class="info-2"><div class="info-item-1">前言Docker 的流行离不开其核心概念——镜像。而镜像的构建方式多种多样，但最标准、最透明、最可维护的方式无疑是 Dockerfile。Dockerfile 是一份声明式脚本，它定义了如何从一个基础镜像开始，逐步叠加指令，最终生成一个包含应用程序及其运行环境的可交付镜像。本文将系统讲解 Dockerfile 的方方面面，涵盖基础概念、常用指令、构建流程、分层原理以及一个完整的实战案例，帮你彻底掌握 Dockerfile 的使用。 Dockerfile 是什么？ Dockerfile 是一个文本文件，其中包含了一条条的指令（Instruction），每条指令对应 Linux 系统下的一条命令。Docker 守护程序（dockerd）读取 Dockerfile 并逐条执行这些指令，每执行一条就会生成一个中间镜像层，最终所有层叠加组成最终的镜像。 可以把它理解为”镜像的源代码”——正如我们通过源代码管理应用程序一样，通过 Dockerfile 可以清晰地记录镜像的构建过程，便于版本控制、团队协作和后期维护。 Dockerfile 的优势 自动化：无需手动执行繁杂的 docker co...</div></div></div></a><a class="pagination-related" href="/archives/f5d6e7c8.html" title="Docker命令速查与简单实战"><img class="cover" src="https://picx.zhimg.com/70/v2-b5931fd8a0a340ce11953832401d9803_1440w.avis?source=172ae18b&biz_tag=Post" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-06</div><div class="info-item-2">Docker命令速查与简单实战</div></div><div class="info-2"><div class="info-item-1">Docker 常用命令速查笔记一、镜像管理（Image）   命令 用途 示例    docker images 列出本机所有镜像 docker images   docker pull &lt;镜像名&gt;:&lt;标签&gt; 从仓库拉取镜像 docker pull nginx:1.25   docker rmi &lt;镜像ID或名称&gt; 删除镜像（可加 -f 强制） docker rmi nginx:1.25   docker tag &lt;源镜像&gt; &lt;目标镜像:标签&gt; 给镜像打标签 docker tag myapp:v1 myapp:latest   docker inspect &lt;镜像名&gt; 查看镜像详细信息（JSON格式） docker inspect nginx   docker save -o &lt;文件名&gt;.tar &lt;镜像名&gt; 导出镜像为 tar 文件 docker save -o nginx.tar nginx:1.25   docker load -i &lt;文件名&gt;.tar 从 tar 文件...</div></div></div></a><a class="pagination-related" href="/archives/a54ffedb.html" title="jumpserver笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260715102638262.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-15</div><div class="info-item-2">jumpserver笔记</div></div><div class="info-2"><div class="info-item-1">JumpServer 部署笔记 版本: v4.10.15 | 部署方式: Docker-Compose | 镜像源: Docker Hub   目录 什么是 JumpServer 环境准备 Docker-Compose 部署 初始化与访问 纳管实验节点 组件架构与作用 配置文件解析 常用管理命令 故障排除   1. 什么是 JumpServerJumpServer 是开源的堡垒机&#x2F;跳板机系统，用于集中管理企业内部服务器的访问权限。它解决了以下核心问题：    问题 JumpServer 解决方案    权限分散 统一认证、细粒度授权管理   操作审计 全程录像、命令审计、操作日志   密钥管理 集中管理 SSH 密钥，避免密钥分散   合规要求 满足等保、SOX 等合规审计需求   JumpServer 采用 B&#x2F;S 架构，支持 Web 端直接管理和操作服务器，无需安装客户端。核心价值在于：让运维操作可追溯、可审计、可控制。  2. 环境准备2.1 系统要求 Linux 内核 3.10+ (推荐 Ubuntu 22.04 &#x2F; CentOS 7.9+)...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Raidenxe</div><div class="author-info-description">向着真理和自由，无名的献身。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9C%A8-Debian-%E4%B8%8A%E9%83%A8%E7%BD%B2-Jenkins-%E7%9A%84%E5%AE%8C%E6%95%B4%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97%EF%BC%88APT-Docker%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">在 Debian 上部署 Jenkins 的完整实战指南（APT + Docker）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-Jenkins%EF%BC%9F%E9%83%A8%E7%BD%B2%E6%96%B9%E5%BC%8F%E6%80%8E%E4%B9%88%E9%80%89%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">1. 为什么选择 Jenkins？部署方式怎么选？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%A4%E7%A7%8D%E9%83%A8%E7%BD%B2%E6%96%B9%E5%BC%8F%E5%AF%B9%E6%AF%94"><span class="toc-number">1.1.1.</span> <span class="toc-text">两种部署方式对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%96%B9%E6%A1%88%E4%B8%80%EF%BC%9AAPT-%E6%96%B9%E5%BC%8F%E9%83%A8%E7%BD%B2%EF%BC%88%E9%80%82%E5%90%88%E7%A8%B3%E5%AE%9A%E7%94%9F%E4%BA%A7%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">2. 方案一：APT 方式部署（适合稳定生产）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%AE%89%E8%A3%85-Java-%E8%BF%90%E8%A1%8C%E6%97%B6%EF%BC%88%E5%BF%85%E9%A1%BB%E5%89%8D%E7%BD%AE%EF%BC%89"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 安装 Java 运行时（必须前置）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E6%B7%BB%E5%8A%A0-Jenkins-%E5%AE%98%E6%96%B9-APT-%E4%BB%93%E5%BA%93"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 添加 Jenkins 官方 APT 仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%AE%89%E8%A3%85-Jenkins"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.3 安装 Jenkins</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1%E4%B8%8E%E9%98%B2%E7%81%AB%E5%A2%99%E6%94%BE%E8%A1%8C"><span class="toc-number">1.2.4.</span> <span class="toc-text">2.4 启动服务与防火墙放行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.5.</span> <span class="toc-text">2.5 初始化配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-APT-%E6%96%B9%E5%BC%8F%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="toc-number">1.2.6.</span> <span class="toc-text">2.6 APT 方式常见问题排查</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%96%B9%E6%A1%88%E4%BA%8C%EF%BC%9ADocker-%E6%96%B9%E5%BC%8F%E9%83%A8%E7%BD%B2%EF%BC%88%E6%8E%A8%E8%8D%90%E6%96%B0%E6%89%8B-x2F-%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">3. 方案二：Docker 方式部署（推荐新手 &#x2F; 测试环境）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%AE%89%E8%A3%85-Docker%EF%BC%88%E8%8B%A5%E6%9C%AA%E5%AE%89%E8%A3%85%EF%BC%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1 安装 Docker（若未安装）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%8B%89%E5%8F%96%E6%AD%A3%E7%A1%AE%E7%9A%84%E9%95%9C%E5%83%8F"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2 拉取正确的镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8%EF%BC%88%E5%90%AB%E9%87%8D%E5%90%AF%E7%AD%96%E7%95%A5%EF%BC%89"><span class="toc-number">1.3.3.</span> <span class="toc-text">3.3 运行容器（含重启策略）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E8%8E%B7%E5%8F%96%E5%88%9D%E5%A7%8B%E5%AF%86%E7%A0%81"><span class="toc-number">1.3.4.</span> <span class="toc-text">3.4 获取初始密码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-Docker-%E6%96%B9%E5%BC%8F%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="toc-number">1.3.5.</span> <span class="toc-text">3.5 Docker 方式常见问题排查</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%AF%86%E7%A0%81%E4%B8%A2%E5%A4%B1%E6%88%96%E7%99%BB%E5%BD%95%E5%A4%B1%E8%B4%A5%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="toc-number">1.4.</span> <span class="toc-text">4. 密码丢失或登录失败怎么办？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E6%96%B9%E6%A1%88%E4%B8%80%EF%BC%9A%E4%BF%AE%E6%94%B9-config-xml-%E7%A6%81%E7%94%A8%E5%AE%89%E5%85%A8%E8%AE%A4%E8%AF%81%EF%BC%88%E6%9C%80%E5%B8%B8%E7%94%A8%EF%BC%89"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1 方案一：修改 config.xml 禁用安全认证（最常用）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E6%96%B9%E6%A1%88%E4%BA%8C%EF%BC%9A%E9%80%9A%E8%BF%87-Groovy-%E8%84%9A%E6%9C%AC%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%90%86%E5%91%98%EF%BC%88%E8%BF%9B%E9%98%B6%EF%BC%89"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 方案二：通过 Groovy 脚本创建管理员（进阶）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E6%96%B9%E6%A1%88%E4%B8%89%EF%BC%9A%E5%88%A0%E9%99%A4-config-xml-%E5%AE%8C%E5%85%A8%E9%87%8D%E7%BD%AE%EF%BC%88%E7%BB%88%E6%9E%81%E6%89%8B%E6%AE%B5%EF%BC%89"><span class="toc-number">1.4.3.</span> <span class="toc-text">4.3 方案三：删除 config.xml 完全重置（终极手段）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E9%83%A8%E7%BD%B2%E5%90%8E%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.5.</span> <span class="toc-text">5. 部署后的最佳实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E7%89%88%E6%9C%AC%E7%AD%96%E7%95%A5"><span class="toc-number">1.5.1.</span> <span class="toc-text">5.1 版本策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96"><span class="toc-number">1.5.2.</span> <span class="toc-text">5.2 数据持久化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E9%85%8D%E7%BD%AE%E5%9B%BD%E5%86%85%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.5.3.</span> <span class="toc-text">5.3 配置国内镜像加速插件下载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E4%B8%8E-HTTPS"><span class="toc-number">1.5.4.</span> <span class="toc-text">5.4 反向代理与 HTTPS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-5-%E5%AE%89%E5%85%A8%E5%8A%A0%E5%9B%BA%E6%B8%85%E5%8D%95"><span class="toc-number">1.5.5.</span> <span class="toc-text">5.5 安全加固清单</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">6. 总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95%EF%BC%9A%E5%8F%82%E8%80%83%E8%B5%84%E6%BA%90"><span class="toc-number">1.7.</span> <span class="toc-text">附录：参考资源</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/61196baf.html" title="Jenkins-CICD实战"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins-CICD实战"/></a><div class="content"><a class="title" href="/archives/61196baf.html" title="Jenkins-CICD实战">Jenkins-CICD实战</a><time datetime="2026-08-11T17:09:47.000Z" title="发表于 2026-08-12 01:09:47">2026-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a3e16fea.html" title="面试题1"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试题1"/></a><div class="content"><a class="title" href="/archives/a3e16fea.html" title="面试题1">面试题1</a><time datetime="2026-08-11T14:53:55.000Z" title="发表于 2026-08-11 22:53:55">2026-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/35864571.html" title="docker部署jenkins"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署jenkins"/></a><div class="content"><a class="title" href="/archives/35864571.html" title="docker部署jenkins">docker部署jenkins</a><time datetime="2026-08-10T05:55:00.000Z" title="发表于 2026-08-10 13:55:00">2026-08-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/be6d62ff.html" title="docker部署gitlab"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署gitlab"/></a><div class="content"><a class="title" href="/archives/be6d62ff.html" title="docker部署gitlab">docker部署gitlab</a><time datetime="2026-08-08T07:16:03.000Z" title="发表于 2026-08-08 15:16:03">2026-08-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260807160530247.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s+Helm部署kube-prometheus-stack"/></a><div class="content"><a class="title" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack">K8s+Helm部署kube-prometheus-stack</a><time datetime="2026-08-07T07:12:03.000Z" title="发表于 2026-08-07 15:12:03">2026-08-07</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2020 - 2026 By Raidenxe</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5"></script><script src="/js/main.js?v=5.5.5"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="false"> </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5"></script></div></div></body></html>

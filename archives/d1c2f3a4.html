@@ -1,0 +1,505 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Redis源码编译安装笔记 | Raidenxe的博客</title><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content=" Redis 源码编译安装笔记首先说明一下在Linux上编译安装软件包都是大同小异的。 这里以树莓派为例，在树莓派上编译 Redis 8.8.0 的过程记录，包括依赖、编译选项、踩坑、配置、systemd 和卸载。顺便把内存分配器的选择逻辑也理了一遍。  为什么源码安装 某些发行版自带的 Re..."><script type="application/ld+json"></script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/d1c2f3a4.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css?v=5.5.5"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Redis源码编译安装笔记',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'redis'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/macblack.css"><style>
+  #web_bg{background-image:url(/img/风景006.png)}
+  #footer{background-image:url(/img/风景008.png);background-size:cover;background-position:center}
+  .aplayer-lrc{display:none !important}
+</style>
+<meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/%E9%A3%8E%E6%99%AF006.png));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Raidenxe的博客</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><h1 class="title-seo">Redis源码编译安装笔记</h1></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Redis源码编译安装笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-06-29T09:11:38.000Z" title="发表于 2026-06-29 17:11:38">2026-06-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-07-05T02:22:03.627Z" title="更新于 2026-07-05 10:22:03">2026-07-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Linux学习笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>10分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="container post-content" id="article-container"><p><img src="https://pic4.zhimg.com/v2-f6bcabf288ffc0bc486abea6cbb123bd_1440w.jpg" alt="img"></p>
+<h2 id="Redis-源码编译安装笔记"><a href="#Redis-源码编译安装笔记" class="headerlink" title="Redis 源码编译安装笔记"></a>Redis 源码编译安装笔记</h2><p>首先说明一下在Linux上编译安装软件包都是大同小异的。</p>
+<p>这里以树莓派为例，在树莓派上编译 Redis 8.8.0 的过程记录，包括依赖、编译选项、踩坑、配置、systemd 和卸载。顺便把内存分配器的选择逻辑也理了一遍。</p>
+<hr>
+<h3 id="为什么源码安装"><a href="#为什么源码安装" class="headerlink" title="为什么源码安装"></a>为什么源码安装</h3><ul>
+<li>某些发行版自带的 Redis 版本偏旧，而你想用最新稳定版或者是特定版本。</li>
+<li>想指定安装路径，或者定制编译选项（比如选择内存分配器）。</li>
+<li>纯粹想了解 Redis 的构建过程，方便以后自己排查问题。</li>
+<li>树莓派这类 ARM 设备，源码编译可以针对本地 CPU 做优化。</li>
+</ul>
+<hr>
+<h3 id="安装编译依赖"><a href="#安装编译依赖" class="headerlink" title="安装编译依赖"></a>安装编译依赖</h3><p>先装好基础工具：</p>
+<p>Debian&#x2F;Ubuntu（树莓派 OS 同理）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update <span class="built_in">sudo</span> apt install -y build-essential wget</span><br></pre></td></tr></table></figure>
+
+<h2 id="CentOS-x2F-RHEL-用-yum"><a href="#CentOS-x2F-RHEL-用-yum" class="headerlink" title="CentOS&#x2F;RHEL 用 yum"></a>CentOS&#x2F;RHEL 用 yum</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> yum install -y gcc make wget</span><br></pre></td></tr></table></figure>
+
+<h2 id="获取源码并编译"><a href="#获取源码并编译" class="headerlink" title="获取源码并编译"></a>获取源码并编译</h2><p>下载稳定版源码包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://download.redis.io/redis-stable.tar.gz tar -xzvf redis-stable.tar.gz <span class="built_in">cd</span> redis-stable</span><br></pre></td></tr></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果系统有 jemalloc 头文件，直接 </span></span><br><span class="line">make make -j$(<span class="built_in">nproc</span>)  </span><br><span class="line"><span class="comment"># 如果报 jemalloc 相关错误，就用 </span></span><br><span class="line">libc make MALLOC=libc -j$(<span class="built_in">nproc</span>)-j$(<span class="built_in">nproc</span>) </span><br><span class="line"><span class="comment"># 用满所有 CPU 核心，加快编译速度。</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="编译的几个细节"><a href="#编译的几个细节" class="headerlink" title="编译的几个细节"></a>编译的几个细节</h2><h3 id="make-clean-与-make-distclean"><a href="#make-clean-与-make-distclean" class="headerlink" title="make clean 与 make distclean"></a><code>make clean</code> 与 <code>make distclean</code></h3><ul>
+<li><code>make clean</code> 只删 <code>.o</code> 和可执行文件，保留 Makefile 生成的依赖缓存。</li>
+<li><code>make distclean</code> 清理得更彻底，连依赖缓存一起删。</li>
+</ul>
+<p><strong>如果你切换了内存分配器（比如从 jemalloc 切到 libc），一定要先</strong> <strong><code>make distclean</code>，否则残留的依赖信息会导致编译混乱。</strong></p>
+<h3 id="编译出的文件去哪了"><a href="#编译出的文件去哪了" class="headerlink" title="编译出的文件去哪了"></a>编译出的文件去哪了</h3><p>编译完成后，可执行文件在 <code>src/</code> 目录下。<code>make install</code> 只是把这些文件复制到系统目录。</p>
+<hr>
+<h2 id="常见的编译报错"><a href="#常见的编译报错" class="headerlink" title="常见的编译报错"></a>常见的编译报错</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fatal error: jemalloc/jemalloc.h: No such file or directory</span><br></pre></td></tr></table></figure>
+
+<p>原因：系统没有 jemalloc 头文件，而 Redis 默认使用 jemalloc。</p>
+<p>两种处理方式：</p>
+<ul>
+<li><strong>简单</strong>：<code>make distclean &amp;&amp; make MALLOC=libc</code></li>
+<li><strong>彻底</strong>：安装 <code>libjemalloc-dev</code>，然后 <code>make distclean &amp;&amp; make</code></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">implicit declaration of <span class="keyword">function</span> ‘je_malloc_usable_size’</span><br></pre></td></tr></table></figure>
+
+<p>这个报错通常是因为之前编译过 jemalloc 版本，但后来切到 libc 时没做 <code>distclean</code>。执行 <code>make distclean</code> 再重新编译即可。</p>
+<p><strong>经验</strong>：凡是遇到分配器相关的奇怪报错，先 <code>make distclean</code> 再重来，能省很多时间。</p>
+<hr>
+<h2 id="内存分配器：jemalloc-与-libc"><a href="#内存分配器：jemalloc-与-libc" class="headerlink" title="内存分配器：jemalloc 与 libc"></a>内存分配器：jemalloc 与 libc</h2><p>Redis 自己不做内存池，直接调用系统级的内存分配器。分配器的性能直接影响 Redis 的内存使用效率和碎片率。</p>
+<h3 id="Redis-默认的选择逻辑"><a href="#Redis-默认的选择逻辑" class="headerlink" title="Redis 默认的选择逻辑"></a>Redis 默认的选择逻辑</h3><p>在 Linux 上默认用 <strong>jemalloc</strong>，其他平台（macOS、BSD）默认用 <strong>libc malloc</strong>。</p>
+<p>为什么 Linux 偏爱 jemalloc？主要原因是 jemalloc 在多线程场景下碎片率更低，能更有效地利用内存。</p>
+<h3 id="什么是内存碎片"><a href="#什么是内存碎片" class="headerlink" title="什么是内存碎片"></a>什么是内存碎片</h3><p>简单说：你分配和释放内存的次数多了，内存中会出现很多不连续的空闲小块。当你要申请一块连续大内存时，虽然总空闲量够，但因为没有连续空间，分配失败。jemalloc 通过更细粒度的分配尺寸和更好的回收策略，减少这种情况。</p>
+<h3 id="三种主流分配器对比"><a href="#三种主流分配器对比" class="headerlink" title="三种主流分配器对比"></a>三种主流分配器对比</h3><table>
+<thead>
+<tr>
+<th>分配器</th>
+<th>特点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ptmalloc（glibc 默认）</td>
+<td>最通用，兼容性好，但大并发下性能一般</td>
+<td>通用场景</td>
+</tr>
+<tr>
+<td>jemalloc</td>
+<td>碎片控制好，并发扩展性强，Redis 官方推荐</td>
+<td>高并发、大内存服务</td>
+</tr>
+<tr>
+<td>tcmalloc（Google）</td>
+<td>多核优化不错，但大内存分配时 CPU 可能偏高</td>
+<td>多核 CPU 密集型场景</td>
+</tr>
+</tbody></table>
+<p>大多数场景下，直接用 jemalloc 就好。如果懒得装依赖，<code>MALLOC=libc</code> 也能跑，性能差距在普通负载下几乎感觉不到。</p>
+<hr>
+<h2 id="安装到哪个目录"><a href="#安装到哪个目录" class="headerlink" title="安装到哪个目录"></a>安装到哪个目录</h2><p>默认安装到 <code>/usr/local/bin</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> make install</span><br></pre></td></tr></table></figure>
+
+<p>这样 <code>redis-server</code>、<code>redis-cli</code> 等命令就直接在 PATH 里了。</p>
+<p>如果想统一管理，可以指定 <code>PREFIX</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> make PREFIX=/usr/local/redis install</span><br></pre></td></tr></table></figure>
+
+<p>此时可执行文件在 <code>/usr/local/redis/bin/</code>，需要手动把该目录加入 <code>PATH</code>。</p>
+<blockquote>
+<p><code>/usr/local/bin</code> 是 FHS 标准里“用户自行编译安装的程序”的推荐位置，和包管理器安装的 <code>/usr/bin</code> 区分开。</p>
+</blockquote>
+<p>make install后出现类似以下字段就是安装成功了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Hint: It<span class="string">&#x27;s a good idea to run &#x27;</span>make <span class="built_in">test</span><span class="string">&#x27; ;)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    INSTALL redis-server</span></span><br><span class="line"><span class="string">    INSTALL redis-benchmark</span></span><br><span class="line"><span class="string">    INSTALL redis-cli</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><p>复制默认配置文件到 <code>/etc/redis/</code>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /etc/redis</span><br><span class="line">sudo cp /解压路径/redis.conf /etc/redis/</span><br></pre></td></tr></table></figure>
+
+<p>需要关注的配置项（编辑 <code>/etc/redis/redis.conf</code>）：</p>
+<table>
+<thead>
+<tr>
+<th>配置项</th>
+<th>推荐值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>daemonize</td>
+<td>yes</td>
+<td>后台运行</td>
+</tr>
+<tr>
+<td>bind</td>
+<td>127.0.0.1 或 0.0.0.0</td>
+<td>监听地址，外网访问务必设密码</td>
+</tr>
+<tr>
+<td>requirepass</td>
+<td>强密码</td>
+<td>生产环境必须</td>
+</tr>
+<tr>
+<td>dir</td>
+<td>&#x2F;var&#x2F;lib&#x2F;redis</td>
+<td>数据持久化目录，需提前创建</td>
+</tr>
+<tr>
+<td>logfile</td>
+<td>&#x2F;var&#x2F;log&#x2F;redis&#x2F;redis.log</td>
+<td>日志文件，可选</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="启动与验证"><a href="#启动与验证" class="headerlink" title="启动与验证"></a>启动与验证</h2><h3 id="前台调试"><a href="#前台调试" class="headerlink" title="前台调试"></a>前台调试</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-server /etc/redis/redis.conf --daemonize no</span><br></pre></td></tr></table></figure>
+
+<p>看到 <code>Ready to accept connections</code> 就说明配置没问题，按 Ctrl+C 退出。</p>
+<h3 id="后台运行"><a href="#后台运行" class="headerlink" title="后台运行"></a>后台运行</h3><p>方法一：启动时加 <code>--daemonize yes</code></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-server /etc/redis/redis.conf --daemonize yes</span><br></pre></td></tr></table></figure>
+
+<p>方法二：配置文件里把 <code>daemonize</code> 设为 <code>yes</code>，然后直接</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-server /etc/redis/redis.conf</span><br></pre></td></tr></table></figure>
+
+<p>检查进程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps aux | grep redis-server</span><br></pre></td></tr></table></figure>
+
+<p>连接测试：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli ping # 返回 PONG redis-cli set a b &amp;&amp; redis-cli get a</span><br></pre></td></tr></table></figure>
+
+<p>如果设了密码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -a 密码 <span class="comment"># 或进入后 auth 密码</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="systemd-服务（开机自启）"><a href="#systemd-服务（开机自启）" class="headerlink" title="systemd 服务（开机自启）"></a>systemd 服务（开机自启）</h2><p>源码安装不带 systemd 单元，需要自己写一个。</p>
+<p>创建 <code>/etc/systemd/system/redis.service</code>：</p>
+<figure class="highlight apacheconf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[<span class="attribute">Unit</span>]</span><br><span class="line"><span class="attribute">Description</span>=Redis In-Memory Data Store</span><br><span class="line"><span class="attribute">After</span>=network.target</span><br><span class="line"></span><br><span class="line">[<span class="attribute">Service</span>]</span><br><span class="line"><span class="attribute">Type</span>=simple</span><br><span class="line"><span class="attribute">User</span>=root</span><br><span class="line"><span class="attribute">Group</span>=root</span><br><span class="line"><span class="attribute">ExecStart</span>=/usr/local/bin/redis-server /etc/redis/redis.conf</span><br><span class="line"><span class="attribute">ExecStop</span>=/usr/local/bin/redis-cli shutdown</span><br><span class="line"><span class="attribute">Restart</span>=always</span><br><span class="line"><span class="attribute">LimitNOFILE</span>=<span class="number">65536</span></span><br><span class="line"></span><br><span class="line">[<span class="attribute">Install</span>]</span><br><span class="line"><span class="attribute">WantedBy</span>=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果用了自定义 <code>PREFIX</code>，记得改 <code>ExecStart</code> 和 <code>ExecStop</code> 的路径。</p>
+</blockquote>
+<p>启用并启动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl daemon-reload </span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> redis </span><br><span class="line"><span class="built_in">sudo</span> systemctl start redis </span><br><span class="line"><span class="built_in">sudo</span> systemctl status redis</span><br></pre></td></tr></table></figure>
+
+<p>之后管理就方便了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start|stop|restart|status redis</span><br></pre></td></tr></table></figure>
+
+<h3 id="为什么源码安装没有自带-systemd-服务"><a href="#为什么源码安装没有自带-systemd-服务" class="headerlink" title="为什么源码安装没有自带 systemd 服务"></a>为什么源码安装没有自带 systemd 服务</h3><p>因为 Redis 源码是跨平台的，它不知道你用的是 systemd、SysV init 还是 OpenRC。所以它只负责把二进制文件装好，服务管理留给你自己根据系统来配。</p>
+<p>其实 Redis 源码 <code>utils/</code> 目录下有一个 <code>systemd-redis_server.service</code> 模板，直接复制过来改改也能用。</p>
+<hr>
+<h2 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h2><p>源码安装没有 <code>make uninstall</code>，卸载就是手动删文件。</p>
+<p>先停服务：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl stop redis   # 如果有 systemd # 或 redis-cli shutdown</span><br></pre></td></tr></table></figure>
+
+<p>然后根据安装方式删文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">默认安装（/usr/local/bin）：</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /usr/local/bin <span class="built_in">sudo</span> <span class="built_in">rm</span> -f redis-server redis-cli redis-benchmark redis-sentinel redis-check-rdb redis-check-aof</span><br><span class="line"></span><br><span class="line">自定义 PREFIX（如 /usr/local/redis）：</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">rm</span> -rf /usr/local/redis</span><br></pre></td></tr></table></figure>
+
+<p>配置和数据目录按需清理：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo rm -rf /etc/redis sudo rm -rf /var/lib/redis   # 小心，这会删掉所有持久化数据</span><br></pre></td></tr></table></figure>
+
+<p>如果之前改过 <code>~/.bashrc</code> 加过 PATH，把那行删掉。</p>
+<hr>
+<h2 id="一键安装脚本（交互式）"><a href="#一键安装脚本（交互式）" class="headerlink" title="一键安装脚本（交互式）"></a>一键安装脚本（交互式）</h2><p>下面这个脚本会检测当前目录是否有源码包，没有的话让你选默认版本还是自定义版本，然后自动编译安装。</p>
+<p>编译安装很有可能会遇上各种各样的问题，这里不太建议使用脚本进行安装。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># Redis 源码编译安装交互脚本</span></span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line"></span><br><span class="line">DEFAULT_VERSION=<span class="string">&quot;7.2.4&quot;</span></span><br><span class="line">INSTALL_PREFIX=<span class="string">&quot;/usr/local/redis&quot;</span></span><br><span class="line">REDIS_URL=<span class="string">&quot;Index of /releases/&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">info</span></span>() &#123; <span class="built_in">echo</span> -e <span class="string">&quot;\033[32m[INFO]\033[0m <span class="variable">$1</span>&quot;</span>; &#125;</span><br><span class="line"><span class="function"><span class="title">error</span></span>() &#123; <span class="built_in">echo</span> -e <span class="string">&quot;\033[31m[ERROR]\033[0m <span class="variable">$1</span>&quot;</span>; <span class="built_in">exit</span> 1; &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">check_deps</span></span>() &#123;</span><br><span class="line">    <span class="keyword">for</span> cmd <span class="keyword">in</span> gcc make wget; <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">if</span> ! <span class="built_in">command</span> -v <span class="variable">$cmd</span> &amp;&gt;/dev/null; <span class="keyword">then</span></span><br><span class="line">            error <span class="string">&quot;缺少 <span class="variable">$cmd</span>，请安装 build-essential 和 wget&quot;</span></span><br><span class="line">        <span class="keyword">fi</span></span><br><span class="line">    <span class="keyword">done</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">find_pkg</span></span>() &#123; <span class="built_in">ls</span> redis-*.tar.gz 2&gt;/dev/null | <span class="built_in">head</span> -n1; &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">main</span></span>() &#123;</span><br><span class="line">    check_deps</span><br><span class="line">    <span class="built_in">local</span> pkg=$(find_pkg)</span><br><span class="line">    <span class="keyword">if</span> [ -n <span class="string">&quot;<span class="variable">$pkg</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">        info <span class="string">&quot;发现已有包: <span class="variable">$pkg</span>&quot;</span></span><br><span class="line">        <span class="built_in">read</span> -p <span class="string">&quot;使用它? (y/n, 默认 y): &quot;</span> use</span><br><span class="line">        use=<span class="variable">$&#123;use:-y&#125;</span></span><br><span class="line">        <span class="keyword">if</span> [[ <span class="variable">$use</span> != <span class="string">&quot;y&quot;</span> &amp;&amp; <span class="variable">$use</span> != <span class="string">&quot;Y&quot;</span> ]]; <span class="keyword">then</span></span><br><span class="line">            pkg=<span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="keyword">fi</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> [ -z <span class="string">&quot;<span class="variable">$pkg</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;请选择: 1) 默认版本 <span class="variable">$DEFAULT_VERSION</span>  2) 自定义版本&quot;</span></span><br><span class="line">        <span class="built_in">read</span> -p <span class="string">&quot;输入 1 或 2 (默认 1): &quot;</span> choice</span><br><span class="line">        choice=<span class="variable">$&#123;choice:-1&#125;</span></span><br><span class="line">        <span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$choice</span>&quot;</span> == <span class="string">&quot;1&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">            version=<span class="variable">$DEFAULT_VERSION</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="built_in">read</span> -p <span class="string">&quot;输入版本号 (如 6.2.14): &quot;</span> version</span><br><span class="line">            [ -z <span class="string">&quot;<span class="variable">$version</span>&quot;</span> ] &amp;&amp; error <span class="string">&quot;版本号不能为空&quot;</span></span><br><span class="line">        <span class="keyword">fi</span></span><br><span class="line">        wget --show-progress <span class="string">&quot;<span class="variable">$&#123;REDIS_URL&#125;</span>redis-<span class="variable">$&#123;version&#125;</span>.tar.gz&quot;</span></span><br><span class="line">        pkg=<span class="string">&quot;redis-<span class="variable">$&#123;version&#125;</span>.tar.gz&quot;</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">    tar -xzvf <span class="string">&quot;<span class="variable">$pkg</span>&quot;</span> &gt;/dev/null</span><br><span class="line">    <span class="built_in">cd</span> <span class="string">&quot;<span class="variable">$&#123;pkg%.tar.gz&#125;</span>&quot;</span></span><br><span class="line">    make distclean 2&gt;/dev/null || <span class="literal">true</span></span><br><span class="line">    <span class="comment"># 检测 jemalloc，若无则自动使用 libc</span></span><br><span class="line">    <span class="keyword">if</span> [ ! -f /usr/include/jemalloc/jemalloc.h ] &amp;&amp; [ ! -f /usr/local/include/jemalloc/jemalloc.h ]; <span class="keyword">then</span></span><br><span class="line">        info <span class="string">&quot;未检测到 jemalloc，使用 libc 分配器&quot;</span></span><br><span class="line">        make MALLOC=libc -j$(<span class="built_in">nproc</span>)</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        make -j$(<span class="built_in">nproc</span>)</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">sudo</span> <span class="built_in">mkdir</span> -p <span class="string">&quot;<span class="variable">$INSTALL_PREFIX</span>&quot;</span></span><br><span class="line">    <span class="built_in">sudo</span> make PREFIX=<span class="string">&quot;<span class="variable">$INSTALL_PREFIX</span>&quot;</span> install</span><br><span class="line"></span><br><span class="line">    <span class="built_in">sudo</span> <span class="built_in">mkdir</span> -p /etc/redis</span><br><span class="line">    <span class="built_in">sudo</span> <span class="built_in">cp</span> redis.conf /etc/redis/</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ! grep -q <span class="string">&quot;<span class="variable">$INSTALL_PREFIX</span>/bin&quot;</span> ~/.bashrc; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;export PATH=\$PATH:<span class="variable">$INSTALL_PREFIX</span>/bin&quot;</span> &gt;&gt; ~/.bashrc</span><br><span class="line">        info <span class="string">&quot;已添加 PATH，请执行 source ~/.bashrc 生效&quot;</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">    info <span class="string">&quot;安装完成！&quot;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;启动: <span class="variable">$INSTALL_PREFIX</span>/bin/redis-server /etc/redis/redis.conf&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$EUID</span>&quot;</span> -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;建议以 root 或 sudo 运行&quot;</span></span><br><span class="line">    <span class="built_in">read</span> -p <span class="string">&quot;继续? (y/n): &quot;</span> ans</span><br><span class="line">    [[ <span class="variable">$ans</span> != <span class="string">&quot;y&quot;</span> &amp;&amp; <span class="variable">$ans</span> != <span class="string">&quot;Y&quot;</span> ]] &amp;&amp; <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">main <span class="string">&quot;<span class="variable">$@</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>保存为 <code>install_redis.sh</code>，<code>chmod +x</code> 后 <code>sudo ./install_redis.sh</code> 执行。</p>
+<hr>
+<h2 id="官方文档与参考"><a href="#官方文档与参考" class="headerlink" title="官方文档与参考"></a>官方文档与参考</h2><ul>
+<li>官方源码安装说明：</li>
+</ul>
+<p><a href="https://link.zhihu.com/?target=https://redis.io/docs/latest/operate/oss_and_stack/install/archive/install-redis/install-redis-from-source/" rel="external nofollow noreferrer">Install Redis from Sourceredis.io&#x2F;docs&#x2F;latest&#x2F;operate&#x2F;oss_and_stack&#x2F;install&#x2F;archive&#x2F;install-redis&#x2F;install-redis-from-source&#x2F;</a></p>
+<ul>
+<li>下载页面：</li>
+</ul>
+<p><a href="https://link.zhihu.com/?target=https://redis.io/downloads" rel="external nofollow noreferrer">https://redis.io/downloadsredis.io/downloads</a></p>
+<ul>
+<li>命令参考：</li>
+</ul>
+<p><a href="https://link.zhihu.com/?target=https://redis.io/commands" rel="external nofollow noreferrer">https://redis.io/commandsredis.io/commands</a></p>
+<ul>
+<li>源码根目录的 <code>README</code> 文件，包含编译选项和环境变量说明。</li>
+<li><code>utils/systemd-redis_server.service</code> —— 官方 systemd 模板。</li>
+<li>jemalloc 官网：</li>
+</ul>
+<p><a href="https://link.zhihu.com/?target=https://jemalloc.net/" rel="external nofollow noreferrer">jemallocjemalloc.net&#x2F;</a></p>
+<hr>
+<h2 id="最后说几句"><a href="#最后说几句" class="headerlink" title="最后说几句"></a>最后说几句</h2><p>源码编译本身不复杂，但容易在分配器选择和清理残留上卡住。记住两点：一是切换分配器前先 <code>make distclean</code>；二是如果不确定，直接用 <code>MALLOC=libc</code> 省事。生产环境如果追求极致性能，装好 <code>libjemalloc-dev</code> 让 Redis 默认用 jemalloc 就行。</p>
+<p>systemd 服务文件最好自己写一份，毕竟开机自启和统一管理能省不少麻烦。</p>
+<p>以上过程在树莓派 OS（Debian Bookworm）上实测通过，gcc 12.2。其他发行版大同小异，包管理命令换一下就好。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/d1c2f3a4.html">https://raidenxe.github.io/archives/d1c2f3a4.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/linux/">linux</a><a class="post-meta__tags" href="/tags/redis/">redis</a></div><div class="post-share"><div class="social-share" data-image="https://pic1.zhimg.com/70/v2-b55b31004d6a8fff884113a21230f889_1440w.avis?source=172ae18b&amp;biz_tag=Post" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav id="pagination"><div class="pagination"></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/archives/efab09c6.html" title="redis集群异常的一些排查思路"><img class="cover" src="https://pica.zhimg.com/70/v2-d1f26d21e4fe2218f7a16e7180944e0a_1440w.avis?source=172ae18b&biz_tag=Post" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-22</div><div class="info-item-2">redis集群异常的一些排查思路</div></div><div class="info-2"><div class="info-item-1">分享一下我遇到的redis集群异常问题。 redis报错：redis.exceptions.ReadOnlyError: You can’t write against a read only replica. 排查思路检查redis集群连接到redis节点 1redis-cli -c -h your_redis_node_ip -p your_redis_port  查看集群详细信息 1cluster info   检查哨兵集群连接到哨兵节点 1redis-cli -h your_sentinel_node_ip -p your_sentinel_port  查看哨兵集群详细信息 1SENTINEL masters   主要需要留意master节点是否存活，master节点id是否一致。 定位错误原因并解决经过错误定位和排查后，发现是因为集群不存在master节点导致问题的出现，使用SLAVEOF NO ONE 将一个从节点升级为主节点问题解决。 </div></div></div></a><a class="pagination-related" href="/archives/d2c4a8b1.html" title="Docker容器与宿主机的区别"><img class="cover" src="https://picx.zhimg.com/80/v2-c40c351ba7a6f43753fa47b7859bf36e_720w.webp?source=2c26e567" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-10</div><div class="info-item-2">Docker容器与宿主机的区别</div></div><div class="info-2"><div class="info-item-1">Docker 容器与宿主机共享内核但拥有独立的文件系统、进程空间和资源限制。本文从内核架构、Namespace 隔离、cgroup 资源管控、文件系统分层等维度出发，系统梳理容器与宿主机之间的本质区别，并介绍多种实用的容器环境检测方法。 容器与虚拟机的本质区别在深入讨论容器与宿主机的差异之前，有必要先理解容器化技术的底层架构。与传统的虚拟机不同，Docker 容器并非在独立操作系统上运行，而是与宿主机共享同一个 Linux 内核。 共享内核架构一个典型的 Linux 文件系统由 bootfs 和 rootfs 两部分组成：  bootfs：包含 bootloader 和 kernel（操作系统内核）。 rootfs：包含操作系统所需的文件、配置和目录，但不包括内核。   容器正是利用了这一特性——多个不同的镜像可以在同一个宿主机内核上运行各自的 rootfs：  容器、镜像与父镜像之间的关系：  Namespace 隔离容器方案基于 Linux 内核提供的 cgroup 和 namespace 来实现隔离。Linux 内核通过以下六种 Namespace 实现不同维度的隔离：  ...</div></div></div></a><a class="pagination-related" href="/archives/f5d6e7c8.html" title="Docker命令速查与简单实战"><img class="cover" src="https://picx.zhimg.com/70/v2-b5931fd8a0a340ce11953832401d9803_1440w.avis?source=172ae18b&biz_tag=Post" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-06</div><div class="info-item-2">Docker命令速查与简单实战</div></div><div class="info-2"><div class="info-item-1">Docker 常用命令速查笔记一、镜像管理（Image）   命令 用途 示例    docker images 列出本机所有镜像 docker images   docker pull &lt;镜像名&gt;:&lt;标签&gt; 从仓库拉取镜像 docker pull nginx:1.25   docker rmi &lt;镜像ID或名称&gt; 删除镜像（可加 -f 强制） docker rmi nginx:1.25   docker tag &lt;源镜像&gt; &lt;目标镜像:标签&gt; 给镜像打标签 docker tag myapp:v1 myapp:latest   docker inspect &lt;镜像名&gt; 查看镜像详细信息（JSON格式） docker inspect nginx   docker save -o &lt;文件名&gt;.tar &lt;镜像名&gt; 导出镜像为 tar 文件 docker save -o nginx.tar nginx:1.25   docker load -i &lt;文件名&gt;.tar 从 tar 文件...</div></div></div></a><a class="pagination-related" href="/archives/4417b09c.html" title="使用Shell脚本一键完成Docker二进制部署与镜像加速配置"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260705153854651.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-04</div><div class="info-item-2">使用Shell脚本一键完成Docker二进制部署与镜像加速配置</div></div><div class="info-2"><div class="info-item-1">背景与痛点Docker 作为云原生时代的核心基础设施，几乎是每位开发者和运维人员的必备工具。然而在国内网络环境下，Docker 的部署和镜像拉取往往面临两大痛点：  痛点一：官方源访问不稳定。Docker 官方下载站 download.docker.com 在国内部分地区访问缓慢甚至无法连接，导致二进制包下载失败。 痛点二：镜像拉取速度极慢。由于网络原因，从 Docker Hub 拉取镜像时经常超时或速度极慢，严重影响开发效率。  传统的解决方案是手动下载二进制包、复制到 /usr/bin、配置 systemd 服务、再手工编辑 daemon.json 添加镜像源——步骤繁琐且容易出错。本文将分享一个一键完成的 Shell 脚本，实现 Docker 二进制部署与镜像加速配置的自动化。 脚本功能概述该脚本主要实现以下功能：  支持指定版本或自动获取最新版本：可通过命令行参数指定版本号（如 ./install_docker.sh 29.6.0），不传参数则自动从多个镜像源获取最新稳定版。 多源下载容错：依次尝试官方源、阿里云镜像、清华镜像等多个地址下载二进制包。 全自动安装：解压二进...</div></div></div></a><a class="pagination-related" href="/archives/g9h0i1j2.html" title="Dockerfile完全指南：从入门到实战"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260706171038111.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-06</div><div class="info-item-2">Dockerfile完全指南：从入门到实战</div></div><div class="info-2"><div class="info-item-1">前言Docker 的流行离不开其核心概念——镜像。而镜像的构建方式多种多样，但最标准、最透明、最可维护的方式无疑是 Dockerfile。Dockerfile 是一份声明式脚本，它定义了如何从一个基础镜像开始，逐步叠加指令，最终生成一个包含应用程序及其运行环境的可交付镜像。本文将系统讲解 Dockerfile 的方方面面，涵盖基础概念、常用指令、构建流程、分层原理以及一个完整的实战案例，帮你彻底掌握 Dockerfile 的使用。 Dockerfile 是什么？ Dockerfile 是一个文本文件，其中包含了一条条的指令（Instruction），每条指令对应 Linux 系统下的一条命令。Docker 守护程序（dockerd）读取 Dockerfile 并逐条执行这些指令，每执行一条就会生成一个中间镜像层，最终所有层叠加组成最终的镜像。 可以把它理解为”镜像的源代码”——正如我们通过源代码管理应用程序一样，通过 Dockerfile 可以清晰地记录镜像的构建过程，便于版本控制、团队协作和后期维护。 Dockerfile 的优势 自动化：无需手动执行繁杂的 docker co...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Raidenxe</div><div class="author-info-description">向着真理和自由，无名的献身。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/61196baf.html" title="Jenkins-CICD实战"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins-CICD实战"/></a><div class="content"><a class="title" href="/archives/61196baf.html" title="Jenkins-CICD实战">Jenkins-CICD实战</a><time datetime="2026-08-11T17:09:47.000Z" title="发表于 2026-08-12 01:09:47">2026-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a3e16fea.html" title="面试题1"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试题1"/></a><div class="content"><a class="title" href="/archives/a3e16fea.html" title="面试题1">面试题1</a><time datetime="2026-08-11T14:53:55.000Z" title="发表于 2026-08-11 22:53:55">2026-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/35864571.html" title="docker部署jenkins"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署jenkins"/></a><div class="content"><a class="title" href="/archives/35864571.html" title="docker部署jenkins">docker部署jenkins</a><time datetime="2026-08-10T05:55:00.000Z" title="发表于 2026-08-10 13:55:00">2026-08-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/be6d62ff.html" title="docker部署gitlab"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署gitlab"/></a><div class="content"><a class="title" href="/archives/be6d62ff.html" title="docker部署gitlab">docker部署gitlab</a><time datetime="2026-08-08T07:16:03.000Z" title="发表于 2026-08-08 15:16:03">2026-08-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260807160530247.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s+Helm部署kube-prometheus-stack"/></a><div class="content"><a class="title" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack">K8s+Helm部署kube-prometheus-stack</a><time datetime="2026-08-07T07:12:03.000Z" title="发表于 2026-08-07 15:12:03">2026-08-07</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Docker%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><span class="card-category-list-name">Docker学习笔记</span><span class="card-category-list-count">7</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Docker%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/K8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><span class="card-category-list-name">K8s学习笔记</span><span class="card-category-list-count">2</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/K8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><span class="card-category-list-name">K8s学习笔记</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Kubernetes/"><span class="card-category-list-name">Kubernetes</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><span class="card-category-list-name">Linux学习笔记</span><span class="card-category-list-count">17</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"><span class="card-category-list-name">计算机网络</span><span class="card-category-list-count">8</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><span class="card-category-list-name">Linux学习笔记</span><span class="card-category-list-count">4</span></a></li></ul></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83/" style="font-size: 1.1em; color: #999">生产环境</a> <a href="/tags/k8s/" style="font-size: 1.1em; color: #999">k8s</a> <a href="/tags/%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA/" style="font-size: 1.1em; color: #999">磁盘分区</a> <a href="/tags/jumpserver/" style="font-size: 1.1em; color: #999">jumpserver</a> <a href="/tags/kubeadm/" style="font-size: 1.1em; color: #999">kubeadm</a> <a href="/tags/%E9%98%BF%E9%87%8C%E4%BA%91/" style="font-size: 1.26em; color: #999fa8">阿里云</a> <a href="/tags/%E7%A3%81%E7%9B%98%E6%B8%85%E7%90%86/" style="font-size: 1.1em; color: #999">磁盘清理</a> <a href="/tags/%E7%94%9F%E4%BA%A7%E9%83%A8%E7%BD%B2/" style="font-size: 1.1em; color: #999">生产部署</a> <a href="/tags/%E5%8C%85%E7%AE%A1%E7%90%86/" style="font-size: 1.18em; color: #999ca1">包管理</a> <a href="/tags/docker/" style="font-size: 1.5em; color: #99a9bf">docker</a> <a href="/tags/%E9%83%A8%E7%BD%B2/" style="font-size: 1.18em; color: #999ca1">部署</a> <a href="/tags/IP%E5%8D%8F%E8%AE%AE/" style="font-size: 1.1em; color: #999">IP协议</a> <a href="/tags/redis/" style="font-size: 1.18em; color: #999ca1">redis</a> <a href="/tags/Jenkins/" style="font-size: 1.1em; color: #999">Jenkins</a> <a href="/tags/%E5%AE%89%E5%85%A8%E5%90%88%E8%A7%84/" style="font-size: 1.1em; color: #999">安全合规</a> <a href="/tags/C/" style="font-size: 1.1em; color: #999">C</a> <a href="/tags/Agent/" style="font-size: 1.1em; color: #999">Agent</a> <a href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/" style="font-size: 1.1em; color: #999">单片机</a> <a href="/tags/mysql/" style="font-size: 1.1em; color: #999">mysql</a> <a href="/tags/Kubernetes/" style="font-size: 1.42em; color: #99a6b7">Kubernetes</a> <a href="/tags/%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" style="font-size: 1.1em; color: #999">完整指南</a> <a href="/tags/grep/" style="font-size: 1.18em; color: #999ca1">grep</a> <a href="/tags/GitHub/" style="font-size: 1.1em; color: #999">GitHub</a> <a href="/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/" style="font-size: 1.18em; color: #999ca1">高可用</a> <a href="/tags/%E7%A3%81%E7%9B%98/" style="font-size: 1.1em; color: #999">磁盘</a> <a href="/tags/%E5%93%A8%E5%85%B5/" style="font-size: 1.1em; color: #999">哨兵</a> <a href="/tags/CI-CD/" style="font-size: 1.1em; color: #999">CI/CD</a> <a href="/tags/%E7%A3%81%E7%9B%98%E6%89%A9%E5%AE%B9/" style="font-size: 1.1em; color: #999">磁盘扩容</a> <a href="/tags/kvm/" style="font-size: 1.1em; color: #999">kvm</a> <a href="/tags/ACP/" style="font-size: 1.26em; color: #999fa8">ACP</a> <a href="/tags/Git/" style="font-size: 1.1em; color: #999">Git</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 1.18em; color: #999ca1">安全</a> <a href="/tags/ingress-nginx/" style="font-size: 1.1em; color: #999">ingress-nginx</a> <a href="/tags/CNI/" style="font-size: 1.18em; color: #999ca1">CNI</a> <a href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/" style="font-size: 1.1em; color: #999">嵌入式</a> <a href="/tags/kubectl/" style="font-size: 1.1em; color: #999">kubectl</a> <a href="/tags/Socket/" style="font-size: 1.34em; color: #99a3b0">Socket</a> <a href="/tags/jenkins/" style="font-size: 1.1em; color: #999">jenkins</a> <a href="/tags/%E8%BF%9B%E7%A8%8B/" style="font-size: 1.1em; color: #999">进程</a> <a href="/tags/kubernetes/" style="font-size: 1.1em; color: #999">kubernetes</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      <a class="card-more-btn" href="/archives/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a>
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/08/">
+            <span class="card-archive-list-date">
+              八月 2026
+            </span>
+            <span class="card-archive-list-count">8</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/07/">
+            <span class="card-archive-list-date">
+              七月 2026
+            </span>
+            <span class="card-archive-list-count">14</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/06/">
+            <span class="card-archive-list-date">
+              六月 2026
+            </span>
+            <span class="card-archive-list-count">7</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2022/11/">
+            <span class="card-archive-list-date">
+              十一月 2022
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2022/08/">
+            <span class="card-archive-list-date">
+              八月 2022
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2022/06/">
+            <span class="card-archive-list-date">
+              六月 2022
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2022/05/">
+            <span class="card-archive-list-date">
+              五月 2022
+            </span>
+            <span class="card-archive-list-count">7</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2022/04/">
+            <span class="card-archive-list-date">
+              四月 2022
+            </span>
+            <span class="card-archive-list-count">8</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">52</div></div><div class="webinfo-item"><div class="item-name">本站总字数 :</div><div class="item-count">150.3k</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-08-11T17:36:39.309Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2020 - 2026 By Raidenxe</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5"></script><script src="/js/main.js?v=5.5.5"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="false"> </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5"></script></div></div></body></html>

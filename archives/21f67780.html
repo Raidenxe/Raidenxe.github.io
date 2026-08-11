@@ -1,0 +1,890 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>k8s部署笔记 | Raidenxe的博客</title><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Kubernetes 集群部署：从原理到实践 环境：Ubuntu 26.04 LTS &amp;#x2F; Kubernetes v1.36.2 &amp;#x2F; containerd + cri-dockerd   一、Kubernetes 集群部署架构概述1.1 kubeadm 的作用与原理kubea..."><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "k8s部署笔记",
+  "url": "https://raidenxe.github.io/archives/21f67780.html",
+  "image": "https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260711230814041.png",
+  "datePublished": "2026-07-15T02:00:00.000Z",
+  "dateModified": "2026-07-15T01:22:17.620Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Raidenxe",
+      "url": "https://Raidenxe.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/21f67780.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css?v=5.5.5"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'k8s部署笔记',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/macblack.css"><style>
+  #web_bg{background-image:url(/img/风景006.png)}
+  #footer{background-image:url(/img/风景008.png);background-size:cover;background-position:center}
+  .aplayer-lrc{display:none !important}
+</style>
+<meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/%E9%A3%8E%E6%99%AF006.png));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260711230814041.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Raidenxe的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">k8s部署笔记</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">k8s部署笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-15T02:00:00.000Z" title="发表于 2026-07-15 10:00:00">2026-07-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-07-15T01:22:17.620Z" title="更新于 2026-07-15 09:22:17">2026-07-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/K8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">K8s学习笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">7.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>30分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Kubernetes-集群部署：从原理到实践"><a href="#Kubernetes-集群部署：从原理到实践" class="headerlink" title="Kubernetes 集群部署：从原理到实践"></a>Kubernetes 集群部署：从原理到实践</h1><blockquote>
+<p><strong>环境</strong>：Ubuntu 26.04 LTS &#x2F; Kubernetes v1.36.2 &#x2F; containerd + cri-dockerd</p>
+</blockquote>
+<hr>
+<h2 id="一、Kubernetes-集群部署架构概述"><a href="#一、Kubernetes-集群部署架构概述" class="headerlink" title="一、Kubernetes 集群部署架构概述"></a>一、Kubernetes 集群部署架构概述</h2><h3 id="1-1-kubeadm-的作用与原理"><a href="#1-1-kubeadm-的作用与原理" class="headerlink" title="1.1 kubeadm 的作用与原理"></a>1.1 kubeadm 的作用与原理</h3><p>kubeadm 是 Kubernetes 官方提供的集群部署工具，它的核心任务是将一个 Kubernetes 集群的各个组件以容器化的方式部署到目标机器上。kubeadm 的工作原理可以概括为三个阶段：</p>
+<ol>
+<li><strong>前置检查</strong>：kubeadm init 执行前会进行一系列预检，包括主机名解析、端口占用、CRI 端点可用性、Swap 状态等。任何一项不通过都会阻止初始化。</li>
+<li><strong>组件启动</strong>：以静态 Pod 的方式启动 kube-apiserver、kube-controller-manager、kube-scheduler、etcd 等控制平面组件。这些组件的 YAML 清单由 kubeadm 生成并放置在 <code>/etc/kubernetes/manifests/</code> 目录下，kubelet 会监听该目录并自动启动对应的容器。</li>
+<li><strong>集群引导</strong>：生成证书、kubeconfig 文件、RBAC 规则等集群基础设施，并为后续的工作节点加入提供令牌（token）。</li>
+</ol>
+<h3 id="1-2-kubelet-与控制平面的交互"><a href="#1-2-kubelet-与控制平面的交互" class="headerlink" title="1.2 kubelet 与控制平面的交互"></a>1.2 kubelet 与控制平面的交互</h3><p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260711221053170.png"><br>kubelet 是集群中每个节点上运行的代理组件，它通过 CRI（Container Runtime Interface）与容器运行时通信，负责管理 Pod 的生命周期。kubelet 与控制平面组件的交互流程如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubelet → CRI → containerd（创建/管理 Pod 的容器）</span><br><span class="line">kubelet → kube-apiserver（注册节点、上报状态、监听 Pod 变更）</span><br></pre></td></tr></table></figure>
+
+<p>kubelet 启动时通过 kubeconfig 文件中的证书信息向 kube-apiserver 注册节点信息，之后通过 Watch 机制监听 apiserver 上分配给本节点的 Pod 变更，并据此创建或销毁容器。</p>
+<h3 id="1-3-CRI-与容器运行时的关系"><a href="#1-3-CRI-与容器运行时的关系" class="headerlink" title="1.3 CRI 与容器运行时的关系"></a>1.3 CRI 与容器运行时的关系</h3><p>CRI（Container Runtime Interface）是 Kubernetes 定义的一组 gRPC 接口，用于解耦 kubelet 与具体的容器运行时实现。常见的容器运行时和对应的 CRI 实现包括：</p>
+<table>
+<thead>
+<tr>
+<th>容器运行时</th>
+<th>CRI 实现</th>
+<th>通信方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>containerd</td>
+<td>内置 CRI 插件</td>
+<td><code>/var/run/containerd/containerd.sock</code></td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>cri-dockerd（适配器）</td>
+<td><code>/var/run/cri-dockerd.sock</code></td>
+</tr>
+<tr>
+<td>CRI-O</td>
+<td>原生 CRI 实现</td>
+<td><code>/var/run/crio/crio.sock</code></td>
+</tr>
+</tbody></table>
+<p>kubelet 通过 Unix Socket 与 CRI 端点通信，因此当系统中存在多个 CRI 端点时，kubeadm 必须通过 <code>--cri-socket</code> 参数明确指定使用哪一个。</p>
+<hr>
+<h2 id="二、前置环境准备与原理"><a href="#二、前置环境准备与原理" class="headerlink" title="二、前置环境准备与原理"></a>二、前置环境准备与原理</h2><h3 id="2-1-主机名解析原理"><a href="#2-1-主机名解析原理" class="headerlink" title="2.1 主机名解析原理"></a>2.1 主机名解析原理</h3><p>kubeadm 初始化时，kubelet 需要通过主机名解析到本机 IP 地址，以此向 kube-apiserver 注册节点。主机名解析的查找顺序是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname 命令 → getent hosts &lt;hostname&gt; → /etc/hosts → DNS</span><br></pre></td></tr></table></figure>
+
+<p>当 <code>hostname</code> 与 <code>/etc/hosts</code> 中的记录不一致时，解析会失败。例如，主机名为 <code>master-1</code>，但 <code>/etc/hosts</code> 中写的是 <code>master1</code>，<code>getent hosts master-1</code> 就无法找到匹配的 IP。kubeadm 的预检机制会检查这一项，如果解析失败则阻止初始化。</p>
+<p><strong>修复方法</strong>：确保 <code>/etc/hosts</code> 中的记录与 <code>hostname</code> 命令的输出完全一致。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 统一 hosts 文件与主机名</span></span><br><span class="line"><span class="built_in">sudo</span> sed -i <span class="string">&#x27;s/master1/master-1/g&#x27;</span> /etc/hosts</span><br></pre></td></tr></table></figure>
+
+<p>修改后验证：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ getent hosts master-1</span><br><span class="line">192.168.10.193  master-1   master-1.raiden.com</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-容器运行时-cgroup-驱动原理"><a href="#2-2-容器运行时-cgroup-驱动原理" class="headerlink" title="2.2 容器运行时 cgroup 驱动原理"></a>2.2 容器运行时 cgroup 驱动原理</h3><p>Linux 的 cgroup（Control Group）是容器资源隔离的基础。Kubernetes 集群中，kubelet 和容器运行时（containerd）各有一套 cgroup 驱动机制，两者必须保持一致。</p>
+<p><strong>两种 cgroup 驱动：</strong></p>
+<table>
+<thead>
+<tr>
+<th>驱动</th>
+<th>说明</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>cgroupfs</code></td>
+<td>通过直接操作 cgroup 文件系统管理资源</td>
+<td>Docker 默认、不推荐与 systemd 共存</td>
+</tr>
+<tr>
+<td><code>systemd</code></td>
+<td>通过 systemd 的 cgroup 管理接口</td>
+<td>使用 systemd 作为 init 系统的 Linux 发行版</td>
+</tr>
+</tbody></table>
+<p>Ubuntu 使用 systemd 作为 init 系统，如果 containerd 使用 <code>cgroupfs</code> 驱动而 kubelet 使用 <code>systemd</code> 驱动，两者的 cgroup 资源视图不一致，会导致节点进入 <code>NotReady</code> 状态。</p>
+<p>containerd 安装后默认不会生成配置文件，需要使用以下命令生成并修改：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成 containerd 默认配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">mkdir</span> -p /etc/containerd</span><br><span class="line">containerd config default | <span class="built_in">sudo</span> <span class="built_in">tee</span> /etc/containerd/config.toml &gt; /dev/null</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改 SystemdCgroup 为 true</span></span><br><span class="line"><span class="built_in">sudo</span> sed -i <span class="string">&#x27;s/SystemdCgroup = false/SystemdCgroup = true/&#x27;</span> /etc/containerd/config.toml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启 containerd 服务</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart containerd</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-CRI-端点选择"><a href="#2-3-CRI-端点选择" class="headerlink" title="2.3 CRI 端点选择"></a>2.3 CRI 端点选择</h3><p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260711224407502.png"><br>当系统中同时存在多个容器运行时（如 containerd 原生 CRI 和 cri-dockerd）时，kubeadm 会检测到多个 CRI 端点并报错，无法自动选择。</p>
+<p><strong>两种方案的架构对比：</strong></p>
+<ul>
+<li><strong>containerd 原生 CRI</strong>：<code>kubelet → containerd（内置 CRI 插件）→ 容器</code><ul>
+<li>链路短，性能损耗小</li>
+<li>Kubernetes 官方推荐方案</li>
+</ul>
+</li>
+<li><strong>cri-dockerd</strong>：<code>kubelet → cri-dockerd → Docker → containerd → 容器</code><ul>
+<li>增加了一层适配器调用</li>
+<li>适用于从 v1.24 之前版本迁移、仍依赖 Docker 构建工具链的场景</li>
+</ul>
+</li>
+</ul>
+<p>在 <code>kubeadm init</code> 时通过 <code>--cri-socket</code> 参数指定：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 推荐：使用 containerd 原生 CRI</span></span><br><span class="line">--cri-socket=unix:///var/run/containerd/containerd.sock</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-完整的前置环境修复命令"><a href="#2-4-完整的前置环境修复命令" class="headerlink" title="2.4 完整的前置环境修复命令"></a>2.4 完整的前置环境修复命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 修复 hosts 文件</span></span><br><span class="line"><span class="built_in">sudo</span> sed -i <span class="string">&#x27;s/master1/master-1/g&#x27;</span> /etc/hosts</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 配置 containerd SystemdCgroup</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">mkdir</span> -p /etc/containerd</span><br><span class="line">containerd config default | <span class="built_in">sudo</span> <span class="built_in">tee</span> /etc/containerd/config.toml &gt; /dev/null</span><br><span class="line"><span class="built_in">sudo</span> sed -i <span class="string">&#x27;s/SystemdCgroup = false/SystemdCgroup = true/&#x27;</span> /etc/containerd/config.toml</span><br><span class="line"><span class="built_in">sudo</span> systemctl restart containerd</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 验证镜像拉取（选择 containerd 原生 CRI）</span></span><br><span class="line">kubeadm config images pull \</span><br><span class="line">  --kubernetes-version=v1.36.2 \</span><br><span class="line">  --cri-socket=unix:///var/run/containerd/containerd.sock \</span><br><span class="line">  --image-repository=registry.aliyuncs.com/google_containers</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="三、集群高可用架构设计"><a href="#三、集群高可用架构设计" class="headerlink" title="三、集群高可用架构设计"></a>三、集群高可用架构设计</h2><p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260711223259957.png"></p>
+<h3 id="3-1-高可用架构整体设计"><a href="#3-1-高可用架构整体设计" class="headerlink" title="3.1 高可用架构整体设计"></a>3.1 高可用架构整体设计</h3><p>生产环境中，Kubernetes 控制平面的高可用是保障集群稳定运行的关键。单控制节点部署存在单点故障风险——一旦该节点宕机，整个集群将无法管理。高可用架构的核心思想是：部署多个控制平面节点，并通过负载均衡器将 API 请求分发到所有可用的控制节点。</p>
+<p>整体架构分为三层：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">┌──────────────────────────────────────────────┐</span><br><span class="line">│              客户端访问入口                     │</span><br><span class="line">│         (kubectl / kubeadm join)               │</span><br><span class="line">└──────────────────┬───────────────────────────┘</span><br><span class="line">                   │</span><br><span class="line">                   ▼</span><br><span class="line">┌──────────────────────────────────────────────┐</span><br><span class="line">│             虚拟 IP (VIP)                      │</span><br><span class="line">│           10.0.0.100:6443                      │</span><br><span class="line">│        (Keepalived 管理漂移)                   │</span><br><span class="line">└──────────────────┬───────────────────────────┘</span><br><span class="line">                   │</span><br><span class="line">          ┌────────┴────────┐</span><br><span class="line">          ▼                 ▼</span><br><span class="line">┌─────────────────┐ ┌─────────────────┐</span><br><span class="line">│   HAProxy 主    │ │   HAProxy 备    │</span><br><span class="line">│   (ha-1 节点)   │ │   (ha-2 节点)   │</span><br><span class="line">│   10.0.0.107    │ │   10.0.0.108    │</span><br><span class="line">└────────┬────────┘ └────────┬────────┘</span><br><span class="line">         │                   │</span><br><span class="line">         └────────┬──────────┘</span><br><span class="line">                  │</span><br><span class="line">          ┌───────┴───────┐</span><br><span class="line">          ▼               ▼</span><br><span class="line">┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐</span><br><span class="line">│  Master 1       │ │  Master 2       │ │  Master 3       │</span><br><span class="line">│  kube-apiserver │ │  kube-apiserver │ │  kube-apiserver │</span><br><span class="line">│  10.0.0.101     │ │  10.0.0.102     │ │  10.0.0.103     │</span><br><span class="line">└─────────────────┘ └─────────────────┘ └─────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-各组件角色与关系"><a href="#3-2-各组件角色与关系" class="headerlink" title="3.2 各组件角色与关系"></a>3.2 各组件角色与关系</h3><h4 id="3-2-1-负载均衡层：HAProxy-与-Nginx"><a href="#3-2-1-负载均衡层：HAProxy-与-Nginx" class="headerlink" title="3.2.1 负载均衡层：HAProxy 与 Nginx"></a>3.2.1 负载均衡层：HAProxy 与 Nginx</h4><p>HAProxy 和 Nginx 均支持四层（TCP）负载均衡，能够将客户端请求分发到后端的多个 kube-apiserver 实例。</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>工作模式</th>
+<th>配置复杂度</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HAProxy</td>
+<td>原生四层代理，配置简洁</td>
+<td>低</td>
+<td>专用于负载均衡，推荐用于 K8s API 场景</td>
+</tr>
+<tr>
+<td>Nginx</td>
+<td>需配置 <code>stream</code> 模块实现四层代理</td>
+<td>中</td>
+<td>已使用 Nginx 的团队，统一管理负担</td>
+</tr>
+</tbody></table>
+<p><strong>HAProxy</strong> 的核心优势在于：</p>
+<ul>
+<li>配置语义清晰，对四层负载均衡的支持更加原生</li>
+<li>内置简洁的状态监控页面（<code>/status</code>），便于运维人员实时观察后端各节点的健康状态</li>
+<li>支持精细的健康检查参数（间隔、失败阈值、恢复阈值）</li>
+</ul>
+<p><strong>Nginx</strong> 的优势在于：</p>
+<ul>
+<li>已经在使用 Nginx 的团队可以统一管理，减少运维组件数量</li>
+<li>通过 <code>stream</code> 模块实现四层代理，与 HTTP 配置分离管理</li>
+</ul>
+<h4 id="3-2-2-高可用保障层：Keepalived"><a href="#3-2-2-高可用保障层：Keepalived" class="headerlink" title="3.2.2 高可用保障层：Keepalived"></a>3.2.2 高可用保障层：Keepalived</h4><p>Keepalived 通过 VRRP（Virtual Router Redundancy Protocol）协议实现虚拟 IP（VIP）的漂移，确保负载均衡器本身的高可用。其核心机制如下：</p>
+<ul>
+<li>主备两台 HAProxy 节点上各运行一个 Keepalived 实例</li>
+<li>主节点（MASTER）持有 VIP，处理所有 API 请求</li>
+<li>Keepalived 通过 VRRP 通告报文进行心跳检测，监控主节点状态</li>
+<li>当主节点故障时，备节点（BACKUP）自动接管 VIP，整个过程对客户端透明</li>
+<li>通过 <code>vrrp_script</code> 机制监控 HAProxy 进程状态，当 HAProxy 异常时主动降级触发切换</li>
+</ul>
+<p>Keepalived 的工作流程可以用以下时序描述：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">正常状态：</span><br><span class="line">  ha-1 (MASTER, priority=100) → 持有 VIP 10.0.0.100 → 处理请求</span><br><span class="line">  ha-2 (BACKUP, priority=80)  → 等待 MASTER 心跳</span><br><span class="line"></span><br><span class="line">故障切换：</span><br><span class="line">  ha-1 HAProxy 异常 → vrrp_script 检测失败 → priority 降低至 70</span><br><span class="line">  → ha-2 优先级 80 高于 ha-1 → ha-2 接管 VIP → 服务恢复</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-3-控制平面层：多-Master-节点"><a href="#3-2-3-控制平面层：多-Master-节点" class="headerlink" title="3.2.3 控制平面层：多 Master 节点"></a>3.2.3 控制平面层：多 Master 节点</h4><p>多个控制平面节点各自运行完整的 kube-apiserver、kube-controller-manager、kube-scheduler 和 etcd 组件。其中：</p>
+<ul>
+<li><strong>kube-apiserver</strong> 是无状态的服务，可以水平扩展，通过负载均衡器统一对外提供服务</li>
+<li><strong>etcd</strong> 采用 Raft 协议实现分布式一致性，奇数个节点（3 或 5）确保选主能正常达成多数派</li>
+<li><strong>kube-controller-manager</strong> 和 <strong>kube-scheduler</strong> 通过 <code>--leader-elect</code> 参数实现领导者选举，同一时刻只有一个实例处于活跃状态</li>
+</ul>
+<h3 id="3-3-数据流与请求路径"><a href="#3-3-数据流与请求路径" class="headerlink" title="3.3 数据流与请求路径"></a>3.3 数据流与请求路径</h3><p>客户端（kubectl、kubeadm join、Pod 等）访问 kube-apiserver 的完整路径如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">客户端 → DNS 解析 kubeapi.raiden.com → VIP (10.0.0.100)</span><br><span class="line">       → Keepalived 将请求路由到当前 MASTER 的 HAProxy</span><br><span class="line">       → HAProxy 根据负载均衡策略转发到某个 Master 节点的 kube-apiserver</span><br><span class="line">       → kube-apiserver 处理请求并返回结果</span><br></pre></td></tr></table></figure>
+
+<p>关键机制说明：</p>
+<ol>
+<li><strong>客户端无感知</strong>：客户端始终通过 VIP 访问，无需感知后端节点的变化或故障切换</li>
+<li><strong>健康检查自动剔除</strong>：HAProxy 定期对后端 kube-apiserver 进行健康检查（<code>check inter 3s fall 3 rise 3</code>），自动将故障节点从负载池中移除</li>
+<li><strong>双重高可用保障</strong>：Keepalived 的 <code>vrrp_script</code> 监控 HAProxy 进程，HAProxy 的健康检查监控 kube-apiserver 进程，构成两层故障检测机制</li>
+<li><strong>控制节点通过 VIP 加入</strong>：额外的控制平面节点加入集群时，同样通过 VIP 与 kube-apiserver 通信，规避了单个 Master 节点的故障风险</li>
+</ol>
+<h3 id="3-4-高可用部署配置"><a href="#3-4-高可用部署配置" class="headerlink" title="3.4 高可用部署配置"></a>3.4 高可用部署配置</h3><p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260711230105210.png"></p>
+<h4 id="3-4-1-主机规划"><a href="#3-4-1-主机规划" class="headerlink" title="3.4.1 主机规划"></a>3.4.1 主机规划</h4><table>
+<thead>
+<tr>
+<th>IP 地址</th>
+<th>主机名</th>
+<th>角色</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>10.0.0.101</td>
+<td>master-1</td>
+<td>控制平面节点 1</td>
+</tr>
+<tr>
+<td>10.0.0.102</td>
+<td>master-2</td>
+<td>控制平面节点 2</td>
+</tr>
+<tr>
+<td>10.0.0.103</td>
+<td>master-3</td>
+<td>控制平面节点 3</td>
+</tr>
+<tr>
+<td>10.0.0.104</td>
+<td>node-1</td>
+<td>工作节点 1</td>
+</tr>
+<tr>
+<td>10.0.0.105</td>
+<td>node-2</td>
+<td>工作节点 2</td>
+</tr>
+<tr>
+<td>10.0.0.107</td>
+<td>ha-1</td>
+<td>负载均衡节点 1（HAProxy + Keepalived）</td>
+</tr>
+<tr>
+<td>10.0.0.108</td>
+<td>ha-2</td>
+<td>负载均衡节点 2（HAProxy + Keepalived）</td>
+</tr>
+<tr>
+<td>10.0.0.100</td>
+<td>kubeapi</td>
+<td>虚拟 IP（VIP）</td>
+</tr>
+</tbody></table>
+<h4 id="3-4-2-配置主机名解析"><a href="#3-4-2-配置主机名解析" class="headerlink" title="3.4.2 配置主机名解析"></a>3.4.2 配置主机名解析</h4><p>在所有节点上配置统一的 hosts 文件，确保集群内所有主机可以通过主机名互相访问：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt;&gt; /etc/hosts &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">10.0.0.100 kubeapi kubeapi.raiden.com</span></span><br><span class="line"><span class="string">10.0.0.101 master-1 master-1.raiden.com</span></span><br><span class="line"><span class="string">10.0.0.102 master-2 master-2.raiden.com</span></span><br><span class="line"><span class="string">10.0.0.103 master-3 master-3.raiden.com</span></span><br><span class="line"><span class="string">10.0.0.104 node-1 node-1.raiden.com</span></span><br><span class="line"><span class="string">10.0.0.105 node-2 node-2.raiden.com</span></span><br><span class="line"><span class="string">10.0.0.107 ha-1 ha-1.raiden.com</span></span><br><span class="line"><span class="string">10.0.0.108 ha-2 ha-2.raiden.com</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-4-3-配置-HAProxy"><a href="#3-4-3-配置-HAProxy" class="headerlink" title="3.4.3 配置 HAProxy"></a>3.4.3 配置 HAProxy</h4><p>在两台负载均衡节点（ha-1、ha-2）上安装并配置 HAProxy：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 HAProxy</span></span><br><span class="line"><span class="built_in">sudo</span> apt update &amp;&amp; <span class="built_in">sudo</span> apt -y install haproxy</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置内核参数，允许绑定非本地 IP（VIP 漂移时需要）</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;net.ipv4.ip_nonlocal_bind = 1&quot;</span> | <span class="built_in">sudo</span> <span class="built_in">tee</span> -a /etc/sysctl.conf</span><br><span class="line"><span class="built_in">sudo</span> sysctl -p</span><br></pre></td></tr></table></figure>
+
+<p>编辑 <code>/etc/haproxy/haproxy.cfg</code>，添加以下内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">listen stats</span><br><span class="line">    mode http</span><br><span class="line">    bind 0.0.0.0:8888</span><br><span class="line">    stats enable</span><br><span class="line">    stats uri /status</span><br><span class="line">    stats auth admin:123456</span><br><span class="line"></span><br><span class="line">listen kubernetes-api-6443</span><br><span class="line">    bind 10.0.0.100:6443</span><br><span class="line">    mode tcp</span><br><span class="line">    server master-1 10.0.0.101:6443 check inter 3s fall 3 rise 3</span><br><span class="line">    server master-2 10.0.0.102:6443 check inter 3s fall 3 rise 3</span><br><span class="line">    server master-3 10.0.0.103:6443 check inter 3s fall 3 rise 3</span><br></pre></td></tr></table></figure>
+
+<p>配置参数说明：</p>
+<ul>
+<li><code>bind 10.0.0.100:6443</code>：绑定到 VIP 地址，确保只有 VIP 持有者提供服务</li>
+<li><code>mode tcp</code>：四层 TCP 代理模式，适用于 kube-apiserver 的 HTTPS 流量</li>
+<li><code>check inter 3s</code>：每 3 秒进行一次健康检查</li>
+<li><code>fall 3</code>：连续 3 次检查失败后标记为不可用</li>
+<li><code>rise 3</code>：连续 3 次检查成功后恢复可用</li>
+</ul>
+<p>重启 HAProxy 服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl restart haproxy</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> haproxy</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-4-4-配置-Keepalived"><a href="#3-4-4-配置-Keepalived" class="headerlink" title="3.4.4 配置 Keepalived"></a>3.4.4 配置 Keepalived</h4><p>在两台负载均衡节点上安装 Keepalived：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update &amp;&amp; <span class="built_in">sudo</span> apt -y install keepalived</span><br></pre></td></tr></table></figure>
+
+<p><strong>ha-1 节点（MASTER）配置</strong> <code>/etc/keepalived/keepalived.conf</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">global_defs &#123;</span><br><span class="line">   router_id ha-1.raiden.com</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script check_haproxy &#123;</span><br><span class="line">    script &quot;killall -0 haproxy&quot;</span><br><span class="line">    interval 1</span><br><span class="line">    weight -30</span><br><span class="line">    fall 3</span><br><span class="line">    rise 2</span><br><span class="line">    timeout 2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state MASTER</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 66</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 123456</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        10.0.0.100/24 dev eth0 label eth0:1</span><br><span class="line">    &#125;</span><br><span class="line">    track_script &#123;</span><br><span class="line">        check_haproxy</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>ha-2 节点（BACKUP）配置</strong> <code>/etc/keepalived/keepalived.conf</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">global_defs &#123;</span><br><span class="line">   router_id ha-2.raiden.com</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script check_haproxy &#123;</span><br><span class="line">    script &quot;killall -0 haproxy&quot;</span><br><span class="line">    interval 1</span><br><span class="line">    weight -30</span><br><span class="line">    fall 3</span><br><span class="line">    rise 2</span><br><span class="line">    timeout 2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 66</span><br><span class="line">    priority 80</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 123456</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        10.0.0.100/24 dev eth0 label eth0:1</span><br><span class="line">    &#125;</span><br><span class="line">    track_script &#123;</span><br><span class="line">        check_haproxy</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关键配置参数说明：</p>
+<ul>
+<li><code>virtual_router_id 66</code>：虚拟路由器 ID，同一 VRRP 组内的所有节点必须一致</li>
+<li><code>priority</code>：优先级，数值越大越优先成为 MASTER</li>
+<li><code>advert_int 1</code>：VRRP 通告间隔（秒），控制故障检测速度</li>
+<li><code>vrrp_script check_haproxy</code>：通过 <code>killall -0 haproxy</code> 检测 HAProxy 进程是否存活，若异常则降低优先级，触发 VIP 漂移</li>
+</ul>
+<p>启动 Keepalived 服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl restart keepalived</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> keepalived</span><br></pre></td></tr></table></figure>
+
+<p>验证 VIP 是否已绑定：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip a | grep 10.0.0.100</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-4-5-使用-Nginx-替代-HAProxy"><a href="#3-4-5-使用-Nginx-替代-HAProxy" class="headerlink" title="3.4.5 使用 Nginx 替代 HAProxy"></a>3.4.5 使用 Nginx 替代 HAProxy</h4><p>如果团队已使用 Nginx，也可以使用 Nginx 的 stream 模块实现四层负载均衡，替代 HAProxy：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 Nginx</span></span><br><span class="line"><span class="built_in">sudo</span> apt update &amp;&amp; <span class="built_in">sudo</span> apt -y install nginx</span><br></pre></td></tr></table></figure>
+
+<p>编辑 <code>/etc/nginx/nginx.conf</code>，在 <code>http</code> 块之前添加 stream 配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">stream &#123;</span><br><span class="line">    upstream kubernetes-api &#123;</span><br><span class="line">        server 10.0.0.101:6443 max_fails=3 fail_timeout=30s;</span><br><span class="line">        server 10.0.0.102:6443 max_fails=3 fail_timeout=30s;</span><br><span class="line">        server 10.0.0.103:6443 max_fails=3 fail_timeout=30s;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        listen 10.0.0.100:6443;</span><br><span class="line">        proxy_pass kubernetes-api;</span><br><span class="line">        proxy_connect_timeout 3s;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 验证配置并重启</span></span><br><span class="line"><span class="built_in">sudo</span> nginx -t</span><br><span class="line"><span class="built_in">sudo</span> systemctl restart nginx</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> nginx</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-5-高可用架构的关键注意事项"><a href="#3-5-高可用架构的关键注意事项" class="headerlink" title="3.5 高可用架构的关键注意事项"></a>3.5 高可用架构的关键注意事项</h3><table>
+<thead>
+<tr>
+<th>要点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>控制平面节点数</td>
+<td>建议奇数个（3 或 5），以保证 etcd Raft 选主能正常达成多数派</td>
+</tr>
+<tr>
+<td>负载均衡器自身高可用</td>
+<td>Keepalived 保障，但两台负载均衡节点不应部署在同一台物理机上</td>
+</tr>
+<tr>
+<td>健康检查</td>
+<td>HAProxy 的 <code>check</code> 机制与 Keepalived 的 <code>vrrp_script</code> 构成双重保障</td>
+</tr>
+<tr>
+<td>初始化参数</td>
+<td><code>kubeadm init</code> 时 <code>--control-plane-endpoint</code> 必须指向 VIP 地址</td>
+</tr>
+<tr>
+<td>证书同步</td>
+<td>多 Master 模式下，kubeadm 的 <code>--upload-certs</code> 会自动分发证书</td>
+</tr>
+<tr>
+<td>网络延迟</td>
+<td>负载均衡节点与 Master 节点之间的网络延迟应尽可能低</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="四、高可用-kubeadm-部署完整步骤"><a href="#四、高可用-kubeadm-部署完整步骤" class="headerlink" title="四、高可用 kubeadm 部署完整步骤"></a>四、高可用 kubeadm 部署完整步骤</h2><h3 id="4-1-初始化第一个控制平面节点"><a href="#4-1-初始化第一个控制平面节点" class="headerlink" title="4.1 初始化第一个控制平面节点"></a>4.1 初始化第一个控制平面节点</h3><p>在 master-1 节点上执行初始化命令，注意 <code>--control-plane-endpoint</code> 必须指向 VIP 地址：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> kubeadm init \</span><br><span class="line">  --kubernetes-version=v1.36.2 \</span><br><span class="line">  --control-plane-endpoint=kubeapi.raiden.com:6443 \</span><br><span class="line">  --apiserver-advertise-address=10.0.0.101 \</span><br><span class="line">  --pod-network-cidr=10.244.0.0/16 \</span><br><span class="line">  --service-cidr=10.96.0.0/12 \</span><br><span class="line">  --token-ttl=0 \</span><br><span class="line">  --image-repository=registry.aliyuncs.com/google_containers \</span><br><span class="line">  --cri-socket=unix:///var/run/containerd/containerd.sock \</span><br><span class="line">  --upload-certs</span><br></pre></td></tr></table></figure>
+
+<p>关键参数说明：</p>
+<ul>
+<li><code>--control-plane-endpoint=kubeapi.raiden.com:6443</code>：VIP 地址，所有节点通过此地址访问 API Server</li>
+<li><code>--upload-certs</code>：上传证书到 etcd，供后续控制节点加入时使用</li>
+<li><code>--apiserver-advertise-address</code>：指定 API Server 对外通告的 IP 地址</li>
+</ul>
+<p>初始化成功后，记录输出的 <code>kubeadm join</code> 命令，特别是 <code>--control-plane</code> 的加入命令。</p>
+<h3 id="4-2-配置-kubectl"><a href="#4-2-配置-kubectl" class="headerlink" title="4.2 配置 kubectl"></a>4.2 配置 kubectl</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$HOME</span>/.kube</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cp</span> -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure>
+
+<p>验证配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
+
+<p>此时节点处于 <code>NotReady</code> 状态是正常的，因为尚未部署 CNI 网络插件。</p>
+<h3 id="4-3-部署-CNI-网络插件"><a href="#4-3-部署-CNI-网络插件" class="headerlink" title="4.3 部署 CNI 网络插件"></a>4.3 部署 CNI 网络插件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml</span><br></pre></td></tr></table></figure>
+
+<p>等待约 1-2 分钟，节点状态会变为 <code>Ready</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-4-加入第二个控制平面节点"><a href="#4-4-加入第二个控制平面节点" class="headerlink" title="4.4 加入第二个控制平面节点"></a>4.4 加入第二个控制平面节点</h3><p>在 master-2 节点上执行加入命令（使用初始化时输出的 join 命令）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> kubeadm <span class="built_in">join</span> kubeapi.raiden.com:6443 \</span><br><span class="line">  --token &lt;token&gt; \</span><br><span class="line">  --discovery-token-ca-cert-hash sha256:&lt;<span class="built_in">hash</span>&gt; \</span><br><span class="line">  --control-plane \</span><br><span class="line">  --certificate-key &lt;cert-key&gt; \</span><br><span class="line">  --cri-socket=unix:///var/run/containerd/containerd.sock</span><br></pre></td></tr></table></figure>
+
+<p>参数说明：</p>
+<ul>
+<li><code>--control-plane</code>：标识这是一个控制平面节点</li>
+<li><code>--certificate-key</code>：用于获取 master-1 上传的证书</li>
+</ul>
+<p>加入完成后，在 master-1 上验证：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-5-加入第三个控制平面节点"><a href="#4-5-加入第三个控制平面节点" class="headerlink" title="4.5 加入第三个控制平面节点"></a>4.5 加入第三个控制平面节点</h3><p>在 master-3 节点上执行同样的加入命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> kubeadm <span class="built_in">join</span> kubeapi.raiden.com:6443 \</span><br><span class="line">  --token &lt;token&gt; \</span><br><span class="line">  --discovery-token-ca-cert-hash sha256:&lt;<span class="built_in">hash</span>&gt; \</span><br><span class="line">  --control-plane \</span><br><span class="line">  --certificate-key &lt;cert-key&gt; \</span><br><span class="line">  --cri-socket=unix:///var/run/containerd/containerd.sock</span><br></pre></td></tr></table></figure>
+
+<p>验证三节点状态：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes -o wide</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-6-加入工作节点"><a href="#4-6-加入工作节点" class="headerlink" title="4.6 加入工作节点"></a>4.6 加入工作节点</h3><p>在 node-1 和 node-2 节点上执行加入命令（不带 <code>--control-plane</code> 参数）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> kubeadm <span class="built_in">join</span> kubeapi.raiden.com:6443 \</span><br><span class="line">  --token &lt;token&gt; \</span><br><span class="line">  --discovery-token-ca-cert-hash sha256:&lt;<span class="built_in">hash</span>&gt; \</span><br><span class="line">  --cri-socket=unix:///var/run/containerd/containerd.sock</span><br></pre></td></tr></table></figure>
+
+<p>验证所有节点状态：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes -o wide</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-7-验证高可用配置"><a href="#4-7-验证高可用配置" class="headerlink" title="4.7 验证高可用配置"></a>4.7 验证高可用配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看控制平面组件状态</span></span><br><span class="line">kubectl get pods -n kube-system</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 etcd 集群状态</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -it etcd-master-1 -n kube-system -- etcdctl member list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证 VIP 漂移（手动停止 ha-1 的 keepalived 服务）</span></span><br><span class="line"><span class="comment"># 在 ha-2 上检查 VIP 是否已漂移</span></span><br><span class="line">ip a | grep 10.0.0.100</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="五、kubeconfig-认证原理与-CNI-网络插件"><a href="#五、kubeconfig-认证原理与-CNI-网络插件" class="headerlink" title="五、kubeconfig 认证原理与 CNI 网络插件"></a>五、kubeconfig 认证原理与 CNI 网络插件</h2><h3 id="5-1-kubeconfig-认证原理"><a href="#5-1-kubeconfig-认证原理" class="headerlink" title="5.1 kubeconfig 认证原理"></a>5.1 kubeconfig 认证原理</h3><p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260711230244131.png"><br>kubectl 通过 kubeconfig 文件中的凭证信息向 kube-apiserver 发起认证请求。kubeconfig 文件包含以下关键信息：</p>
+<ul>
+<li><strong>clusters</strong>：集群的 API Server 地址和 CA 证书</li>
+<li><strong>users</strong>：客户端证书或 token</li>
+<li><strong>contexts</strong>：将用户与集群关联起来</li>
+</ul>
+<p><code>kubeadm init</code> 成功后生成的 <code>/etc/kubernetes/admin.conf</code> 包含完整的集群凭证。kubectl 默认从 <code>$HOME/.kube/config</code> 加载 kubeconfig 文件。如果该文件不存在或不可读，kubectl 会回退到默认的 <code>localhost:8080</code> 非安全端口连接，导致连接拒绝。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修复前</span></span><br><span class="line">$ kubectl get nodes</span><br><span class="line">The connection to the server localhost:8080 was refused</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修复后</span></span><br><span class="line">$ kubectl get nodes</span><br><span class="line">NAME       STATUS     ROLES           AGE   VERSION</span><br><span class="line">master-1   NotReady   control-plane   21m   v1.36.2</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-CNI-网络插件原理"><a href="#5-2-CNI-网络插件原理" class="headerlink" title="5.2 CNI 网络插件原理"></a>5.2 CNI 网络插件原理</h3><p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260711230346646.png"><br>Kubernetes 集群中的 Pod 网络需要由 CNI（Container Network Interface）插件实现。kubeadm 本身不提供网络解决方案，因此初始化完成后节点处于 <code>NotReady</code> 状态是正常现象，kubelet 日志中会显示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">network plugin is not ready: cni config uninitialized</span><br></pre></td></tr></table></figure>
+
+<p>CNI 插件的核心功能包括：</p>
+<ul>
+<li><strong>Pod IP 分配</strong>：为每个 Pod 分配一个集群内唯一的 IP 地址</li>
+<li><strong>跨节点通信</strong>：确保不同节点上的 Pod 可以互相通信</li>
+<li><strong>网络策略</strong>：部分 CNI 插件支持 NetworkPolicy 定义 Pod 间访问规则</li>
+</ul>
+<p>常用 CNI 插件对比：</p>
+<table>
+<thead>
+<tr>
+<th>插件</th>
+<th>特点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Flannel</td>
+<td>简单、使用 VXLAN 或 host-gw 封装</td>
+<td>初学者、小规模集群</td>
+</tr>
+<tr>
+<td>Calico</td>
+<td>支持 BGP 和 NetworkPolicy</td>
+<td>生产环境、需要网络策略</td>
+</tr>
+<tr>
+<td>Cilium</td>
+<td>基于 eBPF，性能优异</td>
+<td>高级网络场景</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="六、Kubernetes-常见资源及作用"><a href="#六、Kubernetes-常见资源及作用" class="headerlink" title="六、Kubernetes 常见资源及作用"></a>六、Kubernetes 常见资源及作用</h2><p>Kubernetes 通过声明式 API 管理各种资源对象，理解这些资源的作用和关系是使用 Kubernetes 的基础。</p>
+<h3 id="6-1-资源分类与层次关系"><a href="#6-1-资源分类与层次关系" class="headerlink" title="6.1 资源分类与层次关系"></a>6.1 资源分类与层次关系</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────────────────┐</span><br><span class="line">│                      集群级别资源                            │</span><br><span class="line">│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │</span><br><span class="line">│  │   Node       │  │ Namespace    │  │ Resource     │     │</span><br><span class="line">│  │  (节点)      │  │  (命名空间)   │  │ Quota        │     │</span><br><span class="line">│  └──────────────┘  └──────────────┘  └──────────────┘     │</span><br><span class="line">└─────────────────────────────────────────────────────────────┘</span><br><span class="line">                              │</span><br><span class="line">                              ▼</span><br><span class="line">┌─────────────────────────────────────────────────────────────┐</span><br><span class="line">│                    工作负载资源                              │</span><br><span class="line">│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │</span><br><span class="line">│  │ Deployment   │  │ StatefulSet  │  │ DaemonSet    │     │</span><br><span class="line">│  │ (无状态部署) │  │ (有状态部署) │  │ (守护进程)   │     │</span><br><span class="line">│  └──────────────┘  └──────────────┘  └──────────────┘     │</span><br><span class="line">│  ┌──────────────┐                                          │</span><br><span class="line">│  │     Job      │  ┌──────────────┐                        │</span><br><span class="line">│  │  (一次性任务)│  │  CronJob     │                        │</span><br><span class="line">│  │              │  │ (定时任务)   │                        │</span><br><span class="line">│  └──────────────┘  └──────────────┘                        │</span><br><span class="line">└─────────────────────────────────────────────────────────────┘</span><br><span class="line">                              │</span><br><span class="line">                              ▼</span><br><span class="line">┌─────────────────────────────────────────────────────────────┐</span><br><span class="line">│                    应用级别资源                              │</span><br><span class="line">│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │</span><br><span class="line">│  │     Pod      │  │ Service      │  │ Ingress      │     │</span><br><span class="line">│  │  (最小单元)  │  │  (服务发现)   │  │  (入口路由)   │     │</span><br><span class="line">│  └──────────────┘  └──────────────┘  └──────────────┘     │</span><br><span class="line">└─────────────────────────────────────────────────────────────┘</span><br><span class="line">                              │</span><br><span class="line">                              ▼</span><br><span class="line">┌─────────────────────────────────────────────────────────────┐</span><br><span class="line">│                    配置与存储资源                            │</span><br><span class="line">│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │</span><br><span class="line">│  │ ConfigMap    │  │   Secret     │  │     PV       │     │</span><br><span class="line">│  │  (配置文件)   │  │  (敏感数据)   │  │  (持久卷)    │     │</span><br><span class="line">│  └──────────────┘  └──────────────┘  └──────────────┘     │</span><br><span class="line">│                    ┌──────────────┐  ┌──────────────┐     │</span><br><span class="line">│                    │    PVC       │  │ StorageClass │     │</span><br><span class="line">│                    │ (卷声明)     │  │  (存储类)    │     │</span><br><span class="line">│                    └──────────────┘  └──────────────┘     │</span><br><span class="line">└─────────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-2-核心资源详解"><a href="#6-2-核心资源详解" class="headerlink" title="6.2 核心资源详解"></a>6.2 核心资源详解</h3><h4 id="6-2-1-Pod"><a href="#6-2-1-Pod" class="headerlink" title="6.2.1 Pod"></a>6.2.1 Pod</h4><p><strong>作用</strong>：Kubernetes 最小的部署单元，是一组共享网络和存储的容器集合。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>多个容器共享同一个网络命名空间（共享 IP 和端口）</li>
+<li>共享存储卷</li>
+<li>作为一个整体被调度到同一个节点</li>
+</ul>
+<p><strong>典型场景</strong>：</p>
+<ul>
+<li>运行单个应用容器</li>
+<li>运行主容器 + 边车（Sidecar）容器（如日志收集、监控代理）</li>
+</ul>
+<h4 id="6-2-2-Deployment"><a href="#6-2-2-Deployment" class="headerlink" title="6.2.2 Deployment"></a>6.2.2 Deployment</h4><p><strong>作用</strong>：管理无状态应用的部署和滚动更新。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>声明式定义期望的 Pod 副本数</li>
+<li>支持滚动更新和回滚</li>
+<li>自动修复失败的 Pod（自愈能力）</li>
+</ul>
+<p><strong>典型场景</strong>：</p>
+<ul>
+<li>Web 服务、API 服务等无状态应用</li>
+<li>需要频繁发布更新的应用</li>
+</ul>
+<h4 id="6-2-3-StatefulSet"><a href="#6-2-3-StatefulSet" class="headerlink" title="6.2.3 StatefulSet"></a>6.2.3 StatefulSet</h4><p><strong>作用</strong>：管理有状态应用，保证 Pod 的有序性和唯一性。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>Pod 名称带有固定序号（如 mysql-0, mysql-1, mysql-2）</li>
+<li>每个 Pod 有稳定的网络标识和持久存储</li>
+<li>按顺序创建、更新、删除 Pod</li>
+</ul>
+<p><strong>典型场景</strong>：</p>
+<ul>
+<li>数据库集群（MySQL、PostgreSQL）</li>
+<li>需要持久化状态的分布式应用</li>
+</ul>
+<h4 id="6-2-4-DaemonSet"><a href="#6-2-4-DaemonSet" class="headerlink" title="6.2.4 DaemonSet"></a>6.2.4 DaemonSet</h4><p><strong>作用</strong>：确保每个（或部分）节点上运行一个 Pod 副本。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>自动在新加入的节点上部署 Pod</li>
+<li>适用于系统级守护进程</li>
+</ul>
+<p><strong>典型场景</strong>：</p>
+<ul>
+<li>日志收集器（Fluentd、Filebeat）</li>
+<li>监控代理（Prometheus Node Exporter）</li>
+<li>网络插件（Calico、Flannel）</li>
+</ul>
+<h4 id="6-2-5-Job-x2F-CronJob"><a href="#6-2-5-Job-x2F-CronJob" class="headerlink" title="6.2.5 Job &#x2F; CronJob"></a>6.2.5 Job &#x2F; CronJob</h4><p><strong>作用</strong>：执行一次性或定时任务。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>Job：执行一次后结束</li>
+<li>CronJob：按 Cron 表达式定时执行</li>
+</ul>
+<p><strong>典型场景</strong>：</p>
+<ul>
+<li>数据备份</li>
+<li>定时清理任务</li>
+<li>批处理作业</li>
+</ul>
+<h4 id="6-2-6-Service"><a href="#6-2-6-Service" class="headerlink" title="6.2.6 Service"></a>6.2.6 Service</h4><p><strong>作用</strong>：为 Pod 提供稳定的网络访问入口。</p>
+<p><strong>类型</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ClusterIP</td>
+<td>默认类型，仅集群内部访问</td>
+<td>内部服务间通信</td>
+</tr>
+<tr>
+<td>NodePort</td>
+<td>通过节点端口暴露到集群外部</td>
+<td>开发环境、测试环境</td>
+</tr>
+<tr>
+<td>LoadBalancer</td>
+<td>云平台自动创建负载均衡器</td>
+<td>生产环境对外服务</td>
+</tr>
+<tr>
+<td>ExternalName</td>
+<td>将服务映射到外部域名</td>
+<td>访问外部服务</td>
+</tr>
+</tbody></table>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>提供稳定的 ClusterIP，不受 Pod 变化影响</li>
+<li>自动负载均衡到后端 Pod</li>
+<li>通过标签选择器关联 Pod</li>
+</ul>
+<h4 id="6-2-7-Ingress"><a href="#6-2-7-Ingress" class="headerlink" title="6.2.7 Ingress"></a>6.2.7 Ingress</h4><p><strong>作用</strong>：管理 HTTP&#x2F;HTTPS 流量的路由规则。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>支持基于域名的路由</li>
+<li>支持路径路由</li>
+<li>支持 TLS 终止</li>
+</ul>
+<p><strong>典型场景</strong>：</p>
+<ul>
+<li>多个服务共享同一个域名</li>
+<li>HTTPS 证书管理</li>
+</ul>
+<h4 id="6-2-8-ConfigMap"><a href="#6-2-8-ConfigMap" class="headerlink" title="6.2.8 ConfigMap"></a>6.2.8 ConfigMap</h4><p><strong>作用</strong>：存储非敏感配置信息。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>以键值对形式存储</li>
+<li>可以通过环境变量或文件挂载方式注入 Pod</li>
+</ul>
+<p><strong>典型场景</strong>：</p>
+<ul>
+<li>应用配置文件</li>
+<li>环境变量配置</li>
+</ul>
+<h4 id="6-2-9-Secret"><a href="#6-2-9-Secret" class="headerlink" title="6.2.9 Secret"></a>6.2.9 Secret</h4><p><strong>作用</strong>：存储敏感信息（密码、密钥、证书等）。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>数据进行 Base64 编码（注意：不是加密）</li>
+<li>支持多种类型（generic、tls、docker-registry）</li>
+</ul>
+<p><strong>典型场景</strong>：</p>
+<ul>
+<li>数据库密码</li>
+<li>API 密钥</li>
+<li>TLS 证书</li>
+</ul>
+<h4 id="6-2-10-PV-x2F-PVC"><a href="#6-2-10-PV-x2F-PVC" class="headerlink" title="6.2.10 PV &#x2F; PVC"></a>6.2.10 PV &#x2F; PVC</h4><p><strong>作用</strong>：管理持久化存储。</p>
+<p><strong>关系</strong>：</p>
+<ul>
+<li>PV（PersistentVolume）：集群级别的存储资源</li>
+<li>PVC（PersistentVolumeClaim）：用户对存储资源的申请</li>
+</ul>
+<p><strong>典型场景</strong>：</p>
+<ul>
+<li>数据库持久化存储</li>
+<li>需要持久化的应用数据</li>
+</ul>
+<h4 id="6-2-11-StorageClass"><a href="#6-2-11-StorageClass" class="headerlink" title="6.2.11 StorageClass"></a>6.2.11 StorageClass</h4><p><strong>作用</strong>：动态创建 PV。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>用户无需手动创建 PV</li>
+<li>根据 PVC 的请求自动创建对应规格的 PV</li>
+</ul>
+<p><strong>典型场景</strong>：</p>
+<ul>
+<li>云平台存储（AWS EBS、Azure Disk、GCP Persistent Disk）</li>
+<li>本地存储</li>
+</ul>
+<hr>
+<h2 id="七、YAML-字段含义详解"><a href="#七、YAML-字段含义详解" class="headerlink" title="七、YAML 字段含义详解"></a>七、YAML 字段含义详解</h2><p>Kubernetes 的资源定义通常使用 YAML 格式，理解每个字段的含义是编写正确配置的关键。</p>
+<h3 id="7-1-YAML-文件基本结构"><a href="#7-1-YAML-文件基本结构" class="headerlink" title="7.1 YAML 文件基本结构"></a>7.1 YAML 文件基本结构</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span>            <span class="comment"># API 版本</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span>               <span class="comment"># 资源类型</span></span><br><span class="line"><span class="attr">metadata:</span>                      <span class="comment"># 元数据</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-deploy</span>           <span class="comment"># 资源名称</span></span><br><span class="line">  <span class="attr">labels:</span>                      <span class="comment"># 标签</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span>                          <span class="comment"># 规格定义</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span>                  <span class="comment"># 副本数</span></span><br><span class="line">  <span class="attr">selector:</span>                    <span class="comment"># 标签选择器</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">template:</span>                    <span class="comment"># Pod 模板</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span>              <span class="comment"># 容器定义</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx:1.25</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-2-核心字段说明"><a href="#7-2-核心字段说明" class="headerlink" title="7.2 核心字段说明"></a>7.2 核心字段说明</h3><h4 id="7-2-1-apiVersion"><a href="#7-2-1-apiVersion" class="headerlink" title="7.2.1 apiVersion"></a>7.2.1 apiVersion</h4><p>指定资源使用的 Kubernetes API 版本。不同资源类型可能有不同的 API 版本：</p>
+<table>
+<thead>
+<tr>
+<th>资源类型</th>
+<th>API 版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Pod</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>Service</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td>apps&#x2F;v1</td>
+</tr>
+<tr>
+<td>StatefulSet</td>
+<td>apps&#x2F;v1</td>
+</tr>
+<tr>
+<td>DaemonSet</td>
+<td>apps&#x2F;v1</td>
+</tr>
+<tr>
+<td>ConfigMap</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>Secret</td>
+<td>v1</td>
+</tr>
+<tr>
+<td>Ingress</td>
+<td>networking.k8s.io&#x2F;v1</td>
+</tr>
+<tr>
+<td>NetworkPolicy</td>
+<td>networking.k8s.io&#x2F;v1</td>
+</tr>
+</tbody></table>
+<h4 id="7-2-2-kind"><a href="#7-2-2-kind" class="headerlink" title="7.2.2 kind"></a>7.2.2 kind</h4><p>指定资源类型，如 <code>Deployment</code>、<code>Service</code>、<code>Pod</code> 等。</p>
+<h4 id="7-2-3-metadata"><a href="#7-2-3-metadata" class="headerlink" title="7.2.3 metadata"></a>7.2.3 metadata</h4><p>资源的元数据信息：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>资源名称，在同一命名空间内唯一</td>
+</tr>
+<tr>
+<td><code>labels</code></td>
+<td>标签，用于资源选择和分类</td>
+</tr>
+<tr>
+<td><code>annotations</code></td>
+<td>注解，用于附加元数据信息（如配置说明、工具信息）</td>
+</tr>
+<tr>
+<td><code>namespace</code></td>
+<td>所属命名空间，默认 <code>default</code></td>
+</tr>
+</tbody></table>
+<h4 id="7-2-4-spec"><a href="#7-2-4-spec" class="headerlink" title="7.2.4 spec"></a>7.2.4 spec</h4><p>资源的规格定义，不同资源类型的 <code>spec</code> 字段不同。</p>
+<h3 id="7-3-Pod-规格字段"><a href="#7-3-Pod-规格字段" class="headerlink" title="7.3 Pod 规格字段"></a>7.3 Pod 规格字段</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span>                    <span class="comment"># 容器名称</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx:1.25</span>              <span class="comment"># 镜像地址</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span>   <span class="comment"># 镜像拉取策略（Always/IfNotPresent/Never）</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span>            <span class="comment"># 容器内部端口</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">http</span>                   <span class="comment"># 端口名称（可选）</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">TCP</span>                <span class="comment"># 协议（TCP/UDP）</span></span><br><span class="line">    <span class="attr">resources:</span>                     <span class="comment"># 资源限制</span></span><br><span class="line">      <span class="attr">requests:</span>                    <span class="comment"># 请求资源（保证分配）</span></span><br><span class="line">        <span class="attr">cpu:</span> <span class="string">&quot;100m&quot;</span>                <span class="comment"># CPU 请求（100m = 0.1 CPU）</span></span><br><span class="line">        <span class="attr">memory:</span> <span class="string">&quot;128Mi&quot;</span>            <span class="comment"># 内存请求</span></span><br><span class="line">      <span class="attr">limits:</span>                      <span class="comment"># 资源限制（最大可用）</span></span><br><span class="line">        <span class="attr">cpu:</span> <span class="string">&quot;500m&quot;</span></span><br><span class="line">        <span class="attr">memory:</span> <span class="string">&quot;256Mi&quot;</span></span><br><span class="line">    <span class="attr">env:</span>                           <span class="comment"># 环境变量</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ENV_NAME</span></span><br><span class="line">      <span class="attr">value:</span> <span class="string">&quot;production&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">DB_PASSWORD</span></span><br><span class="line">      <span class="attr">valueFrom:</span></span><br><span class="line">        <span class="attr">secretKeyRef:</span>              <span class="comment"># 从 Secret 获取</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">db-secret</span></span><br><span class="line">          <span class="attr">key:</span> <span class="string">password</span></span><br><span class="line">    <span class="attr">volumeMounts:</span>                  <span class="comment"># 卷挂载</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/etc/config</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">data-volume</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/data</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">app-data</span>           <span class="comment"># 子路径（可选）</span></span><br><span class="line">  <span class="attr">volumes:</span>                         <span class="comment"># 卷定义</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">    <span class="attr">configMap:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">app-config</span>             <span class="comment"># 挂载 ConfigMap</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">data-volume</span></span><br><span class="line">    <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">      <span class="attr">claimName:</span> <span class="string">app-data-pvc</span>      <span class="comment"># 挂载 PVC</span></span><br><span class="line">  <span class="attr">restartPolicy:</span> <span class="string">Always</span>            <span class="comment"># 重启策略（Always/OnFailure/Never）</span></span><br><span class="line">  <span class="attr">nodeSelector:</span>                    <span class="comment"># 节点选择器</span></span><br><span class="line">    <span class="attr">disk-type:</span> <span class="string">ssd</span></span><br><span class="line">  <span class="attr">tolerations:</span>                     <span class="comment"># 污点容忍</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">&quot;node-role.kubernetes.io/control-plane&quot;</span></span><br><span class="line">    <span class="attr">operator:</span> <span class="string">&quot;Exists&quot;</span></span><br><span class="line">    <span class="attr">effect:</span> <span class="string">&quot;NoSchedule&quot;</span></span><br><span class="line">  <span class="attr">affinity:</span>                        <span class="comment"># 节点亲和性</span></span><br><span class="line">    <span class="attr">nodeAffinity:</span></span><br><span class="line">      <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">        <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">zone</span></span><br><span class="line">            <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">            <span class="attr">values:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">us-east-1a</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-4-Deployment-规格字段"><a href="#7-4-Deployment-规格字段" class="headerlink" title="7.4 Deployment 规格字段"></a>7.4 Deployment 规格字段</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span>                      <span class="comment"># 期望副本数</span></span><br><span class="line">  <span class="attr">selector:</span>                        <span class="comment"># Pod 选择器（必须与 template.labels 匹配）</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">matchExpressions:</span>              <span class="comment"># 表达式匹配（可选）</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">      <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">      <span class="attr">values:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">strategy:</span>                        <span class="comment"># 更新策略</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">RollingUpdate</span>            <span class="comment"># 滚动更新（默认）</span></span><br><span class="line">    <span class="attr">rollingUpdate:</span></span><br><span class="line">      <span class="attr">maxSurge:</span> <span class="number">1</span>                  <span class="comment"># 更新期间最大额外副本数</span></span><br><span class="line">      <span class="attr">maxUnavailable:</span> <span class="number">0</span>            <span class="comment"># 更新期间最大不可用副本数</span></span><br><span class="line">    <span class="comment"># type: Recreate              # 重建更新（先删除再创建）</span></span><br><span class="line">  <span class="attr">template:</span>                        <span class="comment"># Pod 模板（详见 7.3）</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx:1.25</span></span><br><span class="line">  <span class="attr">minReadySeconds:</span> <span class="number">5</span>               <span class="comment"># Pod 就绪后等待时间（秒）</span></span><br><span class="line">  <span class="attr">revisionHistoryLimit:</span> <span class="number">10</span>         <span class="comment"># 保留的历史版本数</span></span><br><span class="line">  <span class="attr">paused:</span> <span class="literal">false</span>                    <span class="comment"># 是否暂停更新</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-5-Service-规格字段"><a href="#7-5-Service-规格字段" class="headerlink" title="7.5 Service 规格字段"></a>7.5 Service 规格字段</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ClusterIP</span>                  <span class="comment"># 服务类型（ClusterIP/NodePort/LoadBalancer/ExternalName）</span></span><br><span class="line">  <span class="attr">clusterIP:</span> <span class="number">10.96</span><span class="number">.0</span><span class="number">.100</span>          <span class="comment"># 指定 ClusterIP（可选，默认自动分配）</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span>                     <span class="comment"># 端口名称</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span>                       <span class="comment"># Service 端口（集群内部访问）</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">8080</span>               <span class="comment"># 容器端口</span></span><br><span class="line">    <span class="attr">nodePort:</span> <span class="number">30080</span>                <span class="comment"># NodePort（仅 NodePort 类型需要）</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">TCP</span>                  <span class="comment"># 协议</span></span><br><span class="line">  <span class="attr">selector:</span>                        <span class="comment"># Pod 选择器</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">externalName:</span> <span class="string">my-service.example.com</span>  <span class="comment"># ExternalName 类型的外部域名</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-6-ConfigMap-规格字段"><a href="#7-6-ConfigMap-规格字段" class="headerlink" title="7.6 ConfigMap 规格字段"></a>7.6 ConfigMap 规格字段</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">data:</span>                             <span class="comment"># 配置数据</span></span><br><span class="line">  <span class="attr">app.properties:</span> <span class="string">|</span>               <span class="comment"># 文件内容（多行文本）</span></span><br><span class="line">    <span class="string">server.port=8080</span></span><br><span class="line">    <span class="string">database.host=localhost</span></span><br><span class="line">  <span class="attr">env:</span> <span class="string">production</span>                  <span class="comment"># 单个键值对</span></span><br><span class="line">  <span class="attr">version:</span> <span class="string">&quot;1.0.0&quot;</span></span><br><span class="line"><span class="attr">binaryData:</span>                       <span class="comment"># 二进制数据（如证书文件）</span></span><br><span class="line">  <span class="attr">cert.pem:</span> <span class="string">&lt;base64-encoded&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-7-Secret-规格字段"><a href="#7-7-Secret-规格字段" class="headerlink" title="7.7 Secret 规格字段"></a>7.7 Secret 规格字段</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">type:</span> <span class="string">Opaque</span>                      <span class="comment"># Secret 类型（Opaque/generic/tls/docker-registry）</span></span><br><span class="line"><span class="attr">data:</span>                             <span class="comment"># Base64 编码的敏感数据</span></span><br><span class="line">  <span class="attr">username:</span> <span class="string">YWRtaW4=</span>              <span class="comment"># echo -n &quot;admin&quot; | base64</span></span><br><span class="line">  <span class="attr">password:</span> <span class="string">cGFzc3dvcmQ=</span>          <span class="comment"># echo -n &quot;password&quot; | base64</span></span><br><span class="line"><span class="attr">stringData:</span>                       <span class="comment"># 明文数据（会自动 Base64 编码）</span></span><br><span class="line">  <span class="attr">token:</span> <span class="string">my-secret-token</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-8-PV-x2F-PVC-规格字段"><a href="#7-8-PV-x2F-PVC-规格字段" class="headerlink" title="7.8 PV &#x2F; PVC 规格字段"></a>7.8 PV &#x2F; PVC 规格字段</h3><p><strong>PV 定义</strong>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">10Gi</span>                 <span class="comment"># 存储容量</span></span><br><span class="line">  <span class="attr">accessModes:</span>                    <span class="comment"># 访问模式</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">ReadWriteOnce</span>                 <span class="comment"># 单节点读写</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">ReadOnlyMany</span>                  <span class="comment"># 多节点只读</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">ReadWriteMany</span>                 <span class="comment"># 多节点读写</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span>  <span class="comment"># 回收策略（Retain/Delete/Recycle）</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">standard</span>      <span class="comment"># 存储类名称</span></span><br><span class="line">  <span class="attr">hostPath:</span>                       <span class="comment"># 本地路径（测试用）</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/data/pv001</span></span><br><span class="line">  <span class="comment"># 或使用 StorageClass 动态创建</span></span><br><span class="line">  <span class="attr">csi:</span>                            <span class="comment"># CSI 驱动</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">ebs.csi.aws.com</span></span><br><span class="line">    <span class="attr">volumeHandle:</span> <span class="string">vol-123456</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>PVC 定义</strong>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">10Gi</span>               <span class="comment"># 请求存储容量</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">standard</span>      <span class="comment"># 指定存储类</span></span><br><span class="line">  <span class="attr">selector:</span>                       <span class="comment"># PV 选择器（可选）</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">zone:</span> <span class="string">us-east-1a</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-9-标签选择器语法"><a href="#7-9-标签选择器语法" class="headerlink" title="7.9 标签选择器语法"></a>7.9 标签选择器语法</h3><p>标签选择器用于筛选资源，支持以下几种方式：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 精确匹配</span></span><br><span class="line"><span class="attr">matchLabels:</span></span><br><span class="line">  <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">env:</span> <span class="string">production</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 表达式匹配</span></span><br><span class="line"><span class="attr">matchExpressions:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app</span></span><br><span class="line">  <span class="attr">operator:</span> <span class="string">In</span>                    <span class="comment"># In/NotIn/Exists/DoesNotExist</span></span><br><span class="line">  <span class="attr">values:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">nginx</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">apache</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">key:</span> <span class="string">version</span></span><br><span class="line">  <span class="attr">operator:</span> <span class="string">NotIn</span></span><br><span class="line">  <span class="attr">values:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">test</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">key:</span> <span class="string">tier</span></span><br><span class="line">  <span class="attr">operator:</span> <span class="string">Exists</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="八、部署验证与结果"><a href="#八、部署验证与结果" class="headerlink" title="八、部署验证与结果"></a>八、部署验证与结果</h2><h3 id="8-1-前置环境验证"><a href="#8-1-前置环境验证" class="headerlink" title="8.1 前置环境验证"></a>8.1 前置环境验证</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 验证 hosts 解析</span></span><br><span class="line">$ getent hosts master-1</span><br><span class="line">192.168.10.193  master-1   master-1.raiden.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证 containerd 配置</span></span><br><span class="line">$ grep SystemdCgroup /etc/containerd/config.toml</span><br><span class="line">SystemdCgroup = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证 containerd 服务</span></span><br><span class="line">$ systemctl is-active containerd</span><br><span class="line">active</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证镜像拉取</span></span><br><span class="line">$ <span class="built_in">sudo</span> kubeadm config images pull \</span><br><span class="line">  --kubernetes-version=v1.36.2 \</span><br><span class="line">  --cri-socket=unix:///var/run/containerd/containerd.sock \</span><br><span class="line">  --image-repository=registry.aliyuncs.com/google_containers</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-2-高可用集群验证"><a href="#8-2-高可用集群验证" class="headerlink" title="8.2 高可用集群验证"></a>8.2 高可用集群验证</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看所有节点状态</span></span><br><span class="line">kubectl get nodes -o wide</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看控制平面组件状态</span></span><br><span class="line">kubectl get pods -n kube-system -o wide</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 etcd 集群状态</span></span><br><span class="line">kubectl <span class="built_in">exec</span> -it etcd-master-1 -n kube-system -- etcdctl member list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证 API Server 高可用</span></span><br><span class="line">kubectl get endpoints kubernetes -n default</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证负载均衡器状态（访问 ha-1:8888/status）</span></span><br><span class="line">curl http://10.0.0.107:8888/status</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="九、经验总结与最佳实践"><a href="#九、经验总结与最佳实践" class="headerlink" title="九、经验总结与最佳实践"></a>九、经验总结与最佳实践</h2><h3 id="9-1-部署流程总结"><a href="#9-1-部署流程总结" class="headerlink" title="9.1 部署流程总结"></a>9.1 部署流程总结</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────┐</span><br><span class="line">│                前置环境准备                       │</span><br><span class="line">│  ├─ Swap 禁用                                    │</span><br><span class="line">│  ├─ 内核模块加载 (overlay, br_netfilter)         │</span><br><span class="line">│  ├─ 内核参数设置 (ip_forward, bridge-nf-call)    │</span><br><span class="line">│  ├─ 容器运行时安装与配置 (containerd)            │</span><br><span class="line">│  └─ kubeadm/kubelet/kubectl 安装                 │</span><br><span class="line">├─────────────────────────────────────────────────┤</span><br><span class="line">│                高可用组件部署                      │</span><br><span class="line">│  ├─ HAProxy 配置 (负载均衡)                       │</span><br><span class="line">│  └─ Keepalived 配置 (VIP 漂移)                    │</span><br><span class="line">├─────────────────────────────────────────────────┤</span><br><span class="line">│                kubeadm init                      │</span><br><span class="line">│  ├─ 指定 --control-plane-endpoint=VIP            │</span><br><span class="line">│  ├─ 指定 --apiserver-advertise-address          │</span><br><span class="line">│  └─ 指定 --upload-certs (多 Master)              │</span><br><span class="line">├─────────────────────────────────────────────────┤</span><br><span class="line">│                多 Master 加入                      │</span><br><span class="line">│  ├─ 使用 --control-plane 参数                    │</span><br><span class="line">│  └─ 使用 --certificate-key 同步证书               │</span><br><span class="line">├─────────────────────────────────────────────────┤</span><br><span class="line">│                Worker 节点加入                     │</span><br><span class="line">│  └─ 不带 --control-plane 参数                    │</span><br><span class="line">├─────────────────────────────────────────────────┤</span><br><span class="line">│                CNI 网络插件部署                   │</span><br><span class="line">│  └─ kubectl apply -f kube-flannel.yml           │</span><br><span class="line">└─────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-2-关键教训"><a href="#9-2-关键教训" class="headerlink" title="9.2 关键教训"></a>9.2 关键教训</h3><h4 id="命名一致性至关重要"><a href="#命名一致性至关重要" class="headerlink" title="命名一致性至关重要"></a>命名一致性至关重要</h4><p>主机名、<code>/etc/hosts</code> 记录、<code>--control-plane-endpoint</code> 参数三者必须保持一致。不一致会导致主机名解析失败，kubelet 无法正确注册到集群。</p>
+<p><strong>最佳实践</strong>：在创建虚拟机时就确定好主机名，并在 <code>/etc/hosts</code> 中保持完全一致。</p>
+<h4 id="kubeconfig-是-kubectl-的钥匙"><a href="#kubeconfig-是-kubectl-的钥匙" class="headerlink" title="kubeconfig 是 kubectl 的钥匙"></a>kubeconfig 是 kubectl 的钥匙</h4><p>每次 <code>kubeadm init</code> 完成后，必须执行以下三步：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$HOME</span>/.kube</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cp</span> -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure>
+
+<h4 id="cgroup-驱动一致性"><a href="#cgroup-驱动一致性" class="headerlink" title="cgroup 驱动一致性"></a>cgroup 驱动一致性</h4><p>containerd 安装后默认不会创建 <code>/etc/containerd/config.toml</code>，需要使用 <code>containerd config default</code> 命令生成默认配置，然后修改 <code>SystemdCgroup = true</code> 与 kubelet 保持一致。</p>
+<h4 id="多-CRI-端点环境需要明确指定"><a href="#多-CRI-端点环境需要明确指定" class="headerlink" title="多 CRI 端点环境需要明确指定"></a>多 CRI 端点环境需要明确指定</h4><p>当系统中同时存在 containerd 和 cri-dockerd 时，kubeadm 无法自动选择 CRI 端点，必须通过 <code>--cri-socket</code> 参数明确指定。推荐使用 containerd 原生 CRI，性能更优。</p>
+<h3 id="9-3-高可用部署注意事项"><a href="#9-3-高可用部署注意事项" class="headerlink" title="9.3 高可用部署注意事项"></a>9.3 高可用部署注意事项</h3><ol>
+<li><strong>VIP 配置</strong>：<code>--control-plane-endpoint</code> 必须指向 VIP 地址，不能使用单个 Master 的 IP</li>
+<li><strong>证书同步</strong>：使用 <code>--upload-certs</code> 参数自动分发证书，避免手动复制</li>
+<li><strong>etcd 节点数</strong>：控制平面节点数应为奇数（3 或 5），以保证 Raft 协议的多数派选举</li>
+<li><strong>负载均衡器健康检查</strong>：确保 HAProxy 的 <code>check</code> 参数正确配置，能及时剔除故障节点</li>
+<li><strong>网络策略</strong>：生产环境建议使用 Calico 等支持 NetworkPolicy 的 CNI 插件</li>
+</ol>
+<hr>
+<h2 id="十、关键命令速查"><a href="#十、关键命令速查" class="headerlink" title="十、关键命令速查"></a>十、关键命令速查</h2><h3 id="环境检查命令"><a href="#环境检查命令" class="headerlink" title="环境检查命令"></a>环境检查命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查磁盘空间</span></span><br><span class="line"><span class="built_in">df</span> -h</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查 Swap</span></span><br><span class="line">swapon --show</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查内核模块</span></span><br><span class="line">lsmod | grep -E <span class="string">&#x27;overlay|br_netfilter&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查内核参数</span></span><br><span class="line">sysctl net.bridge.bridge-nf-call-iptables net.ipv4.ip_forward</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查容器运行时</span></span><br><span class="line">crictl version</span><br><span class="line">crictl info</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查 CRI 端点</span></span><br><span class="line"><span class="built_in">ls</span> /var/run/*.sock</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查端口占用</span></span><br><span class="line">ss -tlnp | grep -E <span class="string">&#x27;6443|2379|2380|10250&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="高可用部署命令"><a href="#高可用部署命令" class="headerlink" title="高可用部署命令"></a>高可用部署命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 初始化第一个控制平面节点</span></span><br><span class="line">kubeadm init \</span><br><span class="line">  --kubernetes-version=v1.36.2 \</span><br><span class="line">  --control-plane-endpoint=kubeapi.raiden.com:6443 \</span><br><span class="line">  --apiserver-advertise-address=10.0.0.101 \</span><br><span class="line">  --pod-network-cidr=10.244.0.0/16 \</span><br><span class="line">  --service-cidr=10.96.0.0/12 \</span><br><span class="line">  --token-ttl=0 \</span><br><span class="line">  --image-repository=registry.aliyuncs.com/google_containers \</span><br><span class="line">  --cri-socket=unix:///var/run/containerd/containerd.sock \</span><br><span class="line">  --upload-certs</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加入额外控制平面节点</span></span><br><span class="line">kubeadm <span class="built_in">join</span> kubeapi.raiden.com:6443 \</span><br><span class="line">  --token &lt;token&gt; \</span><br><span class="line">  --discovery-token-ca-cert-hash sha256:&lt;<span class="built_in">hash</span>&gt; \</span><br><span class="line">  --control-plane \</span><br><span class="line">  --certificate-key &lt;cert-key&gt; \</span><br><span class="line">  --cri-socket=unix:///var/run/containerd/containerd.sock</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加入工作节点</span></span><br><span class="line">kubeadm <span class="built_in">join</span> kubeapi.raiden.com:6443 \</span><br><span class="line">  --token &lt;token&gt; \</span><br><span class="line">  --discovery-token-ca-cert-hash sha256:&lt;<span class="built_in">hash</span>&gt; \</span><br><span class="line">  --cri-socket=unix:///var/run/containerd/containerd.sock</span><br><span class="line"></span><br><span class="line"><span class="comment"># 部署 Flannel</span></span><br><span class="line">kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml</span><br></pre></td></tr></table></figure>
+
+<h3 id="常用排错命令"><a href="#常用排错命令" class="headerlink" title="常用排错命令"></a>常用排错命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看节点状态</span></span><br><span class="line">kubectl get nodes -o wide</span><br><span class="line">kubectl describe node master-1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 Pod 状态</span></span><br><span class="line">kubectl get pods --all-namespaces</span><br><span class="line">kubectl describe pod -n kube-flannel kube-flannel-ds-xxxxx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 kubelet 日志</span></span><br><span class="line">journalctl -u kubelet -f --no-pager</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 containerd 日志</span></span><br><span class="line">journalctl -u containerd -f --no-pager</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重置集群（如需重新初始化）</span></span><br><span class="line">kubeadm reset -f</span><br><span class="line"><span class="built_in">rm</span> -rf /etc/cni/net.d/ <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/21f67780.html">https://raidenxe.github.io/archives/21f67780.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Kubernetes/">Kubernetes</a><a class="post-meta__tags" href="/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/">高可用</a><a class="post-meta__tags" href="/tags/%E9%83%A8%E7%BD%B2/">部署</a><a class="post-meta__tags" href="/tags/kubeadm/">kubeadm</a></div><div class="post-share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260711230814041.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/archives/a54ffedb.html" title="jumpserver笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260715102638262.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">jumpserver笔记</div></div><div class="info-2"><div class="info-item-1">JumpServer 部署笔记 版本: v4.10.15 | 部署方式: Docker-Compose | 镜像源: Docker Hub   目录 什么是 JumpServer 环境准备 Docker-Compose 部署 初始化与访问 纳管实验节点 组件架构与作用 配置文件解析 常用管理命令 故障排除   1. 什么是 JumpServerJumpServer 是开源的堡垒机&#x2F;跳板机系统，用于集中管理企业内部服务器的访问权限。它解决了以下核心问题：    问题 JumpServer 解决方案    权限分散 统一认证、细粒度授权管理   操作审计 全程录像、命令审计、操作日志   密钥管理 集中管理 SSH 密钥，避免密钥分散   合规要求 满足等保、SOX 等合规审计需求   JumpServer 采用 B&#x2F;S 架构，支持 Web 端直接管理和操作服务器，无需安装客户端。核心价值在于：让运维操作可追溯、可审计、可控制。  2. 环境准备2.1 系统要求 Linux 内核 3.10+ (推荐 Ubuntu 22.04 &#x2F; CentOS 7.9+)...</div></div></div></a><a class="pagination-related" href="/archives/a1b2c3d4.html" title="k8s命令笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">k8s命令笔记</div></div><div class="info-2"><div class="info-item-1">Kubernetes 命令参考手册 适用版本：Kubernetes v1.25+ | 工具：kubectl  概览：从组件关系到命令操作在深入命令之前，先理解 Kubernetes 的核心组件关系和资源层次，这是高效使用 kubectl 的基础。 核心架构关系Kubernetes 集群由控制平面和工作节点组成，各组件协同工作完成资源管理： 123456789101112131415161718192021222324252627282930┌─────────────────────────────────────────────────────────────────┐│                        控制平面 (Control Plane)                 ││  ┌──────────────┐  ┌────────────────┐  ┌────────────────────┐  ││  │ kube-apiserver│  │  etcd (存储)   │  │ kube-controller    │  ││  │   (API入口)...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/archives/8a1b3c2d.html" title="helm安装与使用"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260807160343492.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-07</div><div class="info-item-2">helm安装与使用</div></div><div class="info-2"><div class="info-item-1">Helm 安装与使用 目录 Helm 简介 Helm 安装 使用 Helm 安装 CNI 插件 Helm 常用命令总结 Helm 使用与安全管理   1. Helm 简介Helm 是 Kubernetes 的包管理工具，类似于 Linux 中的 apt 或 yum。它通过 Chart（图表）的方式将 Kubernetes 资源打包、版本化管理，实现一键部署、升级和回滚。 1.1 核心概念   概念 说明    Chart Helm 的软件包，包含部署应用所需的所有 Kubernetes 资源模板   Release Chart 在集群中的一次运行实例，同一个 Chart 可以部署多次   Repository Chart 的存储仓库，可以公开或私有   Values 配置值，覆盖 Chart 中的默认参数   1.2 Helm v3 架构变化Helm v3 移除了 v2 中的 Tiller 服务端组件，改为直接通过 kubeconfig 与 Kubernetes API Server 通信： 12Helm v2:  helm → Tiller (集群内) → K8s APIHel...</div></div></div></a><a class="pagination-related" href="/archives/4ada0a0.html" title="Redis集群与高可用"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260704212618712.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-02</div><div class="info-item-2">Redis集群与高可用</div></div><div class="info-2"><div class="info-item-1">Redis集群与高可用本文基于我自己写的 redis-manage.sh 脚本中集群相关模块整理。日常运维中手动敲命令配置主从、哨兵和Cluster太繁琐，容易出错，所以写了这个脚本把常用操作封装成交互式菜单，生产环境用下来确实省力不少。  脚本集群管理逻辑总览redis-manage.sh 的主菜单里有三个子菜单对应三种集群模式，功能划分得比较清晰： 主从复制相关的操作都在”集群管理”里，哨兵有独立的”哨兵管理”菜单，Redis Cluster则在”Redis Cluster管理”中。整个脚本的设计思路是： 所有修改操作都会先备份配置文件，万一操作失败能回滚。优先用 CONFIG SET 或 SENTINEL SET 动态改参数，避免重启服务。密码通过环境变量传递，不在命令行暴露。还用了时间戳缓存机制，减少重复检测，菜单响应快一些。关键操作会记日志，方便事后排查。 集群相关函数调用关系： 12345678910111213141516171819202122232425main_menu()  ├─ 6) cluster_menu()           → 主从复制  │  ...</div></div></div></a><a class="pagination-related" href="/archives/a1b2c3d4.html" title="k8s命令笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-13</div><div class="info-item-2">k8s命令笔记</div></div><div class="info-2"><div class="info-item-1">Kubernetes 命令参考手册 适用版本：Kubernetes v1.25+ | 工具：kubectl  概览：从组件关系到命令操作在深入命令之前，先理解 Kubernetes 的核心组件关系和资源层次，这是高效使用 kubectl 的基础。 核心架构关系Kubernetes 集群由控制平面和工作节点组成，各组件协同工作完成资源管理： 123456789101112131415161718192021222324252627282930┌─────────────────────────────────────────────────────────────────┐│                        控制平面 (Control Plane)                 ││  ┌──────────────┐  ┌────────────────┐  ┌────────────────────┐  ││  │ kube-apiserver│  │  etcd (存储)   │  │ kube-controller    │  ││  │   (API入口)...</div></div></div></a><a class="pagination-related" href="/archives/be6d62ff.html" title="docker部署gitlab"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-08</div><div class="info-item-2">docker部署gitlab</div></div><div class="info-2"><div class="info-item-1">使用 Docker 部署 GitLab CE（社区版）完整指南作者：raiden环境：Debian 13 &#x2F; Docker 29.7.2 &#x2F; Docker Compose v5.4.0最后更新：2026-08-08  📖 前言GitLab 是目前最受欢迎的开源 DevOps 平台之一，集成了代码托管、CI&#x2F;CD、Issue 跟踪、容器镜像仓库等丰富功能。对于小团队或个人开发者，官方提供的 GitLab CE（社区版） 完全够用，而借助 Docker 部署可以显著降低运维复杂度。 本文将手把手带你完成 GitLab CE 的 Docker 部署，并分享生产环境下的优化建议。无论你是新手还是正在从传统方式迁移，这篇指南都能为你提供可直接落地的操作步骤。  ✅ 前置条件开始前，请确认服务器满足以下最低要求：    项目 最低配置 推荐配置    CPU 2 核 4 核及以上   内存 4 GB 8 GB 或更高   存储 20 GB SSD 50 GB+ SSD   操作系统 Linux（Ubuntu&#x2F;CentOS&#x2F;Debian） 同...</div></div></div></a><a class="pagination-related" href="/archives/1441c194.html" title="从零开始的K8S学习笔记（一）概念入门"><img class="cover" src="https://picx.zhimg.com/v2-7cb275bae9ca40b3f7c855d803fdb9c0_1440w.jpg?source=172ae18b" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-24</div><div class="info-item-2">从零开始的K8S学习笔记（一）概念入门</div></div><div class="info-2"><div class="info-item-1">Kubernetes，简称 K8s，是用 8 代替名字中间的 8 个字符 “ubernete” 而成的缩写。是一个开源的，用于管理云平台中多个主机上的容器化的应用。 本文旨在分享我自己的知识笔记，帮助像我这样的初学者去初步了解 K8S 集群的一些基本概念，文章将按照容器——Docker——Kubernetes 的顺序去梳理相关知识点。 容器和虚拟机可能很多初学者对容器这个概念比较陌生，所以这里先从大家都有一定了解的虚拟机开始讨论。 虚拟机 (VM)，顾名思义，虚拟机就是可以远程连接的虚拟服务器。 而容器（Container），顾名思义，是用于容纳某些东西的，而容器技术就是有效的将单个操作系统的资源 “装” 到某个 “容器” 中。 现在假设你要在虚拟机上运行一个网络应用——包括一个 MySQL 数据库、一个 Vue 前端和一些 Java 库，在 Ubuntu 操作系统 (OS) 上运行。 而一个应用程序由各种组件、服务和库组成，它们运行在操作系统上。 现在，将应用程序打包成一个虚拟机镜像，这个镜像中包括了 Ubuntu 操作系统。这使得虚拟机变得非常笨重——通常有几个 G 的大小。...</div></div></div></a><a class="pagination-related" href="/archives/3fda28a0.html" title="从零开始的K8S学习笔记（二）K8S本地开发环境——minikube安装部署及实践"><img class="cover" src="https://picx.zhimg.com/v2-dd51864d9697f5b3cd2a971d7141c4dd_1440w.jpg?source=172ae18b" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-24</div><div class="info-item-2">从零开始的K8S学习笔记（二）K8S本地开发环境——minikube安装部署及实践</div></div><div class="info-2"><div class="info-item-1">什么是 K8SKubernetes 是容器集群管理系统，是一个开源的平台，可以实现容器集群的自动化部署、自动扩缩容、维护等功能。 通过 Kubernetes 你可以：  快速部署应用 快速扩展应用 无缝对接新的应用功能 节省资源，优化硬件资源的使用  什么是 MinikubeMinikube 是一种轻量级的 Kubernetes 实现，可在本地计算机上创建 VM 并部署仅包含一个节点的简单集群。Minikube 可用于 Linux、macOS 和 Windows 系统。Minikube CLI 提供了用于引导集群工作的多种操作，包括启动、停止、查看状态和删除。 Minikube 一般用于本地开发、测试和学习。 学习 K8S 可以到 Kubernetes 官方文档查看相关资料：Kubernetes 文档 官方文档还提供了交互式教程，在教程里可以使用预装有 Minikube 的在线终端进行体验：交互式教程 - 部署应用 部署安装 Minikube安装步骤参考自 Minikube 的官网：Minikube 官网 最低配置 2 个 CPU 核心或更多 2GB 可用内存 20GB 可用磁盘...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Raidenxe</div><div class="author-info-description">向着真理和自由，无名的献身。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Kubernetes-%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2%EF%BC%9A%E4%BB%8E%E5%8E%9F%E7%90%86%E5%88%B0%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.</span> <span class="toc-text">Kubernetes 集群部署：从原理到实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Kubernetes-%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2%E6%9E%B6%E6%9E%84%E6%A6%82%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">一、Kubernetes 集群部署架构概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-kubeadm-%E7%9A%84%E4%BD%9C%E7%94%A8%E4%B8%8E%E5%8E%9F%E7%90%86"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.1 kubeadm 的作用与原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-kubelet-%E4%B8%8E%E6%8E%A7%E5%88%B6%E5%B9%B3%E9%9D%A2%E7%9A%84%E4%BA%A4%E4%BA%92"><span class="toc-number">1.1.2.</span> <span class="toc-text">1.2 kubelet 与控制平面的交互</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-CRI-%E4%B8%8E%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.1.3.</span> <span class="toc-text">1.3 CRI 与容器运行时的关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%89%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87%E4%B8%8E%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">二、前置环境准备与原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E4%B8%BB%E6%9C%BA%E5%90%8D%E8%A7%A3%E6%9E%90%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 主机名解析原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-cgroup-%E9%A9%B1%E5%8A%A8%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 容器运行时 cgroup 驱动原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-CRI-%E7%AB%AF%E7%82%B9%E9%80%89%E6%8B%A9"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.3 CRI 端点选择</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E5%AE%8C%E6%95%B4%E7%9A%84%E5%89%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E4%BF%AE%E5%A4%8D%E5%91%BD%E4%BB%A4"><span class="toc-number">1.2.4.</span> <span class="toc-text">2.4 完整的前置环境修复命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.3.</span> <span class="toc-text">三、集群高可用架构设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E6%95%B4%E4%BD%93%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1 高可用架构整体设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%90%84%E7%BB%84%E4%BB%B6%E8%A7%92%E8%89%B2%E4%B8%8E%E5%85%B3%E7%B3%BB"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2 各组件角色与关系</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-1-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%B1%82%EF%BC%9AHAProxy-%E4%B8%8E-Nginx"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">3.2.1 负载均衡层：HAProxy 与 Nginx</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-2-%E9%AB%98%E5%8F%AF%E7%94%A8%E4%BF%9D%E9%9A%9C%E5%B1%82%EF%BC%9AKeepalived"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">3.2.2 高可用保障层：Keepalived</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-3-%E6%8E%A7%E5%88%B6%E5%B9%B3%E9%9D%A2%E5%B1%82%EF%BC%9A%E5%A4%9A-Master-%E8%8A%82%E7%82%B9"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">3.2.3 控制平面层：多 Master 节点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%95%B0%E6%8D%AE%E6%B5%81%E4%B8%8E%E8%AF%B7%E6%B1%82%E8%B7%AF%E5%BE%84"><span class="toc-number">1.3.3.</span> <span class="toc-text">3.3 数据流与请求路径</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E9%AB%98%E5%8F%AF%E7%94%A8%E9%83%A8%E7%BD%B2%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.4.</span> <span class="toc-text">3.4 高可用部署配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-1-%E4%B8%BB%E6%9C%BA%E8%A7%84%E5%88%92"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">3.4.1 主机规划</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-2-%E9%85%8D%E7%BD%AE%E4%B8%BB%E6%9C%BA%E5%90%8D%E8%A7%A3%E6%9E%90"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">3.4.2 配置主机名解析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-3-%E9%85%8D%E7%BD%AE-HAProxy"><span class="toc-number">1.3.4.3.</span> <span class="toc-text">3.4.3 配置 HAProxy</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-4-%E9%85%8D%E7%BD%AE-Keepalived"><span class="toc-number">1.3.4.4.</span> <span class="toc-text">3.4.4 配置 Keepalived</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-5-%E4%BD%BF%E7%94%A8-Nginx-%E6%9B%BF%E4%BB%A3-HAProxy"><span class="toc-number">1.3.4.5.</span> <span class="toc-text">3.4.5 使用 Nginx 替代 HAProxy</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E7%9A%84%E5%85%B3%E9%94%AE%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">1.3.5.</span> <span class="toc-text">3.5 高可用架构的关键注意事项</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E9%AB%98%E5%8F%AF%E7%94%A8-kubeadm-%E9%83%A8%E7%BD%B2%E5%AE%8C%E6%95%B4%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.4.</span> <span class="toc-text">四、高可用 kubeadm 部署完整步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%88%9D%E5%A7%8B%E5%8C%96%E7%AC%AC%E4%B8%80%E4%B8%AA%E6%8E%A7%E5%88%B6%E5%B9%B3%E9%9D%A2%E8%8A%82%E7%82%B9"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1 初始化第一个控制平面节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E9%85%8D%E7%BD%AE-kubectl"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 配置 kubectl</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E9%83%A8%E7%BD%B2-CNI-%E7%BD%91%E7%BB%9C%E6%8F%92%E4%BB%B6"><span class="toc-number">1.4.3.</span> <span class="toc-text">4.3 部署 CNI 网络插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-%E5%8A%A0%E5%85%A5%E7%AC%AC%E4%BA%8C%E4%B8%AA%E6%8E%A7%E5%88%B6%E5%B9%B3%E9%9D%A2%E8%8A%82%E7%82%B9"><span class="toc-number">1.4.4.</span> <span class="toc-text">4.4 加入第二个控制平面节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-%E5%8A%A0%E5%85%A5%E7%AC%AC%E4%B8%89%E4%B8%AA%E6%8E%A7%E5%88%B6%E5%B9%B3%E9%9D%A2%E8%8A%82%E7%82%B9"><span class="toc-number">1.4.5.</span> <span class="toc-text">4.5 加入第三个控制平面节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-6-%E5%8A%A0%E5%85%A5%E5%B7%A5%E4%BD%9C%E8%8A%82%E7%82%B9"><span class="toc-number">1.4.6.</span> <span class="toc-text">4.6 加入工作节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-7-%E9%AA%8C%E8%AF%81%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE"><span class="toc-number">1.4.7.</span> <span class="toc-text">4.7 验证高可用配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81kubeconfig-%E8%AE%A4%E8%AF%81%E5%8E%9F%E7%90%86%E4%B8%8E-CNI-%E7%BD%91%E7%BB%9C%E6%8F%92%E4%BB%B6"><span class="toc-number">1.5.</span> <span class="toc-text">五、kubeconfig 认证原理与 CNI 网络插件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-kubeconfig-%E8%AE%A4%E8%AF%81%E5%8E%9F%E7%90%86"><span class="toc-number">1.5.1.</span> <span class="toc-text">5.1 kubeconfig 认证原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-CNI-%E7%BD%91%E7%BB%9C%E6%8F%92%E4%BB%B6%E5%8E%9F%E7%90%86"><span class="toc-number">1.5.2.</span> <span class="toc-text">5.2 CNI 网络插件原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81Kubernetes-%E5%B8%B8%E8%A7%81%E8%B5%84%E6%BA%90%E5%8F%8A%E4%BD%9C%E7%94%A8"><span class="toc-number">1.6.</span> <span class="toc-text">六、Kubernetes 常见资源及作用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E8%B5%84%E6%BA%90%E5%88%86%E7%B1%BB%E4%B8%8E%E5%B1%82%E6%AC%A1%E5%85%B3%E7%B3%BB"><span class="toc-number">1.6.1.</span> <span class="toc-text">6.1 资源分类与层次关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E6%A0%B8%E5%BF%83%E8%B5%84%E6%BA%90%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.6.2.</span> <span class="toc-text">6.2 核心资源详解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-1-Pod"><span class="toc-number">1.6.2.1.</span> <span class="toc-text">6.2.1 Pod</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-2-Deployment"><span class="toc-number">1.6.2.2.</span> <span class="toc-text">6.2.2 Deployment</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-3-StatefulSet"><span class="toc-number">1.6.2.3.</span> <span class="toc-text">6.2.3 StatefulSet</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-4-DaemonSet"><span class="toc-number">1.6.2.4.</span> <span class="toc-text">6.2.4 DaemonSet</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-5-Job-x2F-CronJob"><span class="toc-number">1.6.2.5.</span> <span class="toc-text">6.2.5 Job &#x2F; CronJob</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-6-Service"><span class="toc-number">1.6.2.6.</span> <span class="toc-text">6.2.6 Service</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-7-Ingress"><span class="toc-number">1.6.2.7.</span> <span class="toc-text">6.2.7 Ingress</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-8-ConfigMap"><span class="toc-number">1.6.2.8.</span> <span class="toc-text">6.2.8 ConfigMap</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-9-Secret"><span class="toc-number">1.6.2.9.</span> <span class="toc-text">6.2.9 Secret</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-10-PV-x2F-PVC"><span class="toc-number">1.6.2.10.</span> <span class="toc-text">6.2.10 PV &#x2F; PVC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-11-StorageClass"><span class="toc-number">1.6.2.11.</span> <span class="toc-text">6.2.11 StorageClass</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81YAML-%E5%AD%97%E6%AE%B5%E5%90%AB%E4%B9%89%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.7.</span> <span class="toc-text">七、YAML 字段含义详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-YAML-%E6%96%87%E4%BB%B6%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84"><span class="toc-number">1.7.1.</span> <span class="toc-text">7.1 YAML 文件基本结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E6%A0%B8%E5%BF%83%E5%AD%97%E6%AE%B5%E8%AF%B4%E6%98%8E"><span class="toc-number">1.7.2.</span> <span class="toc-text">7.2 核心字段说明</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2-1-apiVersion"><span class="toc-number">1.7.2.1.</span> <span class="toc-text">7.2.1 apiVersion</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2-2-kind"><span class="toc-number">1.7.2.2.</span> <span class="toc-text">7.2.2 kind</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2-3-metadata"><span class="toc-number">1.7.2.3.</span> <span class="toc-text">7.2.3 metadata</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2-4-spec"><span class="toc-number">1.7.2.4.</span> <span class="toc-text">7.2.4 spec</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-Pod-%E8%A7%84%E6%A0%BC%E5%AD%97%E6%AE%B5"><span class="toc-number">1.7.3.</span> <span class="toc-text">7.3 Pod 规格字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-4-Deployment-%E8%A7%84%E6%A0%BC%E5%AD%97%E6%AE%B5"><span class="toc-number">1.7.4.</span> <span class="toc-text">7.4 Deployment 规格字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-5-Service-%E8%A7%84%E6%A0%BC%E5%AD%97%E6%AE%B5"><span class="toc-number">1.7.5.</span> <span class="toc-text">7.5 Service 规格字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-6-ConfigMap-%E8%A7%84%E6%A0%BC%E5%AD%97%E6%AE%B5"><span class="toc-number">1.7.6.</span> <span class="toc-text">7.6 ConfigMap 规格字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-7-Secret-%E8%A7%84%E6%A0%BC%E5%AD%97%E6%AE%B5"><span class="toc-number">1.7.7.</span> <span class="toc-text">7.7 Secret 规格字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-8-PV-x2F-PVC-%E8%A7%84%E6%A0%BC%E5%AD%97%E6%AE%B5"><span class="toc-number">1.7.8.</span> <span class="toc-text">7.8 PV &#x2F; PVC 规格字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-9-%E6%A0%87%E7%AD%BE%E9%80%89%E6%8B%A9%E5%99%A8%E8%AF%AD%E6%B3%95"><span class="toc-number">1.7.9.</span> <span class="toc-text">7.9 标签选择器语法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E9%83%A8%E7%BD%B2%E9%AA%8C%E8%AF%81%E4%B8%8E%E7%BB%93%E6%9E%9C"><span class="toc-number">1.8.</span> <span class="toc-text">八、部署验证与结果</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E5%89%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E9%AA%8C%E8%AF%81"><span class="toc-number">1.8.1.</span> <span class="toc-text">8.1 前置环境验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E9%AA%8C%E8%AF%81"><span class="toc-number">1.8.2.</span> <span class="toc-text">8.2 高可用集群验证</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.9.</span> <span class="toc-text">九、经验总结与最佳实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-%E9%83%A8%E7%BD%B2%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93"><span class="toc-number">1.9.1.</span> <span class="toc-text">9.1 部署流程总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-%E5%85%B3%E9%94%AE%E6%95%99%E8%AE%AD"><span class="toc-number">1.9.2.</span> <span class="toc-text">9.2 关键教训</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E5%90%8D%E4%B8%80%E8%87%B4%E6%80%A7%E8%87%B3%E5%85%B3%E9%87%8D%E8%A6%81"><span class="toc-number">1.9.2.1.</span> <span class="toc-text">命名一致性至关重要</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#kubeconfig-%E6%98%AF-kubectl-%E7%9A%84%E9%92%A5%E5%8C%99"><span class="toc-number">1.9.2.2.</span> <span class="toc-text">kubeconfig 是 kubectl 的钥匙</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#cgroup-%E9%A9%B1%E5%8A%A8%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-number">1.9.2.3.</span> <span class="toc-text">cgroup 驱动一致性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A-CRI-%E7%AB%AF%E7%82%B9%E7%8E%AF%E5%A2%83%E9%9C%80%E8%A6%81%E6%98%8E%E7%A1%AE%E6%8C%87%E5%AE%9A"><span class="toc-number">1.9.2.4.</span> <span class="toc-text">多 CRI 端点环境需要明确指定</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-3-%E9%AB%98%E5%8F%AF%E7%94%A8%E9%83%A8%E7%BD%B2%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">1.9.3.</span> <span class="toc-text">9.3 高可用部署注意事项</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E3%80%81%E5%85%B3%E9%94%AE%E5%91%BD%E4%BB%A4%E9%80%9F%E6%9F%A5"><span class="toc-number">1.10.</span> <span class="toc-text">十、关键命令速查</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%A3%80%E6%9F%A5%E5%91%BD%E4%BB%A4"><span class="toc-number">1.10.1.</span> <span class="toc-text">环境检查命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E9%83%A8%E7%BD%B2%E5%91%BD%E4%BB%A4"><span class="toc-number">1.10.2.</span> <span class="toc-text">高可用部署命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%8E%92%E9%94%99%E5%91%BD%E4%BB%A4"><span class="toc-number">1.10.3.</span> <span class="toc-text">常用排错命令</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/61196baf.html" title="Jenkins-CICD实战"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins-CICD实战"/></a><div class="content"><a class="title" href="/archives/61196baf.html" title="Jenkins-CICD实战">Jenkins-CICD实战</a><time datetime="2026-08-11T17:09:47.000Z" title="发表于 2026-08-12 01:09:47">2026-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a3e16fea.html" title="面试题1"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试题1"/></a><div class="content"><a class="title" href="/archives/a3e16fea.html" title="面试题1">面试题1</a><time datetime="2026-08-11T14:53:55.000Z" title="发表于 2026-08-11 22:53:55">2026-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/35864571.html" title="docker部署jenkins"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署jenkins"/></a><div class="content"><a class="title" href="/archives/35864571.html" title="docker部署jenkins">docker部署jenkins</a><time datetime="2026-08-10T05:55:00.000Z" title="发表于 2026-08-10 13:55:00">2026-08-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/be6d62ff.html" title="docker部署gitlab"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署gitlab"/></a><div class="content"><a class="title" href="/archives/be6d62ff.html" title="docker部署gitlab">docker部署gitlab</a><time datetime="2026-08-08T07:16:03.000Z" title="发表于 2026-08-08 15:16:03">2026-08-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260807160530247.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s+Helm部署kube-prometheus-stack"/></a><div class="content"><a class="title" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack">K8s+Helm部署kube-prometheus-stack</a><time datetime="2026-08-07T07:12:03.000Z" title="发表于 2026-08-07 15:12:03">2026-08-07</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2020 - 2026 By Raidenxe</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5"></script><script src="/js/main.js?v=5.5.5"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="false"> </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5"></script></div></div></body></html>

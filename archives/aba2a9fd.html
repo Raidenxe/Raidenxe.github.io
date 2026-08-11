@@ -1,0 +1,354 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>常用Linux命令整理 | Raidenxe的博客</title><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="一、 Linux 系统中的目录  “一切皆是文件”是 Unix&amp;#x2F;Linux 的基本哲学之一,了解Linux的目录结构能让我们更得心应手地去使用相关命令。 目录	   评论&amp;#x2F;	根目录，万物起源。&amp;#x2F;bin	包含系统启动和运行所必须的二进制程序。&amp;#x2F;boot	包..."><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "常用Linux命令整理",
+  "url": "https://raidenxe.github.io/archives/aba2a9fd.html",
+  "image": "https://pica.zhimg.com/v2-5fd2e93e3fd4c3824d463dd1a0acaba2_1440w.jpg?source=172ae18b",
+  "datePublished": "2022-04-06T09:55:00.000Z",
+  "dateModified": "2026-06-22T02:34:43.190Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Raidenxe",
+      "url": "https://Raidenxe.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/aba2a9fd.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css?v=5.5.5"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '常用Linux命令整理',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/macblack.css"><style>
+  #web_bg{background-image:url(/img/风景006.png)}
+  #footer{background-image:url(/img/风景008.png);background-size:cover;background-position:center}
+  .aplayer-lrc{display:none !important}
+</style>
+<meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/%E9%A3%8E%E6%99%AF006.png));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://pica.zhimg.com/v2-5fd2e93e3fd4c3824d463dd1a0acaba2_1440w.jpg?source=172ae18b);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Raidenxe的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">常用Linux命令整理</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">常用Linux命令整理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-04-06T09:55:00.000Z" title="发表于 2022-04-06 17:55:00">2022-04-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-22T02:34:43.190Z" title="更新于 2026-06-22 10:34:43">2026-06-22</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Linux学习笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>11分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>一、 Linux 系统中的目录</p>
+<p><img src="https://pic2.zhimg.com/80/v2-0b1560de453a9afb128fd8d821c965dd_720w.jpg" alt="linux文件目录"></p>
+<p>“一切皆是文件”是 Unix&#x2F;Linux 的基本哲学之一,了解Linux的目录结构能让我们更得心应手地去使用相关命令。</p>
+<p>目录	   评论&#x2F;	根目录，万物起源。&#x2F;bin	包含系统启动和运行所必须的二进制程序。&#x2F;boot	包含 Linux 内核，最初的 RMA 磁盘映像（系统启动时，由驱动程序所需），和启动加载程序。&#x2F;boot&#x2F;grub&#x2F;grub.conf or menu.lst， 被用来配置启动加载程序。&#x2F;boot&#x2F;vmlinuz，Linux 内核。&#x2F;dev	这是一个包含设备结点的特殊目录。“一切都是文件”，也使用于设备。 在这个目录里，内核维护着它支持的设备。&#x2F;etc	这个目录包含所有系统层面的配置文件。它也包含一系列的 shell 脚本， 在系统启动时，这些脚本会运行每个系统服务。这个目录中的任何文件应该是可读的文本文件。虽然&#x2F;etc 目录中的任何文件都有趣，但这里只列出了一些我一直喜欢的文件：&#x2F;etc&#x2F;crontab， 定义自动运行的任务。&#x2F;etc&#x2F;fstab，包含存储设备的列表，以及与他们相关的挂载点。&#x2F;etc&#x2F;passwd，包含用户帐号列表。&#x2F;home	在通常的配置环境下，系统会在&#x2F;home下，给每个用户分配一个目录。普通只能 在他们自己的目录下创建文件。这个限制保护系统免受错误的用户活动破坏。&#x2F;lib	包含核心系统程序所需的库文件。这些文件与 Windows 中的动态链接库相似。&#x2F;lost+found	每个使用 Linux 文件系统的格式化分区或设备，例如 ext3文件系统， 都会有这个目录。当部分恢复一个损坏的文件系统时，会用到这个目录。除非文件系统 真正的损坏了，那么这个目录会是个空目录。&#x2F;media	在现在的 Linux 系统中，&#x2F;media 目录会包含可移除媒体设备的挂载点， 例如 USB 驱动器，CD-ROMs 等等。这些设备连接到计算机之后，会自动地挂载到这个目录结点下。&#x2F;mnt	在早些的 Linux 系统中，&#x2F;mnt 目录包含可移除设备的挂载点。&#x2F;opt	这个&#x2F;opt 目录被用来安装“可选的”软件。这个主要用来存储可能 安装在系统中的商业软件产品。&#x2F;proc	这个&#x2F;proc 目录很特殊。从存储在硬盘上的文件的意义上说，它不是真正的文件系统。反而，它是一个由 Linux 内核维护的虚拟文件系统。它所包含的文件是内核的窥视孔。这些文件是可读的， 它们会告诉你内核是怎样监管计算机的。&#x2F;root	root 帐户的家目录。&#x2F;sbin	这个目录包含“系统”二进制文件。它们是完成重大系统任务的程序，通常为超级用户保留。&#x2F;tmp	这个&#x2F;tmp 目录，是用来存储由各种程序创建的临时文件的地方。一些配置，导致系统每次重新启动时，都会清空这个目录。&#x2F;usr	在 Linux 系统中，&#x2F;usr 目录可能是最大的一个。它包含普通用户所需要的所有程序和文件。&#x2F;usr&#x2F;bin	&#x2F;usr&#x2F;bin 目录包含系统安装的可执行程序。通常，这个目录会包含许多程序。&#x2F;usr&#x2F;lib	包含由&#x2F;usr&#x2F;bin 目录中的程序所用的共享库。&#x2F;usr&#x2F;local	这个&#x2F;usr&#x2F;local 目录，是非系统发行版自带，却打算让系统使用的程序的安装目录。通常，由源码编译的程序会安装在&#x2F;usr&#x2F;local&#x2F;bin 目录下。新安装的 Linux 系统中，会存在这个目录， 但却是空目录，直到系统管理员放些东西到它里面。&#x2F;usr&#x2F;sbin	包含许多系统管理程序。&#x2F;usr&#x2F;share	&#x2F;usr&#x2F;share 目录包含许多由&#x2F;usr&#x2F;bin目录中的程序使用的共享数据。 其中包括像默认的配置文件，图标，桌面背景，音频文件等等。&#x2F;usr&#x2F;share&#x2F;doc	大多数安装在系统中的软件包会包含一些文档。在&#x2F;usr&#x2F;share&#x2F;doc 目录下， 我们可以找到按照软件包分类的文档。&#x2F;var	除了&#x2F;tmp 和&#x2F;home 目录之外，相对来说，目前我们看到的目录是静态的，这是说， 它们的内容不会改变。&#x2F;var 目录是可能需要改动的文件存储的地方。各种数据库，假脱机文件， 用户邮件等等，都驻扎在这里。&#x2F;var&#x2F;log	这个&#x2F;var&#x2F;log 目录包含日志文件，各种系统活动的记录。这些文件非常重要，并且应该时时监测它们。其中最重要的一个文件是&#x2F;var&#x2F;log&#x2F;messages。注意，为了系统安全，在一些系统中， 你必须是超级用户才能查看这些日志文件。</p>
+<p>开关机命令</p>
+<p>1、shutdown –h now：立刻进行关机</p>
+<p>2、shutdown –r now：现在重新启动计算机</p>
+<p>3、reboot：现在重新启动计算机</p>
+<p>4、su -：切换用户；passwd：修改用户密码</p>
+<p>5、logout：用户注销</p>
+<p>二、操作文件和目录</p>
+<p>命令格式：命令 -选项 参数 （选项和参数可以为空）</p>
+<p>0、pwd命令Linux pwd（英文全拼：print work directory） 命令用于显示工作目录。</p>
+<p>执行 pwd 指令可立刻得知您目前所在的工作目录的绝对路径名称。</p>
+<p>pwd [–help][–version]–help 在线帮助。</p>
+<p>–version 显示版本信息。</p>
+<p>1、展示目录列表命令ls（list）ls 命令选项-a，–all</p>
+<p>#列出所有文件，甚至包括文件名以圆点开头的默认会被隐藏的隐藏文件。</p>
+<p>-d，–directory</p>
+<p>#通常，如果指定了目录名，ls 命令会列出这个目录中的内容，而不是目录本身。 把这个选项与 -l 选项结合使用，可以看到所指定目录的详细信息，而不是目录中的内容。</p>
+<p>-F，–classify</p>
+<p>#这个选项会在每个所列出的名字后面加上一个指示符。例如，如果名字是 目录名，则会加上一个’&#x2F;‘字符。</p>
+<p>-h，–human-readable</p>
+<p>#当以长格式列出时，以人们可读的格式，而不是以字节数来显示文件的大小。</p>
+<p>-l</p>
+<p>#以长格式显示结果。</p>
+<p>-r，–reverse</p>
+<p>#以相反的顺序来显示结果。通常，ls 命令的输出结果按照字母升序排列。</p>
+<p>-S</p>
+<p>#命令输出结果按照文件大小来排序。</p>
+<p>-t</p>
+<p>#按照修改时间来排序。</p>
+<p>2、mkdir - 创建目录 、 rmdir – 删除目录和</p>
+<p>touch – 创建文件</p>
+<p>mkdir dir1创建一个名为”dir1”的目录</p>
+<p>rmdir dir1删除一个名为”dir1”的目录</p>
+<p>touch dir1创建一个名为”dir1”的文件</p>
+<p>3、cp - 复制文件和目录-a, –archive</p>
+<p>#复制文件和目录，以及它们的属性，包括所有权和权限。 通常，复本具有用户所操作文件的默认属性。</p>
+<p>-i, –interactive</p>
+<p>#在重写已存在文件之前，提示用户确认。如果这个选项不指定， cp 命令会默认重写文件。</p>
+<p>-r, –recursive</p>
+<p>#递归地复制目录及目录中的内容。当复制目录时， 需要这个选项（或者-a 选项）。</p>
+<p>-u, –update</p>
+<p>#当把文件从一个目录复制到另一个目录时，仅复制 目标目录中不存在的文件，或者是文件内容新于目标目录中已经存在的文件。</p>
+<p>-v, –verbose</p>
+<p>#显示翔实的命令操作信息</p>
+<p>4、mv - 移动和重命名文件mv 选项</p>
+<p>-i –interactive</p>
+<p>#在重写一个已经存在的文件之前，提示用户确认信息。 如果不指定这个选项，mv 命令会默认重写文件内容。</p>
+<p>-u –update</p>
+<p>#当把文件从一个目录移动另一个目录时，只是移动不存在的文件， 或者文件内容新于目标目录相对应文件的内容。</p>
+<p>-v –verbose 当操作 mv 命令时，显示翔实的操作信息。</p>
+<p>mv 实例mv file1 file2</p>
+<p>#移动 file1 到 file2。如果 file2 存在，它的内容会被 file1 的内容重写。 如果 file2 不存在，则创建 file2。 每种情况下，file1 不再存在。</p>
+<p>mv -i file1 file2</p>
+<p>#除了如果 file2 存在的话，在 file2 被重写之前，用户会得到 提示信息外，这个和上面的选项一样。</p>
+<p>mv file1 file2 dir1</p>
+<p>#移动 file1 和 file2 到目录 dir1 中。dir1 必须已经存在。</p>
+<p>mv dir1 dir2</p>
+<p>#如果目录 dir2 不存在，创建目录 dir2，并且移动目录 dir1 的内容到 目录 dir2 中，同时删除目录 dir1。如果目录 dir2 存在，移动目录 dir1（及它的内容）到目录 dir2。</p>
+<p>5、rm - 删除文件和目录rm 选项</p>
+<p>-i, –interactive</p>
+<p>#在删除已存在的文件前，提示用户确认信息。 如果不指定这个选项，rm 会默默地删除文件</p>
+<p>-r, –recursive</p>
+<p>#递归地删除文件，这意味着，如果要删除一个目录，而此目录 又包含子目录，那么子目录也会被删除。要删除一个目录，必须指定这个选项。</p>
+<p>-f, –force</p>
+<p>#忽视不存在的文件，不显示提示信息。这选项颠覆了“–interactive”选项。</p>
+<p>-v, –verbose</p>
+<p>#在执行 rm 命令时，显示翔实的操作信息。</p>
+<p>6.文件打包或解压命令tartar -zcvf dir1.tar.gz</p>
+<p>#打包成tar.gz格式压缩包</p>
+<p>tar zxvf dir1.tar.gz</p>
+<p>#解压tar.gz格式压缩包</p>
+<p>tar -jcvf dir1.tar.bz2</p>
+<p>#打包成tar.bz2格式压缩包</p>
+<p>tar jxvf dir1.tar.bz2</p>
+<p>#解压tar.bz2格式的压缩包</p>
+<p>-c 建立新的备份文件。</p>
+<p>-v 显示详细的tar处理的文件信息</p>
+<p>-f 要操作的文件名</p>
+<p>-r 递归处理，将指定目录下的所有文件和子目录一并处理</p>
+<p>zip -q -r dir1.zip</p>
+<p>#压缩成zip格式</p>
+<p>unzip dir1.zip</p>
+<p>#解压zip格式的压缩包</p>
+<p>-q 不显示指令执行过程。</p>
+<p>-r 递归处理，将指定目录下的所有文件和子目录一并处理。</p>
+<p>7 、catcat命令用于连接文件并打印到标准输出设备上。</p>
+<p>语法：</p>
+<p>cat [-AbEnTv]</p>
+<p>选项与参数：</p>
+<p>-A 相当於 -vET 的整合选项，可列出一些特殊字符而不是空白而已；</p>
+<p>-b 列出行号，仅针对非空白行做行号显示，空白行不标行号！</p>
+<p>-E 将结尾的断行字节 $ 显示出来；</p>
+<p>-n 列印出行号，连同空白行也会有行号，与 -b 的选项不同；</p>
+<p>-T 将 [tab] 按键以 ^I 显示出来；</p>
+<p>-v 列出一些看不出来的特殊字符</p>
+<p>8、grep</p>
+<p>Linux grep 命令用于查找文件里符合条件的字符串。 Linux系统中grep命令是一种强大的文本搜索工具，它能使用正则表达式搜索文本，并把匹 配的行打印出来。</p>
+<p>-c 只输出匹配行的计数。</p>
+<p>-I 不区分大小写。</p>
+<p>-h 查询多文件时不显示文件名。</p>
+<p>-l 查询多文件时只输出包含匹配字符的文件名。</p>
+<p>-n 显示匹配行及 行号。</p>
+<p>-s 不显示不存在或无匹配文本的错误信息。</p>
+<p>-v 显示不包含匹配文本的所有行。</p>
+<p>–color&#x3D;auto 可以将找到的关键词部分加上颜色的显示。</p>
+<p>三、系统常用操作命令</p>
+<p>网络管理：ping、ifconfig服务管理命令：service:格式：service s_name start|stop|status|restartlinux系统所有自带服务名称：&#x2F;etc&#x2F;init.d&#x2F;</p>
+<p>常用：service iptables stop关闭防火墙服务</p>
+<p>service network start 启动网卡</p>
+<p>service network stop 关闭网卡</p>
+<p>service network restart 重启网络</p>
+<p>端口管理nststat:查看端口开放情况-a:表示列举所有的连接、服务器监听-t:列出所有tcp协议的服务-u:列出所有udp协议的服务-n:使用端口号来显示-l:列出所有的监听-p:列出所有服务的进程id（pid）常用：netstat -atunlp</p>
+<p>四、软件包管理命令（apt）</p>
+<p>不同的 Linux 发行版使用不同的打包系统，一般而言，大多数发行版分别属于两大包管理技术阵营：Debian的”.deb”，和红帽的”.rpm”。也有一些重要的例外，比方说 Gentoo，Slackware，和Foresight，但大多数会使用这两个基本系统中的一个。</p>
+<p>包管理系统	发行版 (部分列表)</p>
+<p>apt和apt-get 命令适用于 deb 包管理式的 Linux 操作系统（Debian、Ubuntu等），主要用于自动从互联网软件仓库中搜索、下载、安装、升级、卸载软件或操作系统。</p>
+<p>apt 命令 取代的命令 命令的功能</p>
+<p>apt install | apt-get install | 安装软件包</p>
+<p>apt remove | apt-get remove | 移除软件包</p>
+<p>apt purge | apt-get purge | 除软件包及配置文件</p>
+<p>apt update | apt-get update | 刷新存储库索引</p>
+<p>apt upgrade | apt-get upgrade | 升级所有可升级的软件包</p>
+<p>apt autoremove | apt-get autoremove | 自动删除不需要的包</p>
+<p>apt full-upgrade | apt-get dist-upgrade | 在升级软件包时自动处理依赖关系</p>
+<p>apt search | apt-cache search | 搜索应用程序</p>
+<p>apt show | apt-cache show | 显示安装细节</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/aba2a9fd.html">https://raidenxe.github.io/archives/aba2a9fd.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/">Linux</a></div><div class="post-share"><div class="social-share" data-image="https://pica.zhimg.com/v2-5fd2e93e3fd4c3824d463dd1a0acaba2_1440w.jpg?source=172ae18b" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/archives/cc4d518f.html" title="单片机和嵌入式系统的区别"><img class="cover" src="https://pica.zhimg.com/v2-13d1a10aa719b8f5e03b94b824fccac2_1440w.jpg?source=172ae18b" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">单片机和嵌入式系统的区别</div></div><div class="info-2"><div class="info-item-1">单片机和嵌入式系统的区别嵌入式和单片机并不是一对相对的概念，嵌入式系统包括硬件和软件部分，而单片机是单片微型计算机(Single Chip Microcomputer )的简称，即微控制单元(Microcontroller Unit；MCU) 。单片机可以是嵌入式系统的组成部分。我们可以理解为嵌入式系统是一个大类，单片机是其中一个重要的子类。 什么是单片机？单片机又称单片微控制器，它是将电子计算机的基本环节,如:中央处理器(又称中央处理器,主要由运算器,控制器组成),存储器,总线,输入输出接口等,采用集成电路技术集成在一片硅基片上.由于单片计算机体积很小(仅手指般大小),功能强(具有一个简单计算机的功能)。 什么是嵌入式系统？嵌入式系统是基于微处理器的计算机硬件系统，其软件设计用于执行专用功能，既可以作为独立系统，也可以作为大型系统的一部分。其核心是一个集成电路，旨在为实时操作执行计算。其软件内容只包括软件运行环境及其操作系统。硬件内容包括信号处理器、存储器、通信模块等在内的多方面的内容。 复杂性从单个微控制器到具有连接外围设备和网络的一套处理器；从无用户界面到复杂的图形用户界面...</div></div></div></a><a class="pagination-related" href="/archives/6a0755b3.html" title="树莓派系统烧录教程"><img class="cover" src="https://pic1.zhimg.com/v2-7ce2c8e98cf7bd3ebf0e8e053f1dbb0c_1440w.jpg?source=172ae18b" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">树莓派系统烧录教程</div></div><div class="info-2"><div class="info-item-1">树莓派的系统烧录大体上可分为使用 官方的烧录工具Raspberry Pi Imager烧录和使用第三方烧录工具烧录。 官方的烧录工具胜在操作简单，方便快捷，所以这里使用Raspberry Pi Imager进行演示。 具体步骤如下： 首先准备好tf卡和读卡器 然后进入官网下载 Raspberry Pi Imager   安装Raspberry Pi Imager  打开Raspberry Pi Imager 这里我们可以看到有很多系统可供选择，可以自行选择适合的系统，  这里我们选择带有树莓派桌面的第一个系统为例  选择对应的存储设备  烧录程序  接下来耐心等待即可 如果出现报错，可以尝试重新烧录系统。 </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/archives/90acc1af.html" title="Linux下的fork和exec函数"><img class="cover" src="https://pic2.zhimg.com/v2-1a7eb58610755e46dbcc46e787517c08_1440w.jpg?source=172ae18b" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-09</div><div class="info-item-2">Linux下的fork和exec函数</div></div><div class="info-2"><div class="info-item-1">引言多进程编程的概念早在六十年代就被提出，但直到八十年代中期，Unix系统中才引入多进程机制。如今，由于自身的许多优点，多进程编程已经得到了广泛的应用。 fork 函数是 Unix 系统最杰出的成就之一，它是七十年代 UNIX 早期的开发者经过长期在理论和实践上的艰苦探索后取得的成果。一方面，它使操作系统在进程管理上付出了最小的代价；另一方面，又为程序员提供了一个简洁明了的多进程方法。 Linux下进程的结构Linux 下一个进程在内存里有三部分的数据，就是代码段、堆栈段和数据段。  代码段：存放程序代码的数据。如果机器中有数个进程运行相同的一个程序，它们可以共享相同的代码段。 堆栈段：存放子程序的返回地址、子程序的参数以及程序的局部变量。 数据段：存放程序的全局变量、常数以及动态数据分配的空间（如用 malloc 函数取得的空间）。  系统如果同时运行数个相同的程序，它们之间不能使用同一个堆栈段和数据段，但可以共享代码段。 Linux下的进程控制 fork 函数fork() 用来创建一个新的进程，该进程几乎是当前进程的一个完全拷贝。 1234#include &lt;sys/t...</div></div></div></a><a class="pagination-related" href="/archives/ef07d954.html" title="Linux 文本三剑客（2）sed命令的使用"><img class="cover" src="https://pic3.zhimg.com/v2-a151d3592ecf5d6abb44b392f5d569e3_1440w.jpg?source=172ae18b" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-19</div><div class="info-item-2">Linux 文本三剑客（2）sed命令的使用</div></div><div class="info-2"><div class="info-item-1">sed引言sed（意为流编辑器，源自英语“stream editor”的缩写）是一个使用简单紧凑的编程语言来解析和转换文本Unix实用程序。虽然在某些方面类似于允许脚本编辑的编辑器，但只需对输入进行一次传递即可工作，因此效率更高。但是，它能够过滤管道中的文本，这特别将其与其他类型的编辑器区分开来。 sed由贝尔实验室的李·E·麦克马洪于1973年至1974年开发， 并且现在大多数操作系统都可以使用。 sed基于交互式编辑器ed（“editor”，1971）和早期qed（“quick editor”，1965-66）的脚本功能。sed是最早支持正则表达式的工具之一，至今仍然用于文本处理，特别是用于替换命令。用于纯文本字符串操作和“流编辑”的常用工具还有AWK和Perl 。 sed 工作原理 sed是从文件或管道中读取一行，处理一行，输出一行；再读取一行，再处理一行，再输出一行，直到最后一行。每当处理一行时，把当前处理的行存储在临时缓冲区中，称为模式空间（Pattern Space），接着用sed命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送往屏幕。接着处理下一行，这样不断重复...</div></div></div></a><a class="pagination-related" href="/archives/5ef8a3c1.html" title="Linux磁盘清理与扩容：从原理到实践"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260711215050073.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-11</div><div class="info-item-2">Linux磁盘清理与扩容：从原理到实践</div></div><div class="info-2"><div class="info-item-1">引言磁盘空间管理是 Linux 系统管理中的基础但至关重要的环节。随着系统持续运行，各类临时文件、日志归档、缓存数据、容器镜像层等会不断累积，蚕食磁盘空间，最终可能引发服务异常、写入失败乃至系统崩溃。本文将从基本原理出发，结合一次完整的磁盘清理实战案例，系统阐述磁盘清理的方法论、工具链与最佳实践，并进一步介绍磁盘扩容与分区管理的操作指南。  一、磁盘清理的基本原理1.1 磁盘空间是如何被消耗的Linux 文件系统的磁盘占用可归纳为以下几类： （1）持久化数据  操作系统文件（/usr、/etc、/boot） 用户数据（/home） 应用程序数据（/var/lib 下的数据库、容器存储等）  （2）缓存与临时数据  包管理器缓存（APT 的 /var/cache/apt、Snap 的 /var/lib/snapd） 容器运行时层（Docker&#x2F;containerd 的镜像层、快照层） IDE 与开发工具缓存（旧版本服务器文件、扩展缓存）  （3）日志数据  系统日志（systemd journal，位于 /var/log/journal） 应用日志（Redis、Nginx...</div></div></div></a><a class="pagination-related" href="/archives/1815c365.html" title="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）"><img class="cover" src="https://pic1.zhimg.com/v2-18f2189eec39d8a665949f2b43c54626_1440w.jpg?source=172ae18b" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-12</div><div class="info-item-2">计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）</div></div><div class="info-2"><div class="info-item-1">本文使用 fork 函数实现并发 TCP 服务器，关于 fork 函数的用法可以参考我的文章：Linux 下的 fork 和 exec 函数。 服务器基本结构本文的目标是编写一个完整的 TCP 客户&#x2F;服务器程序示例。这个简单的例子是执行如下步骤的一个回射服务器： (1) 客户从标准输入读入一行文本，并写给服务器；(2) 服务器从网络输入读入这行文本，并回射给客户；(3) 客户从网络输入读入这行回射文本，并显示在标准输出上。  迭代服务器和并发服务器迭代服务器以串行方式一次处理一个客户端。迭代服务器会依次处理客户端的连接，只要当前连接的任务没有完成，服务器的进程就会被一直占用，直到任务完成后，服务器关闭这个 socket，释放连接。 并发服务器可以同时并行处理多个客户端。并发服务器主要通过三种方式实现：进程、线程和 IO 复用。 迭代服务器程序轮廓1234567891011int listenfd, connfd;listenfd = socket(AF_INET, SOCK_STREAM, 0);bind(listenfd, (struct sockaddr*)&amp...</div></div></div></a><a class="pagination-related" href="/archives/5281ea67.html" title="Linux创建分区并挂载磁盘"><img class="cover" src="https://picx.zhimg.com/70/v2-113121bedf1a07eed5ef4c79df67669f_1440w.avis?source=172ae18b&biz_tag=Post" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-22</div><div class="info-item-2">Linux创建分区并挂载磁盘</div></div><div class="info-2"><div class="info-item-1">这里使用CentOS7.9进行演示。 查看磁盘状态 df -h  查看已存在分区 fdisk -l  如图所示，已经存在&#x2F;dev&#x2F;sda1，&#x2F;dev&#x2F;sda2分区 创建 /dev/sda3 分区的步骤涉及使用分区工具（如 fdisk 或 parted）来对虚拟磁盘进行分区。以下是使用 fdisk 工具的步骤： 打开分区工具： 运行以下命令以打开磁盘分区工具，其中 /dev/sda 是你要分区的磁盘： 1fdisk /dev/sda  创建新分区： 输入 n 创建一个新分区。选择分区类型。 如果你想要标准的 Linux 分区，通常选择主分区（Primary）。 选择分区编号，如果这是第一个分区，选择 3。 按照提示设置分区的起始和结束扇区。如果你想使用整个可用空间，通常可以使用默认值。保存更改：输入 w 保存所做的更改并退出 fdisk。  再次查看分区情况： fdisk -l  已创建分区&#x2F;dev&#x2F;sda3。 更新分区表： 不进行分区表更新可能导致新分区无法格式化 sudo partprobe &#x2F;dev&#x2...</div></div></div></a><a class="pagination-related" href="/archives/b013fd12.html" title="Ubuntu（WSL2）安装MySQL数据库"><img class="cover" src="https://pic1.zhimg.com/v2-5f5a9a6137dc06bbc3cfb4ae1de982db_1440w.jpg?source=172ae18b" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-08-07</div><div class="info-item-2">Ubuntu（WSL2）安装MySQL数据库</div></div><div class="info-2"><div class="info-item-1">本文将简单介绍Ubuntu安装MySQL数据库的方法以及我在安装过程遇到的一些问题，WSL环境下同样适用。 MySQLMySQL 是最流行的关系型数据库管理系统，在 WEB 应用方面 MySQL 是最好的 RDBMS(Relational Database Management System：关系数据库管理系统)应用软件之一。 命令行安装MySQL在Ubuntu中使用命令行安装MySQL是比较简单快捷的，执行以下命令即可： 1sudo apt install mysql-server -y   常见问题1如果安装失败或者速度太慢，推荐换源并更新apt软件包 1sudo apt update  换源的方法一搜一大堆，这里就不作赘述了。 而在一些arm-Linux开发板上使用apt包管理器是无法安装mysql-server的，比如说树莓派，可以选择安装 MariaDB（由MySQL的创始人创建的一个开源分支版本，使用XtraDB引擎），或者是编译安装MySQL。 常见问题2而在WSL下，安装完MySQL，在终端运行mysql时，往往会报错 报错信息如下： ERROR 2002 (HY...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Raidenxe</div><div class="author-info-description">向着真理和自由，无名的献身。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/61196baf.html" title="Jenkins-CICD实战"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins-CICD实战"/></a><div class="content"><a class="title" href="/archives/61196baf.html" title="Jenkins-CICD实战">Jenkins-CICD实战</a><time datetime="2026-08-11T17:09:47.000Z" title="发表于 2026-08-12 01:09:47">2026-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a3e16fea.html" title="面试题1"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试题1"/></a><div class="content"><a class="title" href="/archives/a3e16fea.html" title="面试题1">面试题1</a><time datetime="2026-08-11T14:53:55.000Z" title="发表于 2026-08-11 22:53:55">2026-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/35864571.html" title="docker部署jenkins"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署jenkins"/></a><div class="content"><a class="title" href="/archives/35864571.html" title="docker部署jenkins">docker部署jenkins</a><time datetime="2026-08-10T05:55:00.000Z" title="发表于 2026-08-10 13:55:00">2026-08-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/be6d62ff.html" title="docker部署gitlab"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署gitlab"/></a><div class="content"><a class="title" href="/archives/be6d62ff.html" title="docker部署gitlab">docker部署gitlab</a><time datetime="2026-08-08T07:16:03.000Z" title="发表于 2026-08-08 15:16:03">2026-08-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260807160530247.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s+Helm部署kube-prometheus-stack"/></a><div class="content"><a class="title" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack">K8s+Helm部署kube-prometheus-stack</a><time datetime="2026-08-07T07:12:03.000Z" title="发表于 2026-08-07 15:12:03">2026-08-07</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2020 - 2026 By Raidenxe</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5"></script><script src="/js/main.js?v=5.5.5"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="false"> </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5"></script></div></div></body></html>

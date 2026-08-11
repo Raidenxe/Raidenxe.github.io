@@ -1,0 +1,615 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>kvm-qemu学习笔记 | Raidenxe的博客</title><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="KVM 虚拟化从入门到实践：架构、部署与网络管理一文讲透 KVM 虚拟化技术栈：KVM、QEMU、libvirt 三组件的分工与协作，从环境部署到网络配置的完整实战记录。 目录 虚拟化基础 KVM架构与核心组件 部署 KVM 虚拟化环境 创建虚拟机 虚拟机管理 存储管理 网络管理（重点） 总结..."><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "kvm-qemu学习笔记",
+  "url": "https://raidenxe.github.io/archives/34769e12.html",
+  "image": "https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260704205341746.png",
+  "datePublished": "2026-07-02T13:48:32.000Z",
+  "dateModified": "2026-07-08T01:55:14.054Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Raidenxe",
+      "url": "https://Raidenxe.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/34769e12.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css?v=5.5.5"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'kvm-qemu学习笔记',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/macblack.css"><style>
+  #web_bg{background-image:url(/img/风景006.png)}
+  #footer{background-image:url(/img/风景008.png);background-size:cover;background-position:center}
+  .aplayer-lrc{display:none !important}
+</style>
+<meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/%E9%A3%8E%E6%99%AF006.png));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260704205341746.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Raidenxe的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">kvm-qemu学习笔记</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">kvm-qemu学习笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-02T13:48:32.000Z" title="发表于 2026-07-02 21:48:32">2026-07-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-07-08T01:55:14.054Z" title="更新于 2026-07-08 09:55:14">2026-07-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Docker%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Docker学习笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">4.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>15分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="KVM-虚拟化从入门到实践：架构、部署与网络管理"><a href="#KVM-虚拟化从入门到实践：架构、部署与网络管理" class="headerlink" title="KVM 虚拟化从入门到实践：架构、部署与网络管理"></a>KVM 虚拟化从入门到实践：架构、部署与网络管理</h1><p>一文讲透 KVM 虚拟化技术栈：<strong>KVM</strong>、<strong>QEMU</strong>、<strong>libvirt</strong> 三组件的分工与协作，从环境部署到网络配置的完整实战记录。</p>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ol>
+<li><a href="#1-%E8%99%9A%E6%8B%9F%E5%8C%96%E5%9F%BA%E7%A1%80">虚拟化基础</a></li>
+<li><a href="#2-kvm%E6%9E%B6%E6%9E%84%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6">KVM架构与核心组件</a></li>
+<li><a href="#3-%E9%83%A8%E7%BD%B2-kvm-%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83">部署 KVM 虚拟化环境</a></li>
+<li><a href="#4-%E5%88%9B%E5%BB%BA%E8%99%9A%E6%8B%9F%E6%9C%BA">创建虚拟机</a></li>
+<li><a href="#5-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%AE%A1%E7%90%86">虚拟机管理</a></li>
+<li><a href="#6-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86">存储管理</a></li>
+<li><a href="#7-%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86%E9%87%8D%E7%82%B9">网络管理（重点）</a></li>
+<li><a href="#8-%E6%80%BB%E7%BB%93">总结</a></li>
+</ol>
+<hr>
+<h2 id="1-虚拟化基础"><a href="#1-虚拟化基础" class="headerlink" title="1 虚拟化基础"></a>1 虚拟化基础</h2><p>虚拟化是通过软件技术将物理资源（CPU、内存、存储、网络）抽象成逻辑资源，实现单台物理机运行多个隔离的**”虚拟机”**的技术。主要类型：</p>
+<ul>
+<li><strong>全虚拟化</strong>：模拟完整硬件环境，无需修改客户机操作系统（如 KVM、VMware ESXi）</li>
+<li><strong>半虚拟化</strong>：客户机需修改内核，通过特定接口访问硬件，性能接近物理机（如 Xen 的 PV 模式）</li>
+<li><strong>容器化</strong>：操作系统级虚拟化，共享宿主机内核（如 Docker）</li>
+</ul>
+<p><strong>KVM（Kernel-based Virtual Machine）</strong>是 Linux 内核模块，将 Linux 转变为类型 1（裸金属）虚拟机监控器（Hypervisor），依赖硬件虚拟化技术（Intel VT-x &#x2F; AMD SVM）。</p>
+<hr>
+<h2 id="2-KVM架构与核心组件"><a href="#2-KVM架构与核心组件" class="headerlink" title="2 KVM架构与核心组件"></a>2 KVM架构与核心组件</h2><p>KVM 技术栈由三个层次分明的组件构成：<strong>KVM（内核态）</strong>、<strong>QEMU（用户态）</strong> 和 <strong>libvirt（管理层）</strong>。理解三者的关系，是掌握 KVM 虚拟化的关键。</p>
+<h3 id="2-1-KVM-内核模块"><a href="#2-1-KVM-内核模块" class="headerlink" title="2.1 KVM 内核模块"></a>2.1 KVM 内核模块</h3><p>KVM 由内核模块 <code>kvm.ko</code> + 处理器特定模块（<code>kvm_intel.ko</code> 或 <code>kvm_amd.ko</code>）组成。<code>kvm.ko</code> 提供核心虚拟化框架，处理器相关模块负责初始化 CPU 硬件虚拟化功能。</p>
+<p>KVM 的职责：</p>
+<ul>
+<li><strong>CPU 虚拟化</strong>：利用 VT-x&#x2F;AMD-V 让 vCPU 指令直接在物理 CPU 上执行，无需软件翻译</li>
+<li><strong>内存虚拟化</strong>：通过 EPT（Intel）或 NPT（AMD）实现虚拟地址到物理地址的转换</li>
+<li><strong>vCPU 调度</strong>：将每个虚拟 CPU 作为 Linux 线程调度</li>
+</ul>
+<p>KVM 不模拟任何 I&#x2F;O 设备——它不知道什么是硬盘、什么是网卡。它通过 <code>/dev/kvm</code> 设备文件向外暴露内核虚拟化能力，用户态程序通过 <code>ioctl</code> 系统调用与 KVM 交互。</p>
+<h3 id="2-2-QEMU：设备模拟器"><a href="#2-2-QEMU：设备模拟器" class="headerlink" title="2.2 QEMU：设备模拟器"></a>2.2 QEMU：设备模拟器</h3><p><strong>QEMU（Quick Emulator）</strong>是一个开源的机器模拟器。在 KVM 架构中，QEMU 作为<strong>用户态组件</strong>运行，承担以下职责：</p>
+<ul>
+<li><strong>设备模拟</strong>：模拟磁盘（virtio-blk、IDE、SATA）、网卡（virtio-net、e1000）、USB、显卡、串口等</li>
+<li><strong>虚拟机进程管理</strong>：每个虚拟机对应一个 QEMU 进程，虚拟机中的每个 vCPU 对应 QEMU 进程中的一个线程</li>
+<li><strong>与 KVM 通信</strong>：通过 <code>/dev/kvm</code> 的 ioctl 接口，将 vCPU 交给 KVM 执行，并在 I&#x2F;O 发生时接收控制权</li>
+</ul>
+<p>QEMU 可以独立于 KVM 运行（纯软件模拟），但性能很低。有了 KVM 加速后，CPU 指令直接运行，只有 I&#x2F;O 操作才经过 QEMU 模拟，这是 KVM-QEMU 组合高性能的根本原因。</p>
+<h3 id="2-3-libvirt：管理接口层"><a href="#2-3-libvirt：管理接口层" class="headerlink" title="2.3 libvirt：管理接口层"></a>2.3 libvirt：管理接口层</h3><p><strong>libvirt</strong>是一套开源的虚拟化管理 API 和工具集，它独立于具体的 hypervisor，支持 KVM、Xen、LXC、VMware ESXi 等多种后端。</p>
+<p>libvirt 的职责：</p>
+<ul>
+<li><strong>统一管理接口</strong>：提供 <code>virsh</code>（命令行）和 <code>virt-manager</code>（图形界面）等工具</li>
+<li><strong>配置标准化</strong>：用 XML 文件定义虚拟机的 CPU、内存、磁盘、网络等配置</li>
+<li><strong>生命周期管理</strong>：虚拟机的创建、启动、暂停、迁移、删除</li>
+<li><strong>资源管理</strong>：存储池管理、虚拟网络管理（NAT、桥接、隔离网络）</li>
+</ul>
+<p>libvirt 是唯一与 QEMU&#x2F;KVM 直接交互的组件。用户通过 <code>virsh</code> 或 <code>virt-manager</code> 发出请求，<code>libvirtd</code> 将请求转换为 QEMU 命令行参数或 QEMU Monitor 命令，最终由 QEMU 和 KVM 执行。</p>
+<h3 id="2-4-三组件协作全流程"><a href="#2-4-三组件协作全流程" class="headerlink" title="2.4 三组件协作全流程"></a>2.4 三组件协作全流程</h3><p>一句话概括三者的关系：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>一句话概括</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>KVM</strong></td>
+<td>让 CPU 和内存”跑得快”（硬件加速）</td>
+</tr>
+<tr>
+<td><strong>QEMU</strong></td>
+<td>让各种外设”长得像”（设备模拟）</td>
+</tr>
+<tr>
+<td><strong>libvirt</strong></td>
+<td>让所有操作”管得住”（统一管理接口）</td>
+</tr>
+</tbody></table>
+<p><strong>数据流示例：虚拟机发起一次磁盘写入</strong></p>
+<ol>
+<li>虚拟机中的应用程序调用 <code>write()</code> 系统调用</li>
+<li>虚拟机内核将数据写入 virtio-blk 前端驱动</li>
+<li>virtio 驱动通过 virtqueue 将请求传递给 QEMU 的用户态后端</li>
+<li>QEMU 接收到 I&#x2F;O 请求，将数据写入宿主机上的磁盘文件（如 qcow2）</li>
+</ol>
+<p>整个过程中，KVM 负责在 vCPU 退出时将控制权交给 QEMU，并在 I&#x2F;O 完成后重新调度 vCPU 继续执行。</p>
+<p><strong>协作架构图：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------------------------------+</span><br><span class="line">|                     用户/管理员                    |</span><br><span class="line">+--------------------------------------------------+</span><br><span class="line">            |                         |</span><br><span class="line">            v                         v</span><br><span class="line">    +----------------+     +-----------------------+</span><br><span class="line">    |  virt-manager  |     |        virsh          |</span><br><span class="line">    |  (图形界面)     |     |    (命令行工具)        |</span><br><span class="line">    +----------------+     +-----------------------+</span><br><span class="line">            |                         |</span><br><span class="line">            +----------- v -----------+</span><br><span class="line">                        |</span><br><span class="line">                        v</span><br><span class="line">              +-------------------+</span><br><span class="line">              |     libvirtd      |   ← 管理 API 层</span><br><span class="line">              | (libvirt 守护进程) |</span><br><span class="line">              +-------------------+</span><br><span class="line">                        |</span><br><span class="line">                        | XML 配置解析 / 生命周期管理</span><br><span class="line">                        v</span><br><span class="line">+-----------------------------------------------+</span><br><span class="line">|                 QEMU 进程                      |  ← 用户态：每个虚拟机对应一个 QEMU 进程</span><br><span class="line">|  +-----------------------------------------+ |</span><br><span class="line">|  |  设备模拟：virtio-net, virtio-blk, USB  | |</span><br><span class="line">|  |  I/O 处理：磁盘读写、网络包收发          | |</span><br><span class="line">|  +-----------------------------------------+ |</span><br><span class="line">+-----------------------------------------------+</span><br><span class="line">                        |</span><br><span class="line">                        | ioctl(/dev/kvm)</span><br><span class="line">                        v</span><br><span class="line">+-----------------------------------------------+</span><br><span class="line">|                 KVM 内核模块                   |  ← 内核态</span><br><span class="line">|  +-----------------------------------------+ |</span><br><span class="line">|  |  CPU 虚拟化 (VT-x/AMD-V)                 | |</span><br><span class="line">|  |  内存管理 (EPT/NPT)                      | |</span><br><span class="line">|  |  vCPU 调度                              | |</span><br><span class="line">|  +-----------------------------------------+ |</span><br><span class="line">+-----------------------------------------------+</span><br><span class="line">                        |</span><br><span class="line">                        v</span><br><span class="line">               +-----------------+</span><br><span class="line">               |   物理硬件      |</span><br><span class="line">               | (CPU/内存/IOMMU) |</span><br><span class="line">               +-----------------+</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="3-部署-KVM-虚拟化环境"><a href="#3-部署-KVM-虚拟化环境" class="headerlink" title="3 部署 KVM 虚拟化环境"></a>3 部署 KVM 虚拟化环境</h2><h3 id="3-1-宿主机环境准备"><a href="#3-1-宿主机环境准备" class="headerlink" title="3.1 宿主机环境准备"></a>3.1 宿主机环境准备</h3><ol>
+<li><strong>确认 CPU 支持硬件虚拟化：</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep -E <span class="string">&#x27;(vmx|svm)&#x27;</span> /proc/cpuinfo</span><br></pre></td></tr></table></figure>
+
+<p>有输出则支持，无输出需检查 BIOS 是否开启虚拟化。</p>
+<ol start="2">
+<li><strong>关闭 SELinux</strong>（如适用）或配置允许 libvirt 访问</li>
+<li><strong>确保网络连通</strong>，配置合适的软件源</li>
+</ol>
+<h3 id="3-2-安装-KVM-工具包"><a href="#3-2-安装-KVM-工具包" class="headerlink" title="3.2 安装 KVM 工具包"></a>3.2 安装 KVM 工具包</h3><p>我编写了自动化脚本 <code>install_kvm_ubuntu.sh</code>，可一键安装以下组件：</p>
+<ul>
+<li><code>qemu-system-x86</code>：QEMU 模拟器</li>
+<li><code>libvirt-daemon-system</code>：libvirt 守护进程及服务</li>
+<li><code>virt-manager</code>：图形化管理工具</li>
+</ul>
+<p>安装后需将用户加入 <code>libvirt</code> 和 <code>kvm</code> 组，启动 <code>libvirtd</code> 服务并设置开机自启。</p>
+<blockquote>
+<p>🔽 <a href="/downloads/install_kvm_ubuntu.sh">下载脚本 install_kvm_ubuntu.sh</a></p>
+</blockquote>
+<h3 id="3-3-自动安装脚本详解"><a href="#3-3-自动安装脚本详解" class="headerlink" title="3.3 自动安装脚本详解"></a>3.3 自动安装脚本详解</h3><p><strong>脚本逻辑流程：</strong></p>
+<p>（流程图占位符，此处保留原文示意）</p>
+<p><strong>关键步骤说明：</strong></p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>检测内容</th>
+<th>失败处理</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CPU 虚拟化检查</td>
+<td><code>grep -E &#39;vmx|svm&#39; /proc/cpuinfo</code></td>
+<td>提示检查 BIOS 设置并退出</td>
+</tr>
+<tr>
+<td>软件包检测</td>
+<td><code>dpkg-query -s qemu-system-x86</code> 等</td>
+<td>自动执行 <code>apt install</code></td>
+</tr>
+<tr>
+<td>用户组配置</td>
+<td>检查当前用户是否在 <code>libvirt</code> 和 <code>kvm</code> 组</td>
+<td>执行 <code>usermod -aG</code>，设置重新登录标志</td>
+</tr>
+<tr>
+<td>内核模块加载</td>
+<td><code>lsmod | grep kvm</code></td>
+<td>执行 <code>modprobe kvm_intel</code> 或 <code>kvm_amd</code></td>
+</tr>
+<tr>
+<td>服务验证</td>
+<td><code>systemctl is-active libvirtd</code></td>
+<td>提示查看 <code>journalctl -u libvirtd</code></td>
+</tr>
+</tbody></table>
+<p><strong>执行安装：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> ./install_kvm_ubuntu.sh</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/image-20260702214602330.png" alt="安装过程截图"></p>
+<p><strong>安装完成，打开 virt-manager 效果：</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/image-20260702214431309.png" alt="virt-manager 界面"></p>
+<hr>
+<h2 id="4-创建虚拟机"><a href="#4-创建虚拟机" class="headerlink" title="4 创建虚拟机"></a>4 创建虚拟机</h2><h3 id="4-1-virt-manager-图形化创建"><a href="#4-1-virt-manager-图形化创建" class="headerlink" title="4.1 virt-manager 图形化创建"></a>4.1 virt-manager 图形化创建</h3><ol>
+<li>启动 <code>virt-manager</code>，连接本地 QEMU&#x2F;KVM</li>
+<li>点击”创建新虚拟机”，选择 ISO 或网络安装</li>
+<li>分配 CPU、内存、磁盘（建议 qcow2 格式）</li>
+<li>网络选择默认 NAT（或自定义桥接）</li>
+<li>完成配置，开始安装操作系统</li>
+</ol>
+<p>图形化操作直观，适合入门及单机管理。</p>
+<h3 id="4-2-virt-install-命令行创建"><a href="#4-2-virt-install-命令行创建" class="headerlink" title="4.2 virt-install 命令行创建"></a>4.2 virt-install 命令行创建</h3><p>命令行方式，适合脚本化批量部署。常用参数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">virt-install \</span><br><span class="line">    --name testvm \</span><br><span class="line">    --memory 2048 \</span><br><span class="line">    --vcpus 2 \</span><br><span class="line">    --disk path=/var/lib/libvirt/images/testvm.qcow2,size=20 \</span><br><span class="line">    --cdrom /path/to/iso \</span><br><span class="line">    --network network=default \</span><br><span class="line">    --graphics vnc,listen=0.0.0.0 \</span><br><span class="line">    --os-variant rhel8.5 \</span><br><span class="line">    --noautoconsole</span><br></pre></td></tr></table></figure>
+
+<p><strong>参数说明：</strong></p>
+<ul>
+<li><code>--os-variant</code>：可使用 <code>osinfo-query os</code> 查询支持的变体</li>
+<li><code>--graphics</code>：可指定 VNC 或 SPICE</li>
+<li><code>--network</code>：可选 <code>network=default</code>（NAT）或 <code>bridge=br0</code>（桥接）</li>
+</ul>
+<h3 id="4-3-基于磁盘模板克隆虚拟机"><a href="#4-3-基于磁盘模板克隆虚拟机" class="headerlink" title="4.3 基于磁盘模板克隆虚拟机"></a>4.3 基于磁盘模板克隆虚拟机</h3><p>复制磁盘镜像文件（注意重置 MAC 地址和 UUID），然后使用 <code>virt-install</code> 的 <code>--import</code> 选项：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cp</span> source.img new.img</span><br><span class="line">virt-install --name newvm --memory 2048 --vcpus 2 \</span><br><span class="line">    --disk path=new.img --import \</span><br><span class="line">    --network network=default --os-variant generic</span><br></pre></td></tr></table></figure>
+
+<p>也可使用 <code>virt-clone</code> 命令自动完成克隆：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virt-clone --original sourcevm --name newvm --file new.img</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="5-虚拟机管理"><a href="#5-虚拟机管理" class="headerlink" title="5 虚拟机管理"></a>5 虚拟机管理</h2><h3 id="5-1-virtio-半虚拟化驱动"><a href="#5-1-virtio-半虚拟化驱动" class="headerlink" title="5.1 virtio 半虚拟化驱动"></a>5.1 virtio 半虚拟化驱动</h3><h4 id="5-1-1-virtio-的工作原理"><a href="#5-1-1-virtio-的工作原理" class="headerlink" title="5.1.1 virtio 的工作原理"></a>5.1.1 virtio 的工作原理</h4><p><strong>virtio</strong>是半虚拟化 I&#x2F;O 框架，客户机通过前端驱动与 QEMU 后端通信，绕过完整设备模拟，大幅减少 VM-Exit，提升网络和磁盘性能。相比模拟的 e1000 网卡或 IDE 磁盘，virtio 可提升 <strong>2-5 倍</strong> 的吞吐量。</p>
+<h4 id="5-1-2-virtio-设备类型"><a href="#5-1-2-virtio-设备类型" class="headerlink" title="5.1.2 virtio 设备类型"></a>5.1.2 virtio 设备类型</h4><p>包含 <code>virtio-net</code>、<code>virtio-blk</code>、<code>virtio-scsi</code>、<code>virtio-serial</code>、<code>virtio-rng</code> 等。生产环境推荐全部使用 virtio 设备。</p>
+<h4 id="5-1-3-驱动获取"><a href="#5-1-3-驱动获取" class="headerlink" title="5.1.3 驱动获取"></a>5.1.3 驱动获取</h4><ul>
+<li><strong>Linux</strong>：内核内置 virtio 驱动（需开启相关编译选项），主流发行版默认已启用</li>
+<li><strong>Windows</strong>：需下载对应版本的 <code>virtio-win</code> 驱动 ISO（Fedora 项目提供），安装系统时需加载驱动</li>
+</ul>
+<h3 id="5-2-libvirt-架构"><a href="#5-2-libvirt-架构" class="headerlink" title="5.2 libvirt 架构"></a>5.2 libvirt 架构</h3><p>libvirt 提供 API 统一管理 KVM、Xen、LXC 等。主要组件：</p>
+<ul>
+<li><code>libvirtd</code>：守护进程</li>
+<li><code>virsh</code>：命令行客户端</li>
+<li><code>virt-manager</code>：图形客户端</li>
+<li>网络、存储、节点设备管理</li>
+</ul>
+<p><strong>配置文件位置：</strong></p>
+<ul>
+<li><code>/etc/libvirt/</code>：libvirt 主配置目录</li>
+<li><code>/etc/libvirt/qemu/</code>：虚拟机 XML 定义文件</li>
+<li><code>/var/lib/libvirt/images/</code>：默认磁盘镜像存储目录</li>
+</ul>
+<h3 id="5-3-virt-manager-管理"><a href="#5-3-virt-manager-管理" class="headerlink" title="5.3 virt-manager 管理"></a>5.3 virt-manager 管理</h3><h4 id="5-3-1-启动菜单"><a href="#5-3-1-启动菜单" class="headerlink" title="5.3.1 启动菜单"></a>5.3.1 启动菜单</h4><p>右键虚拟机可执行启动、暂停、关闭、迁移、快照管理、修改配置等操作。</p>
+<h4 id="5-3-2-远程管理-KVM-宿主机"><a href="#5-3-2-远程管理-KVM-宿主机" class="headerlink" title="5.3.2 远程管理 KVM 宿主机"></a>5.3.2 远程管理 KVM 宿主机</h4><p>通过 SSH 连接，添加连接 <code>qemu+ssh://user@host/system</code>，需对方开启 libvirt 远程访问权限。</p>
+<h4 id="5-3-3-性能监控"><a href="#5-3-3-性能监控" class="headerlink" title="5.3.3 性能监控"></a>5.3.3 性能监控</h4><p>图形界面显示 CPU、内存、磁盘 I&#x2F;O、网络流量实时图表。</p>
+<h4 id="5-3-4-管理快照"><a href="#5-3-4-管理快照" class="headerlink" title="5.3.4 管理快照"></a>5.3.4 管理快照</h4><p>支持创建、恢复、删除快照（基于 qcow2 文件），方便回滚实验环境。</p>
+<h3 id="5-4-virsh-命令行工具"><a href="#5-4-virsh-命令行工具" class="headerlink" title="5.4 virsh 命令行工具"></a>5.4 virsh 命令行工具</h3><p><code>virsh</code> 是核心管理命令，支持交互式和非交互式模式。</p>
+<h4 id="5-4-1-常用命令速查"><a href="#5-4-1-常用命令速查" class="headerlink" title="5.4.1 常用命令速查"></a>5.4.1 常用命令速查</h4><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>virsh list --all</code></td>
+<td>列出所有虚拟机</td>
+</tr>
+<tr>
+<td><code>virsh start &lt;vm&gt;</code></td>
+<td>启动虚拟机</td>
+</tr>
+<tr>
+<td><code>virsh shutdown &lt;vm&gt;</code></td>
+<td>优雅关机</td>
+</tr>
+<tr>
+<td><code>virsh destroy &lt;vm&gt;</code></td>
+<td>强制断电</td>
+</tr>
+<tr>
+<td><code>virsh suspend &lt;vm&gt;</code></td>
+<td>暂停虚拟机</td>
+</tr>
+<tr>
+<td><code>virsh resume &lt;vm&gt;</code></td>
+<td>恢复虚拟机</td>
+</tr>
+<tr>
+<td><code>virsh autostart &lt;vm&gt;</code></td>
+<td>设置开机自启</td>
+</tr>
+<tr>
+<td><code>virsh dumpxml &lt;vm&gt;</code></td>
+<td>查看完整配置</td>
+</tr>
+<tr>
+<td><code>virsh edit &lt;vm&gt;</code></td>
+<td>编辑配置（自动校验）</td>
+</tr>
+<tr>
+<td><code>virsh undefine &lt;vm&gt;</code></td>
+<td>删除虚拟机定义</td>
+</tr>
+<tr>
+<td><code>virsh console &lt;vm&gt;</code></td>
+<td>串口登录虚拟机</td>
+</tr>
+</tbody></table>
+<h4 id="5-4-2-操作示例"><a href="#5-4-2-操作示例" class="headerlink" title="5.4.2 操作示例"></a>5.4.2 操作示例</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看所有虚拟机（含已关闭）</span></span><br><span class="line">virsh list --all</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动虚拟机</span></span><br><span class="line">virsh start testvm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 优雅关机</span></span><br><span class="line">virsh shutdown testvm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 强制关闭（虚拟机无响应时使用）</span></span><br><span class="line">virsh destroy testvm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置开机自启</span></span><br><span class="line">virsh autostart testvm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 取消开机自启</span></span><br><span class="line">virsh autostart --<span class="built_in">disable</span> testvm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导出虚拟机配置</span></span><br><span class="line">virsh dumpxml testvm &gt; testvm.xml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编辑虚拟机配置</span></span><br><span class="line">virsh edit testvm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除虚拟机（仅删除定义，磁盘需手动清理）</span></span><br><span class="line">virsh undefine testvm</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-4-3-console-登录虚拟机"><a href="#5-4-3-console-登录虚拟机" class="headerlink" title="5.4.3 console 登录虚拟机"></a>5.4.3 console 登录虚拟机</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh console testvm</span><br></pre></td></tr></table></figure>
+
+<p>需虚拟机内配置串口终端（如 Linux 添加 <code>console=ttyS0</code> 内核参数）。退出按 <code>Ctrl + ]</code>。</p>
+<h3 id="5-5-virt-what"><a href="#5-5-virt-what" class="headerlink" title="5.5 virt-what"></a>5.5 virt-what</h3><p><code>virt-what</code> 是检测虚拟机运行环境的工具，可识别 KVM、Xen、VMware 等 hypervisor。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install virt-what</span><br><span class="line">virt-what   <span class="comment"># 输出 kvm</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="6-存储管理"><a href="#6-存储管理" class="headerlink" title="6 存储管理"></a>6 存储管理</h2><h3 id="6-1-KVM-存储模式"><a href="#6-1-KVM-存储模式" class="headerlink" title="6.1 KVM 存储模式"></a>6.1 KVM 存储模式</h3><ul>
+<li><strong>文件存储</strong>：qcow2、raw、vmdk 等格式，存放在普通文件系统中</li>
+<li><strong>块设备存储</strong>：LVM 逻辑卷、iSCSI、FC、本地磁盘分区</li>
+<li><strong>网络存储</strong>：NFS、GlusterFS、Ceph RBD</li>
+</ul>
+<p>推荐使用 <strong>qcow2</strong> 格式，支持稀疏文件、快照、压缩、加密。</p>
+<h3 id="6-2-虚拟磁盘管理"><a href="#6-2-虚拟磁盘管理" class="headerlink" title="6.2 虚拟磁盘管理"></a>6.2 虚拟磁盘管理</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看存储池</span></span><br><span class="line">virsh pool-list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看存储池中的卷</span></span><br><span class="line">virsh vol-list default</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建磁盘（qcow2 格式）</span></span><br><span class="line">virsh vol-create-as default testvm.qcow2 20G --format qcow2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除卷</span></span><br><span class="line">virsh vol-delete default testvm.qcow2</span><br></pre></td></tr></table></figure>
+
+<p>虚拟机关联磁盘可在 XML 中通过 <code>&lt;disk&gt;</code> 元素定义，支持总线类型（virtio、ide、sata）：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">disk</span> <span class="attr">type</span>=<span class="string">&#x27;file&#x27;</span> <span class="attr">device</span>=<span class="string">&#x27;disk&#x27;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">driver</span> <span class="attr">name</span>=<span class="string">&#x27;qemu&#x27;</span> <span class="attr">type</span>=<span class="string">&#x27;qcow2&#x27;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">source</span> <span class="attr">file</span>=<span class="string">&#x27;/var/lib/libvirt/images/testvm.qcow2&#x27;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">target</span> <span class="attr">dev</span>=<span class="string">&#x27;vda&#x27;</span> <span class="attr">bus</span>=<span class="string">&#x27;virtio&#x27;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">disk</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="7-网络管理（重点）"><a href="#7-网络管理（重点）" class="headerlink" title="7 网络管理（重点）"></a>7 网络管理（重点）</h2><h3 id="7-1-四种网络模式"><a href="#7-1-四种网络模式" class="headerlink" title="7.1 四种网络模式"></a>7.1 四种网络模式</h3><p>KVM 支持四种网络模式：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>说明</th>
+<th>类比 VMware</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>NAT</strong></td>
+<td>默认，虚拟机通过宿主机 NAT 访问外网</td>
+<td>VMnet8</td>
+</tr>
+<tr>
+<td><strong>隔离（isolated）</strong></td>
+<td>仅虚拟机间通信，不与物理网络互通</td>
+<td>仅主机（VMnet1）</td>
+</tr>
+<tr>
+<td><strong>桥接（bridge）</strong></td>
+<td>虚拟机与宿主机共享物理网卡，拥有独立 IP</td>
+<td>桥接模式</td>
+</tr>
+<tr>
+<td><strong>直接分配（SR-IOV）</strong></td>
+<td>物理网卡直通，性能最高</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<p>虚拟机网卡类型支持 <code>rtl8139</code>、<code>e1000</code>、<code>virtio-net-pci</code> 等，生产环境强烈推荐 <strong>virtio</strong>。</p>
+<h3 id="7-2-宿主机-vnet-与虚拟机-eth0-的关系"><a href="#7-2-宿主机-vnet-与虚拟机-eth0-的关系" class="headerlink" title="7.2 宿主机 vnet 与虚拟机 eth0 的关系"></a>7.2 宿主机 vnet 与虚拟机 eth0 的关系</h3><p>这是<strong>前后端（backend&#x2F;frontend）</strong>的非对称关系：</p>
+<ul>
+<li>虚拟机内的 <code>eth0</code> 是前端虚拟设备（virtio-net）</li>
+<li>宿主机上的 <code>vnetX</code> 是后端 TAP 接口（由 QEMU 创建）</li>
+</ul>
+<p><strong>数据流路径：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">虚拟机 eth0 → virtio ring → QEMU → /dev/net/tun → vnetX → 网桥 → 物理网卡</span><br></pre></td></tr></table></figure>
+
+<p><code>vnetX</code> 是虚拟机网卡在宿主机的”出口”，两者一一对应，但概念上不相等。</p>
+<p>查看 vnetX 信息：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ethtool -i vnet0   <span class="comment"># 查看驱动（应为 tun）</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-3-默认-NAT-网络管理"><a href="#7-3-默认-NAT-网络管理" class="headerlink" title="7.3 默认 NAT 网络管理"></a>7.3 默认 NAT 网络管理</h3><p>安装 KVM 后自动创建一个名为 <code>default</code> 的 NAT 网络，其架构为：</p>
+<ul>
+<li><strong>网桥</strong>：<code>virbr0</code>（IP 192.168.122.1）</li>
+<li><strong>DHCP&#x2F;DNS</strong>：<code>dnsmasq</code> 服务，分配 192.168.122.2~254</li>
+<li><strong>NAT 转发</strong>：通过 iptables 规则实现</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看活动网络</span></span><br><span class="line">virsh net-list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看网络详情</span></span><br><span class="line">virsh net-info default</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 DHCP 租约</span></span><br><span class="line">virsh net-dhcp-leases default</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导出网络配置</span></span><br><span class="line">virsh net-dumpxml default</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看虚拟机网卡信息</span></span><br><span class="line">virsh domiflist testvm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取虚拟机 IP 地址</span></span><br><span class="line">virsh domifaddr testvm</span><br></pre></td></tr></table></figure>
+
+<p>修改默认网络网段（如改为 10.0.0.0&#x2F;24），使用 <code>virsh net-edit default</code> 编辑后重启网络。</p>
+<h3 id="7-4-自定义网络配置"><a href="#7-4-自定义网络配置" class="headerlink" title="7.4 自定义网络配置"></a>7.4 自定义网络配置</h3><h4 id="7-4-1-网络类型"><a href="#7-4-1-网络类型" class="headerlink" title="7.4.1 网络类型"></a>7.4.1 网络类型</h4><ul>
+<li><strong>临时网络</strong>：使用 <code>virsh net-create demo.xml</code> 创建，宿主机重启后消失</li>
+<li><strong>持久网络</strong>：使用 <code>virsh net-define demo.xml</code> 定义，保存至 <code>/etc/libvirt/qemu/networks/</code></li>
+</ul>
+<h4 id="7-4-2-自定义-NAT-网络"><a href="#7-4-2-自定义-NAT-网络" class="headerlink" title="7.4.2 自定义 NAT 网络"></a>7.4.2 自定义 NAT 网络</h4><p>创建 <code>demo-nat.xml</code>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">network</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>demo-nat<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">forward</span> <span class="attr">mode</span>=<span class="string">&#x27;nat&#x27;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">bridge</span> <span class="attr">name</span>=<span class="string">&#x27;virbr1&#x27;</span> <span class="attr">stp</span>=<span class="string">&#x27;on&#x27;</span> <span class="attr">delay</span>=<span class="string">&#x27;0&#x27;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">ip</span> <span class="attr">address</span>=<span class="string">&#x27;192.168.123.1&#x27;</span> <span class="attr">netmask</span>=<span class="string">&#x27;255.255.255.0&#x27;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dhcp</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">range</span> <span class="attr">start</span>=<span class="string">&#x27;192.168.123.2&#x27;</span> <span class="attr">end</span>=<span class="string">&#x27;192.168.123.254&#x27;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dhcp</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">ip</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">network</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>部署并启动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">virsh net-define demo-nat.xml</span><br><span class="line">virsh net-start demo-nat</span><br><span class="line">virsh net-autostart demo-nat</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-5-桥接网络实践"><a href="#7-5-桥接网络实践" class="headerlink" title="7.5 桥接网络实践"></a>7.5 桥接网络实践</h3><h4 id="7-5-1-方式一：手动创建网桥-br0"><a href="#7-5-1-方式一：手动创建网桥-br0" class="headerlink" title="7.5.1 方式一：手动创建网桥 br0"></a>7.5.1 方式一：手动创建网桥 br0</h4><p>宿主机安装 <code>bridge-utils</code>，修改网络配置（如 netplan）创建 br0：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/netplan/01-netcfg.yaml</span></span><br><span class="line"><span class="attr">network:</span></span><br><span class="line">  <span class="attr">version:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">ethernets:</span></span><br><span class="line">    <span class="attr">eth0:</span></span><br><span class="line">      <span class="attr">dhcp4:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">bridges:</span></span><br><span class="line">    <span class="attr">br0:</span></span><br><span class="line">      <span class="attr">interfaces:</span> [<span class="string">eth0</span>]</span><br><span class="line">      <span class="attr">dhcp4:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>应用配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> netplan apply</span><br></pre></td></tr></table></figure>
+
+<p>虚拟机 XML 指定桥接：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">interface</span> <span class="attr">type</span>=<span class="string">&#x27;bridge&#x27;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">source</span> <span class="attr">bridge</span>=<span class="string">&#x27;br0&#x27;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">model</span> <span class="attr">type</span>=<span class="string">&#x27;virtio&#x27;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">interface</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="7-5-2-方式二：libvirt-管理的桥接网络"><a href="#7-5-2-方式二：libvirt-管理的桥接网络" class="headerlink" title="7.5.2 方式二：libvirt 管理的桥接网络"></a>7.5.2 方式二：libvirt 管理的桥接网络</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">network</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>host-bridge<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">forward</span> <span class="attr">mode</span>=<span class="string">&#x27;bridge&#x27;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">bridge</span> <span class="attr">name</span>=<span class="string">&#x27;br0&#x27;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">network</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>部署后虚拟机使用 <code>network=host-bridge</code> 即可。</p>
+<p><strong>两种方式对比：</strong></p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>手动创建 br0</td>
+<td>灵活，宿主机和虚拟机共享同一网桥</td>
+<td>配置复杂，依赖系统网络管理</td>
+</tr>
+<tr>
+<td>libvirt 桥接网络</td>
+<td>统一管理，virsh 可控制</td>
+<td>物理网卡需支持混杂模式</td>
+</tr>
+</tbody></table>
+<h4 id="7-5-3-跨主机通信方案"><a href="#7-5-3-跨主机通信方案" class="headerlink" title="7.5.3 跨主机通信方案"></a>7.5.3 跨主机通信方案</h4><p>默认 NAT 网络无法跨主机通信。跨主机通信主要有三种方案：</p>
+<ul>
+<li><strong>桥接网络</strong>：虚拟机获得与宿主机同网段的 IP，可直接被外部访问</li>
+<li><strong>VXLAN&#x2F;Open vSwitch</strong>：在二层网络上叠加虚拟网络，实现跨主机二层互通</li>
+<li><strong>路由方案</strong>：在宿主机上配置路由表，让不同宿主机的 NAT 子网互通</li>
+</ul>
+<h4 id="7-5-4-内外网隔离综合案例"><a href="#7-5-4-内外网隔离综合案例" class="headerlink" title="7.5.4 内外网隔离综合案例"></a>7.5.4 内外网隔离综合案例</h4><p><strong>场景</strong>：一台宿主机上存在多组虚拟机：</p>
+<ul>
+<li><strong>内网组</strong>：仅宿主机内部通信（isolated），用于数据库集群</li>
+<li><strong>外网组</strong>：桥接物理网卡（bridge），直接对外提供服务</li>
+<li><strong>受限组</strong>：通过 NAT 访问外网但外部不可访问（nat），用于开发测试</li>
+</ul>
+<p><strong>实现方式：</strong></p>
+<ol>
+<li>创建三个 libvirt 网络：<code>internal</code>（isolated）、<code>public</code>（bridge）、<code>dev</code>（nat）</li>
+<li>虚拟机按角色连接到对应的网络</li>
+<li>利用 <code>iptables</code>&#x2F;<code>firewalld</code> 控制不同网络间的访问规则</li>
+</ol>
+<hr>
+<h2 id="8-总结"><a href="#8-总结" class="headerlink" title="8 总结"></a>8 总结</h2><p>本文从虚拟化基础概念出发，完整梳理了 KVM 技术栈的三大核心组件：</p>
+<ul>
+<li><strong>KVM</strong>：内核级硬件虚拟化加速器，负责 CPU 和内存虚拟化</li>
+<li><strong>QEMU</strong>：用户态设备模拟器，负责 I&#x2F;O 设备模拟，每个虚拟机对应一个进程</li>
+<li><strong>libvirt</strong>：上层管理接口，提供 <code>virsh</code>、<code>virt-manager</code> 等工具，统一管理虚拟机生命周期</li>
+</ul>
+<p>三者分工明确、协同工作，构成了 Linux 平台上最主流的开源虚拟化方案。通过本文的实践指导，从环境部署到虚拟机创建，再到网络精细配置，读者应能在 Ubuntu 系统上独立搭建并管理 KVM 虚拟化环境。</p>
+<p><strong>关键要点回顾：</strong></p>
+<ul>
+<li>CPU 必须支持硬件虚拟化（<code>vmx</code>&#x2F;<code>svm</code> 标志）</li>
+<li>生产环境虚拟机磁盘使用 <strong>qcow2</strong> 格式，网卡使用 <strong>virtio</strong> 驱动</li>
+<li>NAT 网络适合单机实验，桥接网络适合生产服务</li>
+<li><code>virsh</code> 是日常管理的最核心命令，建议熟练使用</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/34769e12.html">https://raidenxe.github.io/archives/34769e12.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/">Linux</a><a class="post-meta__tags" href="/tags/kvm/">kvm</a><a class="post-meta__tags" href="/tags/qemu/">qemu</a></div><div class="post-share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260704205341746.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/archives/4ada0a0.html" title="Redis集群与高可用"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260704212618712.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Redis集群与高可用</div></div><div class="info-2"><div class="info-item-1">Redis集群与高可用本文基于我自己写的 redis-manage.sh 脚本中集群相关模块整理。日常运维中手动敲命令配置主从、哨兵和Cluster太繁琐，容易出错，所以写了这个脚本把常用操作封装成交互式菜单，生产环境用下来确实省力不少。  脚本集群管理逻辑总览redis-manage.sh 的主菜单里有三个子菜单对应三种集群模式，功能划分得比较清晰： 主从复制相关的操作都在”集群管理”里，哨兵有独立的”哨兵管理”菜单，Redis Cluster则在”Redis Cluster管理”中。整个脚本的设计思路是： 所有修改操作都会先备份配置文件，万一操作失败能回滚。优先用 CONFIG SET 或 SENTINEL SET 动态改参数，避免重启服务。密码通过环境变量传递，不在命令行暴露。还用了时间戳缓存机制，减少重复检测，菜单响应快一些。关键操作会记日志，方便事后排查。 集群相关函数调用关系： 12345678910111213141516171819202122232425main_menu()  ├─ 6) cluster_menu()           → 主从复制  │  ...</div></div></div></a><a class="pagination-related" href="/archives/e5f6g7h8.html" title="5分钟搞定Linux高精度时间同步"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">5分钟搞定Linux高精度时间同步</div></div><div class="info-2"><div class="info-item-1">一、时间不同步：被忽视的系统顽疾在运维工作中，服务器时间不同步是一个极易被忽视却危害极大的问题。它不像磁盘爆满或服务宕机那样立刻报警，而是像无声无息”慢性病”，侵蚀系统的稳定性和安全性。以下是时间偏差可能引发的几类严重后果： 🔐 安全认证失效SSL&#x2F;TLS 证书的生效与过期验证完全依赖系统时间。如果服务器时间偏差超过500毫秒，就可能导致证书被判定为未生效或已过期。在实际场景中，Nginx 配置 ssl_verify_client 时，若客户端时间与服务器偏差超过证书有效期范围，会直接拒绝连接。许多认证系统也依赖时间戳管理会话，时间不同步会导致会话超时设置错误。 📋 日志分析与审计合规风险分布式系统中各节点时间不同步，会导致请求日志时序彻底错乱。曾有金融系统因仅0.5秒的时间差，导致交易流水与审计日志无法对应。在微服务架构中，跨节点日志时间戳不一致可使故障排查效率下降80%以上。更严重的是，金融行业要求操作日志时间精度达毫秒级，时间偏差可能违反等保2.0等合规要求，某银行就曾因日志时间不同步被监管机构处罚。审计日志若时间不准，甚至可能失去法律效力。 🧩 分布式系统...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/archives/cf06f66d.html" title="计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序"><img class="cover" src="https://pic3.zhimg.com/v2-762ad4c0feef90b6b09b72864f637762_1440w.jpg?source=172ae18b" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-17</div><div class="info-item-2">计算机网络知识点总结（四）Linux C++ Socket实现“伪”半双工聊天室程序</div></div><div class="info-2"><div class="info-item-1">上一篇文章讲了Socket的基本函数，并用一个简单的示例实现了单工通信——客户端发消息，服务端接收并返回。这一篇我打算在此基础上改进，实现服务端和客户端之间的相互通信，也就是半双工聊天。  如果想更深入理解，推荐大家阅读《UNIX网络编程卷1套接字联网API》这本书。  1. 补充知识点1.1 Socket处于网络协议的哪个层次？ 套接字编程接口位于应用层和传输层之间，是从应用层进入传输层的入口。应用层、表示层、会话层这三层处理具体的网络应用细节，而传输层、网络层、数据链路层、物理层处理通信细节。 1.2 为什么Socket提供的是从OSI模型顶上三层进入传输层的接口？这样设计有两个原因：  职责分离：顶上三层处理具体网络应用（如FTP、Telnet、HTTP）的所有细节，但对通信细节了解很少；底下四层对具体网络应用了解不多，却处理所有的通信细节——发送数据、等待确认、给无序到达的数据排序、计算并验证校验和等等。  进程隔离：顶上三层通常构成用户进程，底下四层作为操作系统内核的一部分提供。现代操作系统都提供分隔用户进程与内核的机制，因此第4层和第5层之间的接口是构建API的自然位...</div></div></div></a><a class="pagination-related" href="/archives/7a099087.html" title="计算机网络知识点总结（三）Socket基本函数详解，C-Socket入门实战"><img class="cover" src="https://pica.zhimg.com/v2-0ccfd39e0b8d5bf6bb8960f7894c1e5d_1440w.jpg?source=172ae18b" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-16</div><div class="info-item-2">计算机网络知识点总结（三）Socket基本函数详解，C-Socket入门实战</div></div><div class="info-2"><div class="info-item-1">上一篇文章简单介绍了什么是Socket以及如何用Socket实现客户端和服务端的基本通信。这一篇我打算详细拆解Socket的核心函数，配合代码示例让大家能真正动手写出一个可用的程序。 Socket数据结构在正式讲函数之前，先看一下Socket编程中最核心的数据结构——sockaddr和sockaddr_in：  sockaddr是通用的地址结构，而sockaddr_in是IPv4专用的结构，实际编程中用得更多。两者可以通过强制类型转换互相转换。 Linux系统下的头文件写Socket程序时，Linux下需要包含以下头文件： 123456#include &lt;sys/socket.h&gt;    // 核心Socket函数和数据结构#include &lt;netinet/in.h&gt;    // sockaddr_in结构和IP地址转换函数#include &lt;arpa/inet.h&gt;     // inet_addr、inet_ntoa等地址转换函数#include &lt;unistd.h&gt;        // close()函数#include &...</div></div></div></a><a class="pagination-related" href="/archives/b013fd12.html" title="Ubuntu（WSL2）安装MySQL数据库"><img class="cover" src="https://pic1.zhimg.com/v2-5f5a9a6137dc06bbc3cfb4ae1de982db_1440w.jpg?source=172ae18b" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-08-07</div><div class="info-item-2">Ubuntu（WSL2）安装MySQL数据库</div></div><div class="info-2"><div class="info-item-1">本文将简单介绍Ubuntu安装MySQL数据库的方法以及我在安装过程遇到的一些问题，WSL环境下同样适用。 MySQLMySQL 是最流行的关系型数据库管理系统，在 WEB 应用方面 MySQL 是最好的 RDBMS(Relational Database Management System：关系数据库管理系统)应用软件之一。 命令行安装MySQL在Ubuntu中使用命令行安装MySQL是比较简单快捷的，执行以下命令即可： 1sudo apt install mysql-server -y   常见问题1如果安装失败或者速度太慢，推荐换源并更新apt软件包 1sudo apt update  换源的方法一搜一大堆，这里就不作赘述了。 而在一些arm-Linux开发板上使用apt包管理器是无法安装mysql-server的，比如说树莓派，可以选择安装 MariaDB（由MySQL的创始人创建的一个开源分支版本，使用XtraDB引擎），或者是编译安装MySQL。 常见问题2而在WSL下，安装完MySQL，在终端运行mysql时，往往会报错 报错信息如下： ERROR 2002 (HY...</div></div></div></a><a class="pagination-related" href="/archives/7ff4090f.html" title="apt-get 和 apt的区别是什么"><img class="cover" src="https://pica.zhimg.com/v2-8906400806f6e81937a2a7a27e645362_1440w.jpg?source=172ae18b" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-06-13</div><div class="info-item-2">apt-get 和 apt的区别是什么</div></div><div class="info-2"><div class="info-item-1">这是个很有意思的问题，我刚接触到Ubuntu的时候便在各种教程中看到apt和apt-get的身影，apt和apt-get有什么区别这个问题也随之浮现在我脑海中，是我作为Linux初学者所遇到的第一个问题。 所以我想写一个较为详细回答，算是现在的我给以前的我的一个解答。 dkpg（底层工具）-&gt;apt-get（上层工具）-&gt;apt（apt-get的再封装） 首先，需要理解包管理系统这个概念。 Linux 发行版本质量最重要的决定因素是软件包管理系统和其支持社区的持久性。随着我们花费更多的时间在 Linux 上，我们会发现它的变化是非常快的。大多数一线 Linux 发行版每隔六个月发布一个新版本，并且有许多独立的程序每天都会更新。为了能和这些如暴风雪一般多的软件保持联系，我们需要一些好工具来进行软件包管理。 Linux包管理系统DPKG和RPM 不同的 Linux 发行版使用不同的包管理系统，一般而言，大多数发行版分别属于两大包管理技术阵营： Debian 的”.deb”，和红帽的”.rpm”。 dpkg :这个机制最早是由Debian Linux社群所开发出来的﹐通过d...</div></div></div></a><a class="pagination-related" href="/archives/a1e2b7b3.html" title="日常使用Linux系统是什么体验？"><img class="cover" src="https://pic1.zhimg.com/v2-70854dea311f3e4c308180ea1dc1c973_1440w.jpg?source=172ae18b" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-07</div><div class="info-item-2">日常使用Linux系统是什么体验？</div></div><div class="info-2"><div class="info-item-1">趁着五一小假期，我尝试了去使用Linux作为日常使用的操作系统，这个过程中也是踩了不少的坑，所以想写一篇文章分享一下。 我个人使用过Kail、CentOS7、Ubuntu16.04、Windows Subsystem for Linux（WSL）作为开发环境，我个人更喜欢Debian Style (.deb)包管理系统，所以最终选择了使用Ubuntu18.04 LTS，打算在开发之余日常使用，满足听音乐，写文档，看看视频等需求。 Ubuntu的优缺点： 安装Flash插件  解决办法是通过终端安装flash插件： 12sudo apt-get updatesudo apt-get install flashplugin-installer  或者 安装ubuntu-restricted-extras；ubuntu-restricted-extras 是一个包含各种基本软件，如 Flash 插件、unrar、gstreamer、mp4、Ubuntu 中的 Chromium 浏览器的编解码器等的软件包。 Ubuntu提供了一个软件包来安装所有基本的媒体编解码器：ubuntu-rest...</div></div></div></a><a class="pagination-related" href="/archives/1815c365.html" title="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）"><img class="cover" src="https://pic1.zhimg.com/v2-18f2189eec39d8a665949f2b43c54626_1440w.jpg?source=172ae18b" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-12</div><div class="info-item-2">计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）</div></div><div class="info-2"><div class="info-item-1">本文使用 fork 函数实现并发 TCP 服务器，关于 fork 函数的用法可以参考我的文章：Linux 下的 fork 和 exec 函数。 服务器基本结构本文的目标是编写一个完整的 TCP 客户&#x2F;服务器程序示例。这个简单的例子是执行如下步骤的一个回射服务器： (1) 客户从标准输入读入一行文本，并写给服务器；(2) 服务器从网络输入读入这行文本，并回射给客户；(3) 客户从网络输入读入这行回射文本，并显示在标准输出上。  迭代服务器和并发服务器迭代服务器以串行方式一次处理一个客户端。迭代服务器会依次处理客户端的连接，只要当前连接的任务没有完成，服务器的进程就会被一直占用，直到任务完成后，服务器关闭这个 socket，释放连接。 并发服务器可以同时并行处理多个客户端。并发服务器主要通过三种方式实现：进程、线程和 IO 复用。 迭代服务器程序轮廓1234567891011int listenfd, connfd;listenfd = socket(AF_INET, SOCK_STREAM, 0);bind(listenfd, (struct sockaddr*)&amp...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Raidenxe</div><div class="author-info-description">向着真理和自由，无名的献身。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#KVM-%E8%99%9A%E6%8B%9F%E5%8C%96%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E8%B7%B5%EF%BC%9A%E6%9E%B6%E6%9E%84%E3%80%81%E9%83%A8%E7%BD%B2%E4%B8%8E%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">KVM 虚拟化从入门到实践：架构、部署与网络管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%99%9A%E6%8B%9F%E5%8C%96%E5%9F%BA%E7%A1%80"><span class="toc-number">1.2.</span> <span class="toc-text">1 虚拟化基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-KVM%E6%9E%B6%E6%9E%84%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6"><span class="toc-number">1.3.</span> <span class="toc-text">2 KVM架构与核心组件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-KVM-%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1 KVM 内核模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-QEMU%EF%BC%9A%E8%AE%BE%E5%A4%87%E6%A8%A1%E6%8B%9F%E5%99%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.2 QEMU：设备模拟器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-libvirt%EF%BC%9A%E7%AE%A1%E7%90%86%E6%8E%A5%E5%8F%A3%E5%B1%82"><span class="toc-number">1.3.3.</span> <span class="toc-text">2.3 libvirt：管理接口层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E4%B8%89%E7%BB%84%E4%BB%B6%E5%8D%8F%E4%BD%9C%E5%85%A8%E6%B5%81%E7%A8%8B"><span class="toc-number">1.3.4.</span> <span class="toc-text">2.4 三组件协作全流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E9%83%A8%E7%BD%B2-KVM-%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83"><span class="toc-number">1.4.</span> <span class="toc-text">3 部署 KVM 虚拟化环境</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%AE%BF%E4%B8%BB%E6%9C%BA%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.4.1.</span> <span class="toc-text">3.1 宿主机环境准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%AE%89%E8%A3%85-KVM-%E5%B7%A5%E5%85%B7%E5%8C%85"><span class="toc-number">1.4.2.</span> <span class="toc-text">3.2 安装 KVM 工具包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E8%87%AA%E5%8A%A8%E5%AE%89%E8%A3%85%E8%84%9A%E6%9C%AC%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.4.3.</span> <span class="toc-text">3.3 自动安装脚本详解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%88%9B%E5%BB%BA%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="toc-number">1.5.</span> <span class="toc-text">4 创建虚拟机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-virt-manager-%E5%9B%BE%E5%BD%A2%E5%8C%96%E5%88%9B%E5%BB%BA"><span class="toc-number">1.5.1.</span> <span class="toc-text">4.1 virt-manager 图形化创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-virt-install-%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%88%9B%E5%BB%BA"><span class="toc-number">1.5.2.</span> <span class="toc-text">4.2 virt-install 命令行创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%9F%BA%E4%BA%8E%E7%A3%81%E7%9B%98%E6%A8%A1%E6%9D%BF%E5%85%8B%E9%9A%86%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="toc-number">1.5.3.</span> <span class="toc-text">4.3 基于磁盘模板克隆虚拟机</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%AE%A1%E7%90%86"><span class="toc-number">1.6.</span> <span class="toc-text">5 虚拟机管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-virtio-%E5%8D%8A%E8%99%9A%E6%8B%9F%E5%8C%96%E9%A9%B1%E5%8A%A8"><span class="toc-number">1.6.1.</span> <span class="toc-text">5.1 virtio 半虚拟化驱动</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-1-virtio-%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.6.1.1.</span> <span class="toc-text">5.1.1 virtio 的工作原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-2-virtio-%E8%AE%BE%E5%A4%87%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.6.1.2.</span> <span class="toc-text">5.1.2 virtio 设备类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-3-%E9%A9%B1%E5%8A%A8%E8%8E%B7%E5%8F%96"><span class="toc-number">1.6.1.3.</span> <span class="toc-text">5.1.3 驱动获取</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-libvirt-%E6%9E%B6%E6%9E%84"><span class="toc-number">1.6.2.</span> <span class="toc-text">5.2 libvirt 架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-virt-manager-%E7%AE%A1%E7%90%86"><span class="toc-number">1.6.3.</span> <span class="toc-text">5.3 virt-manager 管理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-1-%E5%90%AF%E5%8A%A8%E8%8F%9C%E5%8D%95"><span class="toc-number">1.6.3.1.</span> <span class="toc-text">5.3.1 启动菜单</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-2-%E8%BF%9C%E7%A8%8B%E7%AE%A1%E7%90%86-KVM-%E5%AE%BF%E4%B8%BB%E6%9C%BA"><span class="toc-number">1.6.3.2.</span> <span class="toc-text">5.3.2 远程管理 KVM 宿主机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-3-%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7"><span class="toc-number">1.6.3.3.</span> <span class="toc-text">5.3.3 性能监控</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-4-%E7%AE%A1%E7%90%86%E5%BF%AB%E7%85%A7"><span class="toc-number">1.6.3.4.</span> <span class="toc-text">5.3.4 管理快照</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-virsh-%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7"><span class="toc-number">1.6.4.</span> <span class="toc-text">5.4 virsh 命令行工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-4-1-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E9%80%9F%E6%9F%A5"><span class="toc-number">1.6.4.1.</span> <span class="toc-text">5.4.1 常用命令速查</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-4-2-%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.6.4.2.</span> <span class="toc-text">5.4.2 操作示例</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-4-3-console-%E7%99%BB%E5%BD%95%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="toc-number">1.6.4.3.</span> <span class="toc-text">5.4.3 console 登录虚拟机</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-5-virt-what"><span class="toc-number">1.6.5.</span> <span class="toc-text">5.5 virt-what</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86"><span class="toc-number">1.7.</span> <span class="toc-text">6 存储管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-KVM-%E5%AD%98%E5%82%A8%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.7.1.</span> <span class="toc-text">6.1 KVM 存储模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E8%99%9A%E6%8B%9F%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86"><span class="toc-number">1.7.2.</span> <span class="toc-text">6.2 虚拟磁盘管理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="toc-number">1.8.</span> <span class="toc-text">7 网络管理（重点）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E5%9B%9B%E7%A7%8D%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.8.1.</span> <span class="toc-text">7.1 四种网络模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E5%AE%BF%E4%B8%BB%E6%9C%BA-vnet-%E4%B8%8E%E8%99%9A%E6%8B%9F%E6%9C%BA-eth0-%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.8.2.</span> <span class="toc-text">7.2 宿主机 vnet 与虚拟机 eth0 的关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E9%BB%98%E8%AE%A4-NAT-%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86"><span class="toc-number">1.8.3.</span> <span class="toc-text">7.3 默认 NAT 网络管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-4-%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE"><span class="toc-number">1.8.4.</span> <span class="toc-text">7.4 自定义网络配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-4-1-%E7%BD%91%E7%BB%9C%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.8.4.1.</span> <span class="toc-text">7.4.1 网络类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-4-2-%E8%87%AA%E5%AE%9A%E4%B9%89-NAT-%E7%BD%91%E7%BB%9C"><span class="toc-number">1.8.4.2.</span> <span class="toc-text">7.4.2 自定义 NAT 网络</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-5-%E6%A1%A5%E6%8E%A5%E7%BD%91%E7%BB%9C%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.8.5.</span> <span class="toc-text">7.5 桥接网络实践</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-5-1-%E6%96%B9%E5%BC%8F%E4%B8%80%EF%BC%9A%E6%89%8B%E5%8A%A8%E5%88%9B%E5%BB%BA%E7%BD%91%E6%A1%A5-br0"><span class="toc-number">1.8.5.1.</span> <span class="toc-text">7.5.1 方式一：手动创建网桥 br0</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-5-2-%E6%96%B9%E5%BC%8F%E4%BA%8C%EF%BC%9Alibvirt-%E7%AE%A1%E7%90%86%E7%9A%84%E6%A1%A5%E6%8E%A5%E7%BD%91%E7%BB%9C"><span class="toc-number">1.8.5.2.</span> <span class="toc-text">7.5.2 方式二：libvirt 管理的桥接网络</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-5-3-%E8%B7%A8%E4%B8%BB%E6%9C%BA%E9%80%9A%E4%BF%A1%E6%96%B9%E6%A1%88"><span class="toc-number">1.8.5.3.</span> <span class="toc-text">7.5.3 跨主机通信方案</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-5-4-%E5%86%85%E5%A4%96%E7%BD%91%E9%9A%94%E7%A6%BB%E7%BB%BC%E5%90%88%E6%A1%88%E4%BE%8B"><span class="toc-number">1.8.5.4.</span> <span class="toc-text">7.5.4 内外网隔离综合案例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E6%80%BB%E7%BB%93"><span class="toc-number">1.9.</span> <span class="toc-text">8 总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/61196baf.html" title="Jenkins-CICD实战"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins-CICD实战"/></a><div class="content"><a class="title" href="/archives/61196baf.html" title="Jenkins-CICD实战">Jenkins-CICD实战</a><time datetime="2026-08-11T17:09:47.000Z" title="发表于 2026-08-12 01:09:47">2026-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a3e16fea.html" title="面试题1"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试题1"/></a><div class="content"><a class="title" href="/archives/a3e16fea.html" title="面试题1">面试题1</a><time datetime="2026-08-11T14:53:55.000Z" title="发表于 2026-08-11 22:53:55">2026-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/35864571.html" title="docker部署jenkins"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署jenkins"/></a><div class="content"><a class="title" href="/archives/35864571.html" title="docker部署jenkins">docker部署jenkins</a><time datetime="2026-08-10T05:55:00.000Z" title="发表于 2026-08-10 13:55:00">2026-08-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/be6d62ff.html" title="docker部署gitlab"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署gitlab"/></a><div class="content"><a class="title" href="/archives/be6d62ff.html" title="docker部署gitlab">docker部署gitlab</a><time datetime="2026-08-08T07:16:03.000Z" title="发表于 2026-08-08 15:16:03">2026-08-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260807160530247.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s+Helm部署kube-prometheus-stack"/></a><div class="content"><a class="title" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack">K8s+Helm部署kube-prometheus-stack</a><time datetime="2026-08-07T07:12:03.000Z" title="发表于 2026-08-07 15:12:03">2026-08-07</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2020 - 2026 By Raidenxe</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5"></script><script src="/js/main.js?v=5.5.5"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="false"> </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5"></script></div></div></body></html>

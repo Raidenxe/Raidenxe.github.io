@@ -1,0 +1,338 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Linux下的fork和exec函数 | Raidenxe的博客</title><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="引言多进程编程的概念早在六十年代就被提出，但直到八十年代中期，Unix系统中才引入多进程机制。如今，由于自身的许多优点，多进程编程已经得到了广泛的应用。 fork 函数是 Unix 系统最杰出的成就之一，它是七十年代 UNIX 早期的开发者经过长期在理论和实践上的艰苦探索后取得的成果。一方面，..."><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Linux下的fork和exec函数",
+  "url": "https://raidenxe.github.io/archives/90acc1af.html",
+  "image": "https://pic2.zhimg.com/v2-1a7eb58610755e46dbcc46e787517c08_1440w.jpg?source=172ae18b",
+  "datePublished": "2022-05-09T14:16:00.000Z",
+  "dateModified": "2026-07-08T01:52:59.185Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Raidenxe",
+      "url": "https://Raidenxe.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/90acc1af.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css?v=5.5.5"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Linux下的fork和exec函数',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/macblack.css"><style>
+  #web_bg{background-image:url(/img/风景006.png)}
+  #footer{background-image:url(/img/风景008.png);background-size:cover;background-position:center}
+  .aplayer-lrc{display:none !important}
+</style>
+<meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/%E9%A3%8E%E6%99%AF006.png));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://pic2.zhimg.com/v2-1a7eb58610755e46dbcc46e787517c08_1440w.jpg?source=172ae18b);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Raidenxe的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Linux下的fork和exec函数</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Linux下的fork和exec函数</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-05-09T14:16:00.000Z" title="发表于 2022-05-09 22:16:00">2022-05-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-07-08T01:52:59.185Z" title="更新于 2026-07-08 09:52:59">2026-07-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Linux学习笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>多进程编程的概念早在六十年代就被提出，但直到八十年代中期，Unix系统中才引入多进程机制。如今，由于自身的许多优点，多进程编程已经得到了广泛的应用。</p>
+<p><code>fork</code> 函数是 Unix 系统最杰出的成就之一，它是七十年代 UNIX 早期的开发者经过长期在理论和实践上的艰苦探索后取得的成果。一方面，它使操作系统在进程管理上付出了最小的代价；另一方面，又为程序员提供了一个简洁明了的多进程方法。</p>
+<h2 id="Linux下进程的结构"><a href="#Linux下进程的结构" class="headerlink" title="Linux下进程的结构"></a>Linux下进程的结构</h2><p>Linux 下一个进程在内存里有三部分的数据，就是<strong>代码段</strong>、<strong>堆栈段</strong>和<strong>数据段</strong>。</p>
+<ul>
+<li><strong>代码段</strong>：存放程序代码的数据。如果机器中有数个进程运行相同的一个程序，它们可以共享相同的代码段。</li>
+<li><strong>堆栈段</strong>：存放子程序的返回地址、子程序的参数以及程序的局部变量。</li>
+<li><strong>数据段</strong>：存放程序的全局变量、常数以及动态数据分配的空间（如用 <code>malloc</code> 函数取得的空间）。</li>
+</ul>
+<p>系统如果同时运行数个相同的程序，它们之间不能使用同一个堆栈段和数据段，但可以共享代码段。</p>
+<h2 id="Linux下的进程控制"><a href="#Linux下的进程控制" class="headerlink" title="Linux下的进程控制"></a>Linux下的进程控制</h2><p><img src="https://pic4.zhimg.com/80/v2-eacfccfbb95739f120d80f78582b332f_720w.jpg" alt="进程控制示意图"></p>
+<h3 id="fork-函数"><a href="#fork-函数" class="headerlink" title="fork 函数"></a>fork 函数</h3><p><code>fork()</code> 用来创建一个新的进程，该进程几乎是当前进程的一个完全拷贝。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">pid_t</span> <span class="title function_">fork</span><span class="params">(<span class="type">void</span>)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic4.zhimg.com/80/v2-1fe39319fb80fc6891b8ee5522614f6b_720w.jpg" alt="fork返回值示意图"></p>
+<h3 id="exec-函数族"><a href="#exec-函数族" class="headerlink" title="exec 函数族"></a>exec 函数族</h3><p><code>exec()</code> 函数族用来启动另外的进程以取代当前运行的进程。</p>
+<h3 id="fork-的返回值"><a href="#fork-的返回值" class="headerlink" title="fork 的返回值"></a>fork 的返回值</h3><p>理解 <code>fork</code> 最困难之处在于：<strong>调用它一次，它却返回两次</strong>。</p>
+<ul>
+<li><strong>在父进程中</strong>：返回新派生进程（子进程）的进程 ID 号</li>
+<li><strong>在子进程中</strong>：返回值为 0</li>
+</ul>
+<p>因此，返回值本身告知当前进程是子进程还是父进程。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">pid_t</span> pid = fork();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (pid == <span class="number">-1</span>) &#123;</span><br><span class="line">    <span class="comment">// 出错</span></span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// 子进程</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 父进程，pid 是子进程的 ID</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>fork</code> 在子进程返回 0 而不是父进程 ID 的原因：任何子进程只有一个父进程，子进程可以通过 <code>getppid()</code> 取得父进程 ID；相反，父进程可以有许多子进程，无法直接获取各个子进程 ID。如果父进程想要跟踪所有子进程，必须记录每次调用 <code>fork</code> 的返回值。</p>
+<h3 id="fork-的两个典型用法"><a href="#fork-的两个典型用法" class="headerlink" title="fork 的两个典型用法"></a>fork 的两个典型用法</h3><ol>
+<li><p><strong>一个进程创建一个自身的副本</strong>，这样每个副本都可以在另一个副本执行其他任务的同时处理各自的某个操作。这是网络服务器的典型用法。</p>
+</li>
+<li><p><strong>一个进程想要执行另一个程序</strong>。既然创建新进程的唯一办法是调用 <code>fork</code>，该进程于是首先调用 <code>fork</code> 创建一个自身的副本，然后其中一个副本（通常为子进程）调用 <code>exec</code> 把自身替换成新的程序。这是 Shell 之类程序的典型用法。</p>
+</li>
+</ol>
+<h3 id="fork-的注意事项"><a href="#fork-的注意事项" class="headerlink" title="fork 的注意事项"></a>fork 的注意事项</h3><p><code>fork()</code> 通过复制调用进程来创建一个新进程，新进程称为子进程，是调用进程（父进程）的完全副本，但以下情况除外：</p>
+<ul>
+<li>子进程有自己唯一的进程 ID，并且这个 PID 不匹配任何现有进程组的 ID。</li>
+<li>子进程的父进程 ID 与父进程 ID 相同。</li>
+<li>子进程不会继承其父进程的内存锁和信号量调整。</li>
+<li>子代不会从其父代继承未完成的异步 I&#x2F;O 操作，也不会从其父代继承任何异步 I&#x2F;O 上下文。</li>
+</ul>
+<p>父进程中调用 <code>fork</code> 之前打开的所有描述符在 <code>fork</code> 返回之后由子进程共享。网络服务器利用了这个特性：父进程调用 <code>accept</code> 之后调用 <code>fork</code>，所接受的已连接套接字随后在父进程与子进程之间共享。通常情况下，子进程接着读写这个已连接套接字，父进程则关闭这个已连接套接字。</p>
+<h2 id="exec-函数族-1"><a href="#exec-函数族-1" class="headerlink" title="exec 函数族"></a>exec 函数族</h2><h3 id="exec-函数族的作用"><a href="#exec-函数族的作用" class="headerlink" title="exec 函数族的作用"></a>exec 函数族的作用</h3><p><img src="https://pic1.zhimg.com/80/v2-e31f805cf04b4d3973aa080f9e2bce68_720w.jpg" alt="exec函数族示意图"></p>
+<p><code>exec</code> 函数族的作用是<strong>替换当前进程的代码段和数据段</strong>，将一个新程序加载到当前进程的内存空间中执行。与 <code>fork</code> 不同，<code>exec</code> 不会创建新进程，而是在原有进程的基础上替换执行内容。</p>
+<h3 id="6-个-exec-函数"><a href="#6-个-exec-函数" class="headerlink" title="6 个 exec 函数"></a>6 个 exec 函数</h3><p>系统调用 <code>execve()</code> 对当前进程进行替换，替换者为一个指定的程序。在 Linux 中，exec 函数族包括 6 个函数：</p>
+<table>
+<thead>
+<tr>
+<th>函数名</th>
+<th>路径指定方式</th>
+<th>参数传递方式</th>
+<th>环境变量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>execl</code></td>
+<td>路径名</td>
+<td>列表形式</td>
+<td>使用当前环境</td>
+</tr>
+<tr>
+<td><code>execlp</code></td>
+<td>文件名（搜索 PATH）</td>
+<td>列表形式</td>
+<td>使用当前环境</td>
+</tr>
+<tr>
+<td><code>execle</code></td>
+<td>路径名</td>
+<td>列表形式</td>
+<td>自定义环境</td>
+</tr>
+<tr>
+<td><code>execv</code></td>
+<td>路径名</td>
+<td>数组形式</td>
+<td>使用当前环境</td>
+</tr>
+<tr>
+<td><code>execvp</code></td>
+<td>文件名（搜索 PATH）</td>
+<td>数组形式</td>
+<td>使用当前环境</td>
+</tr>
+<tr>
+<td><code>execve</code></td>
+<td>路径名</td>
+<td>数组形式</td>
+<td>自定义环境</td>
+</tr>
+</tbody></table>
+<p><img src="https://pic2.zhimg.com/80/v2-14fd9241c4671aa8c057c7c3e33da765_720w.jpg" alt="exec函数族对比图"></p>
+<h3 id="函数命名规律"><a href="#函数命名规律" class="headerlink" title="函数命名规律"></a>函数命名规律</h3><p>这些函数的命名遵循一定的规律：</p>
+<ul>
+<li><strong>l（list）</strong>：参数以列表形式逐个传递</li>
+<li><strong>v（vector）</strong>：参数以指针数组形式传递</li>
+<li><strong>p（path）</strong>：使用 PATH 环境变量搜索可执行文件</li>
+<li><strong>e（environment）</strong>：自定义环境变量</li>
+</ul>
+<h3 id="函数原型"><a href="#函数原型" class="headerlink" title="函数原型"></a>函数原型</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">execl</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *path, <span class="type">const</span> <span class="type">char</span> *arg, ...)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execlp</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *file, <span class="type">const</span> <span class="type">char</span> *arg, ...)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execle</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *path, <span class="type">const</span> <span class="type">char</span> *arg, ..., <span class="type">char</span> *<span class="type">const</span> envp[])</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execv</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *path, <span class="type">char</span> *<span class="type">const</span> argv[])</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execvp</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *file, <span class="type">char</span> *<span class="type">const</span> argv[])</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">execve</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *path, <span class="type">char</span> *<span class="type">const</span> argv[], <span class="type">char</span> *<span class="type">const</span> envp[])</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这些函数只在出错时才返回到调用者，否则控制将被传递给新程序的起始点（通常是 <code>main</code> 函数）。</p>
+<h3 id="调用示例"><a href="#调用示例" class="headerlink" title="调用示例"></a>调用示例</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// execl 示例：列表形式，路径名</span></span><br><span class="line">execl(<span class="string">&quot;/bin/ls&quot;</span>, <span class="string">&quot;ls&quot;</span>, <span class="string">&quot;-l&quot;</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// execlp 示例：列表形式，搜索 PATH</span></span><br><span class="line">execlp(<span class="string">&quot;ls&quot;</span>, <span class="string">&quot;ls&quot;</span>, <span class="string">&quot;-l&quot;</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// execv 示例：数组形式，路径名</span></span><br><span class="line"><span class="type">char</span> *argv[] = &#123;<span class="string">&quot;ls&quot;</span>, <span class="string">&quot;-l&quot;</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">execv(<span class="string">&quot;/bin/ls&quot;</span>, argv);</span><br><span class="line"></span><br><span class="line"><span class="comment">// execvp 示例：数组形式，搜索 PATH</span></span><br><span class="line">execvp(<span class="string">&quot;ls&quot;</span>, argv);</span><br><span class="line"></span><br><span class="line"><span class="comment">// execve 示例：自定义环境变量</span></span><br><span class="line"><span class="type">char</span> *envp[] = &#123;<span class="string">&quot;PATH=/usr/bin&quot;</span>, <span class="string">&quot;HOME=/root&quot;</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">execve(<span class="string">&quot;/bin/ls&quot;</span>, argv, envp);</span><br></pre></td></tr></table></figure>
+
+<h2 id="fork-和-exec-代码示例"><a href="#fork-和-exec-代码示例" class="headerlink" title="fork 和 exec 代码示例"></a>fork 和 exec 代码示例</h2><h3 id="示例-1：基本-fork-用法"><a href="#示例-1：基本-fork-用法" class="headerlink" title="示例 1：基本 fork 用法"></a>示例 1：基本 fork 用法</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">pid_t</span> pid = fork();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">-1</span>) &#123;</span><br><span class="line">        perror(<span class="string">&quot;fork failed&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 子进程</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;子进程: PID=%d, PPID=%d\n&quot;</span>, getpid(), getppid());</span><br><span class="line">        <span class="built_in">exit</span>(EXIT_SUCCESS);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 父进程</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;父进程: PID=%d, 子进程PID=%d\n&quot;</span>, getpid(), pid);</span><br><span class="line">        wait(<span class="literal">NULL</span>);  <span class="comment">// 等待子进程结束</span></span><br><span class="line">        <span class="built_in">exit</span>(EXIT_SUCCESS);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="示例-2：fork-exec-组合使用"><a href="#示例-2：fork-exec-组合使用" class="headerlink" title="示例 2：fork + exec 组合使用"></a>示例 2：fork + exec 组合使用</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">pid_t</span> pid = fork();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">-1</span>) &#123;</span><br><span class="line">        perror(<span class="string">&quot;fork failed&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 子进程：执行 ls 命令</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;子进程: 执行 ls -l\n&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="type">char</span> *argv[] = &#123;<span class="string">&quot;ls&quot;</span>, <span class="string">&quot;-l&quot;</span>, <span class="literal">NULL</span>&#125;;</span><br><span class="line">        execvp(<span class="string">&quot;ls&quot;</span>, argv);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// exec 失败才会执行到这里</span></span><br><span class="line">        perror(<span class="string">&quot;execvp failed&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 父进程：等待子进程结束</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;父进程: 等待子进程完成\n&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="type">int</span> status;</span><br><span class="line">        waitpid(pid, &amp;status, <span class="number">0</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (WIFEXITED(status)) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;子进程正常结束，退出码: %d\n&quot;</span>, WEXITSTATUS(status));</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (WIFSIGNALED(status)) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;子进程被信号终止，信号: %d\n&quot;</span>, WTERMSIG(status));</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">exit</span>(EXIT_SUCCESS);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="示例-3：模拟-Shell-执行命令"><a href="#示例-3：模拟-Shell-执行命令" class="headerlink" title="示例 3：模拟 Shell 执行命令"></a>示例 3：模拟 Shell 执行命令</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MAX_ARGS 10</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">char</span> command[<span class="number">100</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;mini-shell&gt; &quot;</span>);</span><br><span class="line">        fgets(command, <span class="keyword">sizeof</span>(command), <span class="built_in">stdin</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 去除换行符</span></span><br><span class="line">        command[<span class="built_in">strcspn</span>(command, <span class="string">&quot;\n&quot;</span>)] = <span class="number">0</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">strcmp</span>(command, <span class="string">&quot;exit&quot;</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="type">pid_t</span> pid = fork();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (pid == <span class="number">-1</span>) &#123;</span><br><span class="line">            perror(<span class="string">&quot;fork failed&quot;</span>);</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// 解析命令参数</span></span><br><span class="line">            <span class="type">char</span> *argv[MAX_ARGS];</span><br><span class="line">            <span class="type">int</span> argc = <span class="number">0</span>;</span><br><span class="line">            <span class="type">char</span> *token = strtok(command, <span class="string">&quot; &quot;</span>);</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">while</span> (token != <span class="literal">NULL</span> &amp;&amp; argc &lt; MAX_ARGS - <span class="number">1</span>) &#123;</span><br><span class="line">                argv[argc++] = token;</span><br><span class="line">                token = strtok(<span class="literal">NULL</span>, <span class="string">&quot; &quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            argv[argc] = <span class="literal">NULL</span>;</span><br><span class="line">            </span><br><span class="line">            execvp(argv[<span class="number">0</span>], argv);</span><br><span class="line">            perror(<span class="string">&quot;execvp failed&quot;</span>);</span><br><span class="line">            <span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            wait(<span class="literal">NULL</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>fork</code> 和 <code>exec</code> 是 Unix&#x2F;Linux 系统中进程控制的核心函数：</p>
+<ul>
+<li><strong>fork</strong>：创建一个与当前进程几乎完全相同的子进程，返回两次</li>
+<li><strong>exec</strong>：用新程序替换当前进程的执行内容，不创建新进程</li>
+</ul>
+<p>两者结合使用是创建新进程并执行新程序的标准模式：<code>fork</code> 创建子进程，<code>exec</code> 替换子进程的执行内容。这种模式被广泛应用于 Shell、网络服务器等程序中。</p>
+<p>本文部分内容参考自《UNIX网络编程卷1：套接字联网API》。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/90acc1af.html">https://raidenxe.github.io/archives/90acc1af.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/">Linux</a><a class="post-meta__tags" href="/tags/%E8%BF%9B%E7%A8%8B/">进程</a></div><div class="post-share"><div class="social-share" data-image="https://pic2.zhimg.com/v2-1a7eb58610755e46dbcc46e787517c08_1440w.jpg?source=172ae18b" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/archives/1815c365.html" title="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）"><img class="cover" src="https://pic1.zhimg.com/v2-18f2189eec39d8a665949f2b43c54626_1440w.jpg?source=172ae18b" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）</div></div><div class="info-2"><div class="info-item-1">本文使用 fork 函数实现并发 TCP 服务器，关于 fork 函数的用法可以参考我的文章：Linux 下的 fork 和 exec 函数。 服务器基本结构本文的目标是编写一个完整的 TCP 客户&#x2F;服务器程序示例。这个简单的例子是执行如下步骤的一个回射服务器： (1) 客户从标准输入读入一行文本，并写给服务器；(2) 服务器从网络输入读入这行文本，并回射给客户；(3) 客户从网络输入读入这行回射文本，并显示在标准输出上。  迭代服务器和并发服务器迭代服务器以串行方式一次处理一个客户端。迭代服务器会依次处理客户端的连接，只要当前连接的任务没有完成，服务器的进程就会被一直占用，直到任务完成后，服务器关闭这个 socket，释放连接。 并发服务器可以同时并行处理多个客户端。并发服务器主要通过三种方式实现：进程、线程和 IO 复用。 迭代服务器程序轮廓1234567891011int listenfd, connfd;listenfd = socket(AF_INET, SOCK_STREAM, 0);bind(listenfd, (struct sockaddr*)&amp...</div></div></div></a><a class="pagination-related" href="/archives/a1e2b7b3.html" title="日常使用Linux系统是什么体验？"><img class="cover" src="https://pic1.zhimg.com/v2-70854dea311f3e4c308180ea1dc1c973_1440w.jpg?source=172ae18b" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">日常使用Linux系统是什么体验？</div></div><div class="info-2"><div class="info-item-1">趁着五一小假期，我尝试了去使用Linux作为日常使用的操作系统，这个过程中也是踩了不少的坑，所以想写一篇文章分享一下。 我个人使用过Kail、CentOS7、Ubuntu16.04、Windows Subsystem for Linux（WSL）作为开发环境，我个人更喜欢Debian Style (.deb)包管理系统，所以最终选择了使用Ubuntu18.04 LTS，打算在开发之余日常使用，满足听音乐，写文档，看看视频等需求。 Ubuntu的优缺点： 安装Flash插件  解决办法是通过终端安装flash插件： 12sudo apt-get updatesudo apt-get install flashplugin-installer  或者 安装ubuntu-restricted-extras；ubuntu-restricted-extras 是一个包含各种基本软件，如 Flash 插件、unrar、gstreamer、mp4、Ubuntu 中的 Chromium 浏览器的编解码器等的软件包。 Ubuntu提供了一个软件包来安装所有基本的媒体编解码器：ubuntu-rest...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/archives/cc4d518f.html" title="单片机和嵌入式系统的区别"><img class="cover" src="https://pica.zhimg.com/v2-13d1a10aa719b8f5e03b94b824fccac2_1440w.jpg?source=172ae18b" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-06</div><div class="info-item-2">单片机和嵌入式系统的区别</div></div><div class="info-2"><div class="info-item-1">单片机和嵌入式系统的区别嵌入式和单片机并不是一对相对的概念，嵌入式系统包括硬件和软件部分，而单片机是单片微型计算机(Single Chip Microcomputer )的简称，即微控制单元(Microcontroller Unit；MCU) 。单片机可以是嵌入式系统的组成部分。我们可以理解为嵌入式系统是一个大类，单片机是其中一个重要的子类。 什么是单片机？单片机又称单片微控制器，它是将电子计算机的基本环节,如:中央处理器(又称中央处理器,主要由运算器,控制器组成),存储器,总线,输入输出接口等,采用集成电路技术集成在一片硅基片上.由于单片计算机体积很小(仅手指般大小),功能强(具有一个简单计算机的功能)。 什么是嵌入式系统？嵌入式系统是基于微处理器的计算机硬件系统，其软件设计用于执行专用功能，既可以作为独立系统，也可以作为大型系统的一部分。其核心是一个集成电路，旨在为实时操作执行计算。其软件内容只包括软件运行环境及其操作系统。硬件内容包括信号处理器、存储器、通信模块等在内的多方面的内容。 复杂性从单个微控制器到具有连接外围设备和网络的一套处理器；从无用户界面到复杂的图形用户界面...</div></div></div></a><a class="pagination-related" href="/archives/34769e12.html" title="kvm-qemu学习笔记"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260704205341746.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-02</div><div class="info-item-2">kvm-qemu学习笔记</div></div><div class="info-2"><div class="info-item-1">KVM 虚拟化从入门到实践：架构、部署与网络管理一文讲透 KVM 虚拟化技术栈：KVM、QEMU、libvirt 三组件的分工与协作，从环境部署到网络配置的完整实战记录。 目录 虚拟化基础 KVM架构与核心组件 部署 KVM 虚拟化环境 创建虚拟机 虚拟机管理 存储管理 网络管理（重点） 总结   1 虚拟化基础虚拟化是通过软件技术将物理资源（CPU、内存、存储、网络）抽象成逻辑资源，实现单台物理机运行多个隔离的**”虚拟机”**的技术。主要类型：  全虚拟化：模拟完整硬件环境，无需修改客户机操作系统（如 KVM、VMware ESXi） 半虚拟化：客户机需修改内核，通过特定接口访问硬件，性能接近物理机（如 Xen 的 PV 模式） 容器化：操作系统级虚拟化，共享宿主机内核（如 Docker）  KVM（Kernel-based Virtual Machine）是 Linux 内核模块，将 Linux 转变为类型 1（裸金属）虚拟机监控器（Hypervisor），依赖硬件虚拟化技术（Intel VT-x &#x2F; AMD SVM）。  2 KVM架构与核心组件KVM 技术栈由...</div></div></div></a><a class="pagination-related" href="/archives/ef07d954.html" title="Linux 文本三剑客（2）sed命令的使用"><img class="cover" src="https://pic3.zhimg.com/v2-a151d3592ecf5d6abb44b392f5d569e3_1440w.jpg?source=172ae18b" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-19</div><div class="info-item-2">Linux 文本三剑客（2）sed命令的使用</div></div><div class="info-2"><div class="info-item-1">sed引言sed（意为流编辑器，源自英语“stream editor”的缩写）是一个使用简单紧凑的编程语言来解析和转换文本Unix实用程序。虽然在某些方面类似于允许脚本编辑的编辑器，但只需对输入进行一次传递即可工作，因此效率更高。但是，它能够过滤管道中的文本，这特别将其与其他类型的编辑器区分开来。 sed由贝尔实验室的李·E·麦克马洪于1973年至1974年开发， 并且现在大多数操作系统都可以使用。 sed基于交互式编辑器ed（“editor”，1971）和早期qed（“quick editor”，1965-66）的脚本功能。sed是最早支持正则表达式的工具之一，至今仍然用于文本处理，特别是用于替换命令。用于纯文本字符串操作和“流编辑”的常用工具还有AWK和Perl 。 sed 工作原理 sed是从文件或管道中读取一行，处理一行，输出一行；再读取一行，再处理一行，再输出一行，直到最后一行。每当处理一行时，把当前处理的行存储在临时缓冲区中，称为模式空间（Pattern Space），接着用sed命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送往屏幕。接着处理下一行，这样不断重复...</div></div></div></a><a class="pagination-related" href="/archives/1815c365.html" title="计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）"><img class="cover" src="https://pic1.zhimg.com/v2-18f2189eec39d8a665949f2b43c54626_1440w.jpg?source=172ae18b" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-12</div><div class="info-item-2">计算机网络知识点总结（六）Linux C++ Socket实现并发TCP服务器（fork）</div></div><div class="info-2"><div class="info-item-1">本文使用 fork 函数实现并发 TCP 服务器，关于 fork 函数的用法可以参考我的文章：Linux 下的 fork 和 exec 函数。 服务器基本结构本文的目标是编写一个完整的 TCP 客户&#x2F;服务器程序示例。这个简单的例子是执行如下步骤的一个回射服务器： (1) 客户从标准输入读入一行文本，并写给服务器；(2) 服务器从网络输入读入这行文本，并回射给客户；(3) 客户从网络输入读入这行回射文本，并显示在标准输出上。  迭代服务器和并发服务器迭代服务器以串行方式一次处理一个客户端。迭代服务器会依次处理客户端的连接，只要当前连接的任务没有完成，服务器的进程就会被一直占用，直到任务完成后，服务器关闭这个 socket，释放连接。 并发服务器可以同时并行处理多个客户端。并发服务器主要通过三种方式实现：进程、线程和 IO 复用。 迭代服务器程序轮廓1234567891011int listenfd, connfd;listenfd = socket(AF_INET, SOCK_STREAM, 0);bind(listenfd, (struct sockaddr*)&amp...</div></div></div></a><a class="pagination-related" href="/archives/e5f6g7h8.html" title="5分钟搞定Linux高精度时间同步"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-30</div><div class="info-item-2">5分钟搞定Linux高精度时间同步</div></div><div class="info-2"><div class="info-item-1">一、时间不同步：被忽视的系统顽疾在运维工作中，服务器时间不同步是一个极易被忽视却危害极大的问题。它不像磁盘爆满或服务宕机那样立刻报警，而是像无声无息”慢性病”，侵蚀系统的稳定性和安全性。以下是时间偏差可能引发的几类严重后果： 🔐 安全认证失效SSL&#x2F;TLS 证书的生效与过期验证完全依赖系统时间。如果服务器时间偏差超过500毫秒，就可能导致证书被判定为未生效或已过期。在实际场景中，Nginx 配置 ssl_verify_client 时，若客户端时间与服务器偏差超过证书有效期范围，会直接拒绝连接。许多认证系统也依赖时间戳管理会话，时间不同步会导致会话超时设置错误。 📋 日志分析与审计合规风险分布式系统中各节点时间不同步，会导致请求日志时序彻底错乱。曾有金融系统因仅0.5秒的时间差，导致交易流水与审计日志无法对应。在微服务架构中，跨节点日志时间戳不一致可使故障排查效率下降80%以上。更严重的是，金融行业要求操作日志时间精度达毫秒级，时间偏差可能违反等保2.0等合规要求，某银行就曾因日志时间不同步被监管机构处罚。审计日志若时间不准，甚至可能失去法律效力。 🧩 分布式系统...</div></div></div></a><a class="pagination-related" href="/archives/5ef8a3c1.html" title="Linux磁盘清理与扩容：从原理到实践"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260711215050073.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-11</div><div class="info-item-2">Linux磁盘清理与扩容：从原理到实践</div></div><div class="info-2"><div class="info-item-1">引言磁盘空间管理是 Linux 系统管理中的基础但至关重要的环节。随着系统持续运行，各类临时文件、日志归档、缓存数据、容器镜像层等会不断累积，蚕食磁盘空间，最终可能引发服务异常、写入失败乃至系统崩溃。本文将从基本原理出发，结合一次完整的磁盘清理实战案例，系统阐述磁盘清理的方法论、工具链与最佳实践，并进一步介绍磁盘扩容与分区管理的操作指南。  一、磁盘清理的基本原理1.1 磁盘空间是如何被消耗的Linux 文件系统的磁盘占用可归纳为以下几类： （1）持久化数据  操作系统文件（/usr、/etc、/boot） 用户数据（/home） 应用程序数据（/var/lib 下的数据库、容器存储等）  （2）缓存与临时数据  包管理器缓存（APT 的 /var/cache/apt、Snap 的 /var/lib/snapd） 容器运行时层（Docker&#x2F;containerd 的镜像层、快照层） IDE 与开发工具缓存（旧版本服务器文件、扩展缓存）  （3）日志数据  系统日志（systemd journal，位于 /var/log/journal） 应用日志（Redis、Nginx...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Raidenxe</div><div class="author-info-description">向着真理和自由，无名的献身。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">52</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">65</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E4%B8%8B%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">Linux下进程的结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E4%B8%8B%E7%9A%84%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6"><span class="toc-number">3.</span> <span class="toc-text">Linux下的进程控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fork-%E5%87%BD%E6%95%B0"><span class="toc-number">3.1.</span> <span class="toc-text">fork 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#exec-%E5%87%BD%E6%95%B0%E6%97%8F"><span class="toc-number">3.2.</span> <span class="toc-text">exec 函数族</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fork-%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="toc-number">3.3.</span> <span class="toc-text">fork 的返回值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fork-%E7%9A%84%E4%B8%A4%E4%B8%AA%E5%85%B8%E5%9E%8B%E7%94%A8%E6%B3%95"><span class="toc-number">3.4.</span> <span class="toc-text">fork 的两个典型用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fork-%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">3.5.</span> <span class="toc-text">fork 的注意事项</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#exec-%E5%87%BD%E6%95%B0%E6%97%8F-1"><span class="toc-number">4.</span> <span class="toc-text">exec 函数族</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exec-%E5%87%BD%E6%95%B0%E6%97%8F%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">4.1.</span> <span class="toc-text">exec 函数族的作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E4%B8%AA-exec-%E5%87%BD%E6%95%B0"><span class="toc-number">4.2.</span> <span class="toc-text">6 个 exec 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%91%BD%E5%90%8D%E8%A7%84%E5%BE%8B"><span class="toc-number">4.3.</span> <span class="toc-text">函数命名规律</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%8E%9F%E5%9E%8B"><span class="toc-number">4.4.</span> <span class="toc-text">函数原型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="toc-number">4.5.</span> <span class="toc-text">调用示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fork-%E5%92%8C-exec-%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-number">5.</span> <span class="toc-text">fork 和 exec 代码示例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-1%EF%BC%9A%E5%9F%BA%E6%9C%AC-fork-%E7%94%A8%E6%B3%95"><span class="toc-number">5.1.</span> <span class="toc-text">示例 1：基本 fork 用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-2%EF%BC%9Afork-exec-%E7%BB%84%E5%90%88%E4%BD%BF%E7%94%A8"><span class="toc-number">5.2.</span> <span class="toc-text">示例 2：fork + exec 组合使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-3%EF%BC%9A%E6%A8%A1%E6%8B%9F-Shell-%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4"><span class="toc-number">5.3.</span> <span class="toc-text">示例 3：模拟 Shell 执行命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/61196baf.html" title="Jenkins-CICD实战"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins-CICD实战"/></a><div class="content"><a class="title" href="/archives/61196baf.html" title="Jenkins-CICD实战">Jenkins-CICD实战</a><time datetime="2026-08-11T17:09:47.000Z" title="发表于 2026-08-12 01:09:47">2026-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a3e16fea.html" title="面试题1"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试题1"/></a><div class="content"><a class="title" href="/archives/a3e16fea.html" title="面试题1">面试题1</a><time datetime="2026-08-11T14:53:55.000Z" title="发表于 2026-08-11 22:53:55">2026-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/35864571.html" title="docker部署jenkins"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署jenkins"/></a><div class="content"><a class="title" href="/archives/35864571.html" title="docker部署jenkins">docker部署jenkins</a><time datetime="2026-08-10T05:55:00.000Z" title="发表于 2026-08-10 13:55:00">2026-08-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/be6d62ff.html" title="docker部署gitlab"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260808152148812.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署gitlab"/></a><div class="content"><a class="title" href="/archives/be6d62ff.html" title="docker部署gitlab">docker部署gitlab</a><time datetime="2026-08-08T07:16:03.000Z" title="发表于 2026-08-08 15:16:03">2026-08-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260807160530247.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s+Helm部署kube-prometheus-stack"/></a><div class="content"><a class="title" href="/archives/acc15af9.html" title="K8s+Helm部署kube-prometheus-stack">K8s+Helm部署kube-prometheus-stack</a><time datetime="2026-08-07T07:12:03.000Z" title="发表于 2026-08-07 15:12:03">2026-08-07</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2020 - 2026 By Raidenxe</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5"></script><script src="/js/main.js?v=5.5.5"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="710433610" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="false"> </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5"></script></div></div></body></html>

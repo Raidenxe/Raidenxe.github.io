@@ -1,0 +1,939 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Ansible 深入浅出实战指南：从零搭建、核心模块到自动化部署 | Raidenxe的博客</title><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content=" 技术栈：Ansible 2.17.14 · Docker 29.7.2 · Ubuntu 22.04适用读者：具备 Linux 基础、想用自动化替代「一台台手动 SSH」的开发者与运维工程师。复现方式：本文所有步骤与配置都基于 Docker 环境实测，你可以在自己的机器上 1:1 复现，看到..."><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Ansible 深入浅出实战指南：从零搭建、核心模块到自动化部署",
+  "url": "https://raidenxe.github.io/archives/9dc3bdc6.html",
+  "image": "https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260926165840686.png",
+  "datePublished": "2026-09-26T08:43:09.000Z",
+  "dateModified": "2026-09-26T09:03:30.216Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Raidenxe",
+      "url": "https://Raidenxe.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/9dc3bdc6.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css?v=5.5.5"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Ansible 深入浅出实战指南：从零搭建、核心模块到自动化部署',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/macblack.css"><style>
+  #web_bg{background-image:url(/img/风景006.png)}
+  #footer{background-image:url(/img/风景008.png);background-size:cover;background-position:center}
+  .aplayer-lrc{display:none !important}
+</style>
+<meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/%E9%A3%8E%E6%99%AF006.png));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">72</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260926165840686.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Raidenxe的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Ansible 深入浅出实战指南：从零搭建、核心模块到自动化部署</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Ansible 深入浅出实战指南：从零搭建、核心模块到自动化部署</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-09-26T08:43:09.000Z" title="发表于 2026-09-26 16:43:09">2026-09-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-26T09:03:30.216Z" title="更新于 2026-09-26 17:03:30">2026-09-26</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>35分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p><strong>技术栈</strong>：Ansible 2.17.14 · Docker 29.7.2 · Ubuntu 22.04<br><strong>适用读者</strong>：具备 Linux 基础、想用自动化替代「一台台手动 SSH」的开发者与运维工程师。<br><strong>复现方式</strong>：本文所有步骤与配置都基于 Docker 环境实测，你可以在自己的机器上 1:1 复现，看到的每个输出均为真实抓取结果。</p>
+</blockquote>
+<!-- TOC -->
+
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li><a href="#%E4%B8%80%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-ansible%E5%85%88%E4%BB%8E%E7%97%9B%E7%82%B9%E8%AF%B4%E8%B5%B7">一、为什么需要 Ansible：先从痛点说起</a></li>
+<li><a href="#%E4%BA%8Cansible-%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%9E%B6%E6%9E%84">二、Ansible 核心概念与架构</a></li>
+<li><a href="#%E4%B8%89%E6%90%AD%E5%BB%BA-docker-%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83">三、搭建 Docker 实验环境</a></li>
+<li><a href="#%E5%9B%9B%E6%B8%85%E5%8D%95-inventoryansible-%E7%9A%84%E9%80%9A%E8%AE%AF%E5%BD%95">四、清单 Inventory：Ansible 的「通讯录」</a></li>
+<li><a href="#%E4%BA%94%E6%A8%A1%E5%9D%97-modules--ad-hoc-%E5%91%BD%E4%BB%A4%E5%AE%9E%E6%88%98">五、模块 Modules + Ad-hoc 命令实战</a></li>
+<li><a href="#%E5%85%ADplaybook%E6%8A%8A%E6%93%8D%E4%BD%9C%E5%8F%98%E6%88%90%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%E5%89%A7%E6%9C%AC">六、Playbook：把操作变成可复用的「剧本」</a></li>
+<li><a href="#%E4%B8%83%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE%E4%B8%80%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%89%B9%E9%87%8F%E9%85%8D%E7%BD%AE">七、实战项目一：服务器批量配置</a></li>
+<li><a href="#%E5%85%AB%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE%E4%BA%8C%E5%BA%94%E7%94%A8%E9%83%A8%E7%BD%B2%E8%87%AA%E5%8A%A8%E5%8C%96%E6%BB%9A%E5%8A%A8%E5%8F%91%E5%B8%83">八、实战项目二：应用部署自动化（滚动发布）</a></li>
+<li><a href="#%E4%B9%9D%E5%8F%98%E9%87%8Ffacts-%E4%B8%8E%E6%9D%A1%E4%BB%B6%E6%8E%A7%E5%88%B6">九、变量、Facts 与条件控制</a></li>
+<li><a href="#%E5%8D%81%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86block--rescue--always">十、错误处理：block &#x2F; rescue &#x2F; always</a></li>
+<li><a href="#%E5%8D%81%E4%B8%80%E5%AE%89%E5%85%A8%E5%AE%9E%E8%B7%B5vault-%E5%8A%A0%E5%AF%86%E6%9C%BA%E5%AF%86">十一、安全实践：Vault 加密机密</a></li>
+<li><a href="#%E5%8D%81%E4%BA%8C%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88">十二、常见问题与解决方案</a></li>
+<li><a href="#%E5%8D%81%E4%B8%89%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E4%B8%8E%E8%BF%9B%E9%98%B6%E6%96%B9%E5%90%91">十三、最佳实践与进阶方向</a></li>
+<li><a href="#%E5%8D%81%E5%9B%9B%E6%80%BB%E7%BB%93">十四、总结</a></li>
+</ul>
+<!-- /TOC -->
+
+<h2 id="一、为什么需要-Ansible：先从痛点说起"><a href="#一、为什么需要-Ansible：先从痛点说起" class="headerlink" title="一、为什么需要 Ansible：先从痛点说起"></a>一、为什么需要 Ansible：先从痛点说起</h2><p>想象一个常见的运维场景：你有 10 台、50 台甚至上千台服务器，每台都要做同一件事——安装 Nginx、创建账号、写入配置、开启服务。如果你还用「人肉 SSH」去逐台敲命令，会面临三座大山：</p>
+<table>
+<thead>
+<tr>
+<th>痛点</th>
+<th>后果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>重复劳动</strong></td>
+<td>同样命令敲几十遍，效率极低</td>
+</tr>
+<tr>
+<td><strong>操作不一致</strong></td>
+<td>手一抖漏改一台，环境「漂移」出各种诡异 Bug</td>
+</tr>
+<tr>
+<td><strong>难以审计</strong></td>
+<td>谁、什么时候、改了哪台？几乎没有记录与回放</td>
+</tr>
+</tbody></table>
+<p><strong>Ansible 就是为了解决这些问题而生的配置管理与应用自动化工具。</strong></p>
+<p>它由红帽（Red Hat）出品，核心思想只有一句话：</p>
+<blockquote>
+<p><strong>用代码描述目标状态，而不是描述操作步骤。</strong></p>
+</blockquote>
+<p>你只需要告诉 Ansible「这台机器最终应该是怎样的状态」，它会自行判断「已经满足就不动，没满足才去改」。这种「声明式 + 幂等」的思维，是整个 Ansible 的灵魂，也是它与传统 Shell 脚本最大的区别。</p>
+<p><strong>与同类工具的差异</strong>（这也是选型时要先想清楚的事）：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Ansible</th>
+<th>Salt &#x2F; Puppet &#x2F; Chef</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Agent</td>
+<td>无，靠 SSH</td>
+<td>通常需要常驻 Agent</td>
+</tr>
+<tr>
+<td>学习曲线</td>
+<td>低（YAML + SSH）</td>
+<td>中到高（各有 DSL &#x2F; Ruby）</td>
+</tr>
+<tr>
+<td>推送模型</td>
+<td>主动推送</td>
+<td>多为 Agent 上报 + Master 下发</td>
+</tr>
+<tr>
+<td>适用规模</td>
+<td>中小集群、批量节点</td>
+<td>大规模、强状态管控</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>一句话结论</strong>：节点规模可控、希望快速上手、不想维护 Agent 基础设施时，Ansible 通常是性价比最高的选择；节点上万且需要强状态收敛时，再考虑 Puppet&#x2F;Salt 一类中心化方案。</p>
+</blockquote>
+<h2 id="二、Ansible-核心概念与架构"><a href="#二、Ansible-核心概念与架构" class="headerlink" title="二、Ansible 核心概念与架构"></a>二、Ansible 核心概念与架构</h2><h3 id="2-1-无代理（Agentless）架构"><a href="#2-1-无代理（Agentless）架构" class="headerlink" title="2.1 无代理（Agentless）架构"></a>2.1 无代理（Agentless）架构</h3><p>Ansible 最大的特色是<strong>无需在被管理机器上安装任何 Agent</strong>。它通过 <strong>SSH</strong> 连接目标机，把一段「模块」代码推过去临时执行，执行完即删，不留常驻进程。下图是本文实验环境的真实架构：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/arch.png" alt="Ansible 无代理架构"></p>
+<p><em>图 1：控制节点通过 SSH 向受管节点推送模块代码，执行完毕后清理临时文件。</em></p>
+<p>从上图可以看到几个核心角色：</p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>控制节点（Control Node）</strong></td>
+<td>安装 Ansible 的机器，负责发号施令。<strong>只有它需要装 Ansible</strong>。</td>
+</tr>
+<tr>
+<td><strong>受管节点（Managed Node）</strong></td>
+<td>被管理的目标服务器。只需要能 SSH 登录、有 Python3，<strong>不用装 Ansible</strong>。</td>
+</tr>
+<tr>
+<td><strong>清单（Inventory）</strong></td>
+<td>记录「有哪些主机、属于哪个组、怎么连」。</td>
+</tr>
+<tr>
+<td><strong>模块（Module）</strong></td>
+<td>一个开箱即用的「小功能」，如复制文件、装软件、启服务。</td>
+</tr>
+<tr>
+<td><strong>Playbook</strong></td>
+<td>把多个模块按顺序编排成 YAML 剧本。</td>
+</tr>
+<tr>
+<td><strong>Facts</strong></td>
+<td>控制节点自动采集到的目标机系统信息（系统类型、IP、CPU 等）。</td>
+</tr>
+</tbody></table>
+<h3 id="2-2-Ansible-的工作流程"><a href="#2-2-Ansible-的工作流程" class="headerlink" title="2.2 Ansible 的工作流程"></a>2.2 Ansible 的工作流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant C as 控制节点</span><br><span class="line">    participant T as 受管节点</span><br><span class="line">    C-&gt;&gt;T: SSH 建立连接</span><br><span class="line">    C-&gt;&gt;C: 从 Inventory 读取清单 &amp; 采集 Facts</span><br><span class="line">    C-&gt;&gt;T: 推送模块代码（Python）到临时目录</span><br><span class="line">    C-&gt;&gt;T: 在目标机执行模块</span><br><span class="line">    T--&gt;&gt;C: 返回 JSON 结果（changed / ok / failed）</span><br><span class="line">    C-&gt;&gt;C: 汇总并输出结果（可并行，默认 forks）</span><br><span class="line">    Note over C,T: 无常驻 Agent，执行完毕临时文件自动清理</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-三句口诀记住核心概念"><a href="#2-3-三句口诀记住核心概念" class="headerlink" title="2.3 三句口诀记住核心概念"></a>2.3 三句口诀记住核心概念</h3><ul>
+<li><strong>Inventory</strong>：我要管哪些主机？</li>
+<li><strong>Module</strong>：我要对它们做什么？（装包、传文件、开服务……）</li>
+<li><strong>Playbook</strong>：把这些「做什么」按顺序、可重复地编排起来。</li>
+</ul>
+<p>下设三个关键原则：</p>
+<ol>
+<li><strong>幂等性（Idempotency）</strong>：同一操作执行 1 次和 100 次，结果一致。</li>
+<li><strong>声明式（Declarative）</strong>：描述「终点状态」，而非动作顺序。</li>
+<li><strong>编排式（Orchestration）</strong>：一台一台或一批一批地协调多机任务。</li>
+</ol>
+<h3 id="2-4-配置加载顺序（新手踩坑高发区）"><a href="#2-4-配置加载顺序（新手踩坑高发区）" class="headerlink" title="2.4 配置加载顺序（新手踩坑高发区）"></a>2.4 配置加载顺序（新手踩坑高发区）</h3><p>Ansible 读取配置、变量时遵循<strong>就近覆盖</strong>原则，顺序是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">命令行参数</span><br><span class="line">  &gt; 环境变量</span><br><span class="line">  &gt; 当前目录 ansible.cfg</span><br><span class="line">  &gt; ~/.ansible.cfg</span><br><span class="line">  &gt; /etc/ansible/ansible.cfg</span><br></pre></td></tr></table></figure>
+
+<p><strong>记住这条顺序，能省掉大量「明明改了配置却没生效」的排查时间</strong>：把项目级 <code>ansible.cfg</code> 放在项目根目录并一起提交 Git，是最稳妥的做法。</p>
+<h2 id="三、搭建-Docker-实验环境"><a href="#三、搭建-Docker-实验环境" class="headerlink" title="三、搭建 Docker 实验环境"></a>三、搭建 Docker 实验环境</h2><p>为了让每一步都能复现，我直接在 Docker 里搭了一个「控制节点 + 3 台受管节点」的实验环境。你不需要真实服务器，一条命令就能把它跑起来。</p>
+<blockquote>
+<p><strong>为什么用 Docker 而不是真机？</strong> 一是启动快、可反复重建；二是和「声明式基础设施」的思想同源——环境本身就是一份可版本化的描述；三是宿主机资源消耗极小，8G 内存的笔记本就能同时跑 4 个容器。</p>
+</blockquote>
+<h3 id="3-1-目录结构与文件"><a href="#3-1-目录结构与文件" class="headerlink" title="3.1 目录结构与文件"></a>3.1 目录结构与文件</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">lab/</span><br><span class="line">├── docker-compose.yml   # 一键编排 4 个容器</span><br><span class="line">├── control/</span><br><span class="line">│   └── Dockerfile       # 控制节点：安装 Ansible</span><br><span class="line">└── node/</span><br><span class="line">    └── Dockerfile       # 受管节点：OpenSSH + Python3</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-控制节点-Dockerfile"><a href="#3-2-控制节点-Dockerfile" class="headerlink" title="3.2 控制节点 Dockerfile"></a>3.2 控制节点 Dockerfile</h3><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># lab/control/Dockerfile</span></span><br><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">22.04</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ENV</span> DEBIAN_FRONTEND=noninteractive</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get update &amp;&amp; apt-get install -y --no-install-recommends \</span></span><br><span class="line"><span class="language-bash">    python3 python3-pip python3-venv openssh-client sshpass vim curl iputils-ping \</span></span><br><span class="line"><span class="language-bash">    &amp;&amp; <span class="built_in">rm</span> -rf /var/lib/apt/lists/*</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 venv 安装 Ansible，避免污染系统 Python</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> python3 -m venv /opt/ansible-venv \</span></span><br><span class="line"><span class="language-bash">    &amp;&amp; /opt/ansible-venv/bin/pip install --no-cache-dir ansible-core \</span></span><br><span class="line"><span class="language-bash">    &amp;&amp; <span class="built_in">ln</span> -s /opt/ansible-venv/bin/ansible /usr/local/bin/ansible \</span></span><br><span class="line"><span class="language-bash">    &amp;&amp; <span class="built_in">ln</span> -s /opt/ansible-venv/bin/ansible-playbook /usr/local/bin/ansible-playbook \</span></span><br><span class="line"><span class="language-bash">    &amp;&amp; ansible --version</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /ansible</span></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">&quot;/bin/bash&quot;</span>]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-受管节点-Dockerfile"><a href="#3-3-受管节点-Dockerfile" class="headerlink" title="3.3 受管节点 Dockerfile"></a>3.3 受管节点 Dockerfile</h3><p>受管节点要能被 SSH 登录，所以内置 OpenSSH 服务、root 密码和免密 sudo 用户 <code>devops</code>。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># lab/node/Dockerfile</span></span><br><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">22.04</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ENV</span> DEBIAN_FRONTEND=noninteractive</span><br><span class="line"><span class="keyword">USER</span> root</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get update &amp;&amp; apt-get install -y --no-install-recommends \</span></span><br><span class="line"><span class="language-bash">    openssh-server <span class="built_in">sudo</span> python3 python3-apt curl nginx iproute2 \</span></span><br><span class="line"><span class="language-bash">    &amp;&amp; <span class="built_in">rm</span> -rf /var/lib/apt/lists/* \</span></span><br><span class="line"><span class="language-bash">    &amp;&amp; <span class="built_in">mkdir</span> -p /run/sshd \</span></span><br><span class="line"><span class="language-bash">    <span class="comment"># 允许 root 密码登录（学习环境用，生产请用密钥）</span></span></span><br><span class="line">    &amp;&amp; echo <span class="string">&#x27;root:Ansible!2024&#x27;</span> | chpasswd \</span><br><span class="line">    &amp;&amp; sed -i <span class="string">&#x27;s/^#\?PermitRootLogin.*/PermitRootLogin yes/&#x27;</span> /etc/ssh/sshd_config \</span><br><span class="line">    &amp;&amp; sed -i <span class="string">&#x27;s/^#\? *PasswordAuthentication.*/PasswordAuthentication yes/&#x27;</span> /etc/ssh/sshd_config \</span><br><span class="line">    <span class="comment"># 创建普通用户 devops + 免密 sudo</span></span><br><span class="line">    &amp;&amp; useradd -m -s /bin/bash devops \</span><br><span class="line">    &amp;&amp; echo <span class="string">&#x27;devops:Ansible!2024&#x27;</span> | chpasswd \</span><br><span class="line">    &amp;&amp; echo <span class="string">&#x27;devops ALL=(ALL) NOPASSWD:ALL&#x27;</span> &gt;&gt; /etc/sudoers.d/devops \</span><br><span class="line">    &amp;&amp; chmod <span class="number">440</span> /etc/sudoers.d/devops</span><br><span class="line"></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">22</span></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">&quot;/usr/sbin/sshd&quot;</span>, <span class="string">&quot;-D&quot;</span>]</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>踩坑提示</strong>：<code>sed</code> 的正则里写 <code>^#\?</code> 和 <code> *</code>，是因为 Ubuntu 22.04 的 sshd_config 中 <code>PasswordAuthentication</code> 默认是带 <code>#</code> 注释的，不加 <code>^#\?</code> 会导致替换后仍然是注释状态，SSH 登录会被 <code>Permission denied</code> 拒绝。这本身就是一个踩坑案例，详见<a href="#%E5%8D%81%E4%BA%8C%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88">第十二章</a>。</p>
+</blockquote>
+<h3 id="3-4-docker-compose-yml"><a href="#3-4-docker-compose-yml" class="headerlink" title="3.4 docker-compose.yml"></a>3.4 docker-compose.yml</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># lab/docker-compose.yml</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">control:</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">./control</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">ansible-control</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">control</span></span><br><span class="line">    <span class="attr">tty:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">stdin_open:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">working_dir:</span> <span class="string">/ansible</span></span><br><span class="line">    <span class="attr">networks:</span> [<span class="string">ansible-lab</span>]</span><br><span class="line">    <span class="attr">depends_on:</span> [<span class="string">node1</span>, <span class="string">node2</span>, <span class="string">node3</span>]</span><br><span class="line"></span><br><span class="line">  <span class="attr">node1:</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">./node</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">ansible-node1</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">node1</span></span><br><span class="line">    <span class="attr">networks:</span> [<span class="string">ansible-lab</span>]</span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;18081:80&quot;</span>   <span class="comment"># 映射 nginx 便于从外部访问演示站点</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">node2:</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">./node</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">ansible-node2</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">node2</span></span><br><span class="line">    <span class="attr">networks:</span> [<span class="string">ansible-lab</span>]</span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;18082:80&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">node3:</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">./node</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">ansible-node3</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">node3</span></span><br><span class="line">    <span class="attr">networks:</span> [<span class="string">ansible-lab</span>]</span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">ansible-lab:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">ansible-lab</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">bridge</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-5-启动并验证"><a href="#3-5-启动并验证" class="headerlink" title="3.5 启动并验证"></a>3.5 启动并验证</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> lab</span><br><span class="line">docker compose build</span><br><span class="line">docker compose up -d</span><br><span class="line">docker ps --format <span class="string">&quot;table &#123;&#123;.Names&#125;&#125;\t&#123;&#123;.Status&#125;&#125;&quot;</span> | grep ansible</span><br></pre></td></tr></table></figure>
+
+<p>预期输出（容器全部 <code>Up</code>）：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ansible-node2     Up 22 seconds</span><br><span class="line">ansible-node1     Up 22 seconds</span><br><span class="line">ansible-control   Up 22 seconds</span><br><span class="line">ansible-node3     Up 22 seconds</span><br></pre></td></tr></table></figure>
+
+<p>进入控制节点，验证 Ansible 是否安装成功：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ansible-control bash</span><br><span class="line">ansible --version</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/env_version.png" alt="环境验证：Ansible 版本"></p>
+<p><em>图 2：控制节点内执行 <code>ansible --version</code> 的真实输出。</em></p>
+<p>可以看到这是 **Ansible [core 2.17.14]**，Python 运行在 <code>/opt/ansible-venv</code> 的虚拟环境里，符合我们在 Dockerfile 中的安装方式。</p>
+<h3 id="3-6-验证-SSH-连通性（环境验收）"><a href="#3-6-验证-SSH-连通性（环境验收）" class="headerlink" title="3.6 验证 SSH 连通性（环境验收）"></a>3.6 验证 SSH 连通性（环境验收）</h3><p>容器起来不等于能管理。环境就绪后的第一件事，是从控制节点免密 SSH 到各节点：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it ansible-control bash</span><br><span class="line">ssh devops@node1 <span class="string">&#x27;hostname &amp;&amp; whoami&#x27;</span>   <span class="comment"># 应输出 node1 / devops</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">node1</span><br><span class="line">devops</span><br></pre></td></tr></table></figure>
+
+<p>SSH 连通后，后续所有 Inventory、Playbook 实验才真正有可执行的基础。建议把这一步作为环境搭建的「验收门槛」，不通就不往下走。</p>
+<h2 id="四、清单-Inventory：Ansible-的「通讯录」"><a href="#四、清单-Inventory：Ansible-的「通讯录」" class="headerlink" title="四、清单 Inventory：Ansible 的「通讯录」"></a>四、清单 Inventory：Ansible 的「通讯录」</h2><h3 id="4-1-什么是-Inventory"><a href="#4-1-什么是-Inventory" class="headerlink" title="4.1 什么是 Inventory"></a>4.1 什么是 Inventory</h3><p>Inventory 清单文件告诉 Ansible「<strong>有哪些主机、分属哪个组、用什么账号连</strong>」。它支持 <strong>INI</strong> 和 <strong>YAML</strong> 两种格式。本文使用最主流的 INI 格式。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># lab/ansible/inventory/hosts.ini</span></span><br><span class="line"><span class="comment"># 每个 [组名] 都是一个可批量管理的主机分组</span></span><br><span class="line"></span><br><span class="line"><span class="section">[webservers]</span></span><br><span class="line">node1 <span class="attr">ansible_host</span>=node1</span><br><span class="line">node2 <span class="attr">ansible_host</span>=node2</span><br><span class="line"></span><br><span class="line"><span class="section">[databases]</span></span><br><span class="line">node3 <span class="attr">ansible_host</span>=node3</span><br><span class="line"></span><br><span class="line"><span class="section">[all:vars]</span></span><br><span class="line"><span class="comment"># 连接到受管节点用的 SSH 账户</span></span><br><span class="line"><span class="attr">ansible_user</span>=root</span><br><span class="line"><span class="attr">ansible_ssh_pass</span>=Ansible!<span class="number">2024</span></span><br><span class="line"><span class="attr">ansible_python_interpreter</span>=/usr/bin/python3</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-配置文件-ansible-cfg"><a href="#4-2-配置文件-ansible-cfg" class="headerlink" title="4.2 配置文件 ansible.cfg"></a>4.2 配置文件 ansible.cfg</h3><p>配置加载顺序见 2.4 节，这里给出一份可直接落到项目的配置：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># lab/ansible/ansible.cfg</span></span><br><span class="line"><span class="section">[defaults]</span></span><br><span class="line"><span class="attr">inventory</span> = inventory/hosts.ini   <span class="comment"># 默认清单文件</span></span><br><span class="line"><span class="attr">gathering</span> = smart                 <span class="comment"># facts 采集策略</span></span><br><span class="line"><span class="attr">timeout</span> = <span class="number">10</span>                      <span class="comment"># 连接超时（秒）</span></span><br><span class="line"><span class="attr">host_key_checking</span> = <span class="literal">False</span>         <span class="comment"># 关闭 SSH host key 交互确认（公网慎用）</span></span><br><span class="line"><span class="attr">forks</span> = <span class="number">5</span>                         <span class="comment"># 并行执行主机数</span></span><br><span class="line"></span><br><span class="line"><span class="section">[ssh_connection]</span></span><br><span class="line"><span class="attr">pipelining</span> = <span class="literal">True</span>                 <span class="comment"># 开启 SSH 管道加速</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>几个关键参数解读</strong>：</p>
+<ul>
+<li><code>forks</code>：控制并发数。管理 5 台机设 5 就够了；上千台节点要调到 50~100，但也要评估目标机的 SSH 连接承载能力。</li>
+<li><code>pipelining</code>：把多个模块调用合并到一次 SSH 会话，能显著减少连接开销，对大量小任务场景提速明显。</li>
+<li><code>host_key_checking</code>：关掉是为了省掉首次连接的交互确认，但生产环境建议保持开启，防止中间人攻击。</li>
+</ul>
+<h3 id="4-3-查看你的清单"><a href="#4-3-查看你的清单" class="headerlink" title="4.3 查看你的清单"></a>4.3 查看你的清单</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /ansible</span><br><span class="line">ansible all --list-hosts</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/inventory_list.png" alt="清单主机列表"></p>
+<p><em>图 3：<code>ansible all --list-hosts</code> 的真实输出。</em></p>
+<p>清单里还可以玩出很多花样：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ansible webservers --list-hosts   <span class="comment"># 只看 webservers 组</span></span><br><span class="line">ansible <span class="string">&#x27;node*&#x27;</span> --list-hosts      <span class="comment"># 支持通配符</span></span><br><span class="line">ansible node1 -m ping -i inventory/hosts.ini   <span class="comment"># 显式指定清单</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-4-内置组"><a href="#4-4-内置组" class="headerlink" title="4.4 内置组"></a>4.4 内置组</h3><p>任何主机不需要声明都在 <strong>两个内置组</strong> 里：</p>
+<table>
+<thead>
+<tr>
+<th>内置组</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>all</code></td>
+<td>所有主机</td>
+</tr>
+<tr>
+<td><code>ungrouped</code></td>
+<td>不属于任何组的主机</td>
+</tr>
+</tbody></table>
+<h3 id="4-5-常用-Inventory-参数速查"><a href="#4-5-常用-Inventory-参数速查" class="headerlink" title="4.5 常用 Inventory 参数速查"></a>4.5 常用 Inventory 参数速查</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+<th>常见场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ansible_host</code></td>
+<td>真实连接地址</td>
+<td>用别名管理云主机</td>
+</tr>
+<tr>
+<td><code>ansible_port</code></td>
+<td>SSH 端口</td>
+<td>非标 22 端口</td>
+</tr>
+<tr>
+<td><code>ansible_user</code> &#x2F; <code>ansible_ssh_pass</code></td>
+<td>登录账号与密码</td>
+<td>实验环境</td>
+</tr>
+<tr>
+<td><code>ansible_ssh_private_key_file</code></td>
+<td>私钥路径</td>
+<td><strong>生产环境首选</strong></td>
+</tr>
+<tr>
+<td><code>ansible_become</code> &#x2F; <code>ansible_become_method</code></td>
+<td>提权开关与方式</td>
+<td><code>sudo</code> &#x2F; <code>su</code></td>
+</tr>
+<tr>
+<td><code>ansible_python_interpreter</code></td>
+<td>指定 Python 路径</td>
+<td>目标机多版本 Python</td>
+</tr>
+</tbody></table>
+<h2 id="五、模块-Modules-Ad-hoc-命令实战"><a href="#五、模块-Modules-Ad-hoc-命令实战" class="headerlink" title="五、模块 Modules + Ad-hoc 命令实战"></a>五、模块 Modules + Ad-hoc 命令实战</h2><p>模块（Module）是 Ansible 的「积木」，每一个都封装了一个独立能力。学习阶段最快捷的方式是用 <strong>Ad-hoc 命令</strong> 即点即用，语法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible &lt;主机/组&gt; -m &lt;模块名&gt; -a <span class="string">&quot;&lt;参数&gt;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-1-测试连通性：ping-模块"><a href="#5-1-测试连通性：ping-模块" class="headerlink" title="5.1 测试连通性：ping 模块"></a>5.1 测试连通性：ping 模块</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible all -m ping</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/ping_result.png" alt="Ansible ping 结果"></p>
+<p><em>图 4：3 台受管节点全部返回 <code>SUCCESS</code> + <code>pong</code>。</em></p>
+<blockquote>
+<p><code>ping</code> 不是 ICMP ping，而是验证「能否建立 SSH 且目标机 Python 可用」。这是排查「连不上」问题的第一步。</p>
+</blockquote>
+<h3 id="5-2-采集系统信息：setup-模块（Facts）"><a href="#5-2-采集系统信息：setup-模块（Facts）" class="headerlink" title="5.2 采集系统信息：setup 模块（Facts）"></a>5.2 采集系统信息：setup 模块（Facts）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible node1 -m setup -a <span class="string">&quot;filter=ansible_os_family&quot;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;ansible_facts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;ansible_os_family&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Debian&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;changed&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-执行命令：command-与-shell-模块"><a href="#5-3-执行命令：command-与-shell-模块" class="headerlink" title="5.3 执行命令：command 与 shell 模块"></a>5.3 执行命令：command 与 shell 模块</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># command：不经过 shell，适用于简单命令（不支持管道、重定向、$变量）</span></span><br><span class="line">ansible node1 -m <span class="built_in">command</span> -a <span class="string">&quot;uptime&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># shell：经过 /bin/sh，支持管道、$变量、重定向</span></span><br><span class="line">ansible node1 -m shell -a <span class="string">&quot;echo hello-<span class="subst">$(hostname)</span> | tr a-z A-Z&quot;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">node1 | CHANGED | rc=0 &gt;&gt;</span><br><span class="line"> 08:19:39 up 11 min,  0 users,  load average: 1.87, 2.29, 1.46</span><br><span class="line">node1 | CHANGED | rc=0 &gt;&gt;</span><br><span class="line">HELLO-CONTROL</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注意一个坑</strong>：<code>$(hostname)</code> 在传给目标机之前就被控制节点的 shell 展开了，所以第二行输出是 <code>HELLO-CONTROL</code>。如果真想在目标机上执行，需要写成单引号或转义：<code>ansible node1 -m shell -a &#39;echo hello-$(hostname)&#39;</code>。<strong>Ad-hoc 的参数引号，是新手最常踩的雷。</strong></p>
+</blockquote>
+<h3 id="5-4-传输文件：copy-与-file-模块"><a href="#5-4-传输文件：copy-与-file-模块" class="headerlink" title="5.4 传输文件：copy 与 file 模块"></a>5.4 传输文件：copy 与 file 模块</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># copy：把本地文件推到目标机</span></span><br><span class="line">ansible node1 -m copy -a <span class="string">&quot;src=/tmp/local-app.conf dest=/tmp/app.conf owner=root group=root mode=0640&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># file：管理文件/目录/软链的状态</span></span><br><span class="line">ansible node1 -m file -a <span class="string">&quot;path=/opt/apps state=directory mode=0755&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># file: 删除文件</span></span><br><span class="line">ansible node1 -m file -a <span class="string">&quot;path=/tmp/tmp.txt state=absent&quot;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;changed&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;checksum&quot;</span><span class="punctuation">:</span> <span class="string">&quot;4167a2eb3bf025d3275c28dd5588c93ea24cfd96&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;dest&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/tmp/app.conf&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;gid&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;group&quot;</span><span class="punctuation">:</span> <span class="string">&quot;root&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;mode&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0640&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;owner&quot;</span><span class="punctuation">:</span> <span class="string">&quot;root&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;size&quot;</span><span class="punctuation">:</span> <span class="number">18</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;state&quot;</span><span class="punctuation">:</span> <span class="string">&quot;file&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;uid&quot;</span><span class="punctuation">:</span> <span class="number">0</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意返回里带 <code>checksum</code> 和 <code>state</code>——这正是幂等判断的依据。下文的 5.8 节会专门讲这一点。</p>
+</blockquote>
+<h3 id="5-5-包管理：apt-模块"><a href="#5-5-包管理：apt-模块" class="headerlink" title="5.5 包管理：apt 模块"></a>5.5 包管理：apt 模块</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Ubuntu/Debian 用 apt；CentOS/Rocky 用 yum/dnf</span></span><br><span class="line">ansible node3 -m apt -a <span class="string">&quot;name=curl state=present&quot;</span></span><br><span class="line"><span class="comment"># state: present=安装, absent=卸载, latest=升级到最新（慎用）</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-6-服务管理：service-x2F-systemd-模块"><a href="#5-6-服务管理：service-x2F-systemd-模块" class="headerlink" title="5.6 服务管理：service &#x2F; systemd 模块"></a>5.6 服务管理：service &#x2F; systemd 模块</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible node1 -m service -a <span class="string">&quot;name=nginx state=started enabled=true&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-7-用户管理：user-模块"><a href="#5-7-用户管理：user-模块" class="headerlink" title="5.7 用户管理：user 模块"></a>5.7 用户管理：user 模块</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible node1 -m user -a <span class="string">&quot;name=admin state=present group=sudo shell=/bin/bash&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-8-幂等性：Ad-hoc-的最大价值"><a href="#5-8-幂等性：Ad-hoc-的最大价值" class="headerlink" title="5.8 幂等性：Ad-hoc 的最大价值"></a>5.8 幂等性：Ad-hoc 的最大价值</h3><p>再跑一遍刚才的 <code>copy</code>，你会看到状态从 <code>CHANGED</code> 变成 <code>SUCCESS</code> 且 <code>changed:false</code>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;changed&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;checksum&quot;</span><span class="punctuation">:</span> <span class="string">&quot;4167a2eb...&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;dest&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/tmp/app.conf&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这就是<strong>幂等</strong>——目标未变，就不做任何多余操作。这是 Ansible 和普通 Shell 脚本的本质区别，也是自动化能被安全地反复执行的根本原因。</p>
+<h3 id="5-9-查模块用法：ansible-doc"><a href="#5-9-查模块用法：ansible-doc" class="headerlink" title="5.9 查模块用法：ansible-doc"></a>5.9 查模块用法：ansible-doc</h3><p>对任何模块不熟悉，直接：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ansible-doc copy     <span class="comment"># 查看 copy 模块文档</span></span><br><span class="line">ansible-doc -l       <span class="comment"># 列出所有可用模块（几百个）</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-10-高频模块速查表"><a href="#5-10-高频模块速查表" class="headerlink" title="5.10 高频模块速查表"></a>5.10 高频模块速查表</h3><table>
+<thead>
+<tr>
+<th>模块</th>
+<th>一句话用途</th>
+<th>关键参数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ping</code></td>
+<td>连通性自检</td>
+<td>无</td>
+</tr>
+<tr>
+<td><code>setup</code></td>
+<td>采集 Facts</td>
+<td><code>filter</code></td>
+</tr>
+<tr>
+<td><code>command</code></td>
+<td>无 shell 执行</td>
+<td><code>creates</code>&#x2F;<code>removes</code></td>
+</tr>
+<tr>
+<td><code>shell</code></td>
+<td>有 shell 执行</td>
+<td><code>chdir</code>&#x2F;<code>executable</code></td>
+</tr>
+<tr>
+<td><code>copy</code></td>
+<td>推文件</td>
+<td><code>src</code>&#x2F;<code>dest</code>&#x2F;<code>mode</code></td>
+</tr>
+<tr>
+<td><code>template</code></td>
+<td>Jinja2 渲染</td>
+<td><code>src</code>&#x2F;<code>dest</code></td>
+</tr>
+<tr>
+<td><code>file</code></td>
+<td>管理文件&#x2F;目录状态</td>
+<td><code>path</code>&#x2F;<code>state</code></td>
+</tr>
+<tr>
+<td><code>apt</code> &#x2F; <code>yum</code></td>
+<td>包管理</td>
+<td><code>name</code>&#x2F;<code>state</code>&#x2F;<code>update_cache</code></td>
+</tr>
+<tr>
+<td><code>service</code> &#x2F; <code>systemd</code></td>
+<td>服务管理</td>
+<td><code>name</code>&#x2F;<code>state</code>&#x2F;<code>enabled</code></td>
+</tr>
+<tr>
+<td><code>user</code></td>
+<td>账号管理</td>
+<td><code>name</code>&#x2F;<code>groups</code>&#x2F;<code>shell</code></td>
+</tr>
+<tr>
+<td><code>uri</code></td>
+<td>HTTP 探测</td>
+<td><code>url</code>&#x2F;<code>return_content</code></td>
+</tr>
+</tbody></table>
+<h2 id="六、Playbook：把操作变成可复用的「剧本」"><a href="#六、Playbook：把操作变成可复用的「剧本」" class="headerlink" title="六、Playbook：把操作变成可复用的「剧本」"></a>六、Playbook：把操作变成可复用的「剧本」</h2><p>Ad-hoc 适合临时验证；自动化工程要用 <strong>Playbook</strong>——一份 YAML 文件，描述「对哪些主机、按什么顺序、做什么」。</p>
+<h3 id="6-1-YAML-快速入门"><a href="#6-1-YAML-快速入门" class="headerlink" title="6.1 YAML 快速入门"></a>6.1 YAML 快速入门</h3><p>YAML 用缩进表达层级（<strong>只能用空格，不能 Tab</strong>），<code>key: value</code> 配对，列表用 <code>- </code>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">webservers</span>          <span class="comment"># 对 webservers 组执行</span></span><br><span class="line">  <span class="attr">become:</span> <span class="literal">true</span>               <span class="comment"># 提权（相当于 sudo）</span></span><br><span class="line">  <span class="attr">tasks:</span>                     <span class="comment"># 任务列表</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">任务一</span></span><br><span class="line">      <span class="attr">module:</span> <span class="string">args</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">任务二</span></span><br><span class="line">      <span class="attr">module:</span> <span class="string">args</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>YAML 常见报错</strong>：<code>found character &#39;\t&#39; that cannot start any token</code>（用了 Tab）、缩进不统一、<code>name:</code> 后面漏了空格。遇到 <code>could not find expected &#39;:&#39;</code> 先检查冒号后是否有空格、是否有特殊字符未加引号。</p>
+</blockquote>
+<h3 id="6-2-最小-Playbook-示例"><a href="#6-2-最小-Playbook-示例" class="headerlink" title="6.2 最小 Playbook 示例"></a>6.2 最小 Playbook 示例</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># playbooks/hello.yml</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">&quot;我的第一个 Playbook&quot;</span></span><br><span class="line">  <span class="attr">hosts:</span> <span class="string">node1</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">打印一行文字</span></span><br><span class="line">      <span class="attr">ansible.builtin.debug:</span></span><br><span class="line">        <span class="attr">msg:</span> <span class="string">&quot;Hello, Ansible! 目标机是 <span class="template-variable">&#123;&#123; inventory_hostname &#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible-playbook playbooks/hello.yml</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-运行前的三道「保险」"><a href="#6-3-运行前的三道「保险」" class="headerlink" title="6.3 运行前的三道「保险」"></a>6.3 运行前的三道「保险」</h3><p>写完 Playbook 别急着跑，先用这三招做沙盘推演：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ansible-playbook setup.yml --syntax-check   <span class="comment"># 仅校验语法，不执行</span></span><br><span class="line">ansible-playbook setup.yml --check          <span class="comment"># dry-run，模拟执行</span></span><br><span class="line">ansible-playbook setup.yml --check --diff   <span class="comment"># 额外显示文件差异</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>--check</code> 是安全网，<code>--diff</code> 能告诉你「会改哪里」。生产变更前务必先跑一遍，尤其涉及配置覆盖的场景。</p>
+</blockquote>
+<h3 id="6-4-Playbook-标准结构解析"><a href="#6-4-Playbook-标准结构解析" class="headerlink" title="6.4 Playbook 标准结构解析"></a>6.4 Playbook 标准结构解析</h3><p>一条完整的任务链通常包含：<code>name</code> + 模块 + 模块参数，配合 <code>vars</code>（变量）、<code>handlers</code>（处理程序）、<code>register</code>（注册结果）、<code>when</code>（条件）等关键词。</p>
+<p>到此，理论已经足够，下面是<strong>两个可完整复现的实战项目</strong>。</p>
+<h2 id="七、实战项目一：服务器批量配置"><a href="#七、实战项目一：服务器批量配置" class="headerlink" title="七、实战项目一：服务器批量配置"></a>七、实战项目一：服务器批量配置</h2><h3 id="7-1-需求"><a href="#7-1-需求" class="headerlink" title="7.1 需求"></a>7.1 需求</h3><p>对公司内两台 Web 服务器（<code>webservers</code> 组：node1、node2）做一次标准化配置：</p>
+<ol>
+<li>安装 Nginx &#x2F; Git &#x2F; htop</li>
+<li>创建统一运维账号 <code>deploy</code> 并赋予免密 sudo</li>
+<li>用模板覆盖 Nginx 配置并重启</li>
+<li>写入欢迎横幅</li>
+<li>确保 Nginx 服务已启动并开机自启</li>
+</ol>
+<h3 id="7-2-配置模板（Jinja2）"><a href="#7-2-配置模板（Jinja2）" class="headerlink" title="7.2 配置模板（Jinja2）"></a>7.2 配置模板（Jinja2）</h3><p>先准备 Nginx 配置模板，它会在运行时用变量的值<strong>动态渲染</strong>：</p>
+<figure class="highlight jinja"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="language-xml"># playbooks/templates/nginx_site.conf.j2</span></span><br><span class="line"><span class="language-xml">server &#123;</span></span><br><span class="line"><span class="language-xml">    listen </span><span class="template-variable">&#123;&#123; nginx_default_port &#125;&#125;</span><span class="language-xml">;</span></span><br><span class="line"><span class="language-xml">    server_name _;</span></span><br><span class="line"><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">    root /var/www/html;</span></span><br><span class="line"><span class="language-xml">    index index.html index.htm;</span></span><br><span class="line"><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">    location / &#123;</span></span><br><span class="line"><span class="language-xml">        try_files $uri $uri/ =404;</span></span><br><span class="line"><span class="language-xml">        add_header X-Managed-By &quot;Ansible&quot;;</span></span><br><span class="line"><span class="language-xml">    &#125;</span></span><br><span class="line"><span class="language-xml"></span></span><br><span class="line"><span class="language-xml">    location /health &#123;</span></span><br><span class="line"><span class="language-xml">        access_log off;</span></span><br><span class="line"><span class="language-xml">        return 200 &quot;ok\n&quot;;</span></span><br><span class="line"><span class="language-xml">    &#125;</span></span><br><span class="line"><span class="language-xml">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注意</strong>：模板里的 <code>$uri</code> 是 Nginx 自身变量，要原样保留（<code>&#123;&#123;</code> 之外的 <code>$</code> 不会被 Ansible 解析）。<strong>凡是「目标语言自己的 <code>$</code> 变量」，都要避免被 Jinja 误当成表达式。</strong></p>
+</blockquote>
+<h3 id="7-3-核心-Playbook（完整代码）"><a href="#7-3-核心-Playbook（完整代码）" class="headerlink" title="7.3 核心 Playbook（完整代码）"></a>7.3 核心 Playbook（完整代码）</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># playbooks/setup_webservers.yml</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">&quot;批量配置 Web 服务器&quot;</span></span><br><span class="line">  <span class="attr">hosts:</span> <span class="string">webservers</span></span><br><span class="line">  <span class="attr">become:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">gather_facts:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">vars:</span></span><br><span class="line">    <span class="attr">site_banner:</span> <span class="string">&quot;管理员：运维团队 | 上次部署：<span class="template-variable">&#123;&#123; ansible_date_time.iso8601 &#125;&#125;</span>&quot;</span></span><br><span class="line">    <span class="attr">nginx_default_port:</span> <span class="number">80</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">handlers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">restart</span> <span class="string">nginx</span></span><br><span class="line">      <span class="attr">ansible.builtin.systemd:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">restarted</span></span><br><span class="line">        <span class="attr">daemon_reload:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">更新</span> <span class="string">apt</span> <span class="string">缓存并安装基础软件</span></span><br><span class="line">      <span class="attr">ansible.builtin.apt:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123; item &#125;&#125;</span>&quot;</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">present</span></span><br><span class="line">        <span class="attr">update_cache:</span> <span class="literal">true</span></span><br><span class="line">      <span class="attr">loop:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">nginx</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">git</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">htop</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">创建维护运维用户</span> <span class="string">deploy</span></span><br><span class="line">      <span class="attr">ansible.builtin.user:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">deploy</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">present</span></span><br><span class="line">        <span class="attr">shell:</span> <span class="string">/bin/bash</span></span><br><span class="line">        <span class="attr">groups:</span> <span class="string">sudo</span></span><br><span class="line">        <span class="attr">append:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">为</span> <span class="string">deploy</span> <span class="string">用户配置免密提权</span></span><br><span class="line">      <span class="attr">ansible.builtin.copy:</span></span><br><span class="line">        <span class="attr">content:</span> <span class="string">&quot;deploy ALL=(ALL) NOPASSWD:ALL\n&quot;</span></span><br><span class="line">        <span class="attr">dest:</span> <span class="string">/etc/sudoers.d/deploy</span></span><br><span class="line">        <span class="attr">owner:</span> <span class="string">root</span></span><br><span class="line">        <span class="attr">group:</span> <span class="string">root</span></span><br><span class="line">        <span class="attr">mode:</span> <span class="string">&#x27;0440&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">渲染</span> <span class="string">Nginx</span> <span class="string">默认站点配置</span></span><br><span class="line">      <span class="attr">ansible.builtin.template:</span></span><br><span class="line">        <span class="attr">src:</span> <span class="string">templates/nginx_site.conf.j2</span></span><br><span class="line">        <span class="attr">dest:</span> <span class="string">/etc/nginx/sites-available/default</span></span><br><span class="line">        <span class="attr">owner:</span> <span class="string">root</span></span><br><span class="line">        <span class="attr">group:</span> <span class="string">root</span></span><br><span class="line">        <span class="attr">mode:</span> <span class="string">&#x27;0644&#x27;</span></span><br><span class="line">      <span class="attr">notify:</span> <span class="string">restart</span> <span class="string">nginx</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">写入服务器欢迎横幅</span></span><br><span class="line">      <span class="attr">ansible.builtin.copy:</span></span><br><span class="line">        <span class="attr">content:</span> <span class="string">|</span></span><br><span class="line"><span class="string">          ============================================</span></span><br><span class="line"><span class="string">          &#123;&#123; site_banner &#125;&#125;</span></span><br><span class="line"><span class="string">          主机: &#123;&#123; inventory_hostname &#125;&#125;</span></span><br><span class="line"><span class="string">          操作系统: &#123;&#123; ansible_distribution &#125;&#125; &#123;&#123; ansible_distribution_version &#125;&#125;</span></span><br><span class="line"><span class="string">          ============================================</span></span><br><span class="line"><span class="string"></span>        <span class="attr">dest:</span> <span class="string">/etc/motd</span></span><br><span class="line">        <span class="attr">mode:</span> <span class="string">&#x27;0644&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">确保</span> <span class="string">Nginx</span> <span class="string">服务处于运行状态</span></span><br><span class="line">      <span class="attr">ansible.builtin.service:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">started</span></span><br><span class="line">        <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">输出部署完成信息</span></span><br><span class="line">      <span class="attr">ansible.builtin.debug:</span></span><br><span class="line">        <span class="attr">msg:</span> <span class="string">&quot;主机 <span class="template-variable">&#123;&#123; inventory_hostname &#125;&#125;</span> 配置完成，Nginx 监听端口 <span class="template-variable">&#123;&#123; nginx_default_port &#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>其中几个关键点：</p>
+<ul>
+<li><strong><code>loop</code> 循环</strong>：<code>apt</code> 任务用一次循环安装 3 个软件包。</li>
+<li>**<code>handler</code> + <code>notify</code>**：只有 <code>template</code> 任务 <strong>确实发生变更时</strong> 才触发 <code>restart nginx</code>，避免每次跑都重启服务。</li>
+<li>**<code>become: true</code>**：以 root 权限执行（受管节点上就是 <code>sudo</code>）。</li>
+</ul>
+<h3 id="7-4-运行-Playbook"><a href="#7-4-运行-Playbook" class="headerlink" title="7.4 运行 Playbook"></a>7.4 运行 Playbook</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /ansible</span><br><span class="line">ansible-playbook playbooks/setup_webservers.yml</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/setup_recap.png" alt="项目一：批量配置服务器运行结果"></p>
+<p><em>图 5：项目一运行部分输出。</em></p>
+<p><code>PLAY RECAP</code> 每台都是 <code>failed=0</code>，配置成功：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PLAY RECAP</span><br><span class="line">node1 : ok=8 changed=1 unreachable=0 failed=0 skipped=0 rescued=0 ignored=0</span><br><span class="line">node2 : ok=8 changed=1 unreachable=0 failed=0 skipped=0 rescued=0 ignored=0</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>图为运行结果的部分截图，幂等验证的完整说明见 7.5。</p>
+</blockquote>
+<h3 id="7-5-幂等验证（重点）"><a href="#7-5-幂等验证（重点）" class="headerlink" title="7.5 幂等验证（重点）"></a>7.5 幂等验证（重点）</h3><p><strong>再跑一遍</strong> <code>ansible-playbook setup_webservers.yml</code>，绝大多数任务变成 <code>ok</code>（<code>changed=false</code>），只有写「部署时间」的横幅任务会 <code>changed</code>（因为时间戳变了）。这说明：</p>
+<blockquote>
+<p><strong>配置已经符合目标状态，就不重复执行。</strong> 这正是自动化能被安全地反复执行的原因。</p>
+</blockquote>
+<h3 id="7-6-从外部访问验证"><a href="#7-6-从外部访问验证" class="headerlink" title="7.6 从外部访问验证"></a>7.6 从外部访问验证</h3><p>在宿主机直接访问映射端口，验证 Nginx 已就绪：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -I http://127.0.0.1:18081/health</span><br></pre></td></tr></table></figure>
+
+<p>预期返回 <code>HTTP/1.1 200 OK</code> 和 <code>X-Managed-By: Ansible</code> 响应头。</p>
+<h2 id="八、实战项目二：应用部署自动化（滚动发布）"><a href="#八、实战项目二：应用部署自动化（滚动发布）" class="headerlink" title="八、实战项目二：应用部署自动化（滚动发布）"></a>八、实战项目二：应用部署自动化（滚动发布）</h2><h3 id="8-1-需求"><a href="#8-1-需求" class="headerlink" title="8.1 需求"></a>8.1 需求</h3><p>向两台 Web 服务器<strong>批量部署一个动态站点首页</strong>，页面内容由 Ansible Facts 实时生成（显示各自 IP、主机名、系统版本、应用版本、部署时间）。为了演示生产环境常用的 <strong>滚动发布</strong>，让 Ansible <strong>一次只处理一台</strong>（<code>serial: 1</code>），先验证 node1 成功再继续 node2，全程通过 handler <code>reload</code>（而非 restart）避免 Nginx 中断。</p>
+<h3 id="8-2-动态首页模板"><a href="#8-2-动态首页模板" class="headerlink" title="8.2 动态首页模板"></a>8.2 动态首页模板</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"># playbooks/templates/index.html.j2</span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;zh&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>&#123;&#123; site_name &#125;&#125;<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-css"></span></span><br><span class="line"><span class="language-css">        <span class="selector-tag">body</span> &#123; <span class="attribute">font-family</span>: sans-serif; <span class="attribute">text-align</span>:center; <span class="attribute">margin-top</span>:<span class="number">8%</span>; <span class="attribute">background</span>:<span class="number">#f6f8fa</span>; &#125;</span></span><br><span class="line"><span class="language-css">        <span class="selector-tag">h1</span>   &#123; <span class="attribute">color</span>:<span class="number">#e60012</span>; &#125;</span></span><br><span class="line"><span class="language-css">        <span class="selector-class">.box</span> &#123; <span class="attribute">background</span>:<span class="number">#fff</span>; <span class="attribute">width</span>:<span class="number">520px</span>; <span class="attribute">margin</span>:<span class="number">0</span> auto; <span class="attribute">padding</span>:<span class="number">28px</span>; <span class="attribute">border-radius</span>:<span class="number">10px</span>;</span></span><br><span class="line"><span class="language-css">               <span class="attribute">box-shadow</span>:<span class="number">0</span> <span class="number">6px</span> <span class="number">20px</span> <span class="built_in">rgba</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,.<span class="number">08</span>); <span class="attribute">border-top</span>:<span class="number">4px</span> solid <span class="number">#e60012</span>; &#125;</span></span><br><span class="line"><span class="language-css">        <span class="selector-tag">code</span> &#123; <span class="attribute">background</span>:<span class="number">#f0f0f0</span>; <span class="attribute">padding</span>:<span class="number">2px</span> <span class="number">6px</span>; <span class="attribute">border-radius</span>:<span class="number">4px</span>; &#125;</span></span><br><span class="line"><span class="language-css">    </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;box&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">h1</span>&gt;</span>&#123;&#123; site_name &#125;&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span>由 <span class="tag">&lt;<span class="name">code</span>&gt;</span>Ansible<span class="tag">&lt;/<span class="name">code</span>&gt;</span> 自动部署<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span>主机地址: <span class="tag">&lt;<span class="name">code</span>&gt;</span>&#123;&#123; ansible_default_ipv4.address &#125;&#125;<span class="tag">&lt;/<span class="name">code</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span>主机名: <span class="tag">&lt;<span class="name">code</span>&gt;</span>&#123;&#123; inventory_hostname &#125;&#125;<span class="tag">&lt;/<span class="name">code</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span>系统版本: <span class="tag">&lt;<span class="name">code</span>&gt;</span>&#123;&#123; ansible_distribution &#125;&#125; &#123;&#123; ansible_distribution_major_version &#125;&#125;<span class="tag">&lt;/<span class="name">code</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span>应用版本: <span class="tag">&lt;<span class="name">code</span>&gt;</span>v&#123;&#123; app_version &#125;&#125;<span class="tag">&lt;/<span class="name">code</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span>部署时间: <span class="tag">&lt;<span class="name">code</span>&gt;</span>&#123;&#123; ansible_date_time.date &#125;&#125; &#123;&#123; ansible_date_time.time &#125;&#125;<span class="tag">&lt;/<span class="name">code</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3-部署-Playbook（完整代码）"><a href="#8-3-部署-Playbook（完整代码）" class="headerlink" title="8.3 部署 Playbook（完整代码）"></a>8.3 部署 Playbook（完整代码）</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># playbooks/deploy_app.yml</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">&quot;应用部署自动化&quot;</span></span><br><span class="line">  <span class="attr">hosts:</span> <span class="string">webservers</span></span><br><span class="line">  <span class="attr">become:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">gather_facts:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">serial:</span> <span class="number">1</span>   <span class="comment"># 每次串行处理 1 台，模拟“滚动发布”，先验证一台再继续</span></span><br><span class="line">  <span class="attr">vars:</span></span><br><span class="line">    <span class="attr">site_name:</span> <span class="string">&quot;Ansible 实战演示站&quot;</span></span><br><span class="line">    <span class="attr">app_version:</span> <span class="string">&quot;2.3.1&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">handlers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">reload</span> <span class="string">nginx</span></span><br><span class="line">      <span class="attr">ansible.builtin.service:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">reloaded</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">创建站点发布目录</span></span><br><span class="line">      <span class="attr">ansible.builtin.file:</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/var/www/html</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">directory</span></span><br><span class="line">        <span class="attr">owner:</span> <span class="string">www-data</span></span><br><span class="line">        <span class="attr">group:</span> <span class="string">www-data</span></span><br><span class="line">        <span class="attr">mode:</span> <span class="string">&#x27;0755&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">渲染动态首页</span></span><br><span class="line">      <span class="attr">ansible.builtin.template:</span></span><br><span class="line">        <span class="attr">src:</span> <span class="string">templates/index.html.j2</span></span><br><span class="line">        <span class="attr">dest:</span> <span class="string">/var/www/html/index.html</span></span><br><span class="line">        <span class="attr">owner:</span> <span class="string">www-data</span></span><br><span class="line">        <span class="attr">group:</span> <span class="string">www-data</span></span><br><span class="line">        <span class="attr">mode:</span> <span class="string">&#x27;0644&#x27;</span></span><br><span class="line">      <span class="attr">notify:</span> <span class="string">reload</span> <span class="string">nginx</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">验证页面已部署</span></span><br><span class="line">      <span class="attr">ansible.builtin.uri:</span></span><br><span class="line">        <span class="attr">url:</span> <span class="string">&quot;http://127.0.0.1/health&quot;</span></span><br><span class="line">        <span class="attr">return_content:</span> <span class="literal">true</span></span><br><span class="line">      <span class="attr">register:</span> <span class="string">health</span></span><br><span class="line">      <span class="attr">until:</span> <span class="string">&quot;&#x27;ok&#x27; in health.content&quot;</span></span><br><span class="line">      <span class="attr">retries:</span> <span class="number">5</span></span><br><span class="line">      <span class="attr">delay:</span> <span class="number">2</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">打印部署结果</span></span><br><span class="line">      <span class="attr">ansible.builtin.debug:</span></span><br><span class="line">        <span class="attr">msg:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123; inventory_hostname &#125;&#125;</span> 页面版本 v<span class="template-variable">&#123;&#123; app_version &#125;&#125;</span> — 健康检查: <span class="template-variable">&#123;&#123; health.content &#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="8-4-运行"><a href="#8-4-运行" class="headerlink" title="8.4 运行"></a>8.4 运行</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible-playbook playbooks/deploy_app.yml</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">PLAY [应用部署自动化]</span><br><span class="line">TASK [Gathering Facts]     ok: [node1]</span><br><span class="line">TASK [创建站点发布目录]      changed: [node1]</span><br><span class="line">TASK [渲染动态首页]          changed: [node1]</span><br><span class="line">TASK [验证页面已部署]        ok: [node1]</span><br><span class="line">TASK [打印部署结果]</span><br><span class="line">    ok: [node1] =&gt; &#123; &quot;msg&quot;: &quot;node1 页面版本 v2.3.1 — 健康检查: ok\n&quot; &#125;</span><br><span class="line">RUNNING HANDLER [reload nginx]   changed: [node1]</span><br><span class="line"></span><br><span class="line">PLAY [应用部署自动化]         # ---- 进入第 2 台 ----</span><br><span class="line">TASK [Gathering Facts]     ok: [node2]</span><br><span class="line">...</span><br><span class="line">PLAY RECAP</span><br><span class="line">node1 : ok=3 changed=3</span><br><span class="line">node2 : ok=3 changed=3</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意 <code>serial: 1</code> 造成「node1 完整跑完 → node2 完整跑完」的两段式执行，且每台都以 handler <code>reload nginx</code> 收尾——<strong>任何一台失败都会立即阻断后续批次</strong>，这就是滚动发布的安全阀。</p>
+</blockquote>
+<h3 id="8-5-验证动态页面"><a href="#8-5-验证动态页面" class="headerlink" title="8.5 验证动态页面"></a>8.5 验证动态页面</h3><p>在控制节点查看 node1 的 Home 内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible node1 -m shell -a <span class="string">&quot;cat /var/www/html/index.html&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/deploy_page.png" alt="项目二：动态部署页面"></p>
+<p><em>图 6：node1 上渲染出的首页，IP 与主机名均为实时 Facts。</em></p>
+<p>刷新宿主机浏览器 <code>http://127.0.0.1:18081</code> 与 <code>http://127.0.0.1:18082</code>，可看到两台主机渲染出的 IP、主机名各自不同——同一套模板，按各机实况生成不同结果，这就是「差异化部署」的基础。</p>
+<h2 id="九、变量、Facts-与条件控制"><a href="#九、变量、Facts-与条件控制" class="headerlink" title="九、变量、Facts 与条件控制"></a>九、变量、Facts 与条件控制</h2><h3 id="9-1-Facts：自动采集的「系统体检报告」"><a href="#9-1-Facts：自动采集的「系统体检报告」" class="headerlink" title="9.1 Facts：自动采集的「系统体检报告」"></a>9.1 Facts：自动采集的「系统体检报告」</h3><p>每次运行，Ansible 默认先采集目标机的 Facts（也可以通过 <code>gather_facts: false</code> 关闭提速）。看一张部分 Facts 表：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列出 node1 所有 Facts（几百个），可翻看</span></span><br><span class="line">ansible node1 -m setup</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>Facts</th>
+<th>含义</th>
+<th>典型值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ansible_hostname</code></td>
+<td>主机名</td>
+<td>node1</td>
+</tr>
+<tr>
+<td><code>ansible_distribution</code></td>
+<td>发行版</td>
+<td>Ubuntu</td>
+</tr>
+<tr>
+<td><code>ansible_default_ipv4.address</code></td>
+<td>默认 IPv4</td>
+<td>172.18.0.3</td>
+</tr>
+<tr>
+<td><code>ansible_processor_vcpus</code></td>
+<td>CPU 核数</td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>ansible_memtotal_mb</code></td>
+<td>内存 MB</td>
+<td>2048</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>性能提示</strong>：大规模节点上 Facts 采集是主要耗时。如果 Playbook 不需要 Facts，显式 <code>gather_facts: false</code> 能显著提速；需要缓存则配 <code>fact_caching = jsonfile</code>。</p>
+</blockquote>
+<h3 id="9-2-变量来源（从低到高优先级）"><a href="#9-2-变量来源（从低到高优先级）" class="headerlink" title="9.2 变量来源（从低到高优先级）"></a>9.2 变量来源（从低到高优先级）</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1) 命令行覆盖</span></span><br><span class="line"><span class="string">--extra-vars</span> <span class="string">&quot;app_version=3.0.0&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2) Playbook 内 vars</span></span><br><span class="line"><span class="attr">vars:</span></span><br><span class="line">  <span class="attr">app_version:</span> <span class="string">&quot;2.3.1&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3) 清单组变量 [组:vars]</span></span><br><span class="line"><span class="comment"># 4) host_vars / group_vars 目录</span></span><br><span class="line"><span class="comment"># 5) 角色 defaults / vars</span></span><br></pre></td></tr></table></figure>
+
+<p>推荐的组织方式是：**<code>group_vars/</code> + <code>host_vars/</code> 目录**——把变量按组、按主机分层存放，可读性远好于把所有变量塞进 Inventory 或 Playbook。</p>
+<h3 id="9-3-条件与循环"><a href="#9-3-条件与循环" class="headerlink" title="9.3 条件与循环"></a>9.3 条件与循环</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">仅在</span> <span class="string">RedHat</span> <span class="string">系安装</span> <span class="string">yum</span> <span class="string">包</span></span><br><span class="line">  <span class="attr">ansible.builtin.package:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">httpd</span></span><br><span class="line">  <span class="attr">when:</span> <span class="string">ansible_os_family</span> <span class="string">==</span> <span class="string">&quot;RedHat&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">循环创建</span> <span class="number">3</span> <span class="string">个用户</span></span><br><span class="line">  <span class="attr">ansible.builtin.user:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123; item &#125;&#125;</span>&quot;</span></span><br><span class="line">    <span class="attr">state:</span> <span class="string">present</span></span><br><span class="line">  <span class="attr">loop:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">alice</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">bob</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">carol</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="9-4-注册变量-register"><a href="#9-4-注册变量-register" class="headerlink" title="9.4 注册变量 register"></a>9.4 注册变量 register</h3><p>把任务输出捕获下来，供后续判断：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">检查配置文件语法</span></span><br><span class="line">  <span class="attr">ansible.builtin.command:</span> <span class="string">nginx</span> <span class="string">-t</span></span><br><span class="line">  <span class="attr">register:</span> <span class="string">nginx_check</span></span><br><span class="line">  <span class="attr">changed_when:</span> <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">语法出错则标记</span></span><br><span class="line">  <span class="attr">ansible.builtin.fail:</span></span><br><span class="line">    <span class="attr">msg:</span> <span class="string">&quot;Nginx 配置有误&quot;</span></span><br><span class="line">  <span class="attr">when:</span> <span class="string">nginx_check.rc</span> <span class="type">!=</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>关键点</strong>：<code>command</code>&#x2F;<code>shell</code> 默认永远返回 <code>changed</code>。用 <code>changed_when: false</code> 或 <code>changed_when: &lt;条件&gt;</code> 显式声明，是写「像样 Playbook」的分水岭。</p>
+</blockquote>
+<h2 id="十、错误处理：block-x2F-rescue-x2F-always"><a href="#十、错误处理：block-x2F-rescue-x2F-always" class="headerlink" title="十、错误处理：block &#x2F; rescue &#x2F; always"></a>十、错误处理：block &#x2F; rescue &#x2F; always</h2><p>前面讲的是「一切顺利」的路径。真实运维里，任务失败是常态——配置写错、端口被占、磁盘满、上游依赖超时。Ansible 提供了类似 try&#x2F;catch&#x2F;finally 的 <strong><code>block</code></strong> 结构来兜底。</p>
+<h3 id="10-1-基本结构"><a href="#10-1-基本结构" class="headerlink" title="10.1 基本结构"></a>10.1 基本结构</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">&quot;带错误兜底的服务更新&quot;</span></span><br><span class="line">  <span class="attr">hosts:</span> <span class="string">node1</span></span><br><span class="line">  <span class="attr">become:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">尝试更新配置并重启</span></span><br><span class="line">      <span class="attr">block:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">渲染新配置</span></span><br><span class="line">          <span class="attr">ansible.builtin.template:</span></span><br><span class="line">            <span class="attr">src:</span> <span class="string">templates/app.conf.j2</span></span><br><span class="line">            <span class="attr">dest:</span> <span class="string">/etc/app/app.conf</span></span><br><span class="line">          <span class="attr">notify:</span> <span class="string">reload</span> <span class="string">app</span></span><br><span class="line"></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">校验配置</span></span><br><span class="line">          <span class="attr">ansible.builtin.command:</span> <span class="string">app</span> <span class="string">-t</span></span><br><span class="line">          <span class="attr">changed_when:</span> <span class="literal">false</span></span><br><span class="line">      <span class="attr">rescue:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">回滚到上一版配置</span></span><br><span class="line">          <span class="attr">ansible.builtin.copy:</span></span><br><span class="line">            <span class="attr">src:</span> <span class="string">/etc/app/app.conf.bak</span></span><br><span class="line">            <span class="attr">dest:</span> <span class="string">/etc/app/app.conf</span></span><br><span class="line">            <span class="attr">remote_src:</span> <span class="literal">true</span></span><br><span class="line">          <span class="attr">notify:</span> <span class="string">reload</span> <span class="string">app</span></span><br><span class="line"></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">记录告警</span></span><br><span class="line">          <span class="attr">ansible.builtin.debug:</span></span><br><span class="line">            <span class="attr">msg:</span> <span class="string">&quot;配置校验失败，已回滚&quot;</span></span><br><span class="line">      <span class="attr">always:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">清理临时文件</span></span><br><span class="line">          <span class="attr">ansible.builtin.file:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/tmp/app-deploy.lock</span></span><br><span class="line">            <span class="attr">state:</span> <span class="string">absent</span></span><br></pre></td></tr></table></figure>
+
+<p>三段语义：</p>
+<ul>
+<li>**<code>block</code>**：主流程，按顺序执行。</li>
+<li>**<code>rescue</code>**：<code>block</code> 中任一任务失败时执行——做回滚、告警、补偿。</li>
+<li>**<code>always</code>**：无论成败都执行——收尾、清理锁文件、解挂临时卷。</li>
+</ul>
+<h3 id="10-2-结合-register-做更细的判断"><a href="#10-2-结合-register-做更细的判断" class="headerlink" title="10.2 结合 register 做更细的判断"></a>10.2 结合 register 做更细的判断</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">重启服务，失败则重试一次</span></span><br><span class="line">  <span class="attr">ansible.builtin.service:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">state:</span> <span class="string">restarted</span></span><br><span class="line">  <span class="attr">register:</span> <span class="string">svc</span></span><br><span class="line">  <span class="attr">until:</span> <span class="string">svc</span> <span class="string">is</span> <span class="string">succeeded</span></span><br><span class="line">  <span class="attr">retries:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">delay:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="10-3-错误处理速查"><a href="#10-3-错误处理速查" class="headerlink" title="10.3 错误处理速查"></a>10.3 错误处理速查</h3><table>
+<thead>
+<tr>
+<th>手段</th>
+<th>作用</th>
+<th>何时用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>block</code>&#x2F;<code>rescue</code>&#x2F;<code>always</code></td>
+<td>结构化的失败兜底</td>
+<td>有回滚&#x2F;补偿逻辑的部署</td>
+</tr>
+<tr>
+<td><code>ignore_errors: true</code></td>
+<td>忽略单任务失败，继续执行</td>
+<td>非关键任务（如日志采集）</td>
+</tr>
+<tr>
+<td><code>failed_when</code></td>
+<td>自定义失败条件</td>
+<td>命令返回 0 但实际失败的场景</td>
+</tr>
+<tr>
+<td><code>changed_when</code></td>
+<td>自定义变更判定</td>
+<td>让 <code>command</code>&#x2F;<code>shell</code> 的幂等可控</td>
+</tr>
+<tr>
+<td><code>retries</code>&#x2F;<code>delay</code>&#x2F;<code>until</code></td>
+<td>重试直到条件满足</td>
+<td>依赖外部服务就绪</td>
+</tr>
+<tr>
+<td><code>any_errors_fatal: true</code></td>
+<td>任一失败即终止整批</td>
+<td>强一致性要求的批次</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>反面案例</strong>：不要对所有任务无脑 <code>ignore_errors: true</code>——那等于把自动化降级成「静默失败脚本」，问题只会被推迟到生产事故时才暴露。</p>
+</blockquote>
+<h2 id="十一、安全实践：Vault-加密机密"><a href="#十一、安全实践：Vault-加密机密" class="headerlink" title="十一、安全实践：Vault 加密机密"></a>十一、安全实践：Vault 加密机密</h2><p>不要把明文密码写进 Playbook（实验里 <code>ansible_ssh_pass=Ansible!2024</code> 仅为演示，生产严禁如此）。生产机密要用 <strong>ansible-vault</strong> 加密：</p>
+<h3 id="11-1-加密整份变量文件"><a href="#11-1-加密整份变量文件" class="headerlink" title="11.1 加密整份变量文件"></a>11.1 加密整份变量文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建加密文件（会让你输入 Vault 密码）</span></span><br><span class="line">ansible-vault create secrets.yml</span><br><span class="line">ansible-vault view secrets.yml     <span class="comment"># 查看</span></span><br><span class="line">ansible-vault edit secrets.yml     <span class="comment"># 编辑</span></span><br><span class="line">ansible-vault rekey secrets.yml    <span class="comment"># 更换密码</span></span><br></pre></td></tr></table></figure>
+
+<p>加密后的文件内容形如：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">$ANSIBLE_VAULT;1.1;AES256</span></span><br><span class="line"><span class="number">6334656362313666366362323937306436323666</span><span class="string">...</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="11-2-更推荐：只加密单个变量值"><a href="#11-2-更推荐：只加密单个变量值" class="headerlink" title="11.2 更推荐：只加密单个变量值"></a>11.2 更推荐：只加密单个变量值</h3><p>整份文件加密会导致 diff 永远不可读。生产环境更常见的做法是<strong>只加密变量值</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible-vault encrypt_string <span class="string">&#x27;s3cr3t-password&#x27;</span> --name <span class="string">&#x27;db_password&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>输出直接贴进普通 YAML：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># group_vars/webservers/vault.yml（此文件可提交 Git）</span></span><br><span class="line"><span class="attr">vault_db_password:</span> <span class="type">!vault</span> <span class="string">|</span></span><br><span class="line"><span class="string">  $ANSIBLE_VAULT;1.1;AES256</span></span><br><span class="line"><span class="string">  333935316462663831663766636439323733303966...</span></span><br></pre></td></tr></table></figure>
+
+<p>在 Playbook 里照常引用 <code>&#123;&#123; vault_db_password &#125;&#125;</code>，使用时解密：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ansible-playbook playbook.yml --ask-vault-pass           <span class="comment"># 交互输入</span></span><br><span class="line">ansible-playbook playbook.yml --vault-id prod@prompt    <span class="comment"># 指定 vault-id</span></span><br><span class="line">ansible-playbook playbook.yml --vault-password-file ~/.vault_pass   <span class="comment"># 从文件读取</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="11-3-Vault-安全红线"><a href="#11-3-Vault-安全红线" class="headerlink" title="11.3 Vault 安全红线"></a>11.3 Vault 安全红线</h3><ul>
+<li><strong>Vault 密码本身不要提交 Git</strong>——存进密码管理器，或交给 CI&#x2F;CD 的 Secret 机制注入。</li>
+<li>多人协作用 <code>--vault-id</code>，按环境（<code>dev</code>&#x2F;<code>staging</code>&#x2F;<code>prod</code>）分密码，避免一把钥匙开所有门。</li>
+<li>轮换用 <code>ansible-vault rekey</code>，不要用新密码新建一份文件然后改名。</li>
+<li>仓库里把 <code>vault_password_file</code> 路径写进 <code>.gitignore</code>，防止误提交。</li>
+</ul>
+<h3 id="11-4-从明文到-Vault-的迁移清单"><a href="#11-4-从明文到-Vault-的迁移清单" class="headerlink" title="11.4 从明文到 Vault 的迁移清单"></a>11.4 从明文到 Vault 的迁移清单</h3><table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>动作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><code>git log -p</code> 找出所有明文密码提交记录</td>
+</tr>
+<tr>
+<td>2</td>
+<td>立即在对应系统<strong>轮换这些凭据</strong>（泄露已发生，不能只靠删文件）</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>ansible-vault encrypt_string</code> 逐条替换</td>
+</tr>
+<tr>
+<td>4</td>
+<td>执行 <code>git filter-repo</code> 从历史中清除（破坏性操作，先备份）</td>
+</tr>
+<tr>
+<td>5</td>
+<td>强推后通知所有协作者重新 clone</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>一旦明文进过 Git，就默认它已经泄露。<strong>先轮换凭据，再清历史。</strong></p>
+</blockquote>
+<h2 id="十二、常见问题与解决方案"><a href="#十二、常见问题与解决方案" class="headerlink" title="十二、常见问题与解决方案"></a>十二、常见问题与解决方案</h2><h3 id="12-1-Permission-denied-publickey-password-——-SSH-登录失败"><a href="#12-1-Permission-denied-publickey-password-——-SSH-登录失败" class="headerlink" title="12.1 Permission denied (publickey,password) —— SSH 登录失败"></a>12.1 <code>Permission denied (publickey,password)</code> —— SSH 登录失败</h3><p><strong>现象</strong>：运行 <code>ansible all -m ping</code> 报权限拒绝。</p>
+<table>
+<thead>
+<tr>
+<th>原因</th>
+<th>排查&#x2F;解决</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>密码错误</td>
+<td>核对 <code>ansible_ssh_pass</code>，或改用 SSH 密钥</td>
+</tr>
+<tr>
+<td>sshd 未开启密码认证</td>
+<td>检查 <code>sshd_config</code> 的 <code>PasswordAuthentication yes</code>（注意 <code>#</code> 注释会覆盖，见 12.6）</td>
+</tr>
+<tr>
+<td>host key 冲突</td>
+<td>清空 <code>~/.ssh/known_hosts</code>：<code>rm -f ~/.ssh/known_hosts</code></td>
+</tr>
+<tr>
+<td>SSH 私钥权限过宽</td>
+<td><code>chmod 600 ~/.ssh/id_ed25519</code>，否则 SSH 直接拒绝使用</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>我们最初搭建时，就因 sed 没去掉 <code>#</code> 注释导致 <code>PasswordAuthentication</code> 失效，从而被 <code>Permission denied</code>。把目标机改对后立刻恢复。</p>
+</blockquote>
+<h3 id="12-2-目标机缺-Python"><a href="#12-2-目标机缺-Python" class="headerlink" title="12.2 目标机缺 Python"></a>12.2 目标机缺 Python</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 若目标机是全新最小系统，可能没有 Python3</span></span><br><span class="line">ansible node1 -m raw -a <span class="string">&quot;apt-get update &amp;&amp; apt-get install -y python3&quot;</span>   <span class="comment"># 或 yum</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>raw</code> 模块不走 Python，是「鸡生蛋」问题的标准解法。装完 Python 之后，其它模块就都能用了。</p>
+</blockquote>
+<h3 id="12-3-提权失败-sudo-a-password-is-required"><a href="#12-3-提权失败-sudo-a-password-is-required" class="headerlink" title="12.3 提权失败 sudo: a password is required"></a>12.3 提权失败 <code>sudo: a password is required</code></h3><p><strong>现象</strong>：<code>become: true</code> 任务失败。</p>
+<p><strong>解决</strong>：为管理用户配置 NOPASSWD sudo：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;devops ALL=(ALL) NOPASSWD:ALL&#x27;</span> &gt; /etc/sudoers.d/devops</span><br><span class="line"><span class="built_in">chmod</span> 440 /etc/sudoers.d/devops</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-4-任务一直-changed，不幂等"><a href="#12-4-任务一直-changed，不幂等" class="headerlink" title="12.4 任务一直 changed，不幂等"></a>12.4 任务一直 <code>changed</code>，不幂等</h3><p><strong>常见原因</strong>：</p>
+<ul>
+<li>模板里含每次都变的时间&#x2F;随机数（如 <code>ansible_date_time.time</code>）。</li>
+<li>使用了 <code>command</code>&#x2F;<code>shell</code> 而它们默认不做幂等判断。</li>
+</ul>
+<p><strong>解决</strong>：合理使用 <code>creates</code> &#x2F; <code>removes</code> &#x2F; <code>changed_when</code> 显式声明变更条件。</p>
+<h3 id="12-5-file-模块不接受-content-参数"><a href="#12-5-file-模块不接受-content-参数" class="headerlink" title="12.5 file 模块不接受 content 参数"></a>12.5 <code>file</code> 模块不接受 <code>content</code> 参数</h3><p><code>file</code> 模块只管「文件&#x2F;目录的<strong>状态</strong>」，<strong>不能写入内容</strong>。要写内容请用 <code>copy</code>（带 <code>content</code>）或 <code>template</code>。这是一个非常容易踩的坑。</p>
+<h3 id="12-6-sshd-config-的注释陷阱（本文真实踩坑）"><a href="#12-6-sshd-config-的注释陷阱（本文真实踩坑）" class="headerlink" title="12.6 sshd_config 的注释陷阱（本文真实踩坑）"></a>12.6 sshd_config 的注释陷阱（本文真实踩坑）</h3><p>Ubuntu 22.04 的 sshd_config 里 <code>PasswordAuthentication</code> 默认是<strong>带 <code>#</code> 注释</strong>的。如果你的 sed 是：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ❌ 只会把生效的那一行改掉，注释行仍写着 no</span></span><br><span class="line">sed -i <span class="string">&#x27;s/PasswordAuthentication no/PasswordAuthentication yes/&#x27;</span> /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+
+<p>正确写法（本文 Dockerfile 采用的）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ✅ 同时匹配注释行与生效行</span></span><br><span class="line">sed -i <span class="string">&#x27;s/^#\? *PasswordAuthentication.*/PasswordAuthentication yes/&#x27;</span> /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+
+<p><strong>排障顺序建议</strong>：先 <code>sshd -T | grep -i passwordauthentication</code> 看 sshd 实际生效值，再回头改配置——不要凭「我以为改了」下判断。</p>
+<h3 id="12-7-模块找不到-x2F-Unsupported-parameters"><a href="#12-7-模块找不到-x2F-Unsupported-parameters" class="headerlink" title="12.7 模块找不到 &#x2F; Unsupported parameters"></a>12.7 模块找不到 &#x2F; <code>Unsupported parameters</code></h3><p>多为<strong>模块名</strong>或<strong>参数拼写</strong>问题。先 <code>ansible-doc &lt;模块名&gt;</code> 确认正确参数，再检查是不是 <code>ansible.builtin.xxx</code> 的 FQCN 写错。</p>
+<h3 id="12-8-排查「连不上」的五步法"><a href="#12-8-排查「连不上」的五步法" class="headerlink" title="12.8 排查「连不上」的五步法"></a>12.8 排查「连不上」的五步法</h3><p>遇到诡异问题时，按顺序走一遍，80% 的情况能定位：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ansible node1 -m ping                    <span class="comment"># 1. 连通性</span></span><br><span class="line">ansible node1 -m setup -a <span class="string">&#x27;filter=ansible_python&#x27;</span>   <span class="comment"># 2. Python 环境</span></span><br><span class="line">ansible-playbook xxx.yml -vvv            <span class="comment"># 3. 详细日志（加 -vvvv 看 SSH 参数）</span></span><br><span class="line">ansible node1 -m raw -a <span class="string">&#x27;whoami&#x27;</span>         <span class="comment"># 4. 绕过 Python 直接执行</span></span><br><span class="line">ssh devops@node1 <span class="string">&#x27;echo ok&#x27;</span>               <span class="comment"># 5. 脱离 Ansible 裸 SSH 验证</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="12-9-常见问题速查表"><a href="#12-9-常见问题速查表" class="headerlink" title="12.9 常见问题速查表"></a>12.9 常见问题速查表</h3><table>
+<thead>
+<tr>
+<th>现象</th>
+<th>根因归类</th>
+<th>首要动作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>UNREACHABLE</code></td>
+<td>网络&#x2F;SSH</td>
+<td><code>ssh</code> 裸连 + <code>sshd -T</code></td>
+</tr>
+<tr>
+<td><code>Authentication failure</code></td>
+<td>凭据</td>
+<td>核对 user&#x2F;pass&#x2F;key 权限</td>
+</tr>
+<tr>
+<td><code>MODULE FAILURE</code></td>
+<td>Python 缺失</td>
+<td><code>raw</code> 装 Python</td>
+</tr>
+<tr>
+<td><code>MISSING SUCCESS MARKER</code></td>
+<td>模块超时</td>
+<td>调大 <code>timeout</code> &#x2F; 检查目标机负载</td>
+</tr>
+<tr>
+<td>任务 <code>changed</code> 不停</td>
+<td>幂等缺失</td>
+<td>加 <code>changed_when</code></td>
+</tr>
+<tr>
+<td>模板渲染报错</td>
+<td>Jinja 语法</td>
+<td><code>ansible-playbook --syntax-check</code></td>
+</tr>
+</tbody></table>
+<h2 id="十三、最佳实践与进阶方向"><a href="#十三、最佳实践与进阶方向" class="headerlink" title="十三、最佳实践与进阶方向"></a>十三、最佳实践与进阶方向</h2><h3 id="13-1-用-Roles-管理大型工程"><a href="#13-1-用-Roles-管理大型工程" class="headerlink" title="13.1 用 Roles 管理大型工程"></a>13.1 用 Roles 管理大型工程</h3><p>数千行的 Playbook 会失控。用 <strong>Roles</strong>（角色）按职责拆层，目录规范：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">site.yml</span><br><span class="line">roles/</span><br><span class="line">  nginx/</span><br><span class="line">    tasks/main.yml        # 任务</span><br><span class="line">    handlers/main.yml     # 处理程序</span><br><span class="line">    templates/            # 模板</span><br><span class="line">    files/                # 静态文件</span><br><span class="line">    vars/main.yml         # 变量（低优先级）</span><br><span class="line">    defaults/main.yml     # 默认值（最低优先级）</span><br><span class="line">  app/</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+<p>引用角色：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">webservers</span></span><br><span class="line">  <span class="attr">roles:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">role:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">role:</span> <span class="string">app</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="13-2-变量优先级速记（从高到低）"><a href="#13-2-变量优先级速记（从高到低）" class="headerlink" title="13.2 变量优先级速记（从高到低）"></a>13.2 变量优先级速记（从高到低）</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">命令行 -e &gt; playbook vars &gt; 清单组变量 &gt; host_vars &gt; group_vars &gt; role vars &gt; role defaults</span><br></pre></td></tr></table></figure>
+
+<p><strong>写变量时最容易出的错，就是把值写在了低优先级的位置，然后被高优先级的同名变量覆盖</strong>——表面看是「变量没生效」，实际是「被覆盖了」。遇到这类问题，先按这条链往下查。</p>
+<h3 id="13-3-命名与可读性"><a href="#13-3-命名与可读性" class="headerlink" title="13.3 命名与可读性"></a>13.3 命名与可读性</h3><ul>
+<li>任务 <code>name</code> 写「干什么 + 给谁」，方便审计阅读。</li>
+<li>遵循插件化&#x2F;模块化，避免「上帝 Playbook」。</li>
+<li>每个 role 带 <code>defaults</code> 提供默认值，允许调用方覆盖。</li>
+<li><code>ansible.cfg</code> 放进项目根目录并一起提交 Git，保证团队成员行为一致。</li>
+</ul>
+<h3 id="13-4-把检查模式变成默认动作"><a href="#13-4-把检查模式变成默认动作" class="headerlink" title="13.4 把检查模式变成默认动作"></a>13.4 把检查模式变成默认动作</h3><p><code>--check</code> &#x2F; <code>--diff</code> &#x2F; <code>--syntax-check</code> 这三件套（见 6.3）应作为每次变更前的默认动作，而不是出了问题才想起用。</p>
+<h3 id="13-5-与-CI-x2F-CD-x2F-云编排结合"><a href="#13-5-与-CI-x2F-CD-x2F-云编排结合" class="headerlink" title="13.5 与 CI&#x2F;CD &#x2F; 云编排结合"></a>13.5 与 CI&#x2F;CD &#x2F; 云编排结合</h3><ul>
+<li>把 Playbook 放进 Git 仓库，用 GitHub Actions &#x2F; GitLab CI 在 merge 后自动执行，实现「配置即代码」（IaC）。</li>
+<li>结合 <strong>AWX &#x2F; Ansible Semaphore</strong>（Web UI）做任务调度与审批。</li>
+<li>云场景可直接用 <code>amazon.aws</code> &#x2F; <code>google.cloud</code> 等 collection 编排资源。</li>
+<li>与 Docker&#x2F;Kubernetes 结合：Ansible 常在节点创建、服务编排的「前一层」承担云资源与基础软件配置，k8s 之上再用原生控制器。</li>
+<li>用 <code>collections/requirements.yml</code> 锁定依赖版本，避免队友拉到的 collection 版本和你不一致。</li>
+</ul>
+<h3 id="13-6-把实验环境也「配置即代码」"><a href="#13-6-把实验环境也「配置即代码」" class="headerlink" title="13.6 把实验环境也「配置即代码」"></a>13.6 把实验环境也「配置即代码」</h3><p>本文的整套 Docker 实验环境本身就是用 Dockerfile 与 docker-compose 描述出来的，这本身就是「声明式基础设施」的缩影——你可以把它提交到仓库，随时 <code>docker compose up -d</code> 重建，这正是 Ansible 倡导的理念。</p>
+<h3 id="13-7-推荐目录布局（可直接照抄）"><a href="#13-7-推荐目录布局（可直接照抄）" class="headerlink" title="13.7 推荐目录布局（可直接照抄）"></a>13.7 推荐目录布局（可直接照抄）</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">lab/</span><br><span class="line">├── ansible.cfg</span><br><span class="line">├── inventory/</span><br><span class="line">│   ├── hosts.ini</span><br><span class="line">│   ├── group_vars/</span><br><span class="line">│   │   ├── all.yml</span><br><span class="line">│   │   └── webservers.yml</span><br><span class="line">│   └── host_vars/</span><br><span class="line">│       └── node1.yml</span><br><span class="line">├── playbooks/</span><br><span class="line">│   ├── setup_webservers.yml</span><br><span class="line">│   ├── deploy_app.yml</span><br><span class="line">│   └── templates/</span><br><span class="line">├── roles/</span><br><span class="line">│   └── nginx/</span><br><span class="line">└── collections/</span><br><span class="line">    └── requirements.yml</span><br></pre></td></tr></table></figure>
+
+<h2 id="十四、总结"><a href="#十四、总结" class="headerlink" title="十四、总结"></a>十四、总结</h2><p>回顾全文，我们用 <strong>Docker 搭了一套真实可复现的环境</strong>，把 Ansible 从理论到实战完整跑通：</p>
+<ol>
+<li><strong>理论</strong>：无代理、幂等、声明式，Inventory &#x2F; Module &#x2F; Playbook 三大件。</li>
+<li><strong>环境</strong>：Dockerfile + compose 一键拉起「控制 + 3 受管」节点。</li>
+<li><strong>模块</strong>：ping &#x2F; setup &#x2F; command &#x2F; shell &#x2F; copy &#x2F; file &#x2F; apt &#x2F; service &#x2F; user 逐一实测。</li>
+<li><strong>实战一</strong>：批量配置 Web 服务器，覆盖 apt、user、template、handler、service，验证幂等。</li>
+<li><strong>实战二</strong>：应用部署自动化，用 Facts + template 渲染差异化首页，<code>serial</code> + reload 模拟滚动发布。</li>
+<li><strong>排障与安全</strong>：<code>block</code>&#x2F;<code>rescue</code> 兜底、Vault 加密、五步排查法、Roles 分层。</li>
+</ol>
+<p><strong>核心要记住的三点</strong>：</p>
+<blockquote>
+<ol>
+<li><strong>描述目标状态，而不是操作步骤</strong>——这是 Ansible 的灵魂。  </li>
+<li><strong>幂等让自动化可以放心反复执行</strong>——这是它比 Shell 脚本更安全的原因。  </li>
+<li><strong>所有「状态」都应该记录下来</strong>（Playbook、Role、Vault、CI），机器是这样配置的，团队才这样协作。</li>
+</ol>
+</blockquote>
+<p><strong>下一步建议</strong>：把你自己的一台服务器纳入 Ansible 管理，从三个最小 Playbook 开始——安装基础软件、配置 SSH 公钥、部署一个静态站点，跑通之后再引入 Roles 和 Vault。自动化不是一次写成的，而是从一个最小可用的 Playbook 开始，不断迭代。</p>
+<p>所有本文用到的完整文件，都放在文章同级的 <code>lab/</code> 目录里，<code>docker compose up -d</code> 即可完整复现。</p>
+<p>Happy automating!</p>
+<hr>
+<p><em>本文所有命令输出均为在 Docker 环境中的真实抓取结果；截图采用终端实录重新渲染，仅美化排版、不改动内容。</em><br><em>文章同工作区下，<code>lab/</code> 目录为可复现的 Docker 环境与全部配置（Dockerfile、compose、ansible.cfg、inventory、playbooks），在 <code>lab/</code> 内执行 <code>docker compose up -d</code> 后即可进入控制节点完整复现。</em></p>
+<h3 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h3><ul>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://docs.ansible.com/ansible/latest/index.html">Ansible 官方文档</a></li>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://docs.ansible.com/ansible/latest/vault_guide/">Ansible Vault 加密变量</a></li>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/ansible/ansible-examples">Ansible 官方实战示例</a></li>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://jinja.palletsprojects.com/">Jinja2 模板文档</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/9dc3bdc6.html">https://raidenxe.github.io/archives/9dc3bdc6.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Ansible/">Ansible</a><a class="post-meta__tags" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2/">自动化部署</a><a class="post-meta__tags" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%89%B9%E9%87%8F%E9%85%8D%E7%BD%AE/">服务器批量配置</a><a class="post-meta__tags" href="/tags/%E5%BA%94%E7%94%A8%E9%83%A8%E7%BD%B2%E8%87%AA%E5%8A%A8%E5%8C%96/">应用部署自动化</a></div><div class="post-share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260926165840686.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/archives/5dc13199.html" title="MySQL 8.0 三节点 MGR 高可用集群部署（Docker Compose 实战）"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260921194508187.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">MySQL 8.0 三节点 MGR 高可用集群部署（Docker Compose 实战）</div></div><div class="info-2"><div class="info-item-1"> 本文基于一次真实部署整理：在一台服务器上用 Docker Compose 起三个 MySQL 8.0 容器，组成单主模式（Single-Primary）的 MGR 组复制高可用集群，并实际验证了主写从读一致、从节点只读约束、集群恢复。  一、方案选型：为什么是 MGR高可用数据库方案常见有 主从复制（异步&#x2F;半同步）、MHA、MGR：    方案 强一致性 自动故障切换 复杂度 说明    主从 + MHA 弱（异步可能丢数据） 需外部组件 中 经典，MHA 作为协调器   半同步复制 中 需外部组件 中 semi_sync 减少丢数据   MGR（本方案） 强（组内多数派确认） 原生，秒级 中高 基于 Paxos，自带故障转移   MGR（MySQL Group Replication）把每个节点的 binlog 广播给组内所有成员，任一成员缺失事务会在线回放到最新，从而在组内实现多数派一致的复制，且主节点故障后组内自动推选新主，无需额外协调组件。 二、MGR 技术原理理解了”它能做什么”，再看它内部怎么工作，部署时踩坑就有据可依了。 2.1 本质：基于 Paxos ...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Raidenxe</div><div class="author-info-description">向着真理和自由，无名的献身。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">72</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">1.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-Ansible%EF%BC%9A%E5%85%88%E4%BB%8E%E7%97%9B%E7%82%B9%E8%AF%B4%E8%B5%B7"><span class="toc-number">2.</span> <span class="toc-text">一、为什么需要 Ansible：先从痛点说起</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Ansible-%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%9E%B6%E6%9E%84"><span class="toc-number">3.</span> <span class="toc-text">二、Ansible 核心概念与架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E6%97%A0%E4%BB%A3%E7%90%86%EF%BC%88Agentless%EF%BC%89%E6%9E%B6%E6%9E%84"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 无代理（Agentless）架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Ansible-%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">3.2.</span> <span class="toc-text">2.2 Ansible 的工作流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E4%B8%89%E5%8F%A5%E5%8F%A3%E8%AF%80%E8%AE%B0%E4%BD%8F%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="toc-number">3.3.</span> <span class="toc-text">2.3 三句口诀记住核心概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E9%85%8D%E7%BD%AE%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F%EF%BC%88%E6%96%B0%E6%89%8B%E8%B8%A9%E5%9D%91%E9%AB%98%E5%8F%91%E5%8C%BA%EF%BC%89"><span class="toc-number">3.4.</span> <span class="toc-text">2.4 配置加载顺序（新手踩坑高发区）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%90%AD%E5%BB%BA-Docker-%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="toc-number">4.</span> <span class="toc-text">三、搭建 Docker 实验环境</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84%E4%B8%8E%E6%96%87%E4%BB%B6"><span class="toc-number">4.1.</span> <span class="toc-text">3.1 目录结构与文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%8E%A7%E5%88%B6%E8%8A%82%E7%82%B9-Dockerfile"><span class="toc-number">4.2.</span> <span class="toc-text">3.2 控制节点 Dockerfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%8F%97%E7%AE%A1%E8%8A%82%E7%82%B9-Dockerfile"><span class="toc-number">4.3.</span> <span class="toc-text">3.3 受管节点 Dockerfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-docker-compose-yml"><span class="toc-number">4.4.</span> <span class="toc-text">3.4 docker-compose.yml</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E5%90%AF%E5%8A%A8%E5%B9%B6%E9%AA%8C%E8%AF%81"><span class="toc-number">4.5.</span> <span class="toc-text">3.5 启动并验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6-%E9%AA%8C%E8%AF%81-SSH-%E8%BF%9E%E9%80%9A%E6%80%A7%EF%BC%88%E7%8E%AF%E5%A2%83%E9%AA%8C%E6%94%B6%EF%BC%89"><span class="toc-number">4.6.</span> <span class="toc-text">3.6 验证 SSH 连通性（环境验收）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%B8%85%E5%8D%95-Inventory%EF%BC%9AAnsible-%E7%9A%84%E3%80%8C%E9%80%9A%E8%AE%AF%E5%BD%95%E3%80%8D"><span class="toc-number">5.</span> <span class="toc-text">四、清单 Inventory：Ansible 的「通讯录」</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E4%BB%80%E4%B9%88%E6%98%AF-Inventory"><span class="toc-number">5.1.</span> <span class="toc-text">4.1 什么是 Inventory</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6-ansible-cfg"><span class="toc-number">5.2.</span> <span class="toc-text">4.2 配置文件 ansible.cfg</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E6%9F%A5%E7%9C%8B%E4%BD%A0%E7%9A%84%E6%B8%85%E5%8D%95"><span class="toc-number">5.3.</span> <span class="toc-text">4.3 查看你的清单</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-%E5%86%85%E7%BD%AE%E7%BB%84"><span class="toc-number">5.4.</span> <span class="toc-text">4.4 内置组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-%E5%B8%B8%E7%94%A8-Inventory-%E5%8F%82%E6%95%B0%E9%80%9F%E6%9F%A5"><span class="toc-number">5.5.</span> <span class="toc-text">4.5 常用 Inventory 参数速查</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E6%A8%A1%E5%9D%97-Modules-Ad-hoc-%E5%91%BD%E4%BB%A4%E5%AE%9E%E6%88%98"><span class="toc-number">6.</span> <span class="toc-text">五、模块 Modules + Ad-hoc 命令实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E6%B5%8B%E8%AF%95%E8%BF%9E%E9%80%9A%E6%80%A7%EF%BC%9Aping-%E6%A8%A1%E5%9D%97"><span class="toc-number">6.1.</span> <span class="toc-text">5.1 测试连通性：ping 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%EF%BC%9Asetup-%E6%A8%A1%E5%9D%97%EF%BC%88Facts%EF%BC%89"><span class="toc-number">6.2.</span> <span class="toc-text">5.2 采集系统信息：setup 模块（Facts）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%EF%BC%9Acommand-%E4%B8%8E-shell-%E6%A8%A1%E5%9D%97"><span class="toc-number">6.3.</span> <span class="toc-text">5.3 执行命令：command 与 shell 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E4%BC%A0%E8%BE%93%E6%96%87%E4%BB%B6%EF%BC%9Acopy-%E4%B8%8E-file-%E6%A8%A1%E5%9D%97"><span class="toc-number">6.4.</span> <span class="toc-text">5.4 传输文件：copy 与 file 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-5-%E5%8C%85%E7%AE%A1%E7%90%86%EF%BC%9Aapt-%E6%A8%A1%E5%9D%97"><span class="toc-number">6.5.</span> <span class="toc-text">5.5 包管理：apt 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-6-%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86%EF%BC%9Aservice-x2F-systemd-%E6%A8%A1%E5%9D%97"><span class="toc-number">6.6.</span> <span class="toc-text">5.6 服务管理：service &#x2F; systemd 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-7-%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86%EF%BC%9Auser-%E6%A8%A1%E5%9D%97"><span class="toc-number">6.7.</span> <span class="toc-text">5.7 用户管理：user 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-8-%E5%B9%82%E7%AD%89%E6%80%A7%EF%BC%9AAd-hoc-%E7%9A%84%E6%9C%80%E5%A4%A7%E4%BB%B7%E5%80%BC"><span class="toc-number">6.8.</span> <span class="toc-text">5.8 幂等性：Ad-hoc 的最大价值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-9-%E6%9F%A5%E6%A8%A1%E5%9D%97%E7%94%A8%E6%B3%95%EF%BC%9Aansible-doc"><span class="toc-number">6.9.</span> <span class="toc-text">5.9 查模块用法：ansible-doc</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-10-%E9%AB%98%E9%A2%91%E6%A8%A1%E5%9D%97%E9%80%9F%E6%9F%A5%E8%A1%A8"><span class="toc-number">6.10.</span> <span class="toc-text">5.10 高频模块速查表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81Playbook%EF%BC%9A%E6%8A%8A%E6%93%8D%E4%BD%9C%E5%8F%98%E6%88%90%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%E3%80%8C%E5%89%A7%E6%9C%AC%E3%80%8D"><span class="toc-number">7.</span> <span class="toc-text">六、Playbook：把操作变成可复用的「剧本」</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-YAML-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8"><span class="toc-number">7.1.</span> <span class="toc-text">6.1 YAML 快速入门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E6%9C%80%E5%B0%8F-Playbook-%E7%A4%BA%E4%BE%8B"><span class="toc-number">7.2.</span> <span class="toc-text">6.2 最小 Playbook 示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-%E8%BF%90%E8%A1%8C%E5%89%8D%E7%9A%84%E4%B8%89%E9%81%93%E3%80%8C%E4%BF%9D%E9%99%A9%E3%80%8D"><span class="toc-number">7.3.</span> <span class="toc-text">6.3 运行前的三道「保险」</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-Playbook-%E6%A0%87%E5%87%86%E7%BB%93%E6%9E%84%E8%A7%A3%E6%9E%90"><span class="toc-number">7.4.</span> <span class="toc-text">6.4 Playbook 标准结构解析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE%E4%B8%80%EF%BC%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%89%B9%E9%87%8F%E9%85%8D%E7%BD%AE"><span class="toc-number">8.</span> <span class="toc-text">七、实战项目一：服务器批量配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E9%9C%80%E6%B1%82"><span class="toc-number">8.1.</span> <span class="toc-text">7.1 需求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E9%85%8D%E7%BD%AE%E6%A8%A1%E6%9D%BF%EF%BC%88Jinja2%EF%BC%89"><span class="toc-number">8.2.</span> <span class="toc-text">7.2 配置模板（Jinja2）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E6%A0%B8%E5%BF%83-Playbook%EF%BC%88%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81%EF%BC%89"><span class="toc-number">8.3.</span> <span class="toc-text">7.3 核心 Playbook（完整代码）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-4-%E8%BF%90%E8%A1%8C-Playbook"><span class="toc-number">8.4.</span> <span class="toc-text">7.4 运行 Playbook</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-5-%E5%B9%82%E7%AD%89%E9%AA%8C%E8%AF%81%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="toc-number">8.5.</span> <span class="toc-text">7.5 幂等验证（重点）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-6-%E4%BB%8E%E5%A4%96%E9%83%A8%E8%AE%BF%E9%97%AE%E9%AA%8C%E8%AF%81"><span class="toc-number">8.6.</span> <span class="toc-text">7.6 从外部访问验证</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE%E4%BA%8C%EF%BC%9A%E5%BA%94%E7%94%A8%E9%83%A8%E7%BD%B2%E8%87%AA%E5%8A%A8%E5%8C%96%EF%BC%88%E6%BB%9A%E5%8A%A8%E5%8F%91%E5%B8%83%EF%BC%89"><span class="toc-number">9.</span> <span class="toc-text">八、实战项目二：应用部署自动化（滚动发布）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E9%9C%80%E6%B1%82"><span class="toc-number">9.1.</span> <span class="toc-text">8.1 需求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-%E5%8A%A8%E6%80%81%E9%A6%96%E9%A1%B5%E6%A8%A1%E6%9D%BF"><span class="toc-number">9.2.</span> <span class="toc-text">8.2 动态首页模板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-3-%E9%83%A8%E7%BD%B2-Playbook%EF%BC%88%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81%EF%BC%89"><span class="toc-number">9.3.</span> <span class="toc-text">8.3 部署 Playbook（完整代码）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-4-%E8%BF%90%E8%A1%8C"><span class="toc-number">9.4.</span> <span class="toc-text">8.4 运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-5-%E9%AA%8C%E8%AF%81%E5%8A%A8%E6%80%81%E9%A1%B5%E9%9D%A2"><span class="toc-number">9.5.</span> <span class="toc-text">8.5 验证动态页面</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E5%8F%98%E9%87%8F%E3%80%81Facts-%E4%B8%8E%E6%9D%A1%E4%BB%B6%E6%8E%A7%E5%88%B6"><span class="toc-number">10.</span> <span class="toc-text">九、变量、Facts 与条件控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-Facts%EF%BC%9A%E8%87%AA%E5%8A%A8%E9%87%87%E9%9B%86%E7%9A%84%E3%80%8C%E7%B3%BB%E7%BB%9F%E4%BD%93%E6%A3%80%E6%8A%A5%E5%91%8A%E3%80%8D"><span class="toc-number">10.1.</span> <span class="toc-text">9.1 Facts：自动采集的「系统体检报告」</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-%E5%8F%98%E9%87%8F%E6%9D%A5%E6%BA%90%EF%BC%88%E4%BB%8E%E4%BD%8E%E5%88%B0%E9%AB%98%E4%BC%98%E5%85%88%E7%BA%A7%EF%BC%89"><span class="toc-number">10.2.</span> <span class="toc-text">9.2 变量来源（从低到高优先级）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-3-%E6%9D%A1%E4%BB%B6%E4%B8%8E%E5%BE%AA%E7%8E%AF"><span class="toc-number">10.3.</span> <span class="toc-text">9.3 条件与循环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-4-%E6%B3%A8%E5%86%8C%E5%8F%98%E9%87%8F-register"><span class="toc-number">10.4.</span> <span class="toc-text">9.4 注册变量 register</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E3%80%81%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%EF%BC%9Ablock-x2F-rescue-x2F-always"><span class="toc-number">11.</span> <span class="toc-text">十、错误处理：block &#x2F; rescue &#x2F; always</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#10-1-%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84"><span class="toc-number">11.1.</span> <span class="toc-text">10.1 基本结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-2-%E7%BB%93%E5%90%88-register-%E5%81%9A%E6%9B%B4%E7%BB%86%E7%9A%84%E5%88%A4%E6%96%AD"><span class="toc-number">11.2.</span> <span class="toc-text">10.2 结合 register 做更细的判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-3-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E9%80%9F%E6%9F%A5"><span class="toc-number">11.3.</span> <span class="toc-text">10.3 错误处理速查</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E5%AE%89%E5%85%A8%E5%AE%9E%E8%B7%B5%EF%BC%9AVault-%E5%8A%A0%E5%AF%86%E6%9C%BA%E5%AF%86"><span class="toc-number">12.</span> <span class="toc-text">十一、安全实践：Vault 加密机密</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-1-%E5%8A%A0%E5%AF%86%E6%95%B4%E4%BB%BD%E5%8F%98%E9%87%8F%E6%96%87%E4%BB%B6"><span class="toc-number">12.1.</span> <span class="toc-text">11.1 加密整份变量文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-2-%E6%9B%B4%E6%8E%A8%E8%8D%90%EF%BC%9A%E5%8F%AA%E5%8A%A0%E5%AF%86%E5%8D%95%E4%B8%AA%E5%8F%98%E9%87%8F%E5%80%BC"><span class="toc-number">12.2.</span> <span class="toc-text">11.2 更推荐：只加密单个变量值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-3-Vault-%E5%AE%89%E5%85%A8%E7%BA%A2%E7%BA%BF"><span class="toc-number">12.3.</span> <span class="toc-text">11.3 Vault 安全红线</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-4-%E4%BB%8E%E6%98%8E%E6%96%87%E5%88%B0-Vault-%E7%9A%84%E8%BF%81%E7%A7%BB%E6%B8%85%E5%8D%95"><span class="toc-number">12.4.</span> <span class="toc-text">11.4 从明文到 Vault 的迁移清单</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">13.</span> <span class="toc-text">十二、常见问题与解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#12-1-Permission-denied-publickey-password-%E2%80%94%E2%80%94-SSH-%E7%99%BB%E5%BD%95%E5%A4%B1%E8%B4%A5"><span class="toc-number">13.1.</span> <span class="toc-text">12.1 Permission denied (publickey,password) —— SSH 登录失败</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-2-%E7%9B%AE%E6%A0%87%E6%9C%BA%E7%BC%BA-Python"><span class="toc-number">13.2.</span> <span class="toc-text">12.2 目标机缺 Python</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-3-%E6%8F%90%E6%9D%83%E5%A4%B1%E8%B4%A5-sudo-a-password-is-required"><span class="toc-number">13.3.</span> <span class="toc-text">12.3 提权失败 sudo: a password is required</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-4-%E4%BB%BB%E5%8A%A1%E4%B8%80%E7%9B%B4-changed%EF%BC%8C%E4%B8%8D%E5%B9%82%E7%AD%89"><span class="toc-number">13.4.</span> <span class="toc-text">12.4 任务一直 changed，不幂等</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-5-file-%E6%A8%A1%E5%9D%97%E4%B8%8D%E6%8E%A5%E5%8F%97-content-%E5%8F%82%E6%95%B0"><span class="toc-number">13.5.</span> <span class="toc-text">12.5 file 模块不接受 content 参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-6-sshd-config-%E7%9A%84%E6%B3%A8%E9%87%8A%E9%99%B7%E9%98%B1%EF%BC%88%E6%9C%AC%E6%96%87%E7%9C%9F%E5%AE%9E%E8%B8%A9%E5%9D%91%EF%BC%89"><span class="toc-number">13.6.</span> <span class="toc-text">12.6 sshd_config 的注释陷阱（本文真实踩坑）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-7-%E6%A8%A1%E5%9D%97%E6%89%BE%E4%B8%8D%E5%88%B0-x2F-Unsupported-parameters"><span class="toc-number">13.7.</span> <span class="toc-text">12.7 模块找不到 &#x2F; Unsupported parameters</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-8-%E6%8E%92%E6%9F%A5%E3%80%8C%E8%BF%9E%E4%B8%8D%E4%B8%8A%E3%80%8D%E7%9A%84%E4%BA%94%E6%AD%A5%E6%B3%95"><span class="toc-number">13.8.</span> <span class="toc-text">12.8 排查「连不上」的五步法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-9-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E9%80%9F%E6%9F%A5%E8%A1%A8"><span class="toc-number">13.9.</span> <span class="toc-text">12.9 常见问题速查表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%89%E3%80%81%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E4%B8%8E%E8%BF%9B%E9%98%B6%E6%96%B9%E5%90%91"><span class="toc-number">14.</span> <span class="toc-text">十三、最佳实践与进阶方向</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#13-1-%E7%94%A8-Roles-%E7%AE%A1%E7%90%86%E5%A4%A7%E5%9E%8B%E5%B7%A5%E7%A8%8B"><span class="toc-number">14.1.</span> <span class="toc-text">13.1 用 Roles 管理大型工程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-2-%E5%8F%98%E9%87%8F%E4%BC%98%E5%85%88%E7%BA%A7%E9%80%9F%E8%AE%B0%EF%BC%88%E4%BB%8E%E9%AB%98%E5%88%B0%E4%BD%8E%EF%BC%89"><span class="toc-number">14.2.</span> <span class="toc-text">13.2 变量优先级速记（从高到低）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-3-%E5%91%BD%E5%90%8D%E4%B8%8E%E5%8F%AF%E8%AF%BB%E6%80%A7"><span class="toc-number">14.3.</span> <span class="toc-text">13.3 命名与可读性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-4-%E6%8A%8A%E6%A3%80%E6%9F%A5%E6%A8%A1%E5%BC%8F%E5%8F%98%E6%88%90%E9%BB%98%E8%AE%A4%E5%8A%A8%E4%BD%9C"><span class="toc-number">14.4.</span> <span class="toc-text">13.4 把检查模式变成默认动作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-5-%E4%B8%8E-CI-x2F-CD-x2F-%E4%BA%91%E7%BC%96%E6%8E%92%E7%BB%93%E5%90%88"><span class="toc-number">14.5.</span> <span class="toc-text">13.5 与 CI&#x2F;CD &#x2F; 云编排结合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-6-%E6%8A%8A%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83%E4%B9%9F%E3%80%8C%E9%85%8D%E7%BD%AE%E5%8D%B3%E4%BB%A3%E7%A0%81%E3%80%8D"><span class="toc-number">14.6.</span> <span class="toc-text">13.6 把实验环境也「配置即代码」</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-7-%E6%8E%A8%E8%8D%90%E7%9B%AE%E5%BD%95%E5%B8%83%E5%B1%80%EF%BC%88%E5%8F%AF%E7%9B%B4%E6%8E%A5%E7%85%A7%E6%8A%84%EF%BC%89"><span class="toc-number">14.7.</span> <span class="toc-text">13.7 推荐目录布局（可直接照抄）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E5%9B%9B%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-number">15.</span> <span class="toc-text">十四、总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BB%B6%E4%BC%B8%E9%98%85%E8%AF%BB"><span class="toc-number">15.1.</span> <span class="toc-text">延伸阅读</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/9dc3bdc6.html" title="Ansible 深入浅出实战指南：从零搭建、核心模块到自动化部署"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260926165840686.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Ansible 深入浅出实战指南：从零搭建、核心模块到自动化部署"/></a><div class="content"><a class="title" href="/archives/9dc3bdc6.html" title="Ansible 深入浅出实战指南：从零搭建、核心模块到自动化部署">Ansible 深入浅出实战指南：从零搭建、核心模块到自动化部署</a><time datetime="2026-09-26T08:43:09.000Z" title="发表于 2026-09-26 16:43:09">2026-09-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/5dc13199.html" title="MySQL 8.0 三节点 MGR 高可用集群部署（Docker Compose 实战）"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260921194508187.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="MySQL 8.0 三节点 MGR 高可用集群部署（Docker Compose 实战）"/></a><div class="content"><a class="title" href="/archives/5dc13199.html" title="MySQL 8.0 三节点 MGR 高可用集群部署（Docker Compose 实战）">MySQL 8.0 三节点 MGR 高可用集群部署（Docker Compose 实战）</a><time datetime="2026-09-20T16:00:00.000Z" title="发表于 2026-09-21 00:00:00">2026-09-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/61196baf.html" title="Jenkins-CICD实战"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins-CICD实战"/></a><div class="content"><a class="title" href="/archives/61196baf.html" title="Jenkins-CICD实战">Jenkins-CICD实战</a><time datetime="2026-08-11T17:09:47.000Z" title="发表于 2026-08-12 01:09:47">2026-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a3e16fea.html" title="面试题1"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg3.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试题1"/></a><div class="content"><a class="title" href="/archives/a3e16fea.html" title="面试题1">面试题1</a><time datetime="2026-08-11T14:53:55.000Z" title="发表于 2026-08-11 22:53:55">2026-08-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/35864571.html" title="docker部署jenkins"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260811230714269.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker部署jenkins"/></a><div class="content"><a class="title" href="/archives/35864571.html" title="docker部署jenkins">docker部署jenkins</a><time datetime="2026-08-10T05:55:00.000Z" title="发表于 2026-08-10 13:55:00">2026-08-10</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2020 - 2026 By Raidenxe</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5"></script><script src="/js/main.js?v=5.5.5"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5"></script></div></div></body></html>

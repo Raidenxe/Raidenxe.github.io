@@ -1,0 +1,1075 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>模拟面试题 | Raidenxe的博客</title><meta name="author" content="Raidenxe"><meta name="copyright" content="Raidenxe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="模拟面试题库与参考答案（运维开发 &amp;#x2F; 监控平台方向） 范围：Linux、Shell、Python、MySQL &amp;#x2F; Oracle &amp;#x2F; Redis &amp;#x2F; MongoDB、Java 运维与性能调优、Kafka、集中监控平台。用法：先自己答一遍，再看答案；答案里的..."><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "模拟面试题",
+  "url": "https://raidenxe.github.io/archives/3d98614a.html",
+  "image": "https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png",
+  "datePublished": "2026-09-27T14:43:37.000Z",
+  "dateModified": "2026-09-27T14:44:00.231Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Raidenxe",
+      "url": "https://Raidenxe.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://raidenxe.github.io/archives/3d98614a.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-bH6HnhLSRK"/><link rel="stylesheet" href="/css/index.css?v=5.5.5"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '模拟面试题',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/macblack.css"><style>
+  #web_bg{background-image:url(/img/风景006.png)}
+  #footer{background-image:url(/img/风景008.png);background-size:cover;background-position:center}
+  .aplayer-lrc{display:none !important}
+</style>
+<meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(/img/%E9%A3%8E%E6%99%AF006.png));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">55</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">72</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Raidenxe的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">模拟面试题</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">模拟面试题</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-09-27T14:43:37.000Z" title="发表于 2026-09-27 22:43:37">2026-09-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-27T14:44:00.231Z" title="更新于 2026-09-27 22:44:00">2026-09-27</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">20.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>69分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="模拟面试题库与参考答案（运维开发-x2F-监控平台方向）"><a href="#模拟面试题库与参考答案（运维开发-x2F-监控平台方向）" class="headerlink" title="模拟面试题库与参考答案（运维开发 &#x2F; 监控平台方向）"></a>模拟面试题库与参考答案（运维开发 &#x2F; 监控平台方向）</h1><blockquote>
+<p>范围：Linux、Shell、Python、MySQL &#x2F; Oracle &#x2F; Redis &#x2F; MongoDB、Java 运维与性能调优、Kafka、集中监控平台。<br>用法：先自己答一遍，再看答案；答案里的”链路”是面试官真正想听的骨架，命令和参数是血肉。</p>
+</blockquote>
+<h2 id="前言：这类岗位面试官到底在考什么"><a href="#前言：这类岗位面试官到底在考什么" class="headerlink" title="前言：这类岗位面试官到底在考什么"></a>前言：这类岗位面试官到底在考什么</h2><p>这个 JD 表面写着”较强 Shell 编写能力””掌握命令执行能力””能够独立进行数据库访问设计”，翻译成面试语言只有一句话：<strong>你过去是不是真的在线上干过活</strong>。</p>
+<p>所以答案的黄金结构是三层：</p>
+<ol>
+<li><strong>结论先行</strong>——第一步看什么、做什么，一句话说清，不要绕。</li>
+<li><strong>链路完整</strong>——从现象到根因的分层排查路径要能一口气讲完（比如 CPU 100% 那套 <code>top → PID → top -H → TID → jstack</code>）。</li>
+<li><strong>能解释为什么</strong>——面试官追问的每一层都是在验证你是”背过”还是”做过”，命令背后的原理（为什么 <code>du</code> 和 <code>df</code> 对不上、为什么删了文件空间不释放）才是区分点。</li>
+</ol>
+<p>面试官大概率不会按顺序问，而是挑一道深挖到底。下面 38 道题按你给的提纲整理，每道都带参考答案和追问解析。</p>
+<hr>
+<h2 id="一、Linux：不是问”大而全”，而是问你能不能干活"><a href="#一、Linux：不是问”大而全”，而是问你能不能干活" class="headerlink" title="一、Linux：不是问”大而全”，而是问你能不能干活"></a>一、Linux：不是问”大而全”，而是问你能不能干活</h2><h3 id="1-线上-Linux-服务器-CPU-持续-90-以上，登录后第一步看什么？"><a href="#1-线上-Linux-服务器-CPU-持续-90-以上，登录后第一步看什么？" class="headerlink" title="1. 线上 Linux 服务器 CPU 持续 90% 以上，登录后第一步看什么？"></a>1. 线上 Linux 服务器 CPU 持续 90% 以上，登录后第一步看什么？</h3><p><strong>参考答案</strong></p>
+<p>第一步永远是 <code>top</code>，但只看三件事，别急着操作：</p>
+<ul>
+<li>上方 <code>%Cpu(s)</code> 一行的状态分布：<code>us</code>（用户态）、<code>sy</code>（内核态）、<code>wa</code>（IO 等待）、<code>id</code>（空闲）、<code>hi/si</code>（硬&#x2F;软中断）。</li>
+<li><code>load average</code> 三个数，结合 CPU 核数判断负载是虚高还是真高。</li>
+<li>按 CPU 排序的进程列表，锁定是哪个进程在烧 CPU。</li>
+</ul>
+<p><code>top</code> 里重点看的字段：<code>PID</code>、<code>%CPU</code>、<code>%MEM</code>、<code>COMMAND</code>，以及上方 CPU 状态行。判断标准：单个进程 <code>%CPU</code> 长时间接近或超过 100%（多核时按核数叠加），基本就是问题进程。</p>
+<p><strong>追问解析</strong></p>
+<ul>
+<li><p><strong>%us、%sy、%wa 分别代表什么？</strong><br><code>%us</code> 是用户态 CPU，业务代码、JVM 里的应用线程跑在这里；<code>%sy</code> 是内核态 CPU，系统调用、中断处理、锁操作消耗在这里；<code>%wa</code> 是 CPU 等 IO 的时间占比，进程在等磁盘&#x2F;网络。三者相加接近 100% 且 <code>id</code> 接近 0，说明 CPU 真的被吃满了；如果 <code>wa</code> 高但 <code>us/sy</code> 不高，说明瓶颈是磁盘而不是计算。</p>
+</li>
+<li><p><strong>如果发现 %sy 很高，你下一步怎么查？</strong><br><code>%sy</code> 高说明内核在忙，常见原因有：系统调用过于频繁（比如某个循环反复做系统调用）、上下文切换太多、网络或磁盘中断打满单个 CPU。用 <code>vmstat 1</code> 看 <code>cs</code>（上下文切换）和 <code>in</code>（中断）列，用 <code>pidstat -w 1</code> 看哪个进程的 <code>cswch</code> 高，必要时 <code>strace -p PID</code> 跟一下系统调用。面试里能说出”先 <code>vmstat</code> 看上下文切换，再 <code>pidstat -w</code> 定位进程”就及格了。</p>
+</li>
+<li><p><strong>如果发现某个 Java 进程占了 80% CPU，你继续怎么查？</strong><br>先用 <code>top -p PID</code> 确认这个进程的 CPU 是持续性的，再用 <code>pidstat -p PID 1</code> 看是哪些线程在消耗。注意：JVM 的 GC 线程、JIT 编译线程（C2 CompilerThread）也会吃 CPU，先排除这两类，再看是不是业务线程。</p>
+</li>
+<li><p><strong>怎么定位到 Java 具体哪个线程？</strong><br>经典五步：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">top -H -p &lt;PID&gt;                          <span class="comment"># 1. 线程视角看 CPU，记下最耗 CPU 的 TID</span></span><br><span class="line"><span class="built_in">printf</span> <span class="string">&quot;%x\n&quot;</span> &lt;TID&gt;                      <span class="comment"># 2. 把十进制 TID 转成十六进制</span></span><br><span class="line">jstack &lt;PID&gt; &gt; /tmp/jstack.txt           <span class="comment"># 3. 抓线程栈</span></span><br><span class="line">grep -A 30 <span class="string">&quot;nid=0x&lt;十六进制TID&gt;&quot;</span> /tmp/jstack.txt   <span class="comment"># 4. 按 nid 找线程栈</span></span><br><span class="line"><span class="comment"># 5. 看栈顶，重点找 RUNNABLE 状态、且栈里出现业务包名（com.xxx）的帧</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>top -H -p PID 看到了线程之后怎么继续？</strong><br>先看线程名：JVM 的线程名是有意义的（<code>http-nio-8080-exec-N</code> 是 Tomcat 工作线程、<code>GC task thread</code> 是 GC、<code>C2 CompilerThread</code> 是 JIT）。如果最耗 CPU 的是业务工作线程，抓 jstack 看它在跑什么；如果是 GC 线程，方向就转到堆和 GC 参数上，CPU 排查立刻变成内存排查。</p>
+</li>
+<li><p><strong>Linux 的线程 ID 和 Java jstack 里面的线程怎么对应？</strong><br><code>top -H</code> 里看到的是 Linux 的 native thread id（TID），<code>jstack</code> 输出里每个线程的 <code>nid=0x...</code> 就是它的十六进制形式。所以 <code>printf &quot;%x&quot; TID</code> 转完直接 grep 就能对上。这是这套排查链路的核心，必须背熟。</p>
+</li>
+</ul>
+<hr>
+<h3 id="2-监控平台服务器磁盘空间-100-，但监控服务还能访问，你怎么处理？"><a href="#2-监控平台服务器磁盘空间-100-，但监控服务还能访问，你怎么处理？" class="headerlink" title="2. 监控平台服务器磁盘空间 100%，但监控服务还能访问，你怎么处理？"></a>2. 监控平台服务器磁盘空间 100%，但监控服务还能访问，你怎么处理？</h3><p><strong>参考答案</strong></p>
+<p>先确认再动手，顺序是：</p>
+<ol>
+<li><code>df -h</code> 看是哪个挂载点满了、使用率多少。</li>
+<li><code>du -sh</code> 逐层往下找大目录：<code>du -sh /var/log/* | sort -rh | head</code>，定位空间被谁吃掉。</li>
+<li>判断哪些文件可以清理：日志、临时文件、旧备份、core dump，优先处理这类；业务数据文件先确认再动。</li>
+</ol>
+<p><strong>追问解析</strong></p>
+<ul>
+<li><p><strong>df -h 和 du -sh 你分别看什么？</strong><br><code>df</code> 看的是文件系统层面的使用情况（块设备的已用&#x2F;可用），它反映的是”这个分区还能不能写”；<code>du</code> 是从目录树统计实际文件大小之和。<code>df</code> 管容量告警，<code>du</code> 管定位大文件。</p>
+</li>
+<li><p><strong>df 显示 95%，但 du 加起来只有 60%，可能是什么问题？</strong><br>最常见的几个原因：一是<strong>已删除但仍被进程打开的文件</strong>（文件在磁盘上还被占用，但目录里已经看不到了，<code>du</code> 自然数不到）；二是<strong>保留块</strong>（ext4 默认预留 5% 给 root）；三是挂载点嵌套或有其他挂载点没被 <code>du</code> 覆盖；四是 <code>du</code> 权限不足统计不全（换 sudo）。面试能说出第一条”deleted 文件被进程持有”，说明真踩过这个坑。</p>
+</li>
+<li><p><strong>如何找到最大的日志文件？</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -xdev -<span class="built_in">type</span> f -size +1G -<span class="built_in">exec</span> <span class="built_in">ls</span> -lh &#123;&#125; \; 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+<p><code>-xdev</code> 防止进入其他挂载点（比如 &#x2F;proc）。或者直接 <code>du -sh /var/log/* | sort -rh | head -10</code>。</p>
+</li>
+<li><p><strong>如果某个日志文件正在被 Java 进程持续写入，你会直接 rm 吗？</strong><br>不会直接 <code>rm</code>。直接 <code>rm</code> 有两个问题：进程持有的文件描述符还指向这个 inode，<strong>空间不会释放</strong>，而且日志照写不误，等于删了个寂寞。正确做法是先停写或轮转：用 <code>logrotate</code> 做轮转（<code>copytruncate</code> 选项能优雅地处理正在被写的文件），或者对文件做 <code>truncate -s 0</code> 先清零，再考虑后续删除。</p>
+</li>
+<li><p><strong>删除之后为什么磁盘空间可能还是不释放？</strong><br>因为空间是否释放取决于<strong>没有进程再持有这个文件</strong>，而不是目录里有没有这个文件名。<code>rm</code> 只是删掉了目录项，文件 inode 还在，直到最后一个打开它的进程关闭文件描述符。</p>
+</li>
+<li><p><strong>怎么定位哪个进程还持有这个文件？</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">lsof +L1          <span class="comment"># 列出所有已被删除但仍被打开的文件的进程</span></span><br><span class="line"><span class="comment"># 或</span></span><br><span class="line">lsof -nP | grep <span class="string">&#x27;(deleted)&#x27;</span></span><br><span class="line"><span class="comment"># 或者直接看某个进程的文件描述符</span></span><br><span class="line"><span class="built_in">ls</span> -l /proc/&lt;PID&gt;/fd | grep deleted</span><br></pre></td></tr></table></figure>
+<p>找到后要么重启进程（干净），要么确认业务无影响后处理。</p>
+</li>
+<li><p><strong>你会怎么设计日志轮转？</strong><br>生产环境用 <code>logrotate</code> 统一管：按大小（<code>size 500M</code>）或按时间（<code>daily</code>）触发，<code>compress</code> 压缩旧日志，<code>rotate N</code> 控制保留份数，关键的是对正在写的文件用 <code>copytruncate</code>（复制后清空原文件，写方句柄不受影响），对会重新打开文件的进程用 <code>postrotate</code> 发信号让它重开。应用侧能配合更好，比如 log4j2 的 <code>RollingFileAppender</code> 本身就是应用内轮转，和系统层 logrotate 二选一，别两个一起上把日志切乱。</p>
+</li>
+</ul>
+<hr>
+<h3 id="3-一个服务启动失败，让你先别看业务代码，只允许用-Linux-命令排查，你怎么查？"><a href="#3-一个服务启动失败，让你先别看业务代码，只允许用-Linux-命令排查，你怎么查？" class="headerlink" title="3. 一个服务启动失败，让你先别看业务代码，只允许用 Linux 命令排查，你怎么查？"></a>3. 一个服务启动失败，让你先别看业务代码，只允许用 Linux 命令排查，你怎么查？</h3><p><strong>参考答案</strong></p>
+<p>先搭框架，再谈工具。排查顺序：</p>
+<ol>
+<li><strong>服务有没有被真正拉起来、以什么状态退出</strong>：<code>systemctl status &lt;svc&gt;</code> 看 Active 状态、<code>Main PID</code>、Exit code。</li>
+<li><strong>启动过程报了什么错</strong>：<code>journalctl -u &lt;svc&gt; -n 200 --no-pager</code> 看 systemd 视角的日志；再 <code>tail -200 /var/log/&lt;app&gt;/app.log</code> 看应用日志。</li>
+<li><strong>进程和端口状态</strong>：<code>ps -ef | grep &lt;app&gt;</code> 看进程是否存在、<code>ss -lntp</code> 看端口有没有监听。</li>
+<li><strong>依赖是否就绪</strong>：<code>ss -lnt</code> 确认 MySQL&#x2F;Redis 端口、<code>nc -zv &lt;host&gt; &lt;port&gt;</code> 确认网络通不通、配置文件对不对。</li>
+</ol>
+<p><strong>追问解析（各命令的适用场景）</strong></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>什么时候用</th>
+<th>看什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ps</code></td>
+<td>进程层面</td>
+<td>进程在不在、父进程是谁、启动参数（<code>-ef</code> 带完整参数）</td>
+</tr>
+<tr>
+<td><code>ss</code></td>
+<td>网络连接&#x2F;监听</td>
+<td>端口有没有被监听、连接状态；替代老旧的 <code>netstat</code></td>
+</tr>
+<tr>
+<td><code>netstat</code></td>
+<td>老系统&#x2F;排查连接表</td>
+<td>端口、连接数、TIME_WAIT 堆积</td>
+</tr>
+<tr>
+<td><code>lsof</code></td>
+<td>文件和端口归属</td>
+<td>端口被谁占用、进程打开了哪些文件</td>
+</tr>
+<tr>
+<td><code>grep</code></td>
+<td>日志过滤</td>
+<td>从日志里筛 ERROR&#x2F;Exception&#x2F;关键时间点</td>
+</tr>
+<tr>
+<td><code>tail</code></td>
+<td>日志跟踪</td>
+<td><code>-f</code> 实时看启动过程报错</td>
+</tr>
+<tr>
+<td><code>systemctl</code></td>
+<td>服务生命周期</td>
+<td>服务状态、exit code、Restart 计数</td>
+</tr>
+<tr>
+<td><code>journalctl</code></td>
+<td>systemd 日志</td>
+<td>服务自身 stdout&#x2F;stderr 之外的系统侧日志（OOM、依赖拉起失败）</td>
+</tr>
+</tbody></table>
+<p>面试官这么问，重点不是要你背命令，而是看你<strong>遇到问题的判断顺序</strong>：先系统侧（服务状态、exit code），再日志（journalctl、应用日志），再资源（进程、端口、依赖），最后一层才是业务代码。反过来先扒代码是运维的大忌。</p>
+<hr>
+<h3 id="4-服务器能-ping-通，但是监控-Agent-还是连接不上，你怎么判断问题在哪里？"><a href="#4-服务器能-ping-通，但是监控-Agent-还是连接不上，你怎么判断问题在哪里？" class="headerlink" title="4. 服务器能 ping 通，但是监控 Agent 还是连接不上，你怎么判断问题在哪里？"></a>4. 服务器能 ping 通，但是监控 Agent 还是连接不上，你怎么判断问题在哪里？</h3><p><strong>参考答案</strong></p>
+<p><code>ping</code> 通只说明三层（网络层）通，后面每一层都可能断。按这条链路逐层验证：</p>
+<ol>
+<li><strong>ping</strong>：三层通，确认主机在网。</li>
+<li><strong>DNS</strong>：<code>nslookup &lt;agent-server&gt;</code> 或 <code>getent hosts</code>，确认 Agent 连接用的域名能解析、解析结果对不对。</li>
+<li><strong>路由</strong>：<code>traceroute -n &lt;server&gt;</code>，看中间哪一跳丢包或不通，确认四层以上的包能否到达。</li>
+<li><strong>TCP 端口</strong>：<code>nc -zv &lt;server&gt; &lt;port&gt;</code>，确认目标端口 TCP 能连通。</li>
+<li><strong>防火墙</strong>：本机 <code>iptables -L -n</code> &#x2F; <code>firewall-cmd --list-all</code>，云环境还要查安全组；常见坑是只放行了 ICMP（所以能 ping 通）但没放行 Agent 端口。</li>
+<li><strong>服务监听</strong>：在服务器上 <code>ss -lntp</code>，看 Agent 服务到底监听在 <code>0.0.0.0</code> 还是 <code>127.0.0.1</code>——监听在回环地址上，外部自然连不上，这是经典问题。</li>
+<li><strong>Agent 配置</strong>：目标地址&#x2F;端口写没写对、token&#x2F;密钥是否一致、协议是否匹配（http&#x2F;https&#x2F;自定义 TCP）、Agent 进程本身是否存活。</li>
+</ol>
+<p>能一口气把”ping 通 ≠ 能连上”讲清楚，并说出”检查监听地址是不是 127.0.0.1”这种真实坑，就证明你有大规模接入监控的实际经验（2100+ 台接入时，这类问题几乎每批都有）。</p>
+<hr>
+<h2 id="二、Shell：JD-写的”较强-Shell-编写能力”很可能是现场写"><a href="#二、Shell：JD-写的”较强-Shell-编写能力”很可能是现场写" class="headerlink" title="二、Shell：JD 写的”较强 Shell 编写能力”很可能是现场写"></a>二、Shell：JD 写的”较强 Shell 编写能力”很可能是现场写</h2><h3 id="5-写一个-Shell：每-5-分钟检查一次磁盘使用率，超过-80-告警，超过-90-清理，你怎么写？"><a href="#5-写一个-Shell：每-5-分钟检查一次磁盘使用率，超过-80-告警，超过-90-清理，你怎么写？" class="headerlink" title="5. 写一个 Shell：每 5 分钟检查一次磁盘使用率，超过 80% 告警，超过 90% 清理，你怎么写？"></a>5. 写一个 Shell：每 5 分钟检查一次磁盘使用率，超过 80% 告警，超过 90% 清理，你怎么写？</h3><p><strong>参考答案</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># disk_check.sh - 磁盘使用率检查：&gt;80% 告警，&gt;90% 清理</span></span><br><span class="line"><span class="built_in">set</span> -euo pipefail</span><br><span class="line"></span><br><span class="line">LOG_FILE=/var/log/disk_check.log</span><br><span class="line">STATE_FILE=/var/run/disk_check.state        <span class="comment"># 记录上次清理时间，避免重复清理</span></span><br><span class="line">THRESH_WARN=80</span><br><span class="line">THRESH_CLEAN=90</span><br><span class="line">CLEAN_INTERVAL=3600                         <span class="comment"># 两次清理最小间隔（秒）</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">log</span></span>() &#123; <span class="built_in">echo</span> <span class="string">&quot;[<span class="subst">$(date &#x27;+%F %T&#x27;)</span>] $*&quot;</span> &gt;&gt; <span class="string">&quot;<span class="variable">$LOG_FILE</span>&quot;</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">cleanup</span></span>() &#123;</span><br><span class="line">    <span class="comment"># 用时间戳状态文件防止短时间内重复清理</span></span><br><span class="line">    <span class="built_in">local</span> last_clean=0</span><br><span class="line">    [[ -f <span class="string">&quot;<span class="variable">$STATE_FILE</span>&quot;</span> ]] &amp;&amp; last_clean=$(<span class="built_in">cat</span> <span class="string">&quot;<span class="variable">$STATE_FILE</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">local</span> now=$(<span class="built_in">date</span> +%s)</span><br><span class="line">    <span class="keyword">if</span> (( now - last_clean &lt; CLEAN_INTERVAL )); <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">log</span> <span class="string">&quot;距上次清理不足 <span class="variable">$&#123;CLEAN_INTERVAL&#125;</span>s，跳过本次清理&quot;</span></span><br><span class="line">        <span class="built_in">return</span> 0</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">log</span> <span class="string">&quot;开始清理：按白名单清理日志和临时文件&quot;</span></span><br><span class="line">    <span class="comment"># 只清理明确可删的对象，绝不用 rm -rf / 通配</span></span><br><span class="line">    find /var/log -name <span class="string">&quot;*.log.*&quot;</span> -mtime +7 -<span class="built_in">exec</span> <span class="built_in">rm</span> -f &#123;&#125; \; 2&gt;/dev/null || <span class="literal">true</span></span><br><span class="line">    find /tmp -<span class="built_in">type</span> f -mtime +3 -<span class="built_in">exec</span> <span class="built_in">rm</span> -f &#123;&#125; \; 2&gt;/dev/null || <span class="literal">true</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$now</span>&quot;</span> &gt; <span class="string">&quot;<span class="variable">$STATE_FILE</span>&quot;</span></span><br><span class="line">    <span class="built_in">log</span> <span class="string">&quot;清理完成&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> mount <span class="keyword">in</span> $(<span class="built_in">df</span> -hP | awk <span class="string">&#x27;NR&gt;1 &amp;&amp; $1 ~ /^\// &#123;print $6&#125;&#x27;</span>); <span class="keyword">do</span></span><br><span class="line">    usage=$(<span class="built_in">df</span> -hP <span class="string">&quot;<span class="variable">$mount</span>&quot;</span> | awk <span class="string">&#x27;NR==2 &#123;print $5&#125;&#x27;</span> | <span class="built_in">tr</span> -d <span class="string">&#x27;%&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> (( usage &gt;= THRESH_CLEAN )); <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">log</span> <span class="string">&quot;WARN: <span class="variable">$mount</span> 使用率 <span class="variable">$&#123;usage&#125;</span>% &gt;= <span class="variable">$&#123;THRESH_CLEAN&#125;</span>%，执行清理&quot;</span></span><br><span class="line">        cleanup</span><br><span class="line">    <span class="keyword">elif</span> (( usage &gt;= THRESH_WARN )); <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">log</span> <span class="string">&quot;ALERT: <span class="variable">$mount</span> 使用率 <span class="variable">$&#123;usage&#125;</span>% &gt;= <span class="variable">$&#123;THRESH_WARN&#125;</span>%&quot;</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>追问解析</strong></p>
+<ul>
+<li><p><strong>怎么避免重复清理？</strong><br>用状态文件记录上次清理时间戳（上面的 <code>STATE_FILE</code>），两次清理间隔内不再触发；另一个思路是按文件 mtime 清理（只删 7 天前的），天然不会重复处理同一批文件。</p>
+</li>
+<li><p><strong>清理哪些文件？</strong><br>只碰白名单：日志轮转产生的旧文件（<code>*.log.*</code>）、超过保留期的临时文件、旧备份、core dump。业务数据、数据库文件、当前正在写的日志一律不碰。回答里强调”白名单 + 绝不 rm -rf 通配”是加分点。</p>
+</li>
+<li><p><strong>如果 &#x2F;var&#x2F;log 特别大怎么办？</strong><br><code>/var/log</code> 大要分两步：先看是不是有进程把日志写飞了（<code>du -sh /var/log/*</code> 定位，<code>lsof</code> 看谁在写），光删文件不解决写飞的根因，几分钟又满了；然后上 <code>logrotate</code> 做轮转+压缩+保留份数，用 <code>copytruncate</code> 处理正在写的文件。如果日志里有敏感信息，还要考虑清空而不是删除（<code>truncate -s 0</code> 保留文件占位）。</p>
+</li>
+<li><p><strong>脚本执行失败怎么处理？</strong><br><code>set -euo pipefail</code> 让脚本在未定义变量、管道失败时立即退出，避免带病执行；清理命令用 <code>|| true</code> 兜底（清理失败不能影响检查主流程）；关键步骤打日志，方便回溯。另外脚本要有幂等性，重复执行结果一致。</p>
+</li>
+<li><p><strong>如何记录执行日志？</strong><br>所有关键动作（告警、清理、异常）追加到固定日志文件，带时间戳（上面的 <code>log()</code> 函数）；配合 <code>logger</code> 打到 syslog 也行，监控平台可以直接采 syslog。</p>
+</li>
+<li><p><strong>怎么让它支持 start&#x2F;stop&#x2F;status？</strong><br>写成带子命令的脚本，用 PID 文件管理：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="string">&quot;<span class="variable">$1</span>&quot;</span> <span class="keyword">in</span></span><br><span class="line">  start) <span class="built_in">nohup</span> <span class="variable">$0</span> run &gt;/dev/null 2&gt;&amp;1 &amp; <span class="built_in">echo</span> $! &gt; /var/run/disk_check.pid;;</span><br><span class="line">  stop)  <span class="built_in">kill</span> <span class="string">&quot;<span class="subst">$(cat /var/run/disk_check.pid)</span>&quot;</span> &amp;&amp; <span class="built_in">rm</span> -f /var/run/disk_check.pid;;</span><br><span class="line">  status) [[ -f /var/run/disk_check.pid ]] &amp;&amp; ps -p <span class="string">&quot;<span class="subst">$(cat /var/run/disk_check.pid)</span>&quot;</span> &gt;/dev/null &amp;&amp; <span class="built_in">echo</span> running || <span class="built_in">echo</span> stopped;;</span><br><span class="line">  run)   <span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span> <span class="variable">$0</span> check; <span class="built_in">sleep</span> 300; <span class="keyword">done</span>;;   <span class="comment"># 每 5 分钟一次</span></span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+<p>更规范的做法是写 systemd unit（<code>Restart=always</code> + <code>StartLimitIntervalSec</code>），生产环境优先 systemd。</p>
+</li>
+</ul>
+<hr>
+<h3 id="6-有-200-台服务器-IP，你需要批量检查-SSH-是否能连接，怎么写？"><a href="#6-有-200-台服务器-IP，你需要批量检查-SSH-是否能连接，怎么写？" class="headerlink" title="6. 有 200 台服务器 IP，你需要批量检查 SSH 是否能连接，怎么写？"></a>6. 有 200 台服务器 IP，你需要批量检查 SSH 是否能连接，怎么写？</h3><p><strong>参考答案</strong></p>
+<p>最朴素的版本是 for 循环逐个连：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> <span class="built_in">read</span> ip; <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">if</span> ssh -o BatchMode=<span class="built_in">yes</span> -o ConnectTimeout=5 -o StrictHostKeyChecking=no root@<span class="string">&quot;<span class="variable">$ip</span>&quot;</span> <span class="literal">true</span> 2&gt;/dev/null; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;OK   <span class="variable">$ip</span>&quot;</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;FAIL <span class="variable">$ip</span>&quot;</span> &gt;&gt; fail_list.txt</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span> &lt; server_ip.txt</span><br></pre></td></tr></table></figure>
+
+<p>但 200 台串行太慢（每台光连接开销就可能 1~3 秒），必须并发。</p>
+<p><strong>追问解析</strong></p>
+<ul>
+<li><p><strong>并发怎么做？</strong><br>最轻量的是 <code>xargs -P</code>：<code>cat server_ip.txt | xargs -P 10 -I {} ./check_one.sh {}</code>；或者用 Shell 的 <code>&amp;</code> + <code>wait</code> 手动控制；再进一步就是上 Python（paramiko + ThreadPoolExecutor），这也是面试官说”这道题很容易引到 Python”的原因——并发、超时、重试、结果收集，Python 都比 Shell 舒服。</p>
+</li>
+<li><p><strong>如果串行执行，大概有什么问题？</strong><br>慢是主要问题：200 台 × 每台 2<del>5 秒 ≈ 10</del>17 分钟，加超时等待会更久；中途一台卡住可能把整批卡死；结果也没有聚合。</p>
+</li>
+<li><p><strong>如果 200 台机器同时执行，会不会把跳板机打爆？</strong><br>会。同时建立 200 个连接，跳板机&#x2F;管理机的连接数、进程数、CPU 瞬间打满，SSH 服务端还有 <code>MaxStartups</code> 限制，超出后直接拒绝新连接，反而全挂。所以必须限并发。</p>
+</li>
+<li><p><strong>怎么限制并发数？</strong><br><code>xargs -P N</code> 里的 N 就是并发上限，一般取 10~50 之间，根据管理机规格和网络调整；Python 里用 <code>ThreadPoolExecutor(max_workers=20)</code> 同理。并发不是越大越好，而是”让管理机保持忙碌但别被打爆”。</p>
+</li>
+<li><p><strong>超时怎么处理？</strong><br>SSH 连接层设 <code>ConnectTimeout=5</code>（连接建立超时）、<code>ServerAliveInterval</code> &#x2F; <code>ServerAliveCountMax</code>（连接建立后的保活探测，防止挂死）；Python 侧 paramiko 的 <code>connect(timeout=5)</code>，再配合线程池的 <code>future.result(timeout=...)</code> 双保险。超时的机器记为失败，不阻塞整个批次。</p>
+</li>
+<li><p><strong>失败机器如何重试？</strong><br>失败 IP 写入文件，第二批只对失败列表重试，最多重试 N 轮（比如 2 轮），仍然失败的单独出报告给人处理。注意重试要限制轮数，避免无脑重试浪费时间。</p>
+</li>
+</ul>
+<hr>
+<h3 id="7-有一批-Java-应用，你需要通过-Shell-批量执行-restart，但必须保证”服务真的起来了”才算成功，怎么做？"><a href="#7-有一批-Java-应用，你需要通过-Shell-批量执行-restart，但必须保证”服务真的起来了”才算成功，怎么做？" class="headerlink" title="7. 有一批 Java 应用，你需要通过 Shell 批量执行 restart，但必须保证”服务真的起来了”才算成功，怎么做？"></a>7. 有一批 Java 应用，你需要通过 Shell 批量执行 restart，但必须保证”服务真的起来了”才算成功，怎么做？</h3><p><strong>参考答案</strong></p>
+<p>核心原则：<strong>restart 成功的判定标准不是”我执行了 kill 和启动命令”，而是”进程存活 + 端口监听 + 应用就绪”三层都通过</strong>。脚本骨架：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># restart_app.sh - 单应用重启，三层验证</span></span><br><span class="line"><span class="built_in">set</span> -euo pipefail</span><br><span class="line"></span><br><span class="line">APP_PID_FILE=/var/run/app.pid</span><br><span class="line">APP_PORT=8080</span><br><span class="line">HEALTH_URL=<span class="string">&quot;http://127.0.0.1:<span class="variable">$&#123;APP_PORT&#125;</span>/actuator/health&quot;</span></span><br><span class="line">START_TIMEOUT=120</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">stop_app</span></span>() &#123;</span><br><span class="line">    <span class="built_in">local</span> pid=$(<span class="built_in">cat</span> <span class="string">&quot;<span class="variable">$APP_PID_FILE</span>&quot;</span> 2&gt;/dev/null || <span class="literal">true</span>)</span><br><span class="line">    [[ -z <span class="string">&quot;<span class="variable">$pid</span>&quot;</span> ]] &amp;&amp; &#123; <span class="built_in">echo</span> <span class="string">&quot;no pid file&quot;</span>; <span class="built_in">return</span> 0; &#125;</span><br><span class="line">    <span class="built_in">kill</span> <span class="string">&quot;<span class="variable">$pid</span>&quot;</span>                                  <span class="comment"># 先优雅停止（可换 kill -TERM）</span></span><br><span class="line">    <span class="comment"># 等进程真正退出，而不是立刻返回</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> $(<span class="built_in">seq</span> 1 30); <span class="keyword">do</span></span><br><span class="line">        <span class="built_in">kill</span> -0 <span class="string">&quot;<span class="variable">$pid</span>&quot;</span> 2&gt;/dev/null || <span class="built_in">return</span> 0</span><br><span class="line">        <span class="built_in">sleep</span> 1</span><br><span class="line">    <span class="keyword">done</span></span><br><span class="line">    <span class="built_in">kill</span> -9 <span class="string">&quot;<span class="variable">$pid</span>&quot;</span> 2&gt;/dev/null || <span class="literal">true</span>           <span class="comment"># 优雅超时才强杀</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">wait_ready</span></span>() &#123;</span><br><span class="line">    <span class="comment"># 1. 进程层</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> $(<span class="built_in">seq</span> 1 <span class="string">&quot;<span class="variable">$START_TIMEOUT</span>&quot;</span>); <span class="keyword">do</span></span><br><span class="line">        jps -l 2&gt;/dev/null | grep -q <span class="string">&quot;app.jar&quot;</span> &amp;&amp; <span class="built_in">break</span></span><br><span class="line">        <span class="built_in">sleep</span> 2</span><br><span class="line">    <span class="keyword">done</span></span><br><span class="line">    <span class="comment"># 2. 端口层</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> $(<span class="built_in">seq</span> 1 <span class="string">&quot;<span class="variable">$START_TIMEOUT</span>&quot;</span>); <span class="keyword">do</span></span><br><span class="line">        ss -lnt | grep -q <span class="string">&quot;:<span class="variable">$&#123;APP_PORT&#125;</span> &quot;</span> &amp;&amp; <span class="built_in">break</span></span><br><span class="line">        <span class="built_in">sleep</span> 2</span><br><span class="line">    <span class="keyword">done</span></span><br><span class="line">    <span class="comment"># 3. 就绪层</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> $(<span class="built_in">seq</span> 1 <span class="string">&quot;<span class="variable">$START_TIMEOUT</span>&quot;</span>); <span class="keyword">do</span></span><br><span class="line">        curl -sf <span class="string">&quot;<span class="variable">$HEALTH_URL</span>&quot;</span> &gt;/dev/null 2&gt;&amp;1 &amp;&amp; &#123; <span class="built_in">echo</span> <span class="string">&quot;READY&quot;</span>; <span class="built_in">return</span> 0; &#125;</span><br><span class="line">        <span class="built_in">sleep</span> 2</span><br><span class="line">    <span class="keyword">done</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;NOT READY after <span class="variable">$&#123;START_TIMEOUT&#125;</span>s&quot;</span> &gt;&amp;2</span><br><span class="line">    <span class="built_in">return</span> 1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">stop_app</span><br><span class="line"><span class="built_in">nohup</span> java -jar /opt/app/app.jar &gt; /var/log/app/app.log 2&gt;&amp;1 &amp;</span><br><span class="line"><span class="built_in">echo</span> $! &gt; <span class="string">&quot;<span class="variable">$APP_PID_FILE</span>&quot;</span></span><br><span class="line">wait_ready || &#123; <span class="built_in">tail</span> -100 /var/log/app/app.log; <span class="built_in">exit</span> 1; &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>追问解析</strong></p>
+<ul>
+<li><p><strong>kill 完以后为什么不能直接认为重启成功？</strong><br><code>kill</code> 只是发信号，它不保证进程退出，更不保证新进程能起来。进程可能没退干净（新进程起不来、端口占用）、可能启动过程中崩掉、可能起了但卡在初始化。一切以”可验证的状态”为准，不能以”命令执行成功”为准。</p>
+</li>
+<li><p><strong>怎么判断 JVM 真正起来？</strong><br><code>jps -l</code> 能看到 JVM 进程（区别于 <code>ps</code> 只能看到 java 命令）；<code>pgrep -f app.jar</code> 也行。更严格的说法是：JVM 进程在 ≠ 应用启动完成，还要看端口和健康接口。</p>
+</li>
+<li><p><strong>怎么判断端口已经监听？</strong><br><code>ss -lnt | grep :8080</code>，确认是 LISTEN 状态、监听地址对（0.0.0.0 还是 127.0.0.1 要看业务需要）。注意端口监听也分两种：容器&#x2F;框架先监听了但业务还没初始化完。</p>
+</li>
+<li><p><strong>怎么判断应用已经 Ready？</strong><br>打健康检查接口：Spring Boot 用 <code>/actuator/health</code>（返回 <code>{&quot;status&quot;:&quot;UP&quot;}</code>），自定义服务会有自己的 <code>/health</code> 或 <code>/ready</code> 接口。只看 <code>&quot;UP&quot;</code> 还不够，生产上健康检查要能反映数据库、Redis 等依赖——<code>actuator/health</code> 默认就带这些组件的探针。</p>
+</li>
+<li><p><strong>如果进程存在，但是接口还是不可用怎么办？</strong><br>不算重启成功，按启动失败处理：抓应用日志最后 100 行看卡在哪（连不上数据库、配置错误、Bean 初始化失败）；确认依赖（MySQL&#x2F;Redis&#x2F;Kafka）是否就绪；判断是不是启动脚本在等待什么（比如注册中心）。接口不可用就是失败，脚本要返回非零、进入失败处理，而不是放过去。这正是”平台上的命令执行能力”要体现的严谨性：<strong>判定标准可验证，失败有依据、有日志</strong>。</p>
+</li>
+</ul>
+<hr>
+<h2 id="三、Python：不是考算法，而是考你能不能把运维工作程序化"><a href="#三、Python：不是考算法，而是考你能不能把运维工作程序化" class="headerlink" title="三、Python：不是考算法，而是考你能不能把运维工作程序化"></a>三、Python：不是考算法，而是考你能不能把运维工作程序化</h2><h3 id="8-让你用-Python-做一个服务器巡检程序，你会怎么设计？"><a href="#8-让你用-Python-做一个服务器巡检程序，你会怎么设计？" class="headerlink" title="8. 让你用 Python 做一个服务器巡检程序，你会怎么设计？"></a>8. 让你用 Python 做一个服务器巡检程序，你会怎么设计？</h3><p><strong>参考答案</strong></p>
+<p>不要讲语法，讲架构。我的设计是一条流水线，每一段职责单一：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">配置读取（yaml/json）</span><br><span class="line">  → 服务器列表（CMDB / 配置文件）</span><br><span class="line">  → 并发执行（线程池）</span><br><span class="line">  → 采集（CPU / 内存 / 磁盘 / 端口）</span><br><span class="line">  → 结果汇总</span><br><span class="line">  → 异常重试</span><br><span class="line">  → 日志</span><br><span class="line">  → 告警</span><br></pre></td></tr></table></figure>
+
+<p>具体到每一段：</p>
+<ol>
+<li><strong>配置读取</strong>：巡检项、阈值、并发数、超时统一放配置文件，代码里不写死；区分”全局配置”和”单机配置”。</li>
+<li><strong>服务器列表</strong>：从 CMDB 或独立文件读，字段至少包含 IP、业务、负责人、SSH 凭据引用；列表要和采集解耦，方便增删机器。</li>
+<li><strong>并发执行</strong>：<code>ThreadPoolExecutor</code> 每台服务器一个任务。</li>
+<li><strong>采集</strong>：SSH 上去执行命令（<code>top</code>&#x2F;<code>free</code>&#x2F;<code>df</code>&#x2F;<code>ss</code>）或用 Agent 采集，解析成结构化结果；建议每台服务器一个独立函数，方便加巡检项。</li>
+<li><strong>结果汇总</strong>：收集所有机器的结果，写数据库或 CSV，能出”哪些机器异常、异常类型分布”的统计。</li>
+<li><strong>异常重试</strong>：连接失败&#x2F;超时的机器重试 N 次，退避策略。</li>
+<li><strong>日志</strong>：每次巡检的进度、每台机器的结果、异常都落日志。</li>
+<li><strong>告警</strong>：异常结果按规则触发告警（对接钉钉&#x2F;飞书&#x2F;邮件&#x2F;监控平台）。</li>
+</ol>
+<p><strong>追问：你为什么用多线程，而不是多进程？</strong></p>
+<p>因为巡检是典型的 <strong>IO 密集型</strong>任务：绝大部分时间花在 SSH 连接、等待远程命令返回上，CPU 几乎不参与。多线程模型下，一个线程在等网络 IO 时会释放 GIL，其他线程能并行推进，线程数&#x3D;并发连接数，效率足够；多进程适合 CPU 密集型（比如大量计算），进程开销大、数量多了反而浪费。一句话：<strong>GIL 只卡计算，不卡 IO，所以 IO 密集任务线程池就够</strong>。另外 Python 侧还有一个理由：多线程共享内存，结果收集、失败列表维护比多进程传参简单得多。</p>
+<hr>
+<h3 id="9-1000-台服务器同时巡检，你-Python-怎么实现？"><a href="#9-1000-台服务器同时巡检，你-Python-怎么实现？" class="headerlink" title="9. 1000 台服务器同时巡检，你 Python 怎么实现？"></a>9. 1000 台服务器同时巡检，你 Python 怎么实现？</h3><p><strong>参考答案</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ThreadPoolExecutor, as_completed</span><br><span class="line"><span class="keyword">import</span> paramiko, time, logging</span><br><span class="line"></span><br><span class="line">MAX_WORKERS = <span class="number">100</span>          <span class="comment"># 并发上限，不是 1000</span></span><br><span class="line">RETRY_TIMES = <span class="number">2</span></span><br><span class="line">TIMEOUT = <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">inspect_one</span>(<span class="params">host</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;单台巡检，异常内部消化，绝不让它影响整体&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> attempt <span class="keyword">in</span> <span class="built_in">range</span>(RETRY_TIMES + <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            client = paramiko.SSHClient()</span><br><span class="line">            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())</span><br><span class="line">            client.connect(host[<span class="string">&quot;ip&quot;</span>], username=host[<span class="string">&quot;user&quot;</span>], password=host[<span class="string">&quot;pwd&quot;</span>],</span><br><span class="line">                           timeout=TIMEOUT, banner_timeout=TIMEOUT)</span><br><span class="line">            _, out, _ = client.exec_command(<span class="string">&quot;uptime &amp;&amp; free -m &amp;&amp; df -h /&quot;</span>, timeout=TIMEOUT)</span><br><span class="line">            data = out.read().decode()</span><br><span class="line">            client.close()</span><br><span class="line">            <span class="keyword">return</span> &#123;<span class="string">&quot;host&quot;</span>: host[<span class="string">&quot;ip&quot;</span>], <span class="string">&quot;ok&quot;</span>: <span class="literal">True</span>, <span class="string">&quot;data&quot;</span>: data&#125;</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            logging.warning(<span class="string">&quot;host=%s attempt=%d err=%s&quot;</span>, host[<span class="string">&quot;ip&quot;</span>], attempt, e)</span><br><span class="line">            time.sleep(<span class="number">2</span> ** attempt)          <span class="comment"># 指数退避</span></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;host&quot;</span>: host[<span class="string">&quot;ip&quot;</span>], <span class="string">&quot;ok&quot;</span>: <span class="literal">False</span>, <span class="string">&quot;err&quot;</span>: <span class="built_in">str</span>(e)&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">hosts</span>):</span><br><span class="line">    failed = []</span><br><span class="line">    <span class="keyword">with</span> ThreadPoolExecutor(max_workers=MAX_WORKERS) <span class="keyword">as</span> pool:</span><br><span class="line">        futures = &#123;pool.submit(inspect_one, h): h <span class="keyword">for</span> h <span class="keyword">in</span> hosts&#125;</span><br><span class="line">        <span class="keyword">for</span> fut <span class="keyword">in</span> as_completed(futures):</span><br><span class="line">            r = fut.result()                  <span class="comment"># 单台异常已被 inspect_one 捕获，不会抛上来</span></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> r[<span class="string">&quot;ok&quot;</span>]:</span><br><span class="line">                failed.append(r)</span><br><span class="line">    <span class="keyword">return</span> failed</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    hosts = load_hosts()                       <span class="comment"># 从 CMDB/文件加载</span></span><br><span class="line">    failed = run(hosts)</span><br><span class="line">    logging.info(<span class="string">&quot;total=%d failed=%d&quot;</span>, <span class="built_in">len</span>(hosts), <span class="built_in">len</span>(failed))</span><br></pre></td></tr></table></figure>
+
+<p><strong>追问解析</strong></p>
+<ul>
+<li><p><strong>你选择 ThreadPoolExecutor 还是 asyncio？</strong><br>用 paramiko（同步阻塞）就是 <code>ThreadPoolExecutor</code>，简单直接，能复用成熟库；如果走 asyncio 必须换异步 SSH 库（如 asyncssh），网络 IO 层面吞吐更高，但代码复杂度和踩坑面都更大。面试里可以说：默认线程池，追求极致吞吐且团队能 hold 住异步时再上 asyncio。</p>
+</li>
+<li><p><strong>最大并发多少？</strong><br>100~200 之间比较合理。受三个约束：本机 fd 和线程资源、目标机器 SSH 服务端 <code>MaxStartups</code> 限制、网络带宽。1000 个并发不是不能起，而是没必要且容易把自己和目标打挂。</p>
+</li>
+<li><p><strong>为什么不是 1000 个线程？</strong><br>线程本身有创建&#x2F;切换开销，1000 个线程光栈空间就吃 1~2GB 虚拟内存；线程切换频繁时 CPU 全耗在调度上；更重要的是 1000 个同时 SSH，目标机的 <code>MaxStartups</code> 会拒绝大部分连接，效果反而差。<strong>并发数量要匹配瓶颈资源，不是匹配任务数量</strong>。</p>
+</li>
+<li><p><strong>单台服务器超时怎么办？</strong><br>双层超时：paramiko 的 <code>connect(timeout=)</code> 管连接阶段；<code>exec_command(timeout=)</code> 或 <code>channel.settimeout()</code> 管命令执行阶段；线程池侧再兜一层 <code>future.result(timeout=MAX)</code>。超时后按失败处理，进入重试逻辑。</p>
+</li>
+<li><p><strong>某台机器 SSH 卡住怎么办？</strong><br>就是上面说的超时机制兜底——连接卡住由 connect 超时解决，命令执行卡住由命令超时解决，绝不会因为一台机器让整个巡检挂起。实践中 paramiko 偶尔有”超时了但线程还挂着”的情况，可以用带 timeout 的 <code>as_completed</code> + 放弃结果来兜，或者用进程级隔离（executor 的 shutdown 不等待挂死线程）。</p>
+</li>
+<li><p><strong>如何做重试？</strong><br>失败重试 2~3 次，用指数退避（0s、2s、4s…），区分错误类型：认证失败&#x2F;主机不存在这类错误不重试（重试也白搭），连接超时&#x2F;网络抖动才重试。</p>
+</li>
+<li><p><strong>怎么保证一个任务失败不会影响整个任务？</strong><br>每个任务内部 <code>try/except</code> 把异常吞掉转成失败结果返回，线程池提交后主线程只收集结果；这样任何一台机器挂了都只是 <code>failed</code> 列表里多一条，整体巡检照常完成。这是并发任务设计的基本功，面试官就是在等这句话。</p>
+</li>
+</ul>
+<hr>
+<h3 id="10-Python-脚本执行远程-Linux-命令，你会怎么实现？"><a href="#10-Python-脚本执行远程-Linux-命令，你会怎么实现？" class="headerlink" title="10. Python 脚本执行远程 Linux 命令，你会怎么实现？"></a>10. Python 脚本执行远程 Linux 命令，你会怎么实现？</h3><p><strong>参考答案</strong></p>
+<p>用 paramiko，核心流程：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> paramiko</span><br><span class="line"></span><br><span class="line">client = paramiko.SSHClient()</span><br><span class="line">client.set_missing_host_key_policy(paramiko.AutoAddPolicy())</span><br><span class="line">client.connect(<span class="string">&quot;10.0.0.10&quot;</span>, port=<span class="number">22</span>, username=<span class="string">&quot;app&quot;</span>,</span><br><span class="line">               password=<span class="string">&quot;xxx&quot;</span>, timeout=<span class="number">5</span>)               <span class="comment"># 或 key_filename=&quot;/path/key&quot;</span></span><br><span class="line"></span><br><span class="line">stdin, stdout, stderr = client.exec_command(<span class="string">&quot;df -h&quot;</span>, timeout=<span class="number">10</span>)</span><br><span class="line">rc = stdout.channel.recv_exit_status()                  <span class="comment"># 命令返回码</span></span><br><span class="line">out = stdout.read().decode()</span><br><span class="line">err = stderr.read().decode()</span><br><span class="line"><span class="built_in">print</span>(rc, out, err)</span><br><span class="line">client.close()</span><br></pre></td></tr></table></figure>
+
+<p><strong>追问解析</strong></p>
+<ul>
+<li><strong>Paramiko 用过吗？</strong> 用它做过批量巡检&#x2F;批量执行（结合线程池），这就是第 9 题的实现基础。</li>
+<li><strong>SSH 的连接、认证怎么做？</strong> <code>SSHClient().connect()</code>，认证两种：密码（<code>password=</code>）或密钥（<code>key_filename=</code> &#x2F; <code>pkey=paramiko.RSAKey.from_private_key_file(...)</code>）。生产环境用密钥，密码会泄露且不好管；大量主机建议统一密钥分发+密钥文件按主机指定。</li>
+<li><strong>密码还是密钥？</strong> 密钥优先：安全（无明文密码）、可审计、支持批量分发（sshd 的 AuthorizedKeys 统一管）。密码只用于临时或环境不允许的场景。</li>
+<li><strong>如何设置 timeout？</strong> 连接层 <code>connect(timeout=)</code>；命令执行层 <code>exec_command(cmd, timeout=)</code> 或 <code>channel.settimeout()</code>。注意 paramiko 的 timeout 覆盖不全时有坑，必要时代码里再补一层 watchdog。</li>
+<li><strong>如何捕获 stdout &#x2F; stderr？</strong> <code>exec_command</code> 返回三个通道对象，分别 <code>read()</code> 即可。注意大输出要流式读（<code>for line in stdout</code>），一次性 <code>read()</code> 可能撑爆内存或阻塞。</li>
+<li><strong>命令返回码怎么判断？</strong> <code>stdout.channel.recv_exit_status()</code> 拿到远程命令的退出码，0 成功、非 0 失败；不要只看有没有输出，有的命令失败也有 stdout。</li>
+<li><strong>连接池有没有考虑过？</strong> 考虑过。重复 <code>connect/close</code> 每次都有 TCP 握手+SSH 协商+认证的开销（几十到几百 ms）。批量场景下按主机缓存 <code>SSHClient</code>，跑完统一关闭。</li>
+<li><strong>批量执行时如何避免连接建立开销？</strong> 两种思路：一是<strong>连接复用</strong>（按 host 缓存 client，一个 host 一连接，多条命令复用）；二是更重的方案（paramiko 的 <code>Transport</code> 通道复用，或干脆用 ssh 的 ControlMaster）。实际工程里”缓存复用”已经能省掉大头，够用。</li>
+</ul>
+<hr>
+<h3 id="11-如果让你开发一个”监控平台命令执行模块”，Python-应该怎么设计？"><a href="#11-如果让你开发一个”监控平台命令执行模块”，Python-应该怎么设计？" class="headerlink" title="11. 如果让你开发一个”监控平台命令执行模块”，Python 应该怎么设计？"></a>11. 如果让你开发一个”监控平台命令执行模块”，Python 应该怎么设计？</h3><p><strong>参考答案</strong></p>
+<p>这个题对应 JD 里的”掌握相应平台上的命令执行能力”，核心不在 SSH 本身，而在<strong>安全、审计、超时、异步</strong>四个维度。</p>
+<p>架构上分四层：</p>
+<ol>
+<li><strong>接口层</strong>：前端提交 <code>{目标主机, 命令类型, 参数}</code>，不是提交原始命令字符串。</li>
+<li><strong>校验层（安全）</strong>：<ul>
+<li>命令走<strong>白名单</strong>：只允许预定义的命令类型（如 <code>df</code>、<code>ping</code>、<code>jstack</code>、<code>restart</code>），参数也校验&#x2F;限制；</li>
+<li>参数化执行，避免拼接注入：用 <code>shlex.split</code> 解析参数，拒绝 <code>;</code> <code>&amp;&amp;</code> <code>|</code> <code>`</code> <code>$()</code> 等 shell 元字符；</li>
+<li>危险命令黑名单兜底：<code>rm -rf /</code>、<code>shutdown</code>、<code>mkfs</code>、<code>dd</code> 等直接拒绝；</li>
+<li>权限控制：按”用户-角色-主机组”授权，只能对授权的机器执行授权的命令。</li>
+</ul>
+</li>
+<li><strong>执行层</strong>：任务进入队列（数据库任务表 + 线程池&#x2F;Celery 异步执行），并发限制、超时控制（命令超时强制 kill）、结果收集。</li>
+<li><strong>审计层</strong>：每次执行落库一条审计记录：<strong>执行人、执行时间、目标服务器、命令、参数、返回码、输出摘要、结果状态</strong>，可追溯、可查询。</li>
+</ol>
+<p><strong>追问解析</strong></p>
+<ul>
+<li><strong>前端传过来的命令怎么处理？</strong> 结构化传参（命令类型+参数列表），后端按白名单模板拼装，而不是把整条命令字符串交给 Shell。这是防注入的第一道闸。</li>
+<li><strong>如何防止命令注入？</strong> 三层：参数白名单&#x2F;校验、<code>shlex.split</code> 解析后逐项校验、绝不用 <code>shell=True</code> 拼接字符串（subprocess 默认 <code>shell=False</code> 且参数列表化）。</li>
+<li><strong>怎么限制危险命令？</strong> 白名单为主（没在白名单里的一律拒绝），黑名单兜底（高危命令即使参数变化也要拦）。白名单的粒度可以到”命令+参数模式”。</li>
+<li><strong>怎么做权限控制？</strong> 用户→角色→权限（命令类型、主机范围），执行前校验目标主机是否在授权范围内；敏感命令（重启、清理）单独加权限位。</li>
+<li><strong>如何记录执行人、执行时间、目标服务器、命令、结果？</strong> 审计表，字段：<code>id, user, action_time, host, cmd_type, params, return_code, output, status, task_id</code>；执行前写一条”待执行”，执行后回填结果，天然形成审计链。</li>
+<li><strong>命令执行超时怎么办？</strong> 执行线程设超时，超时后先 <code>kill -TERM</code> 再 <code>kill -9</code> 兜底，状态标记为超时失败；SSH 层用 paramiko timeout；数据库任务表里标记超时并允许重试或人工介入。</li>
+<li><strong>批量执行失败怎么处理？</strong> 单台失败不阻塞整体（第 9 题的思路），汇总失败清单；支持”只对失败主机重试”；失败原因（超时&#x2F;认证&#x2F;命令报错）分类展示。</li>
+<li><strong>如何实现异步任务？</strong> 任务表（状态机：PENDING→RUNNING→SUCCESS&#x2F;FAILED&#x2F;TIMEOUT）+ 后台线程池&#x2F;Celery&#x2F;RQ 消费；前端轮询或 WebSocket 拿任务状态。比同步接口强在：长任务不占请求线程、天然支持批量、可中断可重试。</li>
+</ul>
+<hr>
+<h2 id="四、数据库：不是问”什么是-MySQL”，而是问你有没有真正做过"><a href="#四、数据库：不是问”什么是-MySQL”，而是问你有没有真正做过" class="headerlink" title="四、数据库：不是问”什么是 MySQL”，而是问你有没有真正做过"></a>四、数据库：不是问”什么是 MySQL”，而是问你有没有真正做过</h2><h3 id="12-现在让你给一个-Java-应用设计-MySQL-数据库访问方案，你会怎么设计？"><a href="#12-现在让你给一个-Java-应用设计-MySQL-数据库访问方案，你会怎么设计？" class="headerlink" title="12. 现在让你给一个 Java 应用设计 MySQL 数据库访问方案，你会怎么设计？"></a>12. 现在让你给一个 Java 应用设计 MySQL 数据库访问方案，你会怎么设计？</h3><p><strong>参考答案</strong></p>
+<p>方案的核心是<strong>连接池 + 参数化访问 + 监控</strong>三件套：</p>
+<ol>
+<li><strong>连接方式</strong>：JDBC（<code>DriverManager.getConnection</code> 或数据源方式），Java 侧用 MyBatis&#x2F;JPA 封装，通过连接池（HikariCP &#x2F; Druid）管理连接。</li>
+<li><strong>连接池配置</strong>：<code>maximumPoolSize</code>、<code>minimumIdle</code>、<code>connectionTimeout</code>、<code>maxLifetime</code> 按业务并发和数据库规格定，原则是”池大小 × 实例数 ≤ 数据库 max_connections 的 60%~70%，留余量”。</li>
+<li><strong>访问规范</strong>：所有 SQL 用参数化（PreparedStatement &#x2F; MyBatis <code>#{}</code>），禁止拼接；读写分离按需做（读多写少时）。</li>
+<li><strong>监控</strong>：池的活跃&#x2F;空闲连接数、获取连接等待时间、SQL 慢查询都要能观测（Druid 监控页或 Prometheus 指标），连接泄漏要靠池的检测机制兜底。</li>
+</ol>
+<p><strong>追问解析</strong></p>
+<ul>
+<li><strong>JDBC 是怎么连接 MySQL 的？</strong> 加载驱动（<code>Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;)</code>）→ <code>DriverManager.getConnection(url, user, pass)</code> 建立 <code>Connection</code> → 创建 <code>Statement</code>&#x2F;<code>PreparedStatement</code> 执行 SQL → <code>ResultSet</code> 取结果 → 释放资源。连接的本质是 MySQL 协议握手（TCP + 认证 + 字符集协商），这也是它开销大的原因。</li>
+<li><strong>为什么需要连接池？</strong> 每次 <code>getConnection</code> 都要走完整的 TCP 握手 + 认证 + 协议协商，毫秒级开销，高频请求下光建连接就能把数据库打垮；连接池复用已建立的连接，把”建连”成本摊薄到几乎为零。</li>
+<li><strong>常见连接池有哪些？</strong> HikariCP（Spring Boot 默认，快、轻）、Druid（阿里，监控&#x2F;慢 SQL 日志&#x2F;防 SQL 注入内置能力强，国内 Java 团队常用）、DBCP&#x2F;C3P0（老牌，新项目基本不用了）。</li>
+<li><strong>最大连接数怎么设置？</strong> 先看数据库侧 <code>max_connections</code>（默认 151），应用侧池大小按业务峰值并发估算，再留余量。经验值：单实例 <code>maximumPoolSize</code> 20~50 常见，但必须验算”连接池大小 × 应用实例数”是否撞到数据库上限；Hikari 官方建议池大小 ≈ <code>(核数 × 2) + 有效磁盘数</code>，实际上以压测为准。</li>
+<li><strong>连接泄漏怎么发现？</strong> 现象：池里的连接被借出不还，活跃连接数只涨不降，最终池耗尽。发现手段：Druid 的 <code>leakDetectionThreshold</code>（连接借出超过阈值记为泄漏并告警）、Hikari 的 <code>leakDetectionThreshold</code>；监控池的活跃连接曲线；代码上强制用 try-with-resources 保证归还。</li>
+<li><strong>数据库连接池耗尽会出现什么现象？</strong> 应用获取连接超时（Hikari 抛 <code>SQLTransientConnectionException: HikariPool-1 - Connection is not available</code>），请求线程集体阻塞在拿连接上，接口变慢直至大面积超时；数据库侧连接数打满，新连接被拒。</li>
+</ul>
+<hr>
+<h3 id="13-线上-MySQL-突然出现大量连接，你怎么排？"><a href="#13-线上-MySQL-突然出现大量连接，你怎么排？" class="headerlink" title="13. 线上 MySQL 突然出现大量连接，你怎么排？"></a>13. 线上 MySQL 突然出现大量连接，你怎么排？</h3><p><strong>参考答案</strong></p>
+<p>一套固定的 SQL 走下来：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 1. 先看连接和状态分布</span></span><br><span class="line"><span class="keyword">SHOW</span> STATUS <span class="keyword">LIKE</span> <span class="string">&#x27;Threads_connected&#x27;</span>;   <span class="comment">-- 当前连接数</span></span><br><span class="line"><span class="keyword">SHOW</span> STATUS <span class="keyword">LIKE</span> <span class="string">&#x27;Threads_running&#x27;</span>;     <span class="comment">-- 正在执行查询的线程数</span></span><br><span class="line"><span class="keyword">SHOW</span> VARIABLES <span class="keyword">LIKE</span> <span class="string">&#x27;max_connections&#x27;</span>;  <span class="comment">-- 上限</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 2. 再看每个连接在干什么</span></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">FULL</span> PROCESSLIST;                  <span class="comment">-- 每个连接的状态、执行时间、当前 SQL</span></span><br></pre></td></tr></table></figure>
+
+<p>判断逻辑：<code>Threads_connected</code> 接近 <code>max_connections</code> 是”连接满了”，<code>Threads_running</code> 高是”真在跑”,两者要分开看。processlist 里重点盯两类：<code>state=Query</code> 且 <code>Time</code> 很大的（慢 SQL 占着连接不放）、大量 <code>Sleep</code> 的连接（多半是连接池空闲连接或泄漏）。</p>
+<p><strong>追问解析</strong></p>
+<ul>
+<li><strong>Threads_connected 很高说明什么？</strong> 说明连接数多，但连接本身不干活时开销并不大（Sleep 状态只占内存）。高的原因可能是：应用连接池配置过大、连接泄漏、并发突增、多个实例连接数叠加超过上限。</li>
+<li><strong>Threads_running 高又说明什么？</strong> 说明真有大量查询在执行，这是”数据库在忙”的信号，指向慢 SQL、锁等待、大查询并发。<code>Threads_running</code> 持续高于 CPU 核数几倍，基本可以断定有慢 SQL 或锁问题。</li>
+<li><strong>怎么判断是不是应用连接池配置有问题？</strong> 看两点：processlist 里连接来源 IP&#x2F;账号是不是都来自同一应用，数量是不是刚好等于”池大小 × 实例数”；如果连接数长期贴在池上限，说明池开大了或者并发真到峰了。反过来如果应用报”获取连接超时”而数据库连接数还有余量，是池太小。</li>
+<li><strong>怎么判断是不是慢 SQL 导致连接一直不释放？</strong> processlist 里 <code>state=Query</code> 且 <code>Time</code> 很大的连接就是慢 SQL，<code>SELECT</code> 类慢 SQL 会一直占着连接直到查完；另外用 <code>performance_schema</code> 或 <code>information_schema.innodb_trx</code> 查长时间未提交的事务（连接显示 Sleep 但事务没提交，也会占着连接和锁）。</li>
+</ul>
+<hr>
+<h3 id="14-让你设计数据库访问，你如何避免-SQL-注入？"><a href="#14-让你设计数据库访问，你如何避免-SQL-注入？" class="headerlink" title="14. 让你设计数据库访问，你如何避免 SQL 注入？"></a>14. 让你设计数据库访问，你如何避免 SQL 注入？</h3><p><strong>参考答案</strong></p>
+<p>三层防线：</p>
+<ol>
+<li><strong>参数化（根本解法）</strong>：所有用户输入进 SQL 都走参数绑定——JDBC 用 <code>PreparedStatement</code>，MyBatis 用 <code>#{}</code>。SQL 结构和数据分离，输入永远只是”值”，不可能变成”可执行的语句片段”。</li>
+<li><strong>输入校验</strong>：业务侧对参数类型、长度、格式做白名单校验；特殊场景（动态表名、排序字段）用枚举白名单映射，杜绝直接拼接。</li>
+<li><strong>权限最小化</strong>：应用账号只授 <code>SELECT/INSERT/UPDATE/DELETE</code>，不给 DDL、不给 root；即使注入成功，能做的事也被锁死。</li>
+</ol>
+<p><strong>追问解析</strong></p>
+<ul>
+<li><strong>PreparedStatement 原理？</strong> 预编译：SQL 骨架先发给 MySQL 服务端解析、编译成执行计划并缓存，参数通过协议单独传输占位。所以参数再特殊也只是数据，不会参与 SQL 语法解析——这是它防注入的根本原因，顺带还有性能收益（执行计划复用）。</li>
+<li><strong>MyBatis 如何防 SQL 注入？</strong> 用 <code>#{}</code> 时 MyBatis 生成 PreparedStatement 的占位符（<code>?</code>），参数走绑定，天然防注入。</li>
+<li><strong>$ 和 # 有什么区别？</strong> <code>#{}</code> 是预编译占位符，安全；<code>${}</code> 是字符串直接拼接进 SQL（比如 <code>ORDER BY ${sort}</code>），不安全，且不能参数化。规范：<code>${}</code> 只允许用在白名单控制的表名&#x2F;列名&#x2F;排序字段上，且值必须经过白名单校验。</li>
+<li><strong>数据库权限应该怎么设计？</strong> 按角色最小授权：应用账号只给业务表的 DML，不给 <code>GRANT</code>&#x2F;DDL；只读账号（报表、巡检）只给 SELECT；DBA 操作走独立的高权账号 + 审批。库、表级权限分开，生产&#x2F;测试环境账号隔离。</li>
+<li><strong>应用账号为什么不能直接使用 root？</strong> root 权限无边界：能改表结构、能改权限、能删库，一旦应用侧被注入或代码 bug，破坏半径是整库而不是单表；root 也绕过了审计（无法区分是哪个应用在操作）。最小权限 + 可审计，是生产数据库的基本底线。</li>
+</ul>
+<hr>
+<h3 id="15-MySQL-一条-SQL-从-1-秒突然变成-20-秒，你怎么定位？"><a href="#15-MySQL-一条-SQL-从-1-秒突然变成-20-秒，你怎么定位？" class="headerlink" title="15. MySQL 一条 SQL 从 1 秒突然变成 20 秒，你怎么定位？"></a>15. MySQL 一条 SQL 从 1 秒突然变成 20 秒，你怎么定位？</h3><p><strong>参考答案</strong></p>
+<p>按这条链路一路排，每一层有明确的验证动作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">慢 SQL → EXPLAIN → 索引 → 锁 → 统计信息 → CPU/IO → Buffer Pool → 连接池 → 应用侧</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>确认慢 SQL 本身</strong>：慢查询日志（<code>slow_query_log</code>）或 performance_schema 里捞这条 SQL，拿到完整语句和耗时分布。</li>
+<li><strong>EXPLAIN 看执行计划</strong>：重点看 <code>type</code>（ALL 全表扫描是信号）、<code>key</code>（走没走索引）、<code>rows</code>（预估扫描行数，和实际数据量对比）、<code>Extra</code>（<code>Using filesort</code>&#x2F;<code>Using temporary</code> 都是性能杀手）。</li>
+<li><strong>索引</strong>：没走索引&#x2F;索引失效（函数、隐式类型转换、前导通配符 <code>%xxx</code>）→ 补索引或改写法；走了索引但 <code>rows</code> 还是大 → 索引选择性差。</li>
+<li><strong>锁</strong>：<code>SHOW ENGINE INNODB STATUS</code> 或 <code>information_schema.innodb_trx</code> 看行锁等待、<code>metadata lock</code>（MDL 锁，DDL 和长事务互卡，线上经典问题）。</li>
+<li><strong>服务器资源</strong>：<code>top</code>&#x2F;<code>iostat</code>&#x2F;<code>vmstat</code> 看 CPU、磁盘 IO；数据没进内存时磁盘读放大（Buffer Pool 命中率低）。</li>
+<li><strong>Buffer Pool</strong>：<code>SHOW GLOBAL STATUS LIKE &#39;Innodb_buffer_pool_read%&#39;</code> 看命中率，命中率低且库大 → <code>innodb_buffer_pool_size</code> 偏小。</li>
+<li><strong>连接池&#x2F;应用侧</strong>：同一时刻连接池是否被占满、是否并发同一慢 SQL 互相放大；应用侧是否并发飙高。</li>
+</ol>
+<p>回答时强调”先确认这是偶发还是持续、是这一条还是这一类 SQL”，然后从执行计划入手——<code>EXPLAIN</code> 之后 80% 的情况落在索引或锁上。</p>
+<hr>
+<h3 id="16-你做过数据库备份，那你怎么证明”备份是有效的”？"><a href="#16-你做过数据库备份，那你怎么证明”备份是有效的”？" class="headerlink" title="16. 你做过数据库备份，那你怎么证明”备份是有效的”？"></a>16. 你做过数据库备份，那你怎么证明”备份是有效的”？</h3><p><strong>参考答案</strong></p>
+<p>核心观点：<strong>备份没验证过就等于没有备份</strong>。证明有效分三层：</p>
+<ol>
+<li><strong>文件层</strong>：备份产物（如 <code>.sql</code>）要检查完整性——文件大小非零、结尾有正常结束标记（mysqldump 的 <code>--dump-slave</code>&#x2F;注释结尾）、可解压可解析；mysqldump 加 <code>--single-transaction --routines --triggers</code> 保证一致性和完整性。</li>
+<li><strong>校验层</strong>：校验和比对（备份文件 sha256）、<code>mysqlcheck</code> 检查表结构完整性、备份日志里无报错。</li>
+<li><strong>恢复层（最重要）</strong>：定期在独立环境做<strong>恢复演练</strong>——把备份恢复到测试库，然后抽查数据一致性：总行数、关键表 checksum（<code>CHECKSUM TABLE</code>）、抽样数据对比，甚至跑一遍核心查询确认可服务。</li>
+</ol>
+<p><strong>追问解析</strong></p>
+<ul>
+<li><strong>单纯看到 .sql 文件存在能不能证明备份成功？</strong> 不能。文件存在只能说明 mysqldump 命令跑完了（或没跑完但留下了半成品），不能说明数据完整、可恢复。常见翻车现场：磁盘满导致备份文件截断、脚本中途失败但文件在、备份的库根本不是线上那个。</li>
+<li><strong>如何验证备份完整性？</strong> 文件层：大小、行数、结尾标记、校验和；结构层：<code>mysqlcheck</code> &#x2F; 导入到临时库看报错；数据层：恢复后 <code>CHECKSUM TABLE</code> 和源库比对（或与上次备份比对）。</li>
+<li><strong>如何做恢复测试？</strong> 定期（比如每月）把最新备份恢复到测试实例，执行：表数量&#x2F;行数核对、checksum 比对、代表性查询、应用冒烟。恢复测试要纳入备份制度，不能想起来才做。</li>
+<li><strong>全量 + 增量怎么设计？</strong> 全量备份（每周&#x2F;每天，mysqldump 或物理备份 XtraBackup）+ 增量基于 binlog 重放（记录备份时刻的 binlog 文件+位点，之后把该位点之后的 binlog 按时间片归档）。恢复时：全量恢复 → 追增量 binlog 到目标时间点。</li>
+<li><strong>binlog 怎么配合？</strong> 备份时记录 <code>SHOW MASTER STATUS</code> 的 <code>File</code> + <code>Position</code>（或 GTID），这就是增量起点；binlog 要开启并设置 <code>expire_logs_days</code>&#x2F;<code>binlog_expire_logs_seconds</code> 让保留期覆盖备份周期，确保增量链不中断。</li>
+<li><strong>数据库迁移以后怎么接着同步源库产生的数据？</strong> 迁移完成 ≠ 数据同步完成：源库在迁移期间还在写。做法：迁移前记录 binlog 位点，迁移完成后继续消费&#x2F;重放源库该位点之后的 binlog（用 Canal &#x2F; DataX &#x2F; 自研 binlog 消费脚本），把增量追平后再做一致性校验，最后才切换写流量。这个回答对应简历上的真实迁移经历，能讲出”位点 + 增量追平 + 切换”三步就是实战过的。</li>
+</ul>
+<hr>
+<h2 id="五、多数据库：JD-写了-Oracle-x2F-MySQL-x2F-SQL-Server-x2F-MongoDB-x2F-Redis"><a href="#五、多数据库：JD-写了-Oracle-x2F-MySQL-x2F-SQL-Server-x2F-MongoDB-x2F-Redis" class="headerlink" title="五、多数据库：JD 写了 Oracle &#x2F; MySQL &#x2F; SQL Server &#x2F; MongoDB &#x2F; Redis"></a>五、多数据库：JD 写了 Oracle &#x2F; MySQL &#x2F; SQL Server &#x2F; MongoDB &#x2F; Redis</h2><p>这里大概率是挑一个主数据库深问，其他只确认你有没有实际碰过。重点深准备 MySQL 和 Redis，Oracle 会问思路。</p>
+<h3 id="17-你实际用得最多的是-MySQL，Oracle-你主要做过什么？"><a href="#17-你实际用得最多的是-MySQL，Oracle-你主要做过什么？" class="headerlink" title="17. 你实际用得最多的是 MySQL，Oracle 你主要做过什么？"></a>17. 你实际用得最多的是 MySQL，Oracle 你主要做过什么？</h3><p><strong>参考答案</strong></p>
+<p>如实交代接触深度（比如：做过 Oracle 上的查询分析、慢 SQL 定位、表空间监控、数据迁移，没有像 MySQL 那样完整负责过），然后立刻把对比讲出来，展示你知道差异在哪：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Oracle</th>
+<th>MySQL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>架构</td>
+<td>实例（SGA&#x2F;PGA）+ 数据库，共享内存管理</td>
+<td>单进程多线程架构（8.0），存储引擎层</td>
+</tr>
+<tr>
+<td>存储</td>
+<td>逻辑结构：表空间 → 段 → 区 → 块，数据文件组成表空间</td>
+<td>表空间&#x2F;独立表空间，由 InnoDB 管理</td>
+</tr>
+<tr>
+<td>分页</td>
+<td><code>ROWNUM</code>&#x2F;<code>FETCH FIRST</code>，无 <code>LIMIT</code></td>
+<td><code>LIMIT n,m</code></td>
+</tr>
+<tr>
+<td>空值</td>
+<td>空字符串视为 NULL</td>
+<td>空字符串和 NULL 不同</td>
+</tr>
+<tr>
+<td>事务&#x2F;锁</td>
+<td>默认读不阻塞写（MVCC+回滚段），行锁</td>
+<td>InnoDB MVCC，行锁（有锁间隙&#x2F;死锁检测）</td>
+</tr>
+<tr>
+<td>高可用</td>
+<td>RAC（共享存储集群）、DataGuard（物理&#x2F;逻辑备库）</td>
+<td>主从复制、MGR、半同步</td>
+</tr>
+<tr>
+<td>运维</td>
+<td>表空间满、undo 表空间、AWR 报告</td>
+<td>慢日志、processlist、Buffer Pool</td>
+</tr>
+</tbody></table>
+<p><strong>追问解析</strong></p>
+<ul>
+<li><strong>Oracle 和 MySQL 最大区别？</strong> 一句话版：Oracle 是”实例 + 数据库”的大而全体系，强调企业级功能（RAC、DataGuard、AWR、细粒度权限），SQL 和存储逻辑都是自己的体系；MySQL 是”轻量 + 存储引擎插件化”（InnoDB&#x2F;MyISAM），靠主从复制和中间件横向扩展。运维上最大的体感差异：Oracle 的表空间管理、undo&#x2F;temp 空间是日常重点，MySQL 的重点是慢 SQL 和主从。</li>
+<li><strong>Oracle 怎么查看当前连接？</strong> <code>SELECT sid, serial#, username, machine, program, status FROM v$session;</code>，<code>v$session</code> 就是 Oracle 版的 processlist。</li>
+<li><strong>怎么定位慢 SQL？</strong> 三个入口：<code>v$session</code> 里找 <code>SQL_ID</code> → 用 <code>SQL_ID</code> 查 <code>v$sql</code>&#x2F;<code>v$sqlarea</code> 拿 SQL 文本和执行统计；或直接出 AWR 报告（<code>awrrpt.sql</code>）看 Top SQL；再看执行计划（<code>DBMS_XPLAN.DISPLAY_CURSOR</code>）。Oracle 的慢 SQL 定位比 MySQL 更体系化，AWR 是 DBA 的标配工具。</li>
+<li><strong>表空间是什么？</strong> Oracle 的逻辑存储容器：数据按 表空间→段→区→块 组织，表空间由一个或多个数据文件（<code>.dbf</code>）组成，表&#x2F;索引创建时落在某个表空间里。类比 MySQL：表空间 ≈ 一个”容器”，对应磁盘上的数据文件。</li>
+<li><strong>Oracle 为什么会出现表空间不足？</strong> 最常见：数据文件达到 maxsize 或自动扩展（<code>AUTOEXTEND</code>）没开&#x2F;被关；undo 表空间被长事务撑爆（经典，大事务回滚段暴涨）；temp 表空间被大排序&#x2F;大哈希撑爆；还有表空间碎片。运维日常就是监控表空间使用率 + 提前加数据文件或开自动扩展。</li>
+</ul>
+<hr>
+<h3 id="18-Redis-在你的项目里承担什么角色？为什么不用-MySQL？"><a href="#18-Redis-在你的项目里承担什么角色？为什么不用-MySQL？" class="headerlink" title="18. Redis 在你的项目里承担什么角色？为什么不用 MySQL？"></a>18. Redis 在你的项目里承担什么角色？为什么不用 MySQL？</h3><p><strong>参考答案</strong></p>
+<p>我的项目里 Redis 承担四类角色：<strong>缓存</strong>（热点数据，扛读流量）、<strong>计数器&#x2F;限流</strong>（QPS 统计、接口限流、库存扣减的原子操作）、<strong>分布式锁</strong>（多实例互斥，如批量任务的排他执行）、<strong>轻量队列</strong>（发布订阅、延迟队列）。选 Redis 而不是 MySQL 做这些事，核心就一句话：<strong>MySQL 是把数据”落盘管起来”，Redis 是把数据”放在内存里快取快读”，两者是不同成本结构的工具</strong>——缓存&#x2F;计数场景要求的是纳秒级读写和原子操作，MySQL 的磁盘 IO 和行锁在这个场景下成本高一个数量级，且扛不住同样的读写并发。</p>
+<p><strong>追问解析</strong></p>
+<ul>
+<li><strong>Redis 数据类型？</strong> string（缓存、计数器）、hash（对象&#x2F;字段级存取）、list（消息队列、最新列表）、set（去重、共同好友）、zset（排行榜、延迟队列，按分数排序）、另外还有 stream（真正带 ack 的消息队列）、bitmap、HyperLogLog。</li>
+<li><strong>缓存穿透？</strong> 查一个<strong>不存在</strong>的数据，缓存永远没有，请求全部打到数据库。解决：① 空值也缓存（设短过期）；② <strong>布隆过滤器</strong>在缓存前拦截不存在的 key；③ 参数校验兜底。</li>
+<li><strong>缓存击穿？</strong> 一个<strong>热点 key 过期</strong>的瞬间，大量请求同时打到数据库。解决：① 互斥锁（只让一个请求回源，其他等待）；② 逻辑过期（value 里带过期时间，异步刷新）；③ 热点 key 不过期 + 后台续期。</li>
+<li><strong>缓存雪崩？</strong> 大量 key 同时过期（或 Redis 整体宕机），请求洪峰全压到数据库。解决：① 过期时间加<strong>随机值</strong>错峰；② 多级缓存（本地缓存 Caffeine + Redis）；③ Redis 高可用（哨兵&#x2F;集群）避免整机宕机；④ 限流降级兜底。</li>
+<li><strong>Redis 持久化？</strong> RDB（定期快照，恢复快、可能丢最后一次快照后的数据）和 AOF（追加写，丢数据少、文件大、恢复慢），4.0 后有混合持久化（RDB 基座 + AOF 增量）。选型：允许丢分钟级数据用 RDB，要尽量不丢用 AOF，默认混合。</li>
+<li><strong>Redis 内存满了怎么办？</strong> 靠 <code>maxmemory</code> + 淘汰策略：<code>noeviction</code>（不淘汰，写报错）、<code>allkeys-lru</code>&#x2F;<code>volatile-lru</code>（按 LRU 淘汰）、<code>allkeys-lfu</code>&#x2F;<code>volatile-lfu</code>（按 LFU）、<code>volatile-ttl</code>（优先淘汰快过期的）。选型逻辑：缓存场景用 allkeys-lfu 或 allkeys-lru；有持久化要求的键要小心淘汰。更根本的解法是扩容&#x2F;加节点，淘汰只是兜底。</li>
+</ul>
+<hr>
+<h3 id="19-MongoDB-和-MySQL，你什么时候会选-MongoDB？"><a href="#19-MongoDB-和-MySQL，你什么时候会选-MongoDB？" class="headerlink" title="19. MongoDB 和 MySQL，你什么时候会选 MongoDB？"></a>19. MongoDB 和 MySQL，你什么时候会选 MongoDB？</h3><p><strong>参考答案</strong></p>
+<p>选型看四点：<strong>数据模型、事务需求、写入规模、查询方式</strong>。</p>
+<p>选 MongoDB 的场景：① 数据是文档&#x2F;JSON 形态（配置、日志、埋点、IoT 数据），字段不固定，用文档模型比关系表舒服；② 高写入量、水平扩展优先（Mongo 分片是原生的）；③ 查询就是按 key&#x2F;范围查，不需要复杂 join；④ 对强事务要求不高（MongoDB 4.0+ 支持事务，但能力与生态仍弱于 MySQL）。</p>
+<p>选 MySQL 的场景：① 强事务、强一致（订单、支付、账务）；② 复杂关联查询、报表统计；③ 团队熟悉度、生态工具（binlog 同步、ORM、运维体系）。</p>
+<p>一句话总结：<strong>关系型数据、钱相关、要 join 要事务的选 MySQL；海量、写多、结构松散的选 MongoDB</strong>。面试官听的是你有没有选型判断力，而不是背书。</p>
+<hr>
+<h2 id="六、Java：重点不是”写-Java”，而是”能不能看懂和运维-Java-系统”"><a href="#六、Java：重点不是”写-Java”，而是”能不能看懂和运维-Java-系统”" class="headerlink" title="六、Java：重点不是”写 Java”，而是”能不能看懂和运维 Java 系统”"></a>六、Java：重点不是”写 Java”，而是”能不能看懂和运维 Java 系统”</h2><h3 id="20-你自己不一定是-Java-开发，现在让你接手一个-Spring-Boot-服务，你怎么判断它是否运行正常？"><a href="#20-你自己不一定是-Java-开发，现在让你接手一个-Spring-Boot-服务，你怎么判断它是否运行正常？" class="headerlink" title="20. 你自己不一定是 Java 开发，现在让你接手一个 Spring Boot 服务，你怎么判断它是否运行正常？"></a>20. 你自己不一定是 Java 开发，现在让你接手一个 Spring Boot 服务，你怎么判断它是否运行正常？</h3><p><strong>参考答案</strong></p>
+<p>按”由外到内、由表到里”的清单过一遍，每一层都有具体命令：</p>
+<ol>
+<li><strong>进程</strong>：<code>ps -ef | grep java</code> &#x2F; <code>jps -l</code>，确认 JVM 进程存活、启动参数正确。</li>
+<li><strong>端口</strong>：<code>ss -lntp | grep &lt;port&gt;</code>，确认监听正常。</li>
+<li><strong>日志</strong>：<code>tail -f /var/log/app/app.log</code>，最近时段有没有 ERROR、异常堆栈、频繁重试。</li>
+<li><strong>JVM</strong>：<code>jstat -gcutil &lt;pid&gt; 1000</code> 看内存和 GC 曲线，<code>jmap -heap &lt;pid&gt;</code> 看堆配置；<code>jstack &lt;pid&gt;</code> 看线程。</li>
+<li><strong>接口</strong>：<code>curl http://127.0.0.1:&lt;port&gt;/actuator/health</code> 看整体状态，再探关键业务接口的耗时和返回码；<code>/actuator/metrics</code> 看 HTTP 请求量、线程池指标。</li>
+<li><strong>线程</strong>：<code>jstack</code> 里有没有大量 BLOCKED&#x2F;WAITING 堆积，Tomcat 工作线程（<code>http-nio-xxx-exec-N</code>）数量是否健康。</li>
+<li><strong>GC</strong>：<code>jstat -gcutil</code> 看 YGC&#x2F;FGC 频率、GC 耗时；Full GC 频繁是内存问题信号。</li>
+<li><strong>数据库连接</strong>：看连接池指标（Druid&#x2F;Hikari 的活跃连接数），以及数据库侧该应用来源的连接是否正常。</li>
+</ol>
+<p>最后综合判断：进程在、端口在、健康接口 UP、日志干净、GC 平稳、连接池有余量——这才叫”运行正常”。面试官想听的是：<strong>你不是只会看进程，而是有完整的健康检查维度</strong>。</p>
+<hr>
+<h3 id="21-Spring-Boot-服务启动失败，你会从哪些方面排查？"><a href="#21-Spring-Boot-服务启动失败，你会从哪些方面排查？" class="headerlink" title="21. Spring Boot 服务启动失败，你会从哪些方面排查？"></a>21. Spring Boot 服务启动失败，你会从哪些方面排查？</h3><p><strong>参考答案</strong></p>
+<p>通用思路先讲：<strong>看完整日志而不是只看报错标题</strong>——Spring Boot 启动失败，异常堆栈的 <code>Caused by</code> 链才是根因，多数时候顺着最底下的 cause 就能定位。然后按错误类型分诊：</p>
+<ul>
+<li><code>Failed to configure a DataSource</code>：pom 里带了 spring-boot-starter-jdbc &#x2F; 数据源相关依赖，但配置里没有数据源或连接不上。先查 <code>application.yml</code> 的 <code>spring.datasource.*</code> 是否完整、数据库是否可达。</li>
+<li><code>BeanCreationException</code>：Bean 创建失败，常见是依赖注入不满足（缺配置、Bean 不存在、循环依赖）。看堆栈里创建的是哪个 Bean、缺哪个依赖。</li>
+<li><code>OutOfMemoryError</code>：JVM 内存不足，查启动参数 <code>-Xmx</code> 是否合理、堆是否瞬间被撑爆；配合 dump 分析（见题 25）。</li>
+<li><code>Connection refused</code>：依赖服务（MySQL&#x2F;Redis&#x2F;Kafka&#x2F;注册中心）没起来或地址端口配错，<code>nc -zv</code> 验证网络。</li>
+<li><code>Port already in use</code>：端口被占，<code>ss -lntp</code> &#x2F; <code>lsof -i:&lt;port&gt;</code> 找到占用进程，是旧实例没退干净还是别的服务。</li>
+</ul>
+<p>排查顺序总结：日志（完整堆栈）→ 配置（数据源&#x2F;依赖地址）→ 依赖服务（网络连通）→ 资源（端口&#x2F;内存）。最后才是业务代码。</p>
+<hr>
+<h3 id="22-你怎么判断一个-Java-服务到底是应用问题、JVM-问题还是数据库问题？"><a href="#22-你怎么判断一个-Java-服务到底是应用问题、JVM-问题还是数据库问题？" class="headerlink" title="22. 你怎么判断一个 Java 服务到底是应用问题、JVM 问题还是数据库问题？"></a>22. 你怎么判断一个 Java 服务到底是应用问题、JVM 问题还是数据库问题？</h3><p><strong>参考答案</strong></p>
+<p>这是一个分层判断题，思路是<strong>用指标排除法 + 耗时分布定位</strong>：</p>
+<ol>
+<li><strong>先看影响面</strong>：是所有接口都慢，还是个别接口慢？全慢 → 大概率是共享资源（JVM&#x2F;数据库&#x2F;线程池&#x2F;网络）；个别慢 → 大概率是应用代码或特定依赖。</li>
+<li><strong>看数据库侧</strong>：数据库 CPU、<code>Threads_running</code>、慢 SQL 数、锁等待是否异常。数据库忙 → 问题在 DB（慢 SQL、锁、容量），此时接口慢只是症状。</li>
+<li><strong>看 JVM 侧</strong>：<code>jstat -gcutil</code> 看 GC 频率和耗时。Full GC 频繁 → JVM 内存&#x2F;GC 问题；GC 正常但接口慢 → 排除 JVM。</li>
+<li><strong>看线程侧</strong>：<code>jstack</code> 看线程状态。大量 BLOCKED 等锁 → 锁竞争；工作线程耗尽 → 线程池问题；大量线程在 JDBC 调用上 → 问题在下游数据库。</li>
+<li><strong>看应用侧</strong>：接口耗时的内部构成（Arthas <code>trace</code> 能按方法拆耗时），定位慢在哪一段代码&#x2F;哪个调用。</li>
+</ol>
+<p>判断口诀：<strong>先看有没有慢 SQL 和数据库异常（数据库问题最常见），再看 GC 和堆（JVM 问题），最后才是应用代码</strong>。面试官要的就是这个”先排除后定位”的思维，而不是上来就猜。</p>
+<hr>
+<h2 id="七、Java-性能调优：JD-第-8-条明确写出来的"><a href="#七、Java-性能调优：JD-第-8-条明确写出来的" class="headerlink" title="七、Java 性能调优：JD 第 8 条明确写出来的"></a>七、Java 性能调优：JD 第 8 条明确写出来的</h2><h3 id="23-线上-Java-应用-CPU-100-，完整排查流程是什么？"><a href="#23-线上-Java-应用-CPU-100-，完整排查流程是什么？" class="headerlink" title="23. 线上 Java 应用 CPU 100%，完整排查流程是什么？"></a>23. 线上 Java 应用 CPU 100%，完整排查流程是什么？</h3><p><strong>参考答案</strong></p>
+<p>这是必考题，完整链路：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">top                                <span class="comment"># 1. 找到 CPU 高的 Java 进程，记下 PID</span></span><br><span class="line">top -H -p &lt;PID&gt;                    <span class="comment"># 2. 线程视角，找到最耗 CPU 的 TID</span></span><br><span class="line"><span class="built_in">printf</span> <span class="string">&quot;%x\n&quot;</span> &lt;TID&gt;                <span class="comment"># 3. TID 转十六进制（就是 jstack 里的 nid）</span></span><br><span class="line">jstack &lt;PID&gt; &gt; /tmp/jstack.log     <span class="comment"># 4. 抓线程栈（多抓几次，间隔几秒，看是否稳定在同一栈）</span></span><br><span class="line">grep -A 30 <span class="string">&quot;nid=0x&lt;hex&gt;&quot;</span> /tmp/jstack.log   <span class="comment"># 5. 定位到线程栈</span></span><br></pre></td></tr></table></figure>
+
+<p>定位到线程栈之后看三件事：</p>
+<ol>
+<li><strong>线程名</strong>：<code>GC task thread</code> → 是 GC 在烧 CPU，方向转向堆内存；<code>C2 CompilerThread</code> → JIT 编译热（通常正常，看是否持续）；<code>http-nio-xxx-exec-N</code> → 业务工作线程，看它跑在哪。</li>
+<li><strong>栈帧</strong>：RUNNABLE 状态 + 栈顶出现<strong>业务包名</strong>（<code>com.xxx.xxx</code>）的方法 → 就是业务代码死循环&#x2F;高频计算；栈顶是 JDK 类库（<code>java.util.HashMap</code>、正则、加密）→ 定位到具体调用方。</li>
+<li><strong>多次抓栈对比</strong>：线程一直卡在同一段代码 → 死循环或锁旋转；每次栈不一样 → 可能是高吞吐计算。</li>
+</ol>
+<p>生产上补一句加分话：<code>jstack</code> 抓之前先 <code>jstat -gcutil</code> 排除 GC 因素，抓栈时多抓 3 次间隔 3 秒，避免抓到一个瞬时状态误判。</p>
+<hr>
+<h3 id="24-Java-服务频繁-Full-GC，你怎么排查？"><a href="#24-Java-服务频繁-Full-GC，你怎么排查？" class="headerlink" title="24. Java 服务频繁 Full GC，你怎么排查？"></a>24. Java 服务频繁 Full GC，你怎么排查？</h3><p><strong>参考答案</strong></p>
+<p>排查链路：</p>
+<ol>
+<li><strong>先确认事实</strong>：<code>jstat -gcutil &lt;pid&gt; 1000</code> 连续观察，看 FGC 次数和间隔、<code>O</code>（老年代）占比。Full GC 多久一次、每次 STW 多久，先量化。</li>
+<li><strong>看对象去向</strong>：<code>S0/S1/E</code> 看新生代，<code>O</code> 看老年代。老年代使用率持续高位不降 → 有对象堆积。</li>
+<li><strong>找堆积原因</strong>，按可能性排：<ul>
+<li><strong>新生代太小</strong>：YGC 频繁、对象没来得及回收就晋升老年代；</li>
+<li><strong>大对象</strong>：超大数组&#x2F;集合直接进老年代（<code>-XX:PretenureSizeThreshold</code> 相关）；</li>
+<li><strong>内存泄漏</strong>：老年代只涨不降（静态集合、缓存不清理、类加载器泄漏）——这是最严重的情况；</li>
+<li><strong>GC 参数不合理</strong>：堆太小（<code>-Xmx</code> 不够）、或用了不适合的 GC（吞吐优先 vs 延迟优先）。</li>
+</ul>
+</li>
+<li><strong>取证</strong>：<code>jmap -dump:format=b,file=/tmp/heap.hprof &lt;pid&gt;</code> 抓 Heap Dump（生产注意暂停影响），用 MAT 分析（看支配树找大对象、Leak Suspects 报告）。</li>
+<li><strong>处置</strong>：参数调优（堆大小、GC 器选择、<code>-XX:NewRatio</code>）解决配置问题；代码修复解决泄漏问题；临时手段是扩容&#x2F;摘流量。</li>
+</ol>
+<p>关键判断：Full GC 后老年代能不能降下来——<strong>能降是”量的问题”（参数&#x2F;容量），不能降是”质的问题”（泄漏）</strong>，这是面试官最想听到的分水岭。</p>
+<hr>
+<h3 id="25-Java-应用内存一直涨，但是没有-OOM，你怎么判断是不是内存泄漏？"><a href="#25-Java-应用内存一直涨，但是没有-OOM，你怎么判断是不是内存泄漏？" class="headerlink" title="25. Java 应用内存一直涨，但是没有 OOM，你怎么判断是不是内存泄漏？"></a>25. Java 应用内存一直涨，但是没有 OOM，你怎么判断是不是内存泄漏？</h3><p><strong>参考答案</strong></p>
+<p>判断泄漏的本质：<strong>内存只涨不降，且 GC 后回不来</strong>。</p>
+<p>排查步骤：</p>
+<ol>
+<li><strong>观察曲线</strong>：<code>jstat -gcutil &lt;pid&gt;</code> 定期采样，画堆内存&#x2F;老年代使用率曲线。正常是有波动的（涨-回收-涨），泄漏是持续单调上升、每次 Full GC 后只降一点点又涨回去。</li>
+<li><strong>拿 Heap Dump</strong>：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:format=b,file=/tmp/heap.hprof &lt;pid&gt;</span><br></pre></td></tr></table></figure>
+注意：大堆 dump 会卡住 JVM（STW），生产要挑低峰期或先用 <code>jmap -histo</code> 看一眼对象分布。</li>
+<li><strong>MAT 分析</strong>：导入 dump 后看三样——<strong>Histogram</strong>（各类型对象数量和大小，哪个类的实例数异常大）、<strong>Dominator Tree</strong>（支配树，按”保留内存”排大对象）、<strong>Leak Suspects</strong>（MAT 自动怀疑泄漏的路径）。重点看”哪类对象一直增长”：如果是<strong>业务对象</strong>（<code>com.xxx</code>），看它的引用链（<code>Path to GC Roots</code>），谁持有它不放；如果是 <code>byte[]</code>&#x2F;集合，看被谁引用。</li>
+<li><strong>定位代码</strong>：从 MAT 的引用链往回推，找到”本该释放却被长期持有”的点。常见泄漏源头：静态集合只增不减、缓存没有过期策略、未关闭的资源（流&#x2F;连接）、ThreadLocal 未清理、类加载器泄漏。</li>
+</ol>
+<p>回答里体现”<strong>histo 看分布 → dump 看引用链 → 代码定位</strong>“三步，就是完整闭环。</p>
+<hr>
+<h3 id="26-Java-应用接口突然从-100ms-变成-5s，但-CPU-和内存都正常，你查什么？"><a href="#26-Java-应用接口突然从-100ms-变成-5s，但-CPU-和内存都正常，你查什么？" class="headerlink" title="26. Java 应用接口突然从 100ms 变成 5s，但 CPU 和内存都正常，你查什么？"></a>26. Java 应用接口突然从 100ms 变成 5s，但 CPU 和内存都正常，你查什么？</h3><p><strong>参考答案</strong></p>
+<p>CPU 和内存正常，说明不是计算和堆的问题，方向转向<strong>等待</strong>。按”等什么”排查：</p>
+<ol>
+<li><strong>线程池</strong>：<code>jstack</code> 看工作线程状态。如果线程都 Blocked&#x2F;Waiting 或线程数打满、任务在队列堆积 → 线程池耗尽，看是谁占了线程。</li>
+<li><strong>数据库</strong>：接口是不是在等 SQL？查慢 SQL、锁等待（processlist、innodb_trx），数据库连接池获取是否超时。</li>
+<li><strong>连接池</strong>：应用自身连接池（Redis&#x2F;MySQL）是否耗尽，获取连接在排队。</li>
+<li><strong>锁</strong>：<code>jstack</code> 里大量线程 BLOCKED 且 <code>waiting to lock</code> 同一个对象 → 锁竞争或死锁。</li>
+<li><strong>GC</strong>：<code>jstat -gcutil</code> 确认——GC 次数不多但单次 STW 长（比如老年代 GC 器配置不当），同样会拖慢接口。</li>
+<li><strong>下游服务</strong>：接口调用了别的服务&#x2F;API，下游慢了接口就慢。用 Arthas <code>trace</code> 或日志看耗时在哪一段（是自己代码、DB、Redis 还是 HTTP 调用）。</li>
+<li><strong>磁盘 IO</strong>：日志写盘、数据文件落盘是否成瓶颈，<code>iostat -x 1</code> 看 <code>%util</code> 和 await。</li>
+<li><strong>网络</strong>：TCP 重传、带宽打满（<code>sar -n DEV</code>），跨机房调用尤其要查。</li>
+</ol>
+<p>排查顺序建议：先 <code>jstack</code> 看线程在等什么（一次就能看到大部分答案），再用 Arthas <code>trace</code> 拆接口耗时构成，最后针对性的看数据库&#x2F;连接池&#x2F;下游。**”CPU 正常说明不是算不过来，而是等不到”**——这句话点出方向，面试官会认可。</p>
+<hr>
+<h2 id="八、Kafka：JD-写了”Kafka-等组件开发，快速完成方案”，偏运维-故障"><a href="#八、Kafka：JD-写了”Kafka-等组件开发，快速完成方案”，偏运维-故障" class="headerlink" title="八、Kafka：JD 写了”Kafka 等组件开发，快速完成方案”，偏运维 + 故障"></a>八、Kafka：JD 写了”Kafka 等组件开发，快速完成方案”，偏运维 + 故障</h2><h3 id="27-Kafka-消息开始大量积压，你接到告警以后第一时间看什么？"><a href="#27-Kafka-消息开始大量积压，你接到告警以后第一时间看什么？" class="headerlink" title="27. Kafka 消息开始大量积压，你接到告警以后第一时间看什么？"></a>27. Kafka 消息开始大量积压，你接到告警以后第一时间看什么？</h3><p><strong>参考答案</strong></p>
+<p>第一件事是量化积压：<strong>Consumer Lag（消费者落后量）</strong>。用监控平台（kafka-exporter + Prometheus）或命令行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kafka-consumer-groups.sh --bootstrap-server &lt;broker&gt; --group &lt;group&gt; --describe</span><br><span class="line"><span class="comment"># 输出里看 LAG 列，哪个 topic-分区 lag 大</span></span><br></pre></td></tr></table></figure>
+
+<p>然后按这条链路走：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Consumer Lag → Consumer（哪个消费者组、是否存活）→ Partition（哪个分区积压）→ Broker（磁盘/CPU/网络）→ 下游</span><br></pre></td></tr></table></figure>
+
+<p>判断逻辑：<strong>先确认积压是真消费不动，还是只是某分区卡住</strong>。如果所有分区 lag 均匀上涨 → 消费整体变慢（处理能力或下游瓶颈）；如果只有个别分区 lag 大 → 该分区 leader 所在 broker 有问题，或该分区对应的消费线程卡死。</p>
+<p><strong>追问解析</strong></p>
+<ul>
+<li><strong>为什么积压先看 Consumer 而不是 Producer？</strong> 积压 &#x3D; 生产速率 &gt; 消费速率，生产端一般不会突然暴涨（可以先扫一眼确认），绝大多数积压是消费端跟不上：consumer 死了、rebalance 循环、处理变慢、下游依赖拖慢。先看消费端，命中率最高。</li>
+<li><strong>Consumer 侧要看什么？</strong> 消费者组是否在 rebalance（频繁 rebalance 会停止消费，表现为 lag 匀速上涨）、consumer 进程是否存活&#x2F;卡死、单条消息处理耗时是否变大、consumer 数量和分区数的比例是否合理。</li>
+<li><strong>Partition 侧要看什么？</strong> 积压集中在哪些分区、分区数和 consumer 数的关系、该分区 leader 在哪个 broker 上（那个 broker 是否异常）。</li>
+</ul>
+<hr>
+<h3 id="28-为什么一个-Consumer-消费不过来？"><a href="#28-为什么一个-Consumer-消费不过来？" class="headerlink" title="28. 为什么一个 Consumer 消费不过来？"></a>28. 为什么一个 Consumer 消费不过来？</h3><p><strong>参考答案</strong></p>
+<p>从吞吐公式拆：<strong>消费速率 &#x3D; 分区数 × 单分区消费速率</strong>，所以消费不过来无非四个原因：</p>
+<ol>
+<li><strong>Consumer 数量不够或超过分区数</strong>：一个分区同一时刻只能被组内一个 consumer 消费，consumer 数超过分区数的部分完全空闲；consumer 数小于分区数则必然有分区消费慢。</li>
+<li><strong>单条消息处理耗时过长</strong>：消费逻辑里有慢操作（同步调下游 API、写库慢、复杂计算），处理时间是吞吐的第一瓶颈。</li>
+<li><strong>频繁 Rebalance</strong>：consumer 心跳超时、处理耗时超过 <code>max.poll.interval.ms</code>、加入&#x2F;离开组，都会触发 rebalance，rebalance 期间<strong>整个组停止消费</strong>，lag 只涨不消。</li>
+<li><strong>下游瓶颈</strong>：消费要写数据库&#x2F;调下游接口，下游慢了消费就慢；DB 连接池打满、下游 API 超时，都会拖住 consumer。</li>
+</ol>
+<p><strong>追问解析</strong></p>
+<ul>
+<li><strong>Consumer 数量和 Partition 数量什么关系？</strong> 一个分区同一时刻只分配给组内一个 consumer；consumer 数 ≤ 分区数时，增加 consumer 能线性提升吞吐；consumer 数 &gt; 分区数时，多出的 consumer 空转。所以提升消费能力要么加分区（改 topic 分区数），要么在 consumer 数不大于分区数的前提下加 consumer。</li>
+<li><strong>单条消息处理耗时怎么定位？</strong> 看 consumer 日志里每条消息的处理耗时（或打点监控），用 Arthas&#x2F;profile 看消费方法内部慢在哪：是反序列化、写库、调下游还是锁等待。顺手看消息大小——消息体太大也会拖慢。</li>
+<li><strong>Consumer 是否频繁 Rebalance？</strong> 看消费组的 <code>kafka-consumer-groups --describe</code> 里成员变化，或监控 rebalance 次数（<code>kafka.consumer:type=consumer-coordinator-metrics</code> 的 <code>rebalance-rate</code>）。原因通常是：心跳超时（网络抖动、GC 停顿）、处理太慢超过 <code>max.poll.interval.ms</code>、<code>session.timeout.ms</code> 设置太小。</li>
+<li><strong>数据库是不是瓶颈？</strong> 消费端批量写库时，看 DB 的活跃连接、慢 SQL、锁等待；把”写库”从消费主链路里拆出来（批量攒批、异步写），吞吐立刻改善。</li>
+<li><strong>下游 API 是否慢？</strong> 如果消费里同步调下游，下游 P99 变高会直接吃掉消费速率；对策是超时&#x2F;熔断&#x2F;降级，或改成异步投递。</li>
+</ul>
+<hr>
+<h3 id="29-Kafka-消息为什么会重复消费？怎么解决？"><a href="#29-Kafka-消息为什么会重复消费？怎么解决？" class="headerlink" title="29. Kafka 消息为什么会重复消费？怎么解决？"></a>29. Kafka 消息为什么会重复消费？怎么解决？</h3><p><strong>参考答案</strong></p>
+<p>重复消费的机制链：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Consumer 消费了一条消息但还没来得及提交 offset</span><br><span class="line">→ Consumer 崩溃 / 触发 rebalance</span><br><span class="line">→ 组重新分配分区，新的 consumer 从&quot;最后已提交的 offset&quot;继续消费</span><br><span class="line">→ 那条没提交的消息被重新拉取 → 重复消费</span><br></pre></td></tr></table></figure>
+
+<p>根因就是一条：<strong>offset 的提交时机晚于业务处理完成，且提交与业务处理不是原子的</strong>。所以重复消费在 Kafka 语义下<strong>无法绝对避免</strong>（除非用事务做到恰好一次），工程上的标准解法是<strong>消费端幂等</strong>。</p>
+<p>解决思路分三层：</p>
+<ol>
+<li><strong>幂等消费（根本解法）</strong>：业务处理做成幂等——用业务唯一键（订单号、消息 ID）去重：消费前查去重表&#x2F;Redis set，已处理过直接跳过；或数据库用唯一索引 + <code>INSERT ... ON DUPLICATE KEY</code> 兜底。这是任何消息系统的通用解法。</li>
+<li><strong>调整提交策略</strong>：处理完再提交（<code>enable.auto.commit=false</code> + 手动提交），把重复窗口缩小到”处理完但没提交”这段；但注意手动提交提前会丢消息（处理中崩溃），提交延后则重复更多——这是个 trade-off，丢 vs 重，通常重比丢好。</li>
+<li><strong>恰好一次（高要求场景）</strong>：Kafka 事务（producer 事务 + <code>read_committed</code> consumer）或”消费-处理-提交”放进同一个事务，成本高、有性能代价，多数场景用不上。</li>
+</ol>
+<p><strong>追问解析</strong></p>
+<ul>
+<li><strong>Offset、Commit 是什么？</strong> offset 是分区内消息的序号（消费位置），consumer 处理完后把新位置提交给 broker，组内其他人（或自己重启后）从提交的位置接着消费。commit 就是”声明我消费到哪了”。</li>
+<li><strong>Consumer 崩溃和重平衡怎么导致重复？</strong> 崩溃或 rebalance 的瞬间，未提交的 offset 会”回滚”到最后一次提交点，这一段消息被重新拉取。rebalance 越频繁，重复窗口被打开得越多。</li>
+<li><strong>为什么幂等是最终解法？</strong> 因为无论怎么调提交策略，都做不到”恰好消费一次”（at-most-once 会丢、at-least-once 会重），只有业务层幂等让”重复”无害。面试官追到这里就是看你说不说得出”幂等兜底”。</li>
+</ul>
+<hr>
+<h3 id="30-Kafka-Producer-发送失败，你怎么判断是应用问题还是-Kafka-问题？"><a href="#30-Kafka-Producer-发送失败，你怎么判断是应用问题还是-Kafka-问题？" class="headerlink" title="30. Kafka Producer 发送失败，你怎么判断是应用问题还是 Kafka 问题？"></a>30. Kafka Producer 发送失败，你怎么判断是应用问题还是 Kafka 问题？</h3><p><strong>参考答案</strong></p>
+<p>先看报错在”哪一段”：producer 发送链路是 应用 → 网络 → broker（Topic&#x2F;分区 Leader）→ 落盘（ISR）。逐层验证：</p>
+<ol>
+<li><strong>Broker 是否存活</strong>：<code>kafka-topics.sh --bootstrap-server &lt;broker&gt; --list</code> 或监控 broker 进程；连接失败先 <code>nc -zv</code> 验证 TCP。</li>
+<li><strong>TCP 是否正常</strong>：到 bootstrap broker 的 9092 端口连通性、网络抖动、防火墙。</li>
+<li><strong>Topic 是否存在</strong>：producer 配错 topic &#x2F; 未开启 auto.create，<code>kafka-topics.sh --describe</code> 确认。</li>
+<li><strong>Partition Leader 是否正常</strong>：<code>--describe</code> 里看分区 leader 和副本，<code>Leader: -1</code> 表示无 leader（broker 挂了未恢复）。</li>
+<li><strong>ISR 是否同步</strong>：ISR 列表比副本数小 → 副本落后或离线，<code>min.insync.replicas</code> 不满足时会直接报 <code>NotEnoughReplicas</code>。</li>
+<li><strong>磁盘</strong>：broker 磁盘满，消息写不进去，报 <code>DiskError</code>&#x2F;<code>LogDir</code> 相关错误。</li>
+<li><strong>acks 设置</strong>：<code>acks=all</code> 要求 ISR 全部确认，对 broker&#x2F;网络更敏感；<code>acks=0/1</code> 容忍更多但可能丢。</li>
+<li><strong>超时参数</strong>：<code>request.timeout.ms</code>、<code>delivery.timeout.ms</code>、<code>retries</code>、<code>max.block.ms</code>——重试耗尽、缓冲区满（<code>buffer.memory</code>）、元数据请求超时都会让 send 回调报错。</li>
+</ol>
+<p>判断结论的框架：<strong>报错在”连接&#x2F;元数据”阶段多半是网络或 broker；报错在”写日志&#x2F;ISR 确认”阶段多半是 broker 侧（磁盘、副本、配置）；同一时刻其他 topic 正常而只有这个 topic 失败，多半是 topic 或 key 路由问题</strong>。</p>
+<hr>
+<h2 id="九、监控平台：这才是你简历和这个岗位真正的结合点"><a href="#九、监控平台：这才是你简历和这个岗位真正的结合点" class="headerlink" title="九、监控平台：这才是你简历和这个岗位真正的结合点"></a>九、监控平台：这才是你简历和这个岗位真正的结合点</h2><h3 id="31-你之前维护-2100-台服务器的监控平台，服务器接入监控的完整流程是什么？"><a href="#31-你之前维护-2100-台服务器的监控平台，服务器接入监控的完整流程是什么？" class="headerlink" title="31. 你之前维护 2100+ 台服务器的监控平台，服务器接入监控的完整流程是什么？"></a>31. 你之前维护 2100+ 台服务器的监控平台，服务器接入监控的完整流程是什么？</h3><p><strong>参考答案</strong></p>
+<p>按阶段讲，突出”规模化”：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CMDB 登记（IP/业务/负责人/机房）</span><br><span class="line">→ 网络打通（防火墙/安全组放行 Agent 端口）</span><br><span class="line">→ Agent 批量安装（脚本/配置管理工具，版本校验）</span><br><span class="line">→ 配置上报（指向 Server/Proxy，鉴权 token）</span><br><span class="line">→ 指标采集验证（确认指标开始上报、无丢点）</span><br><span class="line">→ 告警规则绑定（按业务/主机分组套规则）</span><br><span class="line">→ 通知验证（测试告警真的能发出去）</span><br><span class="line">→ 纳入日常巡检与容量管理</span><br></pre></td></tr></table></figure>
+
+<p>规模化（2100+）的关键点：</p>
+<ol>
+<li><strong>CMDB 先行</strong>：接入前先有准确的机器清单（IP、业务、负责人），没有 CMDB 就别谈批量接入——后面所有分组、告警、通知都依赖它。</li>
+<li><strong>批量安装</strong>：靠脚本&#x2F;Ansible 批量装 Agent，装完回传版本和校验结果，自动核对”已装&#x2F;未装&#x2F;失败”三张表。</li>
+<li><strong>网络与架构分层</strong>：跨网段用 Proxy 中转，避免所有 Agent 直连中心 Server；Agent 上报地址可配置，支持多 Server 负载。</li>
+<li><strong>接入验证自动化</strong>：新机器接入后自动校验”指标是否在更新、时间戳是否新鲜、采集是否有空洞”，通过才标记为”已纳管”。</li>
+<li><strong>告警与通知分级</strong>：按业务重要性分级，通知渠道（邮件&#x2F;短信&#x2F;IM）按级别路由，避免 2100 台机器全量告警把值班打爆。</li>
+</ol>
+<p>这题面试官就是听你有没有真接过大规模：<strong>有 CMDB 概念、有批量验证、有 Proxy 分层、有告警分级</strong>，每一点都是实战痕迹。</p>
+<hr>
+<h3 id="32-你做过主机、JVM、业务监控，那你分别监控什么？"><a href="#32-你做过主机、JVM、业务监控，那你分别监控什么？" class="headerlink" title="32. 你做过主机、JVM、业务监控，那你分别监控什么？"></a>32. 你做过主机、JVM、业务监控，那你分别监控什么？</h3><p><strong>参考答案</strong></p>
+<p>三层监控的指标清单：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>监控对象</th>
+<th>关键指标</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主机</td>
+<td>CPU</td>
+<td>使用率、load average、上下文切换、中断</td>
+</tr>
+<tr>
+<td></td>
+<td>内存</td>
+<td>总量&#x2F;可用、swap 使用、内存分配趋势</td>
+</tr>
+<tr>
+<td></td>
+<td>磁盘</td>
+<td>使用率、inode、IOPS、IO 等待（await&#x2F;%util）</td>
+</tr>
+<tr>
+<td></td>
+<td>网络</td>
+<td>吞吐、连接数、丢包、TCP 重传</td>
+</tr>
+<tr>
+<td></td>
+<td>进程</td>
+<td>关键进程存活、进程数、fd 数</td>
+</tr>
+<tr>
+<td>JVM</td>
+<td>内存</td>
+<td>堆使用（Eden&#x2F;Survivor&#x2F;Old）、非堆（Metaspace）、堆外</td>
+</tr>
+<tr>
+<td></td>
+<td>GC</td>
+<td>YGC&#x2F;FGC 次数与耗时、GC 暂停</td>
+</tr>
+<tr>
+<td></td>
+<td>线程</td>
+<td>线程总数、RUNNABLE&#x2F;BLOCKED 分布、线程池指标</td>
+</tr>
+<tr>
+<td></td>
+<td>类</td>
+<td>已加载类数量（类加载器泄漏信号）</td>
+</tr>
+<tr>
+<td></td>
+<td>CPU</td>
+<td>JVM CPU 使用、各线程 CPU</td>
+</tr>
+<tr>
+<td>业务</td>
+<td>流量</td>
+<td>QPS、TP99&#x2F;TP999、平均 RT</td>
+</tr>
+<tr>
+<td></td>
+<td>质量</td>
+<td>错误率、异常数、超时率、成功率</td>
+</tr>
+<tr>
+<td></td>
+<td>核心业务</td>
+<td>订单量、交易额、队列积压、注册&#x2F;登录量等业务自有指标</td>
+</tr>
+</tbody></table>
+<p>要点：三层各管各的问题——**主机层看”机器还扛不扛得住”，JVM 层看”应用本身健不健康”，业务层看”用户体感好不好”**。面试官会确认你真的采过 JVM 指标（<code>jstat</code> 里那几个值对应 Prometheus 的 <code>jvm_gc_*</code>、<code>jvm_memory_*</code> 指标）。</p>
+<hr>
+<h3 id="33-如果监控系统突然产生大量告警，你怎么判断是真故障还是监控本身故障？"><a href="#33-如果监控系统突然产生大量告警，你怎么判断是真故障还是监控本身故障？" class="headerlink" title="33. 如果监控系统突然产生大量告警，你怎么判断是真故障还是监控本身故障？"></a>33. 如果监控系统突然产生大量告警，你怎么判断是真故障还是监控本身故障？</h3><p><strong>参考答案</strong></p>
+<p>关键判据是<strong>告警的面</strong>：是”全局告警”还是”局部告警”。</p>
+<ol>
+<li><strong>看影响面</strong>：如果同时段、多台不相关机器、多个不同指标一起告警 → 大概率是监控系统自身问题（监控 Server 挂了、采集链路故障、网络分区）；如果只是某几台相关机器&#x2F;某类指标告警 → 更可能是真实故障。</li>
+<li><strong>验证监控链路各层</strong>：<ul>
+<li><strong>Agent&#x2F;Exporter 是否正常</strong>：进程在不在、有没有批量失联（批量失联 &#x3D; 采集链路问题）。</li>
+<li><strong>Server 是否正常</strong>：监控 Server&#x2F;Proxy 的 CPU、负载、队列积压。</li>
+<li><strong>网络是否正常</strong>：Agent 到 Server 的网络、丢包；跨网段批量告警时优先怀疑网络。</li>
+<li><strong>指标是否停止更新</strong>：看 Grafana 里数据有没有断点&#x2F;空洞；指标新鲜度（时间戳是否停在某个时间）是监控故障的强信号。</li>
+<li><strong>时间戳有没有异常</strong>：如果告警时间戳集中在某一秒，可能是一次性的采集&#x2F;评估积压；时钟漂移也会造成假告警。</li>
+</ul>
+</li>
+<li><strong>判断告警风暴特征</strong>：同一规则同时触发几百条（如”主机磁盘&gt;80%”全量触发，而磁盘其实没满）→ 规则配置错误（阈值单位错、正则错、边界判断错）。</li>
+<li><strong>误报排查</strong>：看原始数据 vs 告警阈值——数据本身没超，告警却出来了，那就是规则&#x2F;采集的问题；数据确实超了，才是真故障。</li>
+</ol>
+<p>处理原则：<strong>先救监控（确认监控本身可信），再谈故障处理</strong>——监控不可信时，所有判断都是猜。</p>
+<hr>
+<h3 id="34-如果-JVM-应用已经不可用，但是监控平台没有告警，你认为是哪一层出了问题？怎么定位？"><a href="#34-如果-JVM-应用已经不可用，但是监控平台没有告警，你认为是哪一层出了问题？怎么定位？" class="headerlink" title="34. 如果 JVM 应用已经不可用，但是监控平台没有告警，你认为是哪一层出了问题？怎么定位？"></a>34. 如果 JVM 应用已经不可用，但是监控平台没有告警，你认为是哪一层出了问题？怎么定位？</h3><p><strong>参考答案</strong></p>
+<p>把完整链路画出来，然后逐层排查”断在哪”：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">业务（应用不可用）</span><br><span class="line">→ JVM（是否真的挂了 / 假死）</span><br><span class="line">→ Agent / Exporter（采集是否正常）</span><br><span class="line">→ 监控 Server（数据是否收到）</span><br><span class="line">→ 规则（告警规则是否命中）</span><br><span class="line">→ Alert（是否产生告警）</span><br><span class="line">→ Notification（通知是否送达）</span><br></pre></td></tr></table></figure>
+
+<p>逐层定位：</p>
+<ol>
+<li><strong>业务&#x2F;JVM 层</strong>：确认应用真的不可用（进程、端口、接口）；假死（线程池耗尽、GC 长时间停顿）时进程在但服务不可用，监控必须靠”业务探针”才能发现——主机监控天然发现不了。</li>
+<li><strong>采集层</strong>：Exporter&#x2F;Agent 是否存活、指标是否还在上报（看监控里该主机的指标新鲜度）；JVM exporter 挂了 &#x3D; 数据停更 &#x3D; 没告警。</li>
+<li><strong>Server&#x2F;数据层</strong>：Prometheus&#x2F;Server 是否收到该 target 的数据、target 是否处于 Down 状态（如果采集本身有”up”指标，这个会先告警）。</li>
+<li><strong>规则层</strong>：告警规则阈值是否合理、表达式是否写错（比如 <code>process_uptime &lt; 1</code> 写成 <code>&gt;</code>）、规则是否被静默（silence）或静默未解除。</li>
+<li><strong>Alert&#x2F;通知层</strong>：Alertmanager 是否在运行、告警是否被路由到正确的 receiver、通知通道（邮件&#x2F;IM&#x2F;短信）是否失效、值班人是否漏看。</li>
+</ol>
+<p>常见结论：**”没有告警”≠”没有故障”，往往是监控覆盖不到（没配业务探针&#x2F;进程监控）、采集链路挂了、规则或通知配置错误**。面试官想听你讲”全链路 + 每层验证点”，尤其要能说出”应用假死时主机监控发现不了，需要业务层探针”这个实战认知。</p>
+<hr>
+<h2 id="十、最符合这个岗位的综合实战题"><a href="#十、最符合这个岗位的综合实战题" class="headerlink" title="十、最符合这个岗位的综合实战题"></a>十、最符合这个岗位的综合实战题</h2><h3 id="35-现在有一套-Spring-Boot-MySQL-Redis-Kafka-的监控平台，线上出现接口大量超时，你作为运维开发怎么处理？"><a href="#35-现在有一套-Spring-Boot-MySQL-Redis-Kafka-的监控平台，线上出现接口大量超时，你作为运维开发怎么处理？" class="headerlink" title="35. 现在有一套 Spring Boot + MySQL + Redis + Kafka 的监控平台，线上出现接口大量超时，你作为运维开发怎么处理？"></a>35. 现在有一套 Spring Boot + MySQL + Redis + Kafka 的监控平台，线上出现接口大量超时，你作为运维开发怎么处理？</h3><p><strong>参考答案</strong></p>
+<p>不能只说”先看日志”，要按链路分层排，每一层有验证动作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">告警确认（影响面：全接口还是部分、哪个服务、什么时间点开始）</span><br><span class="line">→ Linux 层（top/load/磁盘 IO：机器是否先出问题）</span><br><span class="line">→ JVM 层（jstat：GC 是否异常、堆是否吃紧）</span><br><span class="line">→ 线程层（jstack：线程池是否耗尽、是否大量 BLOCKED）</span><br><span class="line">→ 数据库层（MySQL：慢 SQL、锁等待、连接数、Threads_running）</span><br><span class="line">→ Redis 层（延迟、大 key、连接数、内存）</span><br><span class="line">→ Kafka 层（消费 lag 是否上涨、是否消费链路拖慢接口）</span><br><span class="line">→ 网络层（跨服务调用耗时、重传、带宽）</span><br><span class="line">→ 日志（错误日志、接口耗时日志，确认最终根因）</span><br></pre></td></tr></table></figure>
+
+<p>处理顺序的三个原则：</p>
+<ol>
+<li><strong>先恢复再根因</strong>：如果接口已大面积超时，第一优先是止血（摘流量、重启、限流降级），而不是站在线上慢慢排查。</li>
+<li><strong>先看共享资源</strong>：全接口超时优先怀疑”所有请求都依赖的东西”——数据库、Redis、Kafka、线程池、GC，按出现概率排：<strong>数据库慢 SQL&#x2F;锁 &gt; 线程池耗尽 &gt; GC &gt; Redis &gt; Kafka 积压</strong>。</li>
+<li><strong>用 jstack + 日志双重确认</strong>：<code>jstack</code> 看线程在等什么（等 DB 连接、等锁、等 GC），接口耗时日志（或 Arthas trace）看耗时分布，两个证据对上根因才算实锤。</li>
+</ol>
+<p>这套链路本身就是监控平台运维人员”值班应急”的标准动作，能完整讲出来就证明你干过。</p>
+<hr>
+<h3 id="36-让你从零开发一个”服务器批量巡检平台”，你怎么设计？"><a href="#36-让你从零开发一个”服务器批量巡检平台”，你怎么设计？" class="headerlink" title="36. 让你从零开发一个”服务器批量巡检平台”，你怎么设计？"></a>36. 让你从零开发一个”服务器批量巡检平台”，你怎么设计？</h3><p><strong>参考答案</strong></p>
+<p>架构按这条流水线，前后端 + 任务 + 执行 + 存储分层：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">前端（任务创建/结果展示/导出）</span><br><span class="line">→ Python API（接收任务、鉴权、落库）</span><br><span class="line">→ 任务队列（任务表 + 后台执行器，状态机管理）</span><br><span class="line">→ 并发执行器（线程池 + SSH，限并发、超时、重试）</span><br><span class="line">→ SSH → Shell 命令（采集）</span><br><span class="line">→ 结果收集与解析（结构化入库）</span><br><span class="line">→ 数据库（任务表、结果表、审计表）</span><br><span class="line">→ 监控/告警（异常结果告警、平台自身健康）</span><br></pre></td></tr></table></figure>
+
+<p><strong>追问：Python 为什么这么设计？</strong></p>
+<ol>
+<li><strong>前后端分离</strong>：API 层和任务执行层解耦，API 只负责接单和返回状态，重活在后台任务里跑——这样长任务（1000 台巡检）不会把 HTTP 请求挂死。</li>
+<li><strong>任务队列解耦</strong>：用”任务表 + 状态机（PENDING→RUNNING→SUCCESS&#x2F;FAILED）+ 后台消费者”而不是同步执行，换来三个能力：异步（前端轮询进度）、批量（一次任务多台机器）、失败重试（只对失败子任务重试）。</li>
+<li><strong>Python 适合</strong>：paramiko&#x2F;SSH 生态成熟，IO 密集任务用线程池就能满足（GIL 不卡 IO），开发效率高，和监控告警（Prometheus 客户端、钉钉&#x2F;飞书 webhook）集成方便。</li>
+<li><strong>结果落库</strong>：所有巡检结果入库，才能做历史对比（上次和这次的磁盘使用率）、趋势分析和报表，纯内存或临时文件撑不起这个能力。</li>
+</ol>
+<p>面试官追”为什么这么设计”，就是在验证你是真架构过，还是只会写脚本。把”解耦、异步、可重试、可追溯”四个词讲到位就稳了。</p>
+<hr>
+<h3 id="37-现在监控平台发现一个-Java-服务频繁重启，你怎么处理？"><a href="#37-现在监控平台发现一个-Java-服务频繁重启，你怎么处理？" class="headerlink" title="37. 现在监控平台发现一个 Java 服务频繁重启，你怎么处理？"></a>37. 现在监控平台发现一个 Java 服务频繁重启，你怎么处理？</h3><p><strong>参考答案</strong></p>
+<p>不要直接说”看日志”，按这条链路排：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">进程（是否真的重启、重启频率、谁在重启）</span><br><span class="line">→ exit code（进程退出码，区分正常退出/崩溃）</span><br><span class="line">→ systemd（Restart 策略、OOM kill 记录）</span><br><span class="line">→ JVM（OutOfMemoryError、GC 异常、启动参数）</span><br><span class="line">→ 应用日志（启动/崩溃前后的报错）</span><br><span class="line">→ 数据库（连不上、连接被拒、慢）</span><br><span class="line">→ Kafka（消费异常、协调器问题）</span><br><span class="line">→ 下游依赖（注册中心、外部服务不可用）</span><br></pre></td></tr></table></figure>
+
+<p>关键排查动作：</p>
+<ol>
+<li>**确认”谁在重启它”**：<code>systemctl status</code> 看 Restart 计数和退出码；<code>journalctl -u &lt;svc&gt; -n 200</code> 看 systemd 视角的重启原因。退出码 137 通常是 <code>kill -9</code>（可能是 OOM killer 或外部强杀），143 是 <code>kill -15</code>。</li>
+<li><strong>查 OOM</strong>：<code>dmesg | grep -i oom</code> &#x2F; <code>journalctl -k</code> 看内核 OOM killer 是否杀了 JVM（进程被 OOM kill 时应用日志里反而没有 Java 堆栈，这是关键区分点）；JVM 自身 OOM 则在应用日志里有 <code>OutOfMemoryError</code> 堆栈。</li>
+<li><strong>看崩溃时间点上下文</strong>：每次崩溃前后应用日志、数据库、Kafka、下游是否同步异常——如果是依赖挂导致启动失败-重启-再失败的循环，修依赖才能止血。</li>
+<li><strong>看启动是否真的成功过</strong>：频繁重启往往是”起不来”（启动失败被 systemd 拉起再失败），而不是”起来后被打死”——两个方向完全不同，先用日志区分。</li>
+</ol>
+<p>回答要点：**先分清”起不来”还是”起来后被杀死”**（systemd&#x2F;exit code&#x2F;OOM 三条证据），再顺着崩溃点看依赖。这是监控平台值班最常见的场景之一。</p>
+<hr>
+<h3 id="38-如果给你一个完全陌生的-Java-监控平台，让你负责运维，你第一天怎么接手？"><a href="#38-如果给你一个完全陌生的-Java-监控平台，让你负责运维，你第一天怎么接手？" class="headerlink" title="38. 如果给你一个完全陌生的 Java 监控平台，让你负责运维，你第一天怎么接手？"></a>38. 如果给你一个完全陌生的 Java 监控平台，让你负责运维，你第一天怎么接手？</h3><p><strong>参考答案</strong></p>
+<p>按十个维度建立”接手清单”，一天内完成信息收集，一周内跑通应急：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">架构（部署拓扑、依赖关系、服务清单）</span><br><span class="line">→ 服务（每个服务的部署方式、启动脚本、健康检查）</span><br><span class="line">→ JVM（启动参数、堆配置、GC 配置）</span><br><span class="line">→ 数据库（连接信息、表结构概览、备份策略）</span><br><span class="line">→ Kafka（topic 清单、消费组、积压基线）</span><br><span class="line">→ 监控（现有监控覆盖了哪些指标、有无盲区）</span><br><span class="line">→ 日志（日志在哪、怎么采集、怎么查）</span><br><span class="line">→ 告警（告警规则清单、通知渠道、静默项）</span><br><span class="line">→ 发布（怎么发布/回滚、版本管理）</span><br><span class="line">→ 应急（历史故障记录、预案文档、值班联系人）</span><br></pre></td></tr></table></figure>
+
+<p>第一天具体动作：</p>
+<ol>
+<li>**跑一遍”健康巡检”**：把第 20 题的清单过一遍每个服务——进程、端口、健康接口、JVM、数据库连接、Kafka lag，得到第一手”现状基线”。</li>
+<li><strong>验证监控和告警真的有效</strong>：抽查几个告警规则，确认”指标→规则→通知”链路通（很多人接手第一天就发现告警是聋子的耳朵）。</li>
+<li><strong>补文档</strong>：把架构图、服务清单、依赖关系、应急联系人整理成接手文档，别信口口相传。</li>
+<li><strong>读历史</strong>：翻历史故障记录和已知问题清单（Issue&#x2F;工单），比读代码快得多。</li>
+</ol>
+<p>“陌生平台接手”考的不是技术深度，是<strong>系统性</strong>：你有没有一套固定的接手方法论。上面十维度 + “先跑健康巡检、先验证告警链路”就是方法论。</p>
+<hr>
+<h2 id="十一、按这个-JD-真正需要重点准备的-15-道题"><a href="#十一、按这个-JD-真正需要重点准备的-15-道题" class="headerlink" title="十一、按这个 JD 真正需要重点准备的 15 道题"></a>十一、按这个 JD 真正需要重点准备的 15 道题</h2><p>不是把 38 道全背熟，而是把下面这些练到面试官连续追问 5 层也不崩。速查表：</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>题目</th>
+<th>核心链路 &#x2F; 一句话答案</th>
+<th>追问点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>CPU 100% 定位 Java 线程</td>
+<td><code>top → top -H → TID → printf %x → jstack → 栈顶业务包名</code></td>
+<td>GC 线程 vs 业务线程怎么区分</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Java 频繁 Full GC</td>
+<td><code>jstat -gcutil</code> → 老年代是否只涨不降 → 参数 or 泄漏</td>
+<td>Full GC 后能不能降下来</td>
+</tr>
+<tr>
+<td>3</td>
+<td>接口突然变慢但 CPU 正常</td>
+<td><code>jstack 看等什么</code> → 线程池&#x2F;锁&#x2F;DB&#x2F;连接池&#x2F;GC&#x2F;下游&#x2F;IO</td>
+<td>全慢 vs 个别慢</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Python 巡检 1000 台</td>
+<td>线程池限并发 100~200 + 超时 + 重试 + 失败隔离</td>
+<td>为什么不是 1000 线程</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Shell 批量执行命令</td>
+<td><code>xargs -P 限并发</code> + ConnectTimeout + 失败重试</td>
+<td>会不会打爆跳板机</td>
+</tr>
+<tr>
+<td>6</td>
+<td>设计命令执行平台</td>
+<td>白名单 + 参数化 + 权限 + 审计 + 异步任务表</td>
+<td>如何防命令注入</td>
+</tr>
+<tr>
+<td>7</td>
+<td>MySQL 连接数打满</td>
+<td><code>processlist</code> 分 Query&#x2F;Sleep → 慢 SQL &#x2F; 锁 &#x2F; 池配置</td>
+<td>Threads_connected vs Threads_running</td>
+</tr>
+<tr>
+<td>8</td>
+<td>SQL 突然变慢</td>
+<td><code>EXPLAIN → 索引 → 锁 → Buffer Pool → 连接池</code></td>
+<td>偶发 vs 持续</td>
+</tr>
+<tr>
+<td>9</td>
+<td>数据库迁移后持续同步</td>
+<td>记录 binlog 位点 → 增量追平 → 校验 → 切换</td>
+<td>增量怎么证明追平</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Kafka 消息积压</td>
+<td>先看 Consumer Lag → Consumer 死&#x2F;慢 → 分区 → broker → 下游</td>
+<td>消费不过来拆吞吐公式</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Kafka 重复消费</td>
+<td>未提交 offset + 崩溃&#x2F;rebalance → 重复；幂等兜底</td>
+<td>提交时机 trade-off</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Spring Boot 启动失败</td>
+<td>完整堆栈 Caused by → 配置&#x2F;依赖&#x2F;端口&#x2F;内存分诊</td>
+<td>DataSource 报错怎么看</td>
+</tr>
+<tr>
+<td>13</td>
+<td>2100+ 服务器接入监控</td>
+<td>CMDB → 批量安装 → Proxy 分层 → 自动验证 → 告警分级</td>
+<td>怎么验证接入成功</td>
+</tr>
+<tr>
+<td>14</td>
+<td>JVM 监控指标怎么采</td>
+<td>jstat&#x2F;Actuator&#x2F;exporter → heap&#x2F;GC&#x2F;线程&#x2F;类，对应 Prometheus 指标</td>
+<td>假死为什么采不到</td>
+</tr>
+<tr>
+<td>15</td>
+<td>设计集中监控系统</td>
+<td>采集（Agent&#x2F;Exporter）→ 存储（TSDB）→ 规则 → 告警 → 通知 → 自监控</td>
+<td>监控自身的告警</td>
+</tr>
+</tbody></table>
+<h2 id="结尾：怎么用这份材料练"><a href="#结尾：怎么用这份材料练" class="headerlink" title="结尾：怎么用这份材料练"></a>结尾：怎么用这份材料练</h2><p>38 道题的价值排序是：<strong>第 23（CPU 定位）、24（Full GC）、35（接口超时全链路）、36（巡检平台设计）、31（大规模接入监控）、33（告警风暴判断）</strong> 这几道最贴近 JD 和简历交叉点，优先练熟。</p>
+<p>建议的练法就是你在消息里说的”真实面试官模式”：<strong>只问一个具体问题，自己答，然后自己模拟面试官按答案里的”追问解析”往下追 3~8 层</strong>。追问不是要背答案，而是逼自己把每条链路的”为什么”讲出来——讲不顺的地方，就是面试会翻车的地方。</p>
+<p>如果准备进入这个模式，直接把你想练的第一道题发过来（比如”Java CPU 100% 怎么排查”），我按面试官的口吻只提问、只追问，不提前给考点提示。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://Raidenxe.github.io">Raidenxe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://raidenxe.github.io/archives/3d98614a.html">https://raidenxe.github.io/archives/3d98614a.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://Raidenxe.github.io" target="_blank">Raidenxe的博客</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/archives/9dc3bdc6.html" title="Ansible 深入浅出实战指南：从零搭建、核心模块到自动化部署"><img class="cover" src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260926165840686.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Ansible 深入浅出实战指南：从零搭建、核心模块到自动化部署</div></div><div class="info-2"><div class="info-item-1"> 技术栈：Ansible 2.17.14 · Docker 29.7.2 · Ubuntu 22.04适用读者：具备 Linux 基础、想用自动化替代「一台台手动 SSH」的开发者与运维工程师。复现方式：本文所有步骤与配置都基于 Docker 环境实测，你可以在自己的机器上 1:1 复现，看到的每个输出均为真实抓取结果。    目录 一、为什么需要 Ansible：先从痛点说起 二、Ansible 核心概念与架构 三、搭建 Docker 实验环境 四、清单 Inventory：Ansible 的「通讯录」 五、模块 Modules + Ad-hoc 命令实战 六、Playbook：把操作变成可复用的「剧本」 七、实战项目一：服务器批量配置 八、实战项目二：应用部署自动化（滚动发布） 九、变量、Facts 与条件控制 十、错误处理：block &#x2F; rescue &#x2F; always 十一、安全实践：Vault 加密机密 十二、常见问题与解决方案 十三、最佳实践与进阶方向 十四、总结    一、为什么需要 Ansible：先从痛点说起想象一个常见的运维场景：你有 10...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Raidenxe</div><div class="author-info-description">向着真理和自由，无名的献身。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">55</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">72</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Raidenxe" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:hr.1213@foxmail.com" rel="external nofollow noreferrer" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A8%A1%E6%8B%9F%E9%9D%A2%E8%AF%95%E9%A2%98%E5%BA%93%E4%B8%8E%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88%EF%BC%88%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91-x2F-%E7%9B%91%E6%8E%A7%E5%B9%B3%E5%8F%B0%E6%96%B9%E5%90%91%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">模拟面试题库与参考答案（运维开发 &#x2F; 监控平台方向）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%EF%BC%9A%E8%BF%99%E7%B1%BB%E5%B2%97%E4%BD%8D%E9%9D%A2%E8%AF%95%E5%AE%98%E5%88%B0%E5%BA%95%E5%9C%A8%E8%80%83%E4%BB%80%E4%B9%88"><span class="toc-number">1.1.</span> <span class="toc-text">前言：这类岗位面试官到底在考什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Linux%EF%BC%9A%E4%B8%8D%E6%98%AF%E9%97%AE%E2%80%9D%E5%A4%A7%E8%80%8C%E5%85%A8%E2%80%9D%EF%BC%8C%E8%80%8C%E6%98%AF%E9%97%AE%E4%BD%A0%E8%83%BD%E4%B8%8D%E8%83%BD%E5%B9%B2%E6%B4%BB"><span class="toc-number">1.2.</span> <span class="toc-text">一、Linux：不是问”大而全”，而是问你能不能干活</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%BA%BF%E4%B8%8A-Linux-%E6%9C%8D%E5%8A%A1%E5%99%A8-CPU-%E6%8C%81%E7%BB%AD-90-%E4%BB%A5%E4%B8%8A%EF%BC%8C%E7%99%BB%E5%BD%95%E5%90%8E%E7%AC%AC%E4%B8%80%E6%AD%A5%E7%9C%8B%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.2.1.</span> <span class="toc-text">1. 线上 Linux 服务器 CPU 持续 90% 以上，登录后第一步看什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%9B%91%E6%8E%A7%E5%B9%B3%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4-100-%EF%BC%8C%E4%BD%86%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E8%BF%98%E8%83%BD%E8%AE%BF%E9%97%AE%EF%BC%8C%E4%BD%A0%E6%80%8E%E4%B9%88%E5%A4%84%E7%90%86%EF%BC%9F"><span class="toc-number">1.2.2.</span> <span class="toc-text">2. 监控平台服务器磁盘空间 100%，但监控服务还能访问，你怎么处理？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%80%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%8A%A8%E5%A4%B1%E8%B4%A5%EF%BC%8C%E8%AE%A9%E4%BD%A0%E5%85%88%E5%88%AB%E7%9C%8B%E4%B8%9A%E5%8A%A1%E4%BB%A3%E7%A0%81%EF%BC%8C%E5%8F%AA%E5%85%81%E8%AE%B8%E7%94%A8-Linux-%E5%91%BD%E4%BB%A4%E6%8E%92%E6%9F%A5%EF%BC%8C%E4%BD%A0%E6%80%8E%E4%B9%88%E6%9F%A5%EF%BC%9F"><span class="toc-number">1.2.3.</span> <span class="toc-text">3. 一个服务启动失败，让你先别看业务代码，只允许用 Linux 命令排查，你怎么查？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%83%BD-ping-%E9%80%9A%EF%BC%8C%E4%BD%86%E6%98%AF%E7%9B%91%E6%8E%A7-Agent-%E8%BF%98%E6%98%AF%E8%BF%9E%E6%8E%A5%E4%B8%8D%E4%B8%8A%EF%BC%8C%E4%BD%A0%E6%80%8E%E4%B9%88%E5%88%A4%E6%96%AD%E9%97%AE%E9%A2%98%E5%9C%A8%E5%93%AA%E9%87%8C%EF%BC%9F"><span class="toc-number">1.2.4.</span> <span class="toc-text">4. 服务器能 ping 通，但是监控 Agent 还是连接不上，你怎么判断问题在哪里？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Shell%EF%BC%9AJD-%E5%86%99%E7%9A%84%E2%80%9D%E8%BE%83%E5%BC%BA-Shell-%E7%BC%96%E5%86%99%E8%83%BD%E5%8A%9B%E2%80%9D%E5%BE%88%E5%8F%AF%E8%83%BD%E6%98%AF%E7%8E%B0%E5%9C%BA%E5%86%99"><span class="toc-number">1.3.</span> <span class="toc-text">二、Shell：JD 写的”较强 Shell 编写能力”很可能是现场写</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%86%99%E4%B8%80%E4%B8%AA-Shell%EF%BC%9A%E6%AF%8F-5-%E5%88%86%E9%92%9F%E6%A3%80%E6%9F%A5%E4%B8%80%E6%AC%A1%E7%A3%81%E7%9B%98%E4%BD%BF%E7%94%A8%E7%8E%87%EF%BC%8C%E8%B6%85%E8%BF%87-80-%E5%91%8A%E8%AD%A6%EF%BC%8C%E8%B6%85%E8%BF%87-90-%E6%B8%85%E7%90%86%EF%BC%8C%E4%BD%A0%E6%80%8E%E4%B9%88%E5%86%99%EF%BC%9F"><span class="toc-number">1.3.1.</span> <span class="toc-text">5. 写一个 Shell：每 5 分钟检查一次磁盘使用率，超过 80% 告警，超过 90% 清理，你怎么写？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%9C%89-200-%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8-IP%EF%BC%8C%E4%BD%A0%E9%9C%80%E8%A6%81%E6%89%B9%E9%87%8F%E6%A3%80%E6%9F%A5-SSH-%E6%98%AF%E5%90%A6%E8%83%BD%E8%BF%9E%E6%8E%A5%EF%BC%8C%E6%80%8E%E4%B9%88%E5%86%99%EF%BC%9F"><span class="toc-number">1.3.2.</span> <span class="toc-text">6. 有 200 台服务器 IP，你需要批量检查 SSH 是否能连接，怎么写？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%9C%89%E4%B8%80%E6%89%B9-Java-%E5%BA%94%E7%94%A8%EF%BC%8C%E4%BD%A0%E9%9C%80%E8%A6%81%E9%80%9A%E8%BF%87-Shell-%E6%89%B9%E9%87%8F%E6%89%A7%E8%A1%8C-restart%EF%BC%8C%E4%BD%86%E5%BF%85%E9%A1%BB%E4%BF%9D%E8%AF%81%E2%80%9D%E6%9C%8D%E5%8A%A1%E7%9C%9F%E7%9A%84%E8%B5%B7%E6%9D%A5%E4%BA%86%E2%80%9D%E6%89%8D%E7%AE%97%E6%88%90%E5%8A%9F%EF%BC%8C%E6%80%8E%E4%B9%88%E5%81%9A%EF%BC%9F"><span class="toc-number">1.3.3.</span> <span class="toc-text">7. 有一批 Java 应用，你需要通过 Shell 批量执行 restart，但必须保证”服务真的起来了”才算成功，怎么做？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81Python%EF%BC%9A%E4%B8%8D%E6%98%AF%E8%80%83%E7%AE%97%E6%B3%95%EF%BC%8C%E8%80%8C%E6%98%AF%E8%80%83%E4%BD%A0%E8%83%BD%E4%B8%8D%E8%83%BD%E6%8A%8A%E8%BF%90%E7%BB%B4%E5%B7%A5%E4%BD%9C%E7%A8%8B%E5%BA%8F%E5%8C%96"><span class="toc-number">1.4.</span> <span class="toc-text">三、Python：不是考算法，而是考你能不能把运维工作程序化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E8%AE%A9%E4%BD%A0%E7%94%A8-Python-%E5%81%9A%E4%B8%80%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B7%A1%E6%A3%80%E7%A8%8B%E5%BA%8F%EF%BC%8C%E4%BD%A0%E4%BC%9A%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-number">1.4.1.</span> <span class="toc-text">8. 让你用 Python 做一个服务器巡检程序，你会怎么设计？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1000-%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%8C%E6%97%B6%E5%B7%A1%E6%A3%80%EF%BC%8C%E4%BD%A0-Python-%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="toc-number">1.4.2.</span> <span class="toc-text">9. 1000 台服务器同时巡检，你 Python 怎么实现？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-Python-%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E8%BF%9C%E7%A8%8B-Linux-%E5%91%BD%E4%BB%A4%EF%BC%8C%E4%BD%A0%E4%BC%9A%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="toc-number">1.4.3.</span> <span class="toc-text">10. Python 脚本执行远程 Linux 命令，你会怎么实现？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E5%A6%82%E6%9E%9C%E8%AE%A9%E4%BD%A0%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E2%80%9D%E7%9B%91%E6%8E%A7%E5%B9%B3%E5%8F%B0%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%A8%A1%E5%9D%97%E2%80%9D%EF%BC%8CPython-%E5%BA%94%E8%AF%A5%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-number">1.4.4.</span> <span class="toc-text">11. 如果让你开发一个”监控平台命令执行模块”，Python 应该怎么设计？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9A%E4%B8%8D%E6%98%AF%E9%97%AE%E2%80%9D%E4%BB%80%E4%B9%88%E6%98%AF-MySQL%E2%80%9D%EF%BC%8C%E8%80%8C%E6%98%AF%E9%97%AE%E4%BD%A0%E6%9C%89%E6%B2%A1%E6%9C%89%E7%9C%9F%E6%AD%A3%E5%81%9A%E8%BF%87"><span class="toc-number">1.5.</span> <span class="toc-text">四、数据库：不是问”什么是 MySQL”，而是问你有没有真正做过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#12-%E7%8E%B0%E5%9C%A8%E8%AE%A9%E4%BD%A0%E7%BB%99%E4%B8%80%E4%B8%AA-Java-%E5%BA%94%E7%94%A8%E8%AE%BE%E8%AE%A1-MySQL-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BF%E9%97%AE%E6%96%B9%E6%A1%88%EF%BC%8C%E4%BD%A0%E4%BC%9A%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-number">1.5.1.</span> <span class="toc-text">12. 现在让你给一个 Java 应用设计 MySQL 数据库访问方案，你会怎么设计？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-%E7%BA%BF%E4%B8%8A-MySQL-%E7%AA%81%E7%84%B6%E5%87%BA%E7%8E%B0%E5%A4%A7%E9%87%8F%E8%BF%9E%E6%8E%A5%EF%BC%8C%E4%BD%A0%E6%80%8E%E4%B9%88%E6%8E%92%EF%BC%9F"><span class="toc-number">1.5.2.</span> <span class="toc-text">13. 线上 MySQL 突然出现大量连接，你怎么排？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-%E8%AE%A9%E4%BD%A0%E8%AE%BE%E8%AE%A1%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BF%E9%97%AE%EF%BC%8C%E4%BD%A0%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D-SQL-%E6%B3%A8%E5%85%A5%EF%BC%9F"><span class="toc-number">1.5.3.</span> <span class="toc-text">14. 让你设计数据库访问，你如何避免 SQL 注入？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15-MySQL-%E4%B8%80%E6%9D%A1-SQL-%E4%BB%8E-1-%E7%A7%92%E7%AA%81%E7%84%B6%E5%8F%98%E6%88%90-20-%E7%A7%92%EF%BC%8C%E4%BD%A0%E6%80%8E%E4%B9%88%E5%AE%9A%E4%BD%8D%EF%BC%9F"><span class="toc-number">1.5.4.</span> <span class="toc-text">15. MySQL 一条 SQL 从 1 秒突然变成 20 秒，你怎么定位？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16-%E4%BD%A0%E5%81%9A%E8%BF%87%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%87%E4%BB%BD%EF%BC%8C%E9%82%A3%E4%BD%A0%E6%80%8E%E4%B9%88%E8%AF%81%E6%98%8E%E2%80%9D%E5%A4%87%E4%BB%BD%E6%98%AF%E6%9C%89%E6%95%88%E7%9A%84%E2%80%9D%EF%BC%9F"><span class="toc-number">1.5.5.</span> <span class="toc-text">16. 你做过数据库备份，那你怎么证明”备份是有效的”？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%A4%9A%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AJD-%E5%86%99%E4%BA%86-Oracle-x2F-MySQL-x2F-SQL-Server-x2F-MongoDB-x2F-Redis"><span class="toc-number">1.6.</span> <span class="toc-text">五、多数据库：JD 写了 Oracle &#x2F; MySQL &#x2F; SQL Server &#x2F; MongoDB &#x2F; Redis</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#17-%E4%BD%A0%E5%AE%9E%E9%99%85%E7%94%A8%E5%BE%97%E6%9C%80%E5%A4%9A%E7%9A%84%E6%98%AF-MySQL%EF%BC%8COracle-%E4%BD%A0%E4%B8%BB%E8%A6%81%E5%81%9A%E8%BF%87%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.6.1.</span> <span class="toc-text">17. 你实际用得最多的是 MySQL，Oracle 你主要做过什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#18-Redis-%E5%9C%A8%E4%BD%A0%E7%9A%84%E9%A1%B9%E7%9B%AE%E9%87%8C%E6%89%BF%E6%8B%85%E4%BB%80%E4%B9%88%E8%A7%92%E8%89%B2%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E7%94%A8-MySQL%EF%BC%9F"><span class="toc-number">1.6.2.</span> <span class="toc-text">18. Redis 在你的项目里承担什么角色？为什么不用 MySQL？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#19-MongoDB-%E5%92%8C-MySQL%EF%BC%8C%E4%BD%A0%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BC%9A%E9%80%89-MongoDB%EF%BC%9F"><span class="toc-number">1.6.3.</span> <span class="toc-text">19. MongoDB 和 MySQL，你什么时候会选 MongoDB？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81Java%EF%BC%9A%E9%87%8D%E7%82%B9%E4%B8%8D%E6%98%AF%E2%80%9D%E5%86%99-Java%E2%80%9D%EF%BC%8C%E8%80%8C%E6%98%AF%E2%80%9D%E8%83%BD%E4%B8%8D%E8%83%BD%E7%9C%8B%E6%87%82%E5%92%8C%E8%BF%90%E7%BB%B4-Java-%E7%B3%BB%E7%BB%9F%E2%80%9D"><span class="toc-number">1.7.</span> <span class="toc-text">六、Java：重点不是”写 Java”，而是”能不能看懂和运维 Java 系统”</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#20-%E4%BD%A0%E8%87%AA%E5%B7%B1%E4%B8%8D%E4%B8%80%E5%AE%9A%E6%98%AF-Java-%E5%BC%80%E5%8F%91%EF%BC%8C%E7%8E%B0%E5%9C%A8%E8%AE%A9%E4%BD%A0%E6%8E%A5%E6%89%8B%E4%B8%80%E4%B8%AA-Spring-Boot-%E6%9C%8D%E5%8A%A1%EF%BC%8C%E4%BD%A0%E6%80%8E%E4%B9%88%E5%88%A4%E6%96%AD%E5%AE%83%E6%98%AF%E5%90%A6%E8%BF%90%E8%A1%8C%E6%AD%A3%E5%B8%B8%EF%BC%9F"><span class="toc-number">1.7.1.</span> <span class="toc-text">20. 你自己不一定是 Java 开发，现在让你接手一个 Spring Boot 服务，你怎么判断它是否运行正常？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#21-Spring-Boot-%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%8A%A8%E5%A4%B1%E8%B4%A5%EF%BC%8C%E4%BD%A0%E4%BC%9A%E4%BB%8E%E5%93%AA%E4%BA%9B%E6%96%B9%E9%9D%A2%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="toc-number">1.7.2.</span> <span class="toc-text">21. Spring Boot 服务启动失败，你会从哪些方面排查？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#22-%E4%BD%A0%E6%80%8E%E4%B9%88%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA-Java-%E6%9C%8D%E5%8A%A1%E5%88%B0%E5%BA%95%E6%98%AF%E5%BA%94%E7%94%A8%E9%97%AE%E9%A2%98%E3%80%81JVM-%E9%97%AE%E9%A2%98%E8%BF%98%E6%98%AF%E6%95%B0%E6%8D%AE%E5%BA%93%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-number">1.7.3.</span> <span class="toc-text">22. 你怎么判断一个 Java 服务到底是应用问题、JVM 问题还是数据库问题？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81Java-%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98%EF%BC%9AJD-%E7%AC%AC-8-%E6%9D%A1%E6%98%8E%E7%A1%AE%E5%86%99%E5%87%BA%E6%9D%A5%E7%9A%84"><span class="toc-number">1.8.</span> <span class="toc-text">七、Java 性能调优：JD 第 8 条明确写出来的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#23-%E7%BA%BF%E4%B8%8A-Java-%E5%BA%94%E7%94%A8-CPU-100-%EF%BC%8C%E5%AE%8C%E6%95%B4%E6%8E%92%E6%9F%A5%E6%B5%81%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.8.1.</span> <span class="toc-text">23. 线上 Java 应用 CPU 100%，完整排查流程是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#24-Java-%E6%9C%8D%E5%8A%A1%E9%A2%91%E7%B9%81-Full-GC%EF%BC%8C%E4%BD%A0%E6%80%8E%E4%B9%88%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="toc-number">1.8.2.</span> <span class="toc-text">24. Java 服务频繁 Full GC，你怎么排查？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#25-Java-%E5%BA%94%E7%94%A8%E5%86%85%E5%AD%98%E4%B8%80%E7%9B%B4%E6%B6%A8%EF%BC%8C%E4%BD%86%E6%98%AF%E6%B2%A1%E6%9C%89-OOM%EF%BC%8C%E4%BD%A0%E6%80%8E%E4%B9%88%E5%88%A4%E6%96%AD%E6%98%AF%E4%B8%8D%E6%98%AF%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%EF%BC%9F"><span class="toc-number">1.8.3.</span> <span class="toc-text">25. Java 应用内存一直涨，但是没有 OOM，你怎么判断是不是内存泄漏？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#26-Java-%E5%BA%94%E7%94%A8%E6%8E%A5%E5%8F%A3%E7%AA%81%E7%84%B6%E4%BB%8E-100ms-%E5%8F%98%E6%88%90-5s%EF%BC%8C%E4%BD%86-CPU-%E5%92%8C%E5%86%85%E5%AD%98%E9%83%BD%E6%AD%A3%E5%B8%B8%EF%BC%8C%E4%BD%A0%E6%9F%A5%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.8.4.</span> <span class="toc-text">26. Java 应用接口突然从 100ms 变成 5s，但 CPU 和内存都正常，你查什么？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81Kafka%EF%BC%9AJD-%E5%86%99%E4%BA%86%E2%80%9DKafka-%E7%AD%89%E7%BB%84%E4%BB%B6%E5%BC%80%E5%8F%91%EF%BC%8C%E5%BF%AB%E9%80%9F%E5%AE%8C%E6%88%90%E6%96%B9%E6%A1%88%E2%80%9D%EF%BC%8C%E5%81%8F%E8%BF%90%E7%BB%B4-%E6%95%85%E9%9A%9C"><span class="toc-number">1.9.</span> <span class="toc-text">八、Kafka：JD 写了”Kafka 等组件开发，快速完成方案”，偏运维 + 故障</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#27-Kafka-%E6%B6%88%E6%81%AF%E5%BC%80%E5%A7%8B%E5%A4%A7%E9%87%8F%E7%A7%AF%E5%8E%8B%EF%BC%8C%E4%BD%A0%E6%8E%A5%E5%88%B0%E5%91%8A%E8%AD%A6%E4%BB%A5%E5%90%8E%E7%AC%AC%E4%B8%80%E6%97%B6%E9%97%B4%E7%9C%8B%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.9.1.</span> <span class="toc-text">27. Kafka 消息开始大量积压，你接到告警以后第一时间看什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#28-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%80%E4%B8%AA-Consumer-%E6%B6%88%E8%B4%B9%E4%B8%8D%E8%BF%87%E6%9D%A5%EF%BC%9F"><span class="toc-number">1.9.2.</span> <span class="toc-text">28. 为什么一个 Consumer 消费不过来？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#29-Kafka-%E6%B6%88%E6%81%AF%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9%EF%BC%9F%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%EF%BC%9F"><span class="toc-number">1.9.3.</span> <span class="toc-text">29. Kafka 消息为什么会重复消费？怎么解决？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#30-Kafka-Producer-%E5%8F%91%E9%80%81%E5%A4%B1%E8%B4%A5%EF%BC%8C%E4%BD%A0%E6%80%8E%E4%B9%88%E5%88%A4%E6%96%AD%E6%98%AF%E5%BA%94%E7%94%A8%E9%97%AE%E9%A2%98%E8%BF%98%E6%98%AF-Kafka-%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-number">1.9.4.</span> <span class="toc-text">30. Kafka Producer 发送失败，你怎么判断是应用问题还是 Kafka 问题？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E7%9B%91%E6%8E%A7%E5%B9%B3%E5%8F%B0%EF%BC%9A%E8%BF%99%E6%89%8D%E6%98%AF%E4%BD%A0%E7%AE%80%E5%8E%86%E5%92%8C%E8%BF%99%E4%B8%AA%E5%B2%97%E4%BD%8D%E7%9C%9F%E6%AD%A3%E7%9A%84%E7%BB%93%E5%90%88%E7%82%B9"><span class="toc-number">1.10.</span> <span class="toc-text">九、监控平台：这才是你简历和这个岗位真正的结合点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#31-%E4%BD%A0%E4%B9%8B%E5%89%8D%E7%BB%B4%E6%8A%A4-2100-%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E7%9B%91%E6%8E%A7%E5%B9%B3%E5%8F%B0%EF%BC%8C%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%8E%A5%E5%85%A5%E7%9B%91%E6%8E%A7%E7%9A%84%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.10.1.</span> <span class="toc-text">31. 你之前维护 2100+ 台服务器的监控平台，服务器接入监控的完整流程是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#32-%E4%BD%A0%E5%81%9A%E8%BF%87%E4%B8%BB%E6%9C%BA%E3%80%81JVM%E3%80%81%E4%B8%9A%E5%8A%A1%E7%9B%91%E6%8E%A7%EF%BC%8C%E9%82%A3%E4%BD%A0%E5%88%86%E5%88%AB%E7%9B%91%E6%8E%A7%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.10.2.</span> <span class="toc-text">32. 你做过主机、JVM、业务监控，那你分别监控什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#33-%E5%A6%82%E6%9E%9C%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F%E7%AA%81%E7%84%B6%E4%BA%A7%E7%94%9F%E5%A4%A7%E9%87%8F%E5%91%8A%E8%AD%A6%EF%BC%8C%E4%BD%A0%E6%80%8E%E4%B9%88%E5%88%A4%E6%96%AD%E6%98%AF%E7%9C%9F%E6%95%85%E9%9A%9C%E8%BF%98%E6%98%AF%E7%9B%91%E6%8E%A7%E6%9C%AC%E8%BA%AB%E6%95%85%E9%9A%9C%EF%BC%9F"><span class="toc-number">1.10.3.</span> <span class="toc-text">33. 如果监控系统突然产生大量告警，你怎么判断是真故障还是监控本身故障？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#34-%E5%A6%82%E6%9E%9C-JVM-%E5%BA%94%E7%94%A8%E5%B7%B2%E7%BB%8F%E4%B8%8D%E5%8F%AF%E7%94%A8%EF%BC%8C%E4%BD%86%E6%98%AF%E7%9B%91%E6%8E%A7%E5%B9%B3%E5%8F%B0%E6%B2%A1%E6%9C%89%E5%91%8A%E8%AD%A6%EF%BC%8C%E4%BD%A0%E8%AE%A4%E4%B8%BA%E6%98%AF%E5%93%AA%E4%B8%80%E5%B1%82%E5%87%BA%E4%BA%86%E9%97%AE%E9%A2%98%EF%BC%9F%E6%80%8E%E4%B9%88%E5%AE%9A%E4%BD%8D%EF%BC%9F"><span class="toc-number">1.10.4.</span> <span class="toc-text">34. 如果 JVM 应用已经不可用，但是监控平台没有告警，你认为是哪一层出了问题？怎么定位？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E3%80%81%E6%9C%80%E7%AC%A6%E5%90%88%E8%BF%99%E4%B8%AA%E5%B2%97%E4%BD%8D%E7%9A%84%E7%BB%BC%E5%90%88%E5%AE%9E%E6%88%98%E9%A2%98"><span class="toc-number">1.11.</span> <span class="toc-text">十、最符合这个岗位的综合实战题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#35-%E7%8E%B0%E5%9C%A8%E6%9C%89%E4%B8%80%E5%A5%97-Spring-Boot-MySQL-Redis-Kafka-%E7%9A%84%E7%9B%91%E6%8E%A7%E5%B9%B3%E5%8F%B0%EF%BC%8C%E7%BA%BF%E4%B8%8A%E5%87%BA%E7%8E%B0%E6%8E%A5%E5%8F%A3%E5%A4%A7%E9%87%8F%E8%B6%85%E6%97%B6%EF%BC%8C%E4%BD%A0%E4%BD%9C%E4%B8%BA%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91%E6%80%8E%E4%B9%88%E5%A4%84%E7%90%86%EF%BC%9F"><span class="toc-number">1.11.1.</span> <span class="toc-text">35. 现在有一套 Spring Boot + MySQL + Redis + Kafka 的监控平台，线上出现接口大量超时，你作为运维开发怎么处理？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#36-%E8%AE%A9%E4%BD%A0%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E2%80%9D%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%89%B9%E9%87%8F%E5%B7%A1%E6%A3%80%E5%B9%B3%E5%8F%B0%E2%80%9D%EF%BC%8C%E4%BD%A0%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-number">1.11.2.</span> <span class="toc-text">36. 让你从零开发一个”服务器批量巡检平台”，你怎么设计？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#37-%E7%8E%B0%E5%9C%A8%E7%9B%91%E6%8E%A7%E5%B9%B3%E5%8F%B0%E5%8F%91%E7%8E%B0%E4%B8%80%E4%B8%AA-Java-%E6%9C%8D%E5%8A%A1%E9%A2%91%E7%B9%81%E9%87%8D%E5%90%AF%EF%BC%8C%E4%BD%A0%E6%80%8E%E4%B9%88%E5%A4%84%E7%90%86%EF%BC%9F"><span class="toc-number">1.11.3.</span> <span class="toc-text">37. 现在监控平台发现一个 Java 服务频繁重启，你怎么处理？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#38-%E5%A6%82%E6%9E%9C%E7%BB%99%E4%BD%A0%E4%B8%80%E4%B8%AA%E5%AE%8C%E5%85%A8%E9%99%8C%E7%94%9F%E7%9A%84-Java-%E7%9B%91%E6%8E%A7%E5%B9%B3%E5%8F%B0%EF%BC%8C%E8%AE%A9%E4%BD%A0%E8%B4%9F%E8%B4%A3%E8%BF%90%E7%BB%B4%EF%BC%8C%E4%BD%A0%E7%AC%AC%E4%B8%80%E5%A4%A9%E6%80%8E%E4%B9%88%E6%8E%A5%E6%89%8B%EF%BC%9F"><span class="toc-number">1.11.4.</span> <span class="toc-text">38. 如果给你一个完全陌生的 Java 监控平台，让你负责运维，你第一天怎么接手？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E6%8C%89%E8%BF%99%E4%B8%AA-JD-%E7%9C%9F%E6%AD%A3%E9%9C%80%E8%A6%81%E9%87%8D%E7%82%B9%E5%87%86%E5%A4%87%E7%9A%84-15-%E9%81%93%E9%A2%98"><span class="toc-number">1.12.</span> <span class="toc-text">十一、按这个 JD 真正需要重点准备的 15 道题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E5%B0%BE%EF%BC%9A%E6%80%8E%E4%B9%88%E7%94%A8%E8%BF%99%E4%BB%BD%E6%9D%90%E6%96%99%E7%BB%83"><span class="toc-number">1.13.</span> <span class="toc-text">结尾：怎么用这份材料练</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/3d98614a.html" title="模拟面试题"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="模拟面试题"/></a><div class="content"><a class="title" href="/archives/3d98614a.html" title="模拟面试题">模拟面试题</a><time datetime="2026-09-27T14:43:37.000Z" title="发表于 2026-09-27 22:43:37">2026-09-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/9dc3bdc6.html" title="Ansible 深入浅出实战指南：从零搭建、核心模块到自动化部署"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260926165840686.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Ansible 深入浅出实战指南：从零搭建、核心模块到自动化部署"/></a><div class="content"><a class="title" href="/archives/9dc3bdc6.html" title="Ansible 深入浅出实战指南：从零搭建、核心模块到自动化部署">Ansible 深入浅出实战指南：从零搭建、核心模块到自动化部署</a><time datetime="2026-09-26T08:43:09.000Z" title="发表于 2026-09-26 16:43:09">2026-09-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/5dc13199.html" title="MySQL 8.0 三节点 MGR 高可用集群部署（Docker Compose 实战）"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260921194508187.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="MySQL 8.0 三节点 MGR 高可用集群部署（Docker Compose 实战）"/></a><div class="content"><a class="title" href="/archives/5dc13199.html" title="MySQL 8.0 三节点 MGR 高可用集群部署（Docker Compose 实战）">MySQL 8.0 三节点 MGR 高可用集群部署（Docker Compose 实战）</a><time datetime="2026-09-20T16:00:00.000Z" title="发表于 2026-09-21 00:00:00">2026-09-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/61196baf.html" title="Jenkins-CICD实战"><img src="https://cdn.jsdelivr.net/gh/Raidenxe/blog-img@master/repo/20260812011814186.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins-CICD实战"/></a><div class="content"><a class="title" href="/archives/61196baf.html" title="Jenkins-CICD实战">Jenkins-CICD实战</a><time datetime="2026-08-11T17:09:47.000Z" title="发表于 2026-08-12 01:09:47">2026-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/a3e16fea.html" title="面试题1"><img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="面试题1"/></a><div class="content"><a class="title" href="/archives/a3e16fea.html" title="面试题1">面试题1</a><time datetime="2026-08-11T14:53:55.000Z" title="发表于 2026-08-11 22:53:55">2026-08-11</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2020 - 2026 By Raidenxe</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5"></script><script src="/js/main.js?v=5.5.5"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5"></script></div></div></body></html>
